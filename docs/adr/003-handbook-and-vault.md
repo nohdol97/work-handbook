@@ -1,6 +1,6 @@
 # ADR 003: 한영 지식 저장소와 vault 사본
 
-- 상태: accepted
+- 상태: accepted (저장소 공개 범위는 ADR 004로 대체)
 - 날짜: 2026-09-24
 
 ## 맥락
@@ -31,3 +31,7 @@ vault는 명시적으로 요청된 단방향 Markdown 사본이다. 경로를 �
 - [같은 페이지 언어 전환](https://ultrabug.github.io/mkdocs-static-i18n/setup/setting-up-material/)
 - [Material Mermaid](https://squidfunk.github.io/mkdocs-material/reference/diagrams/)
 - [GitHub Pages workflow](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
+
+## 후속 결정
+
+[ADR 004](004-public-repository-and-pages.md)가 private 소스 저장소 전제를 대체한다. 지식 구조·vault 사본·사이트 게시 범위 결정은 유지한다.

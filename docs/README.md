@@ -7,6 +7,7 @@
 | [001](adr/001-initial-harness.md) | accepted | work-handbook의 목표와 기본 구조 |
 | [002](adr/002-dependency-aware-parallel-work.md) | accepted | 독립 작업은 병렬 실행하고 공유 변경은 직렬화 |
 | [003](adr/003-handbook-and-vault.md) | accepted | 한영 정규 지식과 vault 사본 |
+| [004](adr/004-public-repository-and-pages.md) | accepted | 사용자 승인에 따른 public 소스 저장소와 Pages 활성화 |
 
 ## 스펙
 

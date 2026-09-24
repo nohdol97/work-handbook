@@ -32,7 +32,7 @@ make validate
 3. 기존 정규 주제에 유용한 지식의 합집합을 반영한다. 양쪽 언어, 메타데이터, glossary, nav, 링크와 예제를 함께 갱신한다.
 4. 전체 쌍을 직접 읽어 의미·쉬운 영어·개인정보를 검토한다. `reviews/bilingual.json`에 실제 검토자, 결과, 현재 SHA-256을 기록한다. 해시만 갱신해서 검토를 대신하면 안 된다.
 5. `.venv/bin/python scripts/check_handbook.py --write-reports`로 반영 보고서를 만든다. `make finalize`로 전체 검증과 vault 저장을 실행한다.
-6. 검증된 지정 파일을 커밋하고 private 원격에 push한다. 자료·커리큘럼·페이지 쌍·coverage·검증·미해결 사항을 간단히 보고한다.
+6. 검증된 지정 파일을 커밋하고 공개 원격에 push한다. 자료·커리큘럼·페이지 쌍·coverage·검증·미해결 사항을 간단히 보고한다.
 
 ## vault 설정
 
@@ -65,7 +65,9 @@ README·운영 계약·출처·한영 문서·자체 스킬 등 first-party `.md
 
 ## GitHub Pages와 안전 경계
 
-소스 저장소는 private이다. push와 PR은 테스트 및 사이트 검증을 실행한다. 공개 활성화를 확인한 뒤 저장소 Pages source를 GitHub Actions로 설정하고 `PAGES_ENABLED=true` repository variable을 설정하면 main push에서 배포한다. 수동 workflow 실행도 지원한다. private 저장소의 Pages 지원 여부는 계정 요금제에서 확인해야 한다. 현재 설정 파일의 존재를 공개 배포 성공으로 보고하지 않는다.
+사용자의 명시적 요청으로 소스 저장소를 public으로 전환했다. Pages source는 GitHub Actions이며 `PAGES_ENABLED=true`가 설정되어 있다. push와 PR은 테스트 및 사이트 검증을 실행하고 main push는 검증 성공 후 배포한다. 수동 workflow 실행도 지원한다. 사이트 주소는 https://nohdol97.github.io/work-handbook/ 이다. 실제 배포 성공은 workflow와 공개 HTTP 응답으로 확인한다.
+
+저장소에 커밋한 소스·운영 문서와 이력도 GitHub에서 공개된다. 사이트에 제외된 파일이라도 저장소에서는 공개된다는 점을 구분한다. 원문은 공개 가능한 내용으로 정리한 경우에만 `sources/`에 커밋한다.
 
 공개 산출물에는 `docs/ko`, `docs/en`만 포함한다. 내부 URL, 고객·회사 식별자, credentials, 개인정보, 독점 코드는 저장하지 않는다. 공부한 내용을 실제 업무 경험으로 표현하지 않는다.
 
