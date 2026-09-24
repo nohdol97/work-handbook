@@ -8,3 +8,4 @@
 | 2026-09-24 | 사용자 요청으로 저장소 public 전환 및 Pages workflow 활성화 | README·지식 계약·ADR 003/004·문서 지도·GitHub 설정 | 공개 전 이력 검토·API 상태·전체 검증·배포와 HTTP 확인 |
 | 2026-09-24 | 자료 반입 중 재현한 npm 사용자 캐시 EPERM의 작업 폴더 캐시 우회 방법 문서화 | README 문제 해결; 실행·권한 계약 변경 없음 | 실패 재현 후 `npm ci --ignore-scripts --cache _workspace/npm-cache` 설치 성공, Mermaid 24개 구문 통과 |
 | 2026-09-24 | 프롬프트를 한영 탭·다중행·모바일 줄바꿈으로 개선하고 새 실무 예시 100개 추가 | Markdown 모음·표시 설정·prompt 감사·스펙 005·ADR 005·지식 계약 | 탭 렌더링/한 줄 회귀 red→green, 전체 검증·브라우저·vault 검증 |
+| 2026-09-24 | 페이지·anchor 증가 시 링크 검사가 같은 HTML을 반복 파싱하던 비용을 제거 | check_site·파싱 횟수 회귀·스펙 004 R8 | 3파일 fixture 파싱 6회 실패→3회 통과, 누락 링크·fragment 회귀 유지, 전체 검증 53개·사이트 오류 0건 |

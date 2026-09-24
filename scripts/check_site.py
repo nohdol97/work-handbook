@@ -27,8 +27,15 @@ def resolve_url(site, page, href):
 def audit_links(site):
     site = Path(site).resolve()
     errors = []
+    documents = {}
+
+    def document(path):
+        if path not in documents:
+            documents[path] = BeautifulSoup(path.read_text(), 'html.parser')
+        return documents[path]
+
     for page in site.rglob('*.html'):
-        soup = BeautifulSoup(page.read_text(), 'html.parser')
+        soup = document(page)
         for link in soup.select('a[href], link[rel="alternate"]'):
             target = resolve_url(site, page, link.get('href', ''))
             if target is None:
@@ -37,7 +44,7 @@ def audit_links(site):
             if not name.is_relative_to(site) or not name.is_file():
                 errors.append(f'{page.relative_to(site)}: missing local link {link.get("href")}')
             elif fragment and name.suffix == '.html':
-                dest = BeautifulSoup(name.read_text(), 'html.parser')
+                dest = document(name)
                 if not dest.find(id=fragment) and not dest.find('a', attrs={'name':fragment}):
                     errors.append(f'{page.relative_to(site)}: missing fragment {fragment}')
     return errors
