@@ -35,10 +35,48 @@ plugins:
             방법론: Methodologies
             지식 관리: Knowledge workflow
             용어집: Glossary
+            데이터 플랫폼: Data platform
+            전체 구조: Architecture
+            학습 범위와 다음 과정: Study scope and next steps
+            저장과 분석 기초: Storage and analytics foundations
+            이벤트 아키텍처: Event architecture
+            Lakehouse와 Iceberg: Lakehouse and Iceberg
+            Spark: Spark
+            Flink: Flink
+            CDC와 Debezium: CDC and Debezium
+            Orchestration: Orchestration
+            dbt: dbt
+            분석 모델링: Analytical modeling
+            Trino: Trino
+            데이터 품질: Data quality
+            데이터 관측: Data observability
+            계보와 메타데이터: Lineage and metadata
+            거버넌스: Governance
+            AI-ready 데이터: AI-ready data
+            온라인 AI 평가: Online AI evaluation
 nav:
   - 홈: index.md
   - 방법론:
       - 지식 관리: methodologies/knowledge-workflow.md
+  - 데이터 플랫폼:
+      - 전체 구조: data-platform/architecture.md
+      - 학습 범위와 다음 과정: data-platform/curriculum.md
+      - 저장과 분석 기초: data-platform/foundations.md
+      - 이벤트 아키텍처: data-platform/event-architecture.md
+      - Lakehouse와 Iceberg: data-platform/lakehouse-iceberg.md
+      - Spark: data-platform/spark.md
+      - Flink: data-platform/flink.md
+      - CDC와 Debezium: data-platform/cdc-debezium.md
+      - Orchestration: data-platform/orchestration.md
+      - dbt: data-platform/dbt.md
+      - 분석 모델링: data-platform/analytical-modeling.md
+      - Trino: data-platform/trino.md
+      - 데이터 품질: data-platform/data-quality.md
+      - 데이터 관측: data-platform/data-observability.md
+      - 계보와 메타데이터: data-platform/lineage-metadata.md
+      - 거버넌스: data-platform/governance.md
+      - AI-ready 데이터: data-platform/ai-ready-data.md
+      - 온라인 AI 평가: data-platform/online-evaluation.md
   - 용어집: glossary/index.md
 markdown_extensions:
   - admonition

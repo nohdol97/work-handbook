@@ -17,6 +17,49 @@ knowledge_ids: []
 | Semantic audit | A review of whether both languages keep the same concepts, examples, constraints, and warnings. |
 | Source of truth | The original used to guide changes and decisions. Here, it is Markdown in Git. |
 
-Add technical terms in both languages when they appear in imported sources.
+## Data platform terms
+
+| Term | Meaning | Canonical topic |
+|---|---|---|
+| OLTP | A workload for small service transactions. | [foundations](../data-platform/foundations.md) |
+| OLAP | An analytical workload that scans, aggregates, and joins large histories. | [foundations](../data-platform/foundations.md) |
+| Column pruning | Reading only the columns a query needs. | [foundations](../data-platform/foundations.md) |
+| Partition / pruning | A rule that divides data / skipping regions that cannot match a query. | [foundations](../data-platform/foundations.md) |
+| Cardinality | The number of distinct values. | [foundations](../data-platform/foundations.md) |
+| Compaction | Maintenance that combines small files into suitable sizes. | [foundations](../data-platform/foundations.md) |
+| Schema | A definition of data structure, such as fields and types. | [event-architecture](../data-platform/event-architecture.md) |
+| Idempotency | Repeating an operation does not duplicate its intended effect. | [event-architecture](../data-platform/event-architecture.md) |
+| Consumer lag | A measure of how far a consumer is behind, often a log-position gap. | [event-architecture](../data-platform/event-architecture.md) |
+| Snapshot | A consistent view of table or processing state at a point in time; scope depends on the type. | [lakehouse-iceberg](../data-platform/lakehouse-iceberg.md) |
+| Shuffle | Moving data between processing nodes for operations such as grouping by key. | [spark](../data-platform/spark.md) |
+| Data skew | Uneven data or work across keys or tasks. | [spark](../data-platform/spark.md) |
+| Watermark | An estimate of event-time progress used for late data and state handling. | [flink](../data-platform/flink.md) |
+| Checkpoint / savepoint | A state snapshot for recovery / a state snapshot used for planned operational changes. | [flink](../data-platform/flink.md) |
+| Backpressure | Pressure sent upstream when downstream processing cannot keep up. | [flink](../data-platform/flink.md) |
+| CDC | Capturing source changes such as inserts, updates, and deletes. | [cdc-debezium](../data-platform/cdc-debezium.md) |
+| WAL | A write-ahead log of database changes used for recovery and replication. | [cdc-debezium](../data-platform/cdc-debezium.md) |
+| Tombstone | A null-value record marking key removal in a Kafka compacted topic. | [cdc-debezium](../data-platform/cdc-debezium.md) |
+| Orchestration / DAG | Managing task dependencies and execution / a directed graph without cycles. | [orchestration](../data-platform/orchestration.md) |
+| Backfill | Filling or recomputing data for a past range. | [orchestration](../data-platform/orchestration.md) |
+| Grain | What one row in a table represents. | [analytical-modeling](../data-platform/analytical-modeling.md) |
+| Fact / dimension | Measured events or values / attributes that describe them. | [analytical-modeling](../data-platform/analytical-modeling.md) |
+| SCD Type 2 | A model that preserves attribute history with new rows and validity periods. | [analytical-modeling](../data-platform/analytical-modeling.md) |
+| Semantic layer | A layer defining reusable meanings and calculations for metrics and dimensions. | [analytical-modeling](../data-platform/analytical-modeling.md) |
+| Predicate pushdown | Passing filter processing closer to the data source. | [trino](../data-platform/trino.md) |
+| Data quality | Whether data meets requirements such as accuracy, completeness, and validity. | [data-quality](../data-platform/data-quality.md) |
+| Quarantine | Separating invalid data from the normal path for investigation and recovery. | [data-quality](../data-platform/data-quality.md) |
+| SLI / SLO | A measured service-level indicator / its target. | [data-observability](../data-platform/data-observability.md) |
+| Freshness | Whether data is recent enough for its use. | [data-observability](../data-platform/data-observability.md) |
+| Observability | Understanding system or data state and change through observed signals. | [data-observability](../data-platform/data-observability.md) |
+| Lineage | Relationships showing how data is created, moved, and transformed. | [lineage-metadata](../data-platform/lineage-metadata.md) |
+| Metadata / catalog | Information about data / a system for finding and exploring that information. | [lineage-metadata](../data-platform/lineage-metadata.md) |
+| Data contract | An agreement covering schema, meaning, quality, freshness, and ownership. | [governance](../data-platform/governance.md) |
+| RBAC | Access control that grants permissions by role. | [governance](../data-platform/governance.md) |
+| Retention | How long and under which conditions data and derived copies are kept. | [governance](../data-platform/governance.md) |
+| Trace / observation / session | An execution flow / an individual step / a group of related executions. | [ai-ready-data](../data-platform/ai-ready-data.md) |
+| Provenance | Information tracing the origin and production context of data or AI output. | [ai-ready-data](../data-platform/ai-ready-data.md) |
+| Reproducibility | The ability to restore experiment conditions; it does not guarantee identical LLM wording. | [ai-ready-data](../data-platform/ai-ready-data.md) |
+| Regression dataset | Evaluation cases used to check whether past failures return. | [ai-ready-data](../data-platform/ai-ready-data.md) |
+| Online evaluation | Attaching feedback, rule checks, or judge signals to real AI executions. | [online-evaluation](../data-platform/online-evaluation.md) |
 
 [Knowledge workflow](../methodologies/knowledge-workflow.md) · [Home](../index.md)

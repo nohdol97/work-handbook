@@ -1,24 +1,24 @@
 {
   "pages": {
     "glossary/index.md": {
-      "ko_sha256": "b5b43881f3f252ce43f0f4709685fdd15c3b1d2c88977e5957321ae7dc89883e",
-      "en_sha256": "375e9c797c68487116cd9d902d578cebcd2fd5026e617d574b88491a816831b7",
+      "ko_sha256": "46d73de1fdaa3e719968a6e78c32b334b13c181e59dd61874a058f34797ef256",
+      "en_sha256": "94d8d7ac17cccf4359858e0d2f73c237c3972c41fce7609e2eb139211e2ff203",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex: full-page bilingual editorial review",
+      "reviewer": "Codex root author review + processing independent full-page review",
       "reviewed": "2026-09-24",
-      "notes": "6개 용어의 정의와 추가 기준 및 2개 내부 링크가 동등하다. 민감한 사례가 없다."
+      "notes": "기존 6개 정의와 신규 40개 기술 용어 정의·정규 주제 링크를 전체 양쪽 대조. 표준 용어·쉬운 영어·의미 동등, 개인 식별값 없음. processing 담당 독립 전체 대조 통과."
     },
     "index.md": {
-      "ko_sha256": "39351513ac150c577d1a11d488d797e933812200f9ae816fb307bfbd33c29c58",
-      "en_sha256": "6723938f285ccb603431c88b35ccd719ee57043a8e258eae46d3affa3efb3b0e",
+      "ko_sha256": "a4f6dc41e46578eb79b202bcad0c2f0ee928eecc954a918cd20fa3074e9acf07",
+      "en_sha256": "ea68240581c1cb1075cad1c6dc06bdd67d05ae1f96cd439b131f8ba68682df2f",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex: full-page bilingual editorial review",
+      "reviewer": "Codex root author review + processing independent full-page review",
       "reviewed": "2026-09-24",
-      "notes": "한영 목적·현재 0건 상태·분야 확장·탐색·언어 전환이 동일하다. 기술 경험이나 비공개 내용이 없다."
+      "notes": "21쌍·1건 반입·18개 신규 쌍·실제 학습 범위와 미학습 구분·복원 노트 한계·탐색 링크를 전체 양쪽 대조. processing 담당 독립 전체 대조 통과."
     },
     "methodologies/knowledge-workflow.md": {
       "ko_sha256": "3f7a294884dc343416bc735b919a74a7a122ade7fda3d3cc46ce4847312ea18b",
@@ -29,6 +29,172 @@
       "reviewer": "Codex: full-page bilingual editorial review",
       "reviewed": "2026-09-24",
       "notes": "입력 구분·6단계·동일 Mermaid·상태·추적 대 공개 구분·개인정보·경험·vault 충돌·LLM 6요소를 양쪽 전체 본문에서 대조했다. 영어는 짧은 능동문과 표준 용어를 사용한다."
+    },
+    "data-platform/foundations.md": {
+      "ko_sha256": "8c7b4f0aa79acb6d121c4cbbe7945baae9fd16f76fb3affce94384994f1dd0bf",
+      "en_sha256": "4a9b45fdce8bb16c2238d3aa41bd05279bd751a352addda3edb6f6cda4c020d0",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/foundations",
+      "notes": "원문 1.1–1.7 전체와 양쪽 최종 페이지를 검토. OLTP/OLAP 예시, latency SQL, row group/page 통계, 원격 I/O, 파일 크기·compaction·write amplification, cardinality·partition/file·bucket/sort를 보존. Pruning을 임의 row 조회와 구분하고 동일 LLM layout 진단 시나리오와 caveat를 확인. 짧고 직접적인 영어 문장과 표준 용어를 확인. 자료와 두 언어 모두 실제 민감정보 없이 가상 예시만 포함한다. studied를 개념 학습으로 한정하고 실행/운영 경험은 주장하지 않는다. 2026-09-24 공식 문서 확인은 설치 버전 테스트를 뜻하지 않는다."
+    },
+    "data-platform/event-architecture.md": {
+      "ko_sha256": "fe91ecad5ca4587e810d0a6175a9abb88d45da94de21011850385fa7ccde446b",
+      "en_sha256": "6500afecd86312a633e84f9a62aea02d1fa04e8f277e1be843389a93798c2a3c",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/foundations",
+      "notes": "원문 2.1–2.6 전체와 양쪽 최종 페이지를 검토. event/ingestion 시간 예시, identity, 단위 contract, JSON/Avro/Protobuf, 양방향 schema 호환성, 전달 보장 경계, replay와 dual path를 보존. Registry 의미 검증 한계·transitive 범위·retention과 동일 Mermaid/LLM replay 시나리오 확인. 짧고 직접적인 영어 문장과 표준 용어를 확인. 자료와 두 언어 모두 실제 민감정보 없이 가상 예시만 포함한다. studied를 개념 학습으로 한정하고 실행/운영 경험은 주장하지 않는다. 2026-09-24 공식 문서 확인은 설치 버전 테스트를 뜻하지 않는다."
+    },
+    "data-platform/lakehouse-iceberg.md": {
+      "ko_sha256": "8e18ebbcda6f9c098d708313c016cdfc4a77abdb07d2f27f599460a99e1b8e9f",
+      "en_sha256": "98e7a31965e19c1b3edf76740add3a65187f8b87924edca0697262f817749161",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/foundations",
+      "notes": "원문 3.1–3.11 전체와 양쪽 최종 페이지를 검토. metadata 계층·다중 metadata 질문, A/B/C snapshot 공유, concurrent M1 writer, partition evolution, pruning/sort, COW/MOR·position/equality delete, maintenance와 catalog/governance 차이를 보존. 원자 commit 구현·v2 범위·orphan 정리 위험을 공식 문서와 대조. 동일 Mermaid/LLM commit 분석 확인. 짧고 직접적인 영어 문장과 표준 용어를 확인. 자료와 두 언어 모두 실제 민감정보 없이 가상 예시만 포함한다. studied를 개념 학습으로 한정하고 실행/운영 경험은 주장하지 않는다. 2026-09-24 공식 문서 확인은 설치 버전 테스트를 뜻하지 않는다."
+    },
+    "data-platform/spark.md": {
+      "ko_sha256": "7e27246f12dcd85b6c1318580b1133c2668ee529d2e0907edb45054149c03c9f",
+      "en_sha256": "073efc936678f190604236efec73a81f6d98911118238028a7f7a1565c21836f",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/foundations",
+      "notes": "원문 4.1–4.14 전체와 양쪽 최종 페이지를 검토. architecture/job-stage-task, lazy plans, narrow/wide·shuffle·join, cache/partition, 80% hot key와 salting ordering 한계, UI·AQE·spill·speculation, Iceberg·Structured Streaming, Spark/dbt 역할 예시를 보존. foreachBatch·watermark·파일 크기 caveat 및 동일 LLM slow-stage 시나리오 확인. 짧고 직접적인 영어 문장과 표준 용어를 확인. 자료와 두 언어 모두 실제 민감정보 없이 가상 예시만 포함한다. studied를 개념 학습으로 한정하고 실행/운영 경험은 주장하지 않는다. 2026-09-24 공식 문서 확인은 설치 버전 테스트를 뜻하지 않는다. root가 이후 salting 주의 문장의 줄 끝 공백 2개 제거 diff를 검토했다. 양쪽 모든 단어와 경고 내용은 동일하며 새 지식 변경 없음."
+    },
+    "data-platform/flink.md": {
+      "ko_sha256": "6a8efdf393a83a2a593dd795099f514069e360f9e0946d995d9f0bb577bbf475",
+      "en_sha256": "8a12fc910bc7fc3c4294378cccae378a03d6c2f4e7dac1fed8e8d0ccbb60fad5",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/foundations",
+      "notes": "원문 5.1–5.14 전체와 양쪽 최종 페이지를 검토. JobManager/TaskManager·keyBy·시간, 5초 watermark와 window 예시, state 종류·TTL, checkpoint/savepoint, exactly-once 범위, backpressure, Kafka 4 partitions/8 readers, Iceberg와 Spark 분업을 보존. Idle 입력·processing-time TTL·unaligned 모드·upsert 제약 및 동일 LLM 진단 시나리오 확인. 짧고 직접적인 영어 문장과 표준 용어를 확인. 자료와 두 언어 모두 실제 민감정보 없이 가상 예시만 포함한다. studied를 개념 학습으로 한정하고 실행/운영 경험은 주장하지 않는다. 2026-09-24 공식 문서 확인은 설치 버전 테스트를 뜻하지 않는다."
+    },
+    "data-platform/analytical-modeling.md": {
+      "ko_sha256": "7f0e00ac70e79a4e1a0408738b41902f07059fa19c55ef5c2daee2d8c613f9c4",
+      "en_sha256": "6986fdab7434d62633a8501e0afba328de21f68a107c05c6c04628560db99256",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/processing",
+      "notes": "원문 9.1–9.8과 KO/EN 전체를 읽음. 세 grain 예시, 네 fact 유형, 모든 주문 milestone, natural/surrogate key, star schema, SCD 필드, normalization/denormalization, AI 3종 fact와 모든 예시 필드, conformed dimension, metric 식·목록 모두 대조. Join 중복·SCD 구간·분모 0 보완이 양쪽에 같음. 짧고 직접적인 영어 문장과 표준 용어, 동일한 6요소 LLM 시나리오·비실행 경계를 확인함. 실제 개인정보·credential·내부 주소 없음. 이 검토는 실행 성능·운영 결과 검증이 아님."
+    },
+    "data-platform/cdc-debezium.md": {
+      "ko_sha256": "6a3a23b74f3661c785409e981eafa61e4b3cbc221864252b1196b875dfdd2e30",
+      "en_sha256": "1fa52d93c1dbaf7cda2187fd4e8c7895c603cdc90dada19e0826c736a4757106",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/processing",
+      "notes": "원문 6.1–6.9 전부와 KO/EN 전체를 읽음. Polling SQL, 주문 100 순서, before/after/op, source·transaction metadata, snapshot·offset, 삭제/tombstone, schema chain, history/current-state, late change, recovery/idempotency 모두 대조. REPLICA IDENTITY·snapshot mode·DDL 미전달·재snapshot의 잃은 이력 한계가 양쪽에 같음. 짧고 직접적인 영어 문장과 표준 용어, 동일한 6요소 LLM 시나리오·비실행 경계를 확인함. 실제 개인정보·credential·내부 주소 없음. 이 검토는 실행 성능·운영 결과 검증이 아님."
+    },
+    "data-platform/dbt.md": {
+      "ko_sha256": "5d9c4bc607a2457599d054bf1a3bfa4dd898f1d17c8b333c701518355de3d765",
+      "en_sha256": "e9955874fb36450e27f1770940a1379c7b326d4209d31235d69408945e99303f",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/processing",
+      "notes": "원문 8.1–8.10과 KO/EN 전체를 읽음. 디렉터리 구조, ref SQL, 세 계층별 역할·예시, incremental filter·lookback·full refresh, 5종 test, snapshot/SCD와 CDC 중복, LLM call lineage, engine 역할 모두 대조. Adapter·unique_key·최초 실행·snapshot 관측 사이 변경 한계가 양쪽에 같음. 짧고 직접적인 영어 문장과 표준 용어, 동일한 6요소 LLM 시나리오·비실행 경계를 확인함. 실제 개인정보·credential·내부 주소 없음. 이 검토는 실행 성능·운영 결과 검증이 아님."
+    },
+    "data-platform/orchestration.md": {
+      "ko_sha256": "4881ebda9e6785a6166b227cf753f3a2ffe2229f89bd64903a0cd32d1d53610b",
+      "en_sha256": "f2cfebf7ce3ac11966fb2fbf4f4a90f9162ddf080b1463b3b76782f14e12ecb0",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/processing",
+      "notes": "원문 7.1–7.8과 KO/EN 전체를 읽음. DAG/task/dependency/schedule·operator 예시, 일시/영구 실패, retry-safe write 경계, backfill 원인·범위, sensor, 모든 parameter와 날짜, 부분 실패 상태, alert 필드, 4가지 anti-pattern 대조. Trigger rule 예외가 양쪽에 같음. 짧고 직접적인 영어 문장과 표준 용어, 동일한 6요소 LLM 시나리오·비실행 경계를 확인함. 실제 개인정보·credential·내부 주소 없음. 이 검토는 실행 성능·운영 결과 검증이 아님."
+    },
+    "data-platform/trino.md": {
+      "ko_sha256": "dfcad6b74ded41e3652b83a3e01391d0c064ba8047b3b940188febde84e60b26",
+      "en_sha256": "e50fa7e6b95a8f0e0324c6c2e1c50b7d912d6bd4a7eb85008c888632a7745eaf",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/processing",
+      "notes": "원문 10.1–10.8과 KO/EN 전체를 읽음. Coordinator/worker·Spark 비유, 3종 connector와 2개 catalog.schema.table, stage/task/split/exchange, 3종 pushdown, join/skew/memory/spill, Spark 비교의 모든 사용 예, S3/Parquet/Iceberg/Trino 역할 대조. Pushdown 지원 조건과 spill legacy·OOM 비보장이 양쪽에 같음. 짧고 직접적인 영어 문장과 표준 용어, 동일한 6요소 LLM 시나리오·비실행 경계를 확인함. 실제 개인정보·credential·내부 주소 없음. 이 검토는 실행 성능·운영 결과 검증이 아님."
+    },
+    "data-platform/data-quality.md": {
+      "ko_sha256": "b562024db2af6cff4ca22ed151a8886ae2e1ed4ed6b7479265300a9e2aab0543",
+      "en_sha256": "f4f37e5e7e039fc6479c1323b47e17871cc635021a344affd6ef9061b565fb7f",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/governance",
+      "notes": "Ch11 전체와 한영 전체를 대조함. 7개 품질 차원의 fact_llm_call 질문, ingestion/silver/gold 검사항목, quarantine 필드와 재처리/모니터링, dbt 4개 검사, Soda/GX/Deequ 범주, 5분·99.9%·0.01% 예시, 5단계 장애 대응을 보존함. dbt 정적 검증 표현을 실제 데이터 SQL 검사로 명확히 하고 별도 freshness 기능을 공식 문서로 보완함. 동일 Mermaid, 동일 LLM prompt, 대응되는 6요소 시나리오를 확인함. 영어 전체를 짧고 직접적인 문장과 표준 용어 관점에서 검토함. 원문 범위와 두 공개 문서에 실제 비밀·자격증명·개인/조직 식별값·내부 URL 없음. 제품 개념과 가상 예시만 포함하며 구현 경험을 주장하지 않음. Front matter/ID/상대링크/코드펜스/공백 stdlib 검사 통과. Mermaid parser는 jsdom 미설치로 실행 불가하여 통합 단계에서 별도 검증 필요."
+    },
+    "data-platform/data-observability.md": {
+      "ko_sha256": "f7c274d620b6158b64f41baee7d4173fc1c69c1dddfbe91c623780b514db98fb",
+      "en_sha256": "9a830726dcb537e09c5b7b5b629853851d8908f33568b3b7b22fdf65d71e5205",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/governance",
+      "notes": "Ch12 전체와 한영 전체를 대조함. source/pipeline/downstream freshness, 급감/급증 원인과 missing partition, 요일·계절 기준선, 모든 schema 변화, 4종 drift, FAILED 5%→45%, green job/0 rows 사례, 3분·0.5%·98M 및 5분·1%·20% 목표, threshold/duration/severity/context와 tier·alert fatigue를 보존함. 수치가 가상 예시이며 기준선 없이 편차를 판정하지 않는 점, 상관관계/원인 구분, 동일 LLM 시나리오를 확인함. 영어 전체를 짧고 직접적인 문장과 표준 용어 관점에서 검토함. 원문 범위와 두 공개 문서에 실제 비밀·자격증명·개인/조직 식별값·내부 URL 없음. 제품 개념과 가상 예시만 포함하며 구현 경험을 주장하지 않음. Front matter/ID/상대링크/코드펜스/공백 stdlib 검사 통과. Mermaid parser는 jsdom 미설치로 실행 불가하여 통합 단계에서 별도 검증 필요."
+    },
+    "data-platform/lineage-metadata.md": {
+      "ko_sha256": "45cd8c7d29957a4dee0df88525ee1200a3426d82b1799cccfcc06f05c2fcbddb",
+      "en_sha256": "6c263b987d2d748ffd45f45e19ece844dc2921c1124e3d9a090316706452c5f3",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/governance",
+      "notes": "Ch13 전체(13.1A 포함)와 한영 전체를 대조함. 세 metadata 종류의 모든 필드와 질문, semantic layer 보충 질문과 Revenue/VAT/refund/Finance 예시 및 계산식, raw_user_events 경로, bronze.orders/transform_orders/silver.orders, column amount/discount 관계, type 변경 downstream 경로, Marquez 역할, catalog 통합의 모든 출처/정보/기능을 보존함. OpenLineage 비실행 metadata event와 수집 범위 한계, 정책 표시/강제 구분을 추가함. 2개 Mermaid와 LLM 시나리오가 양쪽에서 동일 범위를 다룸. 영어 전체를 짧고 직접적인 문장과 표준 용어 관점에서 검토함. 원문 범위와 두 공개 문서에 실제 비밀·자격증명·개인/조직 식별값·내부 URL 없음. 제품 개념과 가상 예시만 포함하며 구현 경험을 주장하지 않음. Front matter/ID/상대링크/코드펜스/공백 stdlib 검사 통과. Mermaid parser는 jsdom 미설치로 실행 불가하여 통합 단계에서 별도 검증 필요."
+    },
+    "data-platform/governance.md": {
+      "ko_sha256": "1270f1fc49a5e516760d4eaf7700b31c8ca6f4a0089c0240eea0fe814114927f",
+      "en_sha256": "00ca58966eb1b81f9d6087308ccf942de5ed998b810afe59a2b16fa01ecc97e2",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/governance",
+      "notes": "Ch14 전체와 한영 전체를 대조함. 기술/업무 owner, 모든 분류와 email/team_id 예, 14일·1년·장기 및 Hot/Cold/Archive, PostgreSQL→Kafka→Bronze→Silver→Gold→Backup 삭제 범위, logical/physical 삭제와 snapshot/file cleanup, static/dynamic masking 및 encryption 구분, row/column/RBAC, 감사 필드/변경 목록, contract 필드 및 숫자/가상 owner, 세 플랫폼 기능 범주와 8개 검토 질문을 보존함. 보관기간은 법적 기준 아님, snapshot 비가시성은 물리삭제 아님, 엔진/API/edition 제약을 양쪽에 명시함. 동일 Mermaid와 동일 6요소 LLM 시나리오를 확인함. 영어 전체를 짧고 직접적인 문장과 표준 용어 관점에서 검토함. 원문 범위와 두 공개 문서에 실제 비밀·자격증명·개인/조직 식별값·내부 URL 없음. 제품 개념과 가상 예시만 포함하며 구현 경험을 주장하지 않음. Front matter/ID/상대링크/코드펜스/공백 stdlib 검사 통과. Mermaid parser는 jsdom 미설치로 실행 불가하여 통합 단계에서 별도 검증 필요."
+    },
+    "data-platform/ai-ready-data.md": {
+      "ko_sha256": "192fdbc4465eb18fdffeb23b79c07a9dbf8ff228fb11f391ba46e0ffd28cca5a",
+      "en_sha256": "e863f8f26e7ccf883a9d584c01a410185965ee4c7fd767aa00a5bf4183bf8cca",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex root author review + processing independent full-page review",
+      "reviewed": "2026-09-24",
+      "notes": "원문 15 전체와 양쪽 페이지의 telemetry 필드·1000/1500 사례·dataset와 snapshot 구분·재현성·regression·embedding 필드·retrieval 권한·provenance·30/7일 label 지연을 대조. 공식 문서 조건과 LLM 6요소 동등. processing 담당의 독립 전체 대조에서도 누락 없음."
+    },
+    "data-platform/online-evaluation.md": {
+      "ko_sha256": "3e3939e8a2ad3f17f193d79724a4d9ce53ca84e5e50c2f98f5055005e472979c",
+      "en_sha256": "e47e38fe9a647d05d05ecc4b4d2b7cbcca423b3253089a3b1bdb2994cce8707f",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex root author review + processing independent full-page review",
+      "reviewed": "2026-09-24",
+      "notes": "원문 16.1 전체의 score=0.4·연결 ID·feedback·자동 검사·Langfuse 활용·실제 traffic 실패 범위 보존. 미평가 상태와 격리 검증 권고 및 LLM 6요소 양쪽 동등. processing 담당 독립 전체 대조 통과."
+    },
+    "data-platform/architecture.md": {
+      "ko_sha256": "1b65adeed8973e7809c2bc416c5fa4cd202e1295b39e301a0013d2d65fa6a06f",
+      "en_sha256": "7abe3a8f00f3becfd61da8c5ba56f49251a3e8f025f4bf685fc27e13e45a1631",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex root author review + processing independent full-page review",
+      "reviewed": "2026-09-24",
+      "notes": "원문 17.1~17.5 및 최종 모델 전체 역할·경로·횡단 관심사 대조. Spark→Silver/dbt→Gold 설명, dbt 실행 엔진 경계, quality/observability 및 metadata/semantic layer 구분 양쪽 일치. 동일 Mermaid. processing 담당 독립 전체 대조 통과."
+    },
+    "data-platform/curriculum.md": {
+      "ko_sha256": "754f1e0a645b4515de457f9c23ca8639d7fefd994b377e1947f786def7ddd272",
+      "en_sha256": "d06d9bf82105cd50e22a341adeb75209f5c81e6ea673fbb98d9afb6d2c4d949e",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex root author review + processing independent full-page review",
+      "reviewed": "2026-09-24",
+      "notes": "원문 도입부와 18장 전체 대조. 복원된 1~4장 한계, Chapter와 Phase 번호 구분, 16.2~21 모든 후속 목차, 최종 10개 질문 양쪽 보존. 미학습을 완료로 주장하지 않음. processing 담당 독립 전체 대조 통과."
     }
   }
 }
