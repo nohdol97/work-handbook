@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build Electron App"
+  short_description: "Build secure, testable Electron desktop applications"
+  default_prompt: "Use $build-electron-app to design and implement this Electron desktop application."

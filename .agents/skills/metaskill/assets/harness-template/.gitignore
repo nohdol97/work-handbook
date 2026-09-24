@@ -1,0 +1,11 @@
+.DS_Store
+*.pyc
+__pycache__/
+.pytest_cache/
+.env
+.env.*
+!.env.example
+/REGISTRY.md
+/_workspace/
+/project/
+/.agents/projects/

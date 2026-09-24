@@ -1,0 +1,1 @@
+{"name":"work-handbook-validation","private":true,"type":"module","scripts":{"check:mermaid":"node scripts/check_mermaid.mjs"},"devDependencies":{"mermaid":"11.12.2","jsdom":"26.1.0"}}

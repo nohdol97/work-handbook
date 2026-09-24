@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skills": [
+    {
+      "name": "verification-before-completion",
+      "source": "obra/superpowers",
+      "repository": "https://github.com/obra/superpowers.git",
+      "revision": "b36e0829c6d0140e93cfef2ca599b1b07d4a7797",
+      "path": "skills/verification-before-completion",
+      "license": "MIT",
+      "reviewed_at": "2026-08-30",
+      "decision": "auto",
+      "status": "installed"
+    }
+  ],
+  "updated_at": "2026-09-24"
+}

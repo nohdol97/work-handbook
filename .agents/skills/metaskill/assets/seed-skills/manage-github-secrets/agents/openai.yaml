@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manage GitHub Secrets"
+  short_description: "Operate GitHub Actions secrets without exposing values"
+  default_prompt: "Use $manage-github-secrets to configure the required repository secret safely."

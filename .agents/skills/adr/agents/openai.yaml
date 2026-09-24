@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architecture Decisions"
+  short_description: "Record durable architectural decisions and trade-offs"
+  default_prompt: "Use $adr to record this structural decision and its consequences."

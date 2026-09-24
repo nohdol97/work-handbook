@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec-Driven Development"
+  short_description: "Turn behavior changes into executable specifications"
+  default_prompt: "Use $spec-driven-development to define the behavior contract before implementation."

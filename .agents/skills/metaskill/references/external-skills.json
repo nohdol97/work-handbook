@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-08-30",
+  "auto_install_policy": {
+    "allowed_licenses": ["MIT", "Apache-2.0"],
+    "required_audit_status": "pass",
+    "require_full_commit_sha": true
+  },
+  "candidates": [
+    {
+      "name": "verification-before-completion",
+      "source": "obra/superpowers",
+      "repository": "https://github.com/obra/superpowers.git",
+      "revision": "b36e0829c6d0140e93cfef2ca599b1b07d4a7797",
+      "path": "skills/verification-before-completion",
+      "license": "MIT",
+      "license_path": "LICENSE",
+      "capabilities": ["core"],
+      "decision": "auto",
+      "installs_at_review": 193800,
+      "audits": {"agent_trust_hub": "pass", "socket": "pass", "snyk": "pass"},
+      "reason": "Fresh evidence before completion claims is universal and does not own product behavior."
+    },
+    {
+      "name": "wrangler",
+      "source": "cloudflare/skills",
+      "repository": "https://github.com/cloudflare/skills.git",
+      "revision": "f96bff754e428838818017f75817f0f9428acd48",
+      "path": "skills/wrangler",
+      "license": "Apache-2.0",
+      "license_path": "LICENSE",
+      "capabilities": ["cloudflare"],
+      "decision": "manual",
+      "installs_at_review": 66000,
+      "audits": {"agent_trust_hub": "pass", "socket": "pass", "snyk": "pass"},
+      "reason": "First-party, licensed, and audited, but its SKILL.md exceeds this harness's 500-line progressive-disclosure limit; use the local focused Cloudflare skill unless the upstream package is compacted."
+    },
+    {
+      "name": "find-skills",
+      "source": "vercel-labs/skills",
+      "repository": "https://github.com/vercel-labs/skills.git",
+      "revision": "435076e78988e1e6ec40d00b0b1d76bdbbc5419a",
+      "path": "skills/find-skills",
+      "license": "MIT",
+      "license_path": "LICENSE",
+      "capabilities": ["discovery"],
+      "decision": "manual",
+      "installs_at_review": 3200000,
+      "audits": {"agent_trust_hub": "pass", "socket": "pass", "snyk": "warn"},
+      "reason": "Useful discovery workflow, but the recorded audit set is not all-pass."
+    },
+    {
+      "name": "playwright-cli",
+      "source": "microsoft/playwright-cli",
+      "repository": "https://github.com/microsoft/playwright-cli.git",
+      "revision": "cbc09311c468e10fba47964e9b3830fe625c9b01",
+      "path": "skills/playwright-cli",
+      "license": "Apache-2.0",
+      "license_path": "LICENSE",
+      "capabilities": ["browser-automation"],
+      "decision": "manual",
+      "installs_at_review": 135700,
+      "audits": {"agent_trust_hub": "pass", "socket": "pass", "snyk": "fail"},
+      "reason": "Official and relevant, but automatic installation is blocked by the recorded Snyk failure."
+    }
+  ]
+}

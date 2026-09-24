@@ -1,0 +1,4 @@
+interface:
+  display_name: "Harness Metaskill"
+  short_description: "Design and evolve evidence-driven personal harnesses"
+  default_prompt: "Use $metaskill to create or improve a personal development harness."

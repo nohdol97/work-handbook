@@ -1,0 +1,4 @@
+interface:
+  display_name: "Operate Cloudflare"
+  short_description: "Build and deploy Cloudflare workloads with safe evidence"
+  default_prompt: "Use $operate-cloudflare to design or deploy this Cloudflare workload safely."
