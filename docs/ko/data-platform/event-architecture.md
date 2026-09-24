@@ -354,8 +354,43 @@ At-least-once는 시스템의 보존·복구 가정 안에서 설명하는 보�
 
 예시 프롬프트:
 
-```text
-Assess this replay design before redesigning it. State the delivery guarantee boundary. Separate facts, assumptions, duplicate risks, and missing evidence. Propose a bounded replay test and expected sink results.
-```
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    Schema와 범위: [schema 버전·offset 범위·보존 기간]
+    처리 계약: [event ID 규칙·sink write·현재 consumer 상태]
+
+    [요청]
+    재설계 전에 현재 replay 설계를 검토해 줘.
+    전달 보장 경계를 명시하고 사실·가정·중복 위험·누락 근거를 나눠 줘.
+
+    [출력]
+    중복·유실 위험과 호환성 점검, 예상 sink 결과를 작성해 줘.
+
+    [검증]
+    제한된 범위의 replay 테스트와 event ID별 기대 결과를 제안해 줘.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Schemas and scope: [schema versions, offset range, retention]
+    Processing contract: [event-ID rules, sink writes, current consumer state]
+
+    [Task]
+    Assess the current replay design before redesigning it.
+    State the delivery guarantee boundary.
+    Separate facts, assumptions, duplicate risks, and missing evidence.
+
+    [Output]
+    List duplicate and loss risks, compatibility checks, and expected sink results.
+
+    [Checks]
+    Propose a bounded replay test and expected results by event ID.
+    ```
+
+[이 주제의 실무 프롬프트 6개 더 보기](../prompts/event-architecture.md)
 
 LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.

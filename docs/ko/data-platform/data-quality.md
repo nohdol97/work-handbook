@@ -105,15 +105,43 @@ Duplicate Rate < 0.01%
 
 **예시 프롬프트:**
 
-```text
-Review this data incident before proposing a redesign.
-The job succeeded, but duplicate llm_call_id values increased.
-Inputs: sanitized schema, batch window, retry and replay history,
-duplicate-rate measurements, SLOs, and downstream datasets.
-Separate observations, assumptions, hypotheses, and missing evidence.
-Give containment options, next checks, a safe reprocessing scope,
-and quality checks required before we resume downstream use.
-```
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    작업은 성공했지만 llm_call_id 중복이 늘었습니다.
+    스키마·이벤트 키·배치 구간: [비식별 정의]
+    retry·replay 이력과 중복률: [측정과 로그]
+    SLO와 downstream 데이터셋: [목록]
+    [요청]
+    재설계를 제안하기 전에 이 데이터 장애를 검토하세요.
+    관찰·가정·가설·누락 근거를 구분하세요.
+    [출력]
+    전파 차단 선택지와 다음 확인 순서를 주세요.
+    안전한 재처리 범위와 downstream 재개 전 품질 검사를 주세요.
+    [검증]
+    키 정의·로그·재처리 구간·전후 품질·downstream 집계로 확인하세요.
+    가설을 운영 승인으로 취급하거나 실제 조치를 실행하지 마세요.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    The job succeeded, but duplicate llm_call_id values increased.
+    Schema, event key, and batch window: [sanitized definitions]
+    Retry and replay history and duplicate rate: [measurements and logs]
+    SLOs and downstream datasets: [list]
+    [Task]
+    Review this data incident before proposing a redesign.
+    Separate observations, assumptions, hypotheses, and missing evidence.
+    [Output]
+    Give containment options and the next checks.
+    Give a safe reprocessing scope and quality checks before downstream use resumes.
+    [Checks]
+    Check key definitions, logs, replay windows, quality changes, and downstream totals.
+    Do not treat hypotheses as approval or execute operational actions.
+    ```
 
 **기대 결과:** 원인 가설, 우선 확인할 증거, 전파 차단 선택지, 재처리와 재개 조건을 구분한 점검안이다.
 
@@ -122,3 +150,5 @@ and quality checks required before we resume downstream use.
 **검증 방법:** 실제 키 정의, 로그, 재처리 구간, 전후 품질 측정값과 downstream 집계를 확인한다. LLM 출력은 가설이며 운영 승인을 대신하지 않는다.
 
 [핸드북 홈](../index.md)
+
+[더 많은 실무 프롬프트](../prompts/data-quality.md)

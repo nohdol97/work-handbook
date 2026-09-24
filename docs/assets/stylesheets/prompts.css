@@ -1,0 +1,12 @@
+/* Natural-language prompts keep authored lines and wrap on narrow screens.
+   SQL, diagrams, and other code blocks retain Material's normal behavior. */
+.md-typeset .prompt pre > code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.65;
+}
+
+.md-typeset .prompt pre {
+  max-width: 100%;
+}

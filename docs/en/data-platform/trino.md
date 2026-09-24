@@ -85,14 +85,50 @@ S3 stores the objects or files. Parquet is the file format. Iceberg manages tabl
 
 Situation: a query joining an Iceberg fact to a PostgreSQL dimension is slow. Give the LLM anonymized SQL, EXPLAIN, actual scan and output rows and bytes, table sizes, key distributions, memory errors, and connector settings.
 
-```text
-Assess this federated query before redesigning it.
-Separate observations from assumptions and hypotheses.
-Check pushdown, join distribution, exchange volume, skew, and memory.
-List missing evidence and small checks that could reject each hypothesis.
-Do not assume spill or broadcast is always safe.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Anonymized SQL, EXPLAIN, and scan and output rows and bytes: [samples]
+    Table sizes, key distributions, memory errors, and connector settings: [context]
+
+    [Task]
+    Assess this federated query before redesigning it.
+    Separate observations from assumptions and hypotheses.
+    Check pushdown, join distribution, exchange volume, skew, and memory.
+    List missing evidence and small checks that could reject each hypothesis.
+    Do not assume spill or broadcast is always safe.
+
+    [Output]
+    Return possible bottlenecks, their evidence, and ordered checks.
+
+    [Checks]
+    Validate with actual plans, runtime statistics, connector documentation, and bounded query comparisons.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    익명화한 SQL·EXPLAIN·scan/output rows·bytes: [샘플]
+    Table 크기·key 분포·memory 오류·connector 설정: [맥락]
+
+    [요청]
+    이 federated query를 재설계하기 전에 평가해 주세요.
+    관찰·가정·가설을 구분해 주세요.
+    Pushdown·join distribution·exchange volume·skew·memory를 확인해 주세요.
+    부족한 근거와 각 가설을 반박할 수 있는 작은 확인 작업을 나열해 주세요.
+    Spill이나 broadcast가 항상 안전하다고 가정하지 말아 주세요.
+
+    [출력]
+    근거별 병목 후보와 확인 순서를 주세요.
+
+    [검증]
+    실제 plan·runtime 통계·connector 문서와 제한된 query 비교로 검증해 주세요.
+    ```
 
 Expected output links possible bottlenecks to evidence and next checks. The LLM may assume pushdown support or only suggest switching to Spark. Check the actual plan, runtime statistics, and connector documentation. Use bounded query comparisons to test each hypothesis. No performance experiment was run here.
 
 [Analytical modeling](analytical-modeling.md) · [dbt](dbt.md) · [Handbook home](../index.md)
+
+[Six related practical prompts](../prompts/trino.md)

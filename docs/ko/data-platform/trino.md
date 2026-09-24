@@ -85,14 +85,50 @@ S3는 실제 object/file을 저장하고 Parquet은 file format이다. Iceberg�
 
 상황: Iceberg fact와 PostgreSQL dimension을 join한 query가 느리다. 제공할 맥락은 익명화한 SQL, EXPLAIN, 실제 scan/output rows와 bytes, table 크기, key 분포, memory 오류, connector 설정이다.
 
-```text
-Assess this federated query before redesigning it.
-Separate observations from assumptions and hypotheses.
-Check pushdown, join distribution, exchange volume, skew, and memory.
-List missing evidence and small checks that could reject each hypothesis.
-Do not assume spill or broadcast is always safe.
-```
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    익명화한 SQL·EXPLAIN·scan/output rows·bytes: [샘플]
+    Table 크기·key 분포·memory 오류·connector 설정: [맥락]
+
+    [요청]
+    이 federated query를 재설계하기 전에 평가해 주세요.
+    관찰·가정·가설을 구분해 주세요.
+    Pushdown·join distribution·exchange volume·skew·memory를 확인해 주세요.
+    부족한 근거와 각 가설을 반박할 수 있는 작은 확인 작업을 나열해 주세요.
+    Spill이나 broadcast가 항상 안전하다고 가정하지 말아 주세요.
+
+    [출력]
+    근거별 병목 후보와 확인 순서를 주세요.
+
+    [검증]
+    실제 plan·runtime 통계·connector 문서와 제한된 query 비교로 검증해 주세요.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Anonymized SQL, EXPLAIN, and scan and output rows and bytes: [samples]
+    Table sizes, key distributions, memory errors, and connector settings: [context]
+
+    [Task]
+    Assess this federated query before redesigning it.
+    Separate observations from assumptions and hypotheses.
+    Check pushdown, join distribution, exchange volume, skew, and memory.
+    List missing evidence and small checks that could reject each hypothesis.
+    Do not assume spill or broadcast is always safe.
+
+    [Output]
+    Return possible bottlenecks, their evidence, and ordered checks.
+
+    [Checks]
+    Validate with actual plans, runtime statistics, connector documentation, and bounded query comparisons.
+    ```
 
 기대 결과는 근거별 병목 후보와 확인 순서다. LLM은 pushdown을 지원한다고 단정하거나 Spark 전환만 제안할 수 있다. 실제 query plan·runtime 통계·connector 문서를 확인하고 제한된 query 비교로 가설을 검증한다. 여기서는 해당 성능 실험을 하지 않았다.
 
 [분석 데이터 모델링](analytical-modeling.md) · [dbt](dbt.md) · [핸드북 홈](../index.md)
+
+[관련 실무 프롬프트 6개](../prompts/trino.md)

@@ -198,8 +198,42 @@ More parallelism may worsen an overloaded external sink. The reviewed Iceberg Fl
 
 Example prompt:
 
-```text
-Assess why event-time progress is stalled. Separate observed facts, idle-input hypotheses, slow-sink hypotheses, and missing evidence. Explain late-data risks. Propose a bounded test without dropping state or changing production retention.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Input progress: [timestamps, per-input watermarks, idle settings, lag]
+    Processing metrics: [backpressure, checkpoint duration, sink latency]
+
+    [Task]
+    Assess why event-time progress is stalled.
+    Separate observed facts, idle-input hypotheses, slow-sink hypotheses, and missing evidence.
+
+    [Output]
+    Explain late-data risks and distinguish idle input from slow processing.
+
+    [Checks]
+    Propose a bounded test without dropping state or changing production retention.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    입력 진행: [timestamp·입력별 watermark·idle 설정·lag]
+    처리 지표: [backpressure·checkpoint duration·sink latency]
+
+    [요청]
+    Event-time 진행이 막힌 이유를 검토해 줘.
+    관찰 사실·idle input 가설·느린 sink 가설·누락 근거를 구분해 줘.
+
+    [출력]
+    Late-data 위험과 입력 정체·느린 처리의 차이를 설명해 줘.
+
+    [검증]
+    State 삭제나 운영 retention 변경 없이 제한된 검증 실험을 제안해 줘.
+    ```
+
+[See six more practical prompts for this topic](../prompts/flink.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.

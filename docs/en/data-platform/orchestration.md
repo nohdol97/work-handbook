@@ -77,13 +77,48 @@ Using XCom for small messages and shared storage for large data follows official
 
 Situation: a logic bug is fixed and seven days need reprocessing. Give the LLM the DAG dependencies, explicit date interval, source retention, output partitions, write method, failure state, and acceptance checks.
 
-```text
-Review this seven-day backfill plan before changing it.
-Separate known facts, assumptions, risks, and missing evidence.
-Check input intervals, retry safety, downstream gates, and validation.
-Return a bounded rerun plan and checks for duplicate or missing rows.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    DAG dependencies, seven-day interval, and source retention: [context]
+    Output partitions, write method, failure state, and acceptance checks: [plan]
+
+    [Task]
+    Review this seven-day backfill plan before changing it.
+    Separate known facts, assumptions, risks, and missing evidence.
+    Check input intervals, retry safety, downstream gates, and validation.
+    Return a bounded rerun plan and checks for duplicate or missing rows.
+
+    [Output]
+    Return the rerun scope and validation list.
+
+    [Checks]
+    Compare actual keys, trigger rules, and intervals with before-and-after results for a small partition.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    DAG dependency·7일 구간·source 보존 범위: [맥락]
+    출력 partition·write 방식·실패 상태·기준: [계획]
+
+    [요청]
+    이 7일 backfill 계획을 바꾸기 전에 먼저 검토해 주세요.
+    알려진 사실·가정·위험·부족한 근거를 구분해 주세요.
+    입력 구간·retry 안전성·downstream gate·검증을 확인해 주세요.
+    제한된 재실행 계획과 중복·누락 행 확인 항목을 주세요.
+
+    [출력]
+    재실행 범위와 검증 목록을 주세요.
+
+    [검증]
+    실제 key·trigger rule·구간과 작은 partition의 전후 결과를 대조해 주세요.
+    ```
 
 Expected output is a rerun scope and validation list. The LLM may assume MERGE is always safe or suggest rerunning the whole DAG. Check real keys, trigger rules, and intervals. Compare results before and after a rerun on a small partition. This page does not claim that these tests were run.
 
 [dbt](dbt.md) · [CDC and Debezium](cdc-debezium.md) · [Handbook home](../index.md)
+
+[Six related practical prompts](../prompts/orchestration.md)

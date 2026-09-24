@@ -525,13 +525,45 @@ Langfuse dataset item 변경에는 시각 기반 버전이 생기지만 dataset 
 - **제공 맥락:** 비식별 실험 metadata, dataset·model·prompt·agent·evaluator 버전, runtime config, 표본 수와 실패 사례.
 - **예시 prompt:**
 
-```text
-Compare these two experiment records.
-List changed conditions and missing version metadata.
-Separate observed score changes from possible causes.
-Do not claim that a model change caused the difference.
-Suggest a controlled comparison using the same dataset and evaluator.
-```
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    두 실험 기록: [비식별 metadata와 점수]
+    dataset·model·prompt·agent·evaluator 버전: [각 버전]
+    runtime 설정·표본 수·실패 사례: [기록]
+    [요청]
+    두 실험을 비교하고 바뀐 조건과 누락 버전 metadata를 찾으세요.
+    관측된 점수 변화와 가능한 원인을 구분하세요.
+    model 변경이 차이의 원인이라고 단정하지 마세요.
+    [출력]
+    같은 dataset과 evaluator로 통제 비교 계획을 제안하세요.
+    바뀐 조건·누락 근거·고정할 설정을 명시하세요.
+    [검증]
+    실제 dataset 항목·설정·trace를 대조하세요.
+    같은 조건의 반복 평가를 계획하되 실행했다고 주장하지 마세요.
+    temperature=0을 완전한 결정성으로 취급하지 마세요.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Two experiment records: [sanitized metadata and scores]
+    Dataset, model, prompt, agent, and evaluator versions: [versions]
+    Runtime settings, sample sizes, and failure cases: [records]
+    [Task]
+    Compare the experiments and list changed conditions and missing version metadata.
+    Separate observed score changes from possible causes.
+    Do not claim that a model change caused the difference.
+    [Output]
+    Suggest a controlled comparison using the same dataset and evaluator.
+    State changed conditions, missing evidence, and settings to hold fixed.
+    [Checks]
+    Compare actual dataset items, settings, and traces.
+    Plan repeated evaluations under the same conditions; do not claim they were run.
+    Do not treat temperature=0 as fully deterministic.
+    ```
 
 - **기대 결과:** 바뀐 조건·누락 정보와 통제 비교 계획.
 - **오류 가능성:** 점수 차이를 model 성능 차이로 단정하거나 temperature=0을 완전한 결정성으로 오해할 수 있다.
@@ -540,3 +572,5 @@ Suggest a controlled comparison using the same dataset and evaluator.
 ## 관련 주제
 
 [온라인 평가](online-evaluation.md) · [거버넌스](governance.md) · [계보와 메타데이터](lineage-metadata.md) · [전체 구조](architecture.md)
+
+[더 많은 실무 프롬프트](../prompts/ai-ready-data.md)

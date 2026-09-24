@@ -509,8 +509,43 @@ Unity Catalog는 data/AI 자산의 접근 제어·lineage·audit 등을 포함�
 
 예시 프롬프트:
 
-```text
-Assess the commit failures. Separate observations, conflict hypotheses, and missing evidence. Identify files that may still be referenced. Propose read-only checks before any retry or cleanup. Do not produce a deletion command.
-```
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    환경: [catalog·engine·format 버전·snapshot 이력]
+    작업 상태: [writer 로그·진행 중 write·retention 정책]
+
+    [요청]
+    Commit 실패를 분석하고 관찰·충돌 가설·누락 근거를 나눠 줘.
+    아직 참조 중일 수 있는 파일을 식별해 줘.
+
+    [출력]
+    충돌 후보와 파일 참조 확인의 조사 순서를 작성해 줘.
+
+    [검증]
+    Retry나 cleanup 전에 읽기 전용 확인을 제안하고 삭제 명령은 만들지 마.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Environment: [catalog, engine, format versions, snapshot history]
+    Work state: [writer logs, in-flight writes, retention policy]
+
+    [Task]
+    Assess the commit failures.
+    Separate observations, conflict hypotheses, and missing evidence.
+    Identify files that may still be referenced.
+
+    [Output]
+    Return conflict candidates and an ordered file-reference investigation.
+
+    [Checks]
+    Propose read-only checks before retry or cleanup; do not produce deletion commands.
+    ```
+
+[이 주제의 실무 프롬프트 6개 더 보기](../prompts/lakehouse-iceberg.md)
 
 LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.

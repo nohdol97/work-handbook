@@ -160,8 +160,43 @@ A large Parquet file can have several scan splits. One file is not always one ta
 
 Example prompt:
 
-```text
-Review this file layout before suggesting changes. Separate observations, assumptions, and hypotheses. Compare compaction, partition changes, and sorting. List missing evidence and one measurable check for each option.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Queries and layout: [SQL, partition keys, file-size distribution]
+    Measurements: [scan bytes, planning time, task distribution]
+
+    [Task]
+    Review the current file layout before suggesting changes.
+    Separate observations, assumptions, and hypotheses.
+    Compare compaction, partition changes, and sorting.
+
+    [Output]
+    List cost drivers, trade-offs, and missing evidence for each option.
+
+    [Checks]
+    Propose one measurable check for each option.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    쿼리와 배치: [SQL·partition key·파일 크기 분포]
+    측정: [scan bytes·planning time·task 분포]
+
+    [요청]
+    변경 제안 전에 현재 파일 배치를 검토해 줘.
+    관찰, 가정, 가설을 나누고 compaction·partition 변경·정렬을 비교해 줘.
+
+    [출력]
+    선택지별 비용 원인·trade-off·누락 근거를 작성해 줘.
+
+    [검증]
+    선택지마다 하나의 측정 가능한 검증을 제안해 줘.
+    ```
+
+[See six more practical prompts for this topic](../prompts/foundations.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.

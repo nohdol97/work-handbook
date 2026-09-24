@@ -8,6 +8,7 @@ validate:
 	$(PYTHON) scripts/check_handbook.py
 	npm run check:mermaid
 	$(MKDOCS) build --strict
+	$(PYTHON) scripts/check_prompts.py
 	$(PYTHON) scripts/check_site.py
 
 sync-vault:

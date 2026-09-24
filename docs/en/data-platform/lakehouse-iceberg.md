@@ -166,8 +166,43 @@ Unity Catalog governs data and AI assets, including access, lineage, and audit. 
 
 Example prompt:
 
-```text
-Assess the commit failures. Separate observations, conflict hypotheses, and missing evidence. Identify files that may still be referenced. Propose read-only checks before any retry or cleanup. Do not produce a deletion command.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Environment: [catalog, engine, format versions, snapshot history]
+    Work state: [writer logs, in-flight writes, retention policy]
+
+    [Task]
+    Assess the commit failures.
+    Separate observations, conflict hypotheses, and missing evidence.
+    Identify files that may still be referenced.
+
+    [Output]
+    Return conflict candidates and an ordered file-reference investigation.
+
+    [Checks]
+    Propose read-only checks before retry or cleanup; do not produce deletion commands.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    환경: [catalog·engine·format 버전·snapshot 이력]
+    작업 상태: [writer 로그·진행 중 write·retention 정책]
+
+    [요청]
+    Commit 실패를 분석하고 관찰·충돌 가설·누락 근거를 나눠 줘.
+    아직 참조 중일 수 있는 파일을 식별해 줘.
+
+    [출력]
+    충돌 후보와 파일 참조 확인의 조사 순서를 작성해 줘.
+
+    [검증]
+    Retry나 cleanup 전에 읽기 전용 확인을 제안하고 삭제 명령은 만들지 마.
+    ```
+
+[See six more practical prompts for this topic](../prompts/lakehouse-iceberg.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.

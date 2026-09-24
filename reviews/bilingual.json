@@ -11,170 +11,184 @@
       "notes": "기존 6개 정의와 신규 40개 기술 용어 정의·정규 주제 링크를 전체 양쪽 대조. 표준 용어·쉬운 영어·의미 동등, 개인 식별값 없음. processing 담당 독립 전체 대조 통과."
     },
     "index.md": {
-      "ko_sha256": "a4f6dc41e46578eb79b202bcad0c2f0ee928eecc954a918cd20fa3074e9acf07",
-      "en_sha256": "ea68240581c1cb1075cad1c6dc06bdd67d05ae1f96cd439b131f8ba68682df2f",
+      "ko_sha256": "f7ba43b55838decff5c95856ef412a34501cba7ab86061eb4e527fbdc7cf2cd6",
+      "en_sha256": "c1e0f037a17b72d33ad38d822ce7bb372b9119621f032397f41733886395e4b7",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review + processing independent full-page review",
+      "reviewer": "Codex root author review + processing/governance_ai independent review",
       "reviewed": "2026-09-24",
-      "notes": "21쌍·1건 반입·18개 신규 쌍·실제 학습 범위와 미학습 구분·복원 노트 한계·탐색 링크를 전체 양쪽 대조. processing 담당 독립 전체 대조 통과."
+      "notes": "한영 39쌍, 신규 실무 예시 100개, 탐색 링크와 실제 학습 범위의 구분을 양쪽 전체에서 대조했다. 짧은 영어와 비밀값 없는 가상 입력을 확인했다."
     },
     "methodologies/knowledge-workflow.md": {
-      "ko_sha256": "3f7a294884dc343416bc735b919a74a7a122ade7fda3d3cc46ce4847312ea18b",
-      "en_sha256": "657308764b981893d02ea5c37e047a17e59087330f01c23d8f0b75e22891551c",
+      "ko_sha256": "89573a872e5ef93c553e1f37044b3c266ea8c2b8b3ed3cce03055480ef77f615",
+      "en_sha256": "a45e3848d26484e8fbb6a5e330120982c0394c2554ceb76267a0b2e40ce51d63",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex: full-page bilingual editorial review",
+      "reviewer": "Codex root author review + processing/governance_ai independent review",
       "reviewed": "2026-09-24",
-      "notes": "입력 구분·6단계·동일 Mermaid·상태·추적 대 공개 구분·개인정보·경험·vault 충돌·LLM 6요소를 양쪽 전체 본문에서 대조했다. 영어는 짧은 능동문과 표준 용어를 사용한다."
+      "notes": "기존 전체 의미를 보존하고 예시의 추출·작성·추적·개인정보·사람 검토 지시를 한영 탭으로 대조했다. 짧은 영어와 비밀값 없는 가상 입력을 확인했다."
     },
     "data-platform/foundations.md": {
-      "ko_sha256": "8c7b4f0aa79acb6d121c4cbbe7945baae9fd16f76fb3affce94384994f1dd0bf",
-      "en_sha256": "4a9b45fdce8bb16c2238d3aa41bd05279bd751a352addda3edb6f6cda4c020d0",
+      "ko_sha256": "7f19cfff7ebc9de4a3a94f3882c0ccba840bc04d8097f15796624385b2a267d3",
+      "en_sha256": "f4d6daace7eba62922aaade3517e54ab14e48c69938ac4af8499cb0c5c25ffc6",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/foundations",
-      "notes": "원문 1.1–1.7 전체와 양쪽 최종 페이지를 검토. OLTP/OLAP 예시, latency SQL, row group/page 통계, 원격 I/O, 파일 크기·compaction·write amplification, cardinality·partition/file·bucket/sort를 보존. Pruning을 임의 row 조회와 구분하고 동일 LLM layout 진단 시나리오와 caveat를 확인. 짧고 직접적인 영어 문장과 표준 용어를 확인. 자료와 두 언어 모두 실제 민감정보 없이 가상 예시만 포함한다. studied를 개념 학습으로 한정하고 실행/운영 경험은 주장하지 않는다. 2026-09-24 공식 문서 확인은 설치 버전 테스트를 뜻하지 않는다."
+      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
+      "reviewed": "2026-09-24",
+      "notes": "기존 개념·표·그림·한계·출처·LLM 시나리오를 한영 전체 대조. 원본 예시의 모든 요구를 한영 탭과 맥락·요청·출력·검증으로 재구성하고 6개 파생 예시로 연결. Prompt 이전 전체와 마지막 검증 문단은 HEAD와 바이트 동등함을 확인. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/event-architecture.md": {
-      "ko_sha256": "fe91ecad5ca4587e810d0a6175a9abb88d45da94de21011850385fa7ccde446b",
-      "en_sha256": "6500afecd86312a633e84f9a62aea02d1fa04e8f277e1be843389a93798c2a3c",
+      "ko_sha256": "95441e5c730c65c2c12dd2ee184e7bb7713473f85e7d2746c05bd27d49133ccf",
+      "en_sha256": "3d6f58441ad6ca8f218b5d7faac23f00c44c8903f85040d42e38a42624ddec1f",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/foundations",
-      "notes": "원문 2.1–2.6 전체와 양쪽 최종 페이지를 검토. event/ingestion 시간 예시, identity, 단위 contract, JSON/Avro/Protobuf, 양방향 schema 호환성, 전달 보장 경계, replay와 dual path를 보존. Registry 의미 검증 한계·transitive 범위·retention과 동일 Mermaid/LLM replay 시나리오 확인. 짧고 직접적인 영어 문장과 표준 용어를 확인. 자료와 두 언어 모두 실제 민감정보 없이 가상 예시만 포함한다. studied를 개념 학습으로 한정하고 실행/운영 경험은 주장하지 않는다. 2026-09-24 공식 문서 확인은 설치 버전 테스트를 뜻하지 않는다."
+      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
+      "reviewed": "2026-09-24",
+      "notes": "기존 개념·표·그림·한계·출처·LLM 시나리오를 한영 전체 대조. 원본 예시의 모든 요구를 한영 탭과 맥락·요청·출력·검증으로 재구성하고 6개 파생 예시로 연결. Prompt 이전 전체와 마지막 검증 문단은 HEAD와 바이트 동등함을 확인. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/lakehouse-iceberg.md": {
-      "ko_sha256": "8e18ebbcda6f9c098d708313c016cdfc4a77abdb07d2f27f599460a99e1b8e9f",
-      "en_sha256": "98e7a31965e19c1b3edf76740add3a65187f8b87924edca0697262f817749161",
+      "ko_sha256": "21d050aa2dcc766ef3a094612163f805f04b861e99f6a37b187c471bdda097ba",
+      "en_sha256": "c76f4c51e7c4ddea623cb6c2b4692b35ffaf7e4219e371a862fe8fcdaf6606d8",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/foundations",
-      "notes": "원문 3.1–3.11 전체와 양쪽 최종 페이지를 검토. metadata 계층·다중 metadata 질문, A/B/C snapshot 공유, concurrent M1 writer, partition evolution, pruning/sort, COW/MOR·position/equality delete, maintenance와 catalog/governance 차이를 보존. 원자 commit 구현·v2 범위·orphan 정리 위험을 공식 문서와 대조. 동일 Mermaid/LLM commit 분석 확인. 짧고 직접적인 영어 문장과 표준 용어를 확인. 자료와 두 언어 모두 실제 민감정보 없이 가상 예시만 포함한다. studied를 개념 학습으로 한정하고 실행/운영 경험은 주장하지 않는다. 2026-09-24 공식 문서 확인은 설치 버전 테스트를 뜻하지 않는다."
+      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
+      "reviewed": "2026-09-24",
+      "notes": "기존 개념·표·그림·한계·출처·LLM 시나리오를 한영 전체 대조. 원본 예시의 모든 요구를 한영 탭과 맥락·요청·출력·검증으로 재구성하고 6개 파생 예시로 연결. Prompt 이전 전체와 마지막 검증 문단은 HEAD와 바이트 동등함을 확인. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/spark.md": {
-      "ko_sha256": "7e27246f12dcd85b6c1318580b1133c2668ee529d2e0907edb45054149c03c9f",
-      "en_sha256": "073efc936678f190604236efec73a81f6d98911118238028a7f7a1565c21836f",
+      "ko_sha256": "34065c36245df52c9e992583750ddc68769b2e3481d733dd0369ca786de427c9",
+      "en_sha256": "f9630076a4eb4ead6af253db83ba77023640e51ecf8de18108298a914c4290e8",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/foundations",
-      "notes": "원문 4.1–4.14 전체와 양쪽 최종 페이지를 검토. architecture/job-stage-task, lazy plans, narrow/wide·shuffle·join, cache/partition, 80% hot key와 salting ordering 한계, UI·AQE·spill·speculation, Iceberg·Structured Streaming, Spark/dbt 역할 예시를 보존. foreachBatch·watermark·파일 크기 caveat 및 동일 LLM slow-stage 시나리오 확인. 짧고 직접적인 영어 문장과 표준 용어를 확인. 자료와 두 언어 모두 실제 민감정보 없이 가상 예시만 포함한다. studied를 개념 학습으로 한정하고 실행/운영 경험은 주장하지 않는다. 2026-09-24 공식 문서 확인은 설치 버전 테스트를 뜻하지 않는다. root가 이후 salting 주의 문장의 줄 끝 공백 2개 제거 diff를 검토했다. 양쪽 모든 단어와 경고 내용은 동일하며 새 지식 변경 없음."
+      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
+      "reviewed": "2026-09-24",
+      "notes": "기존 개념·표·그림·한계·출처·LLM 시나리오를 한영 전체 대조. 원본 예시의 모든 요구를 한영 탭과 맥락·요청·출력·검증으로 재구성하고 6개 파생 예시로 연결. Prompt 이전 전체와 마지막 검증 문단은 HEAD와 바이트 동등함을 확인. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/flink.md": {
-      "ko_sha256": "6a8efdf393a83a2a593dd795099f514069e360f9e0946d995d9f0bb577bbf475",
-      "en_sha256": "8a12fc910bc7fc3c4294378cccae378a03d6c2f4e7dac1fed8e8d0ccbb60fad5",
+      "ko_sha256": "591bf5a63d1abaef05d85d0fe812bce3bba829b911ba282c926b7c99f64513cf",
+      "en_sha256": "1cb1f6510f947c0af04b7c18048a937ece20b0f154bd98776d1b9499d5edda9c",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/foundations",
-      "notes": "원문 5.1–5.14 전체와 양쪽 최종 페이지를 검토. JobManager/TaskManager·keyBy·시간, 5초 watermark와 window 예시, state 종류·TTL, checkpoint/savepoint, exactly-once 범위, backpressure, Kafka 4 partitions/8 readers, Iceberg와 Spark 분업을 보존. Idle 입력·processing-time TTL·unaligned 모드·upsert 제약 및 동일 LLM 진단 시나리오 확인. 짧고 직접적인 영어 문장과 표준 용어를 확인. 자료와 두 언어 모두 실제 민감정보 없이 가상 예시만 포함한다. studied를 개념 학습으로 한정하고 실행/운영 경험은 주장하지 않는다. 2026-09-24 공식 문서 확인은 설치 버전 테스트를 뜻하지 않는다."
+      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
+      "reviewed": "2026-09-24",
+      "notes": "기존 개념·표·그림·한계·출처·LLM 시나리오를 한영 전체 대조. 원본 예시의 모든 요구를 한영 탭과 맥락·요청·출력·검증으로 재구성하고 6개 파생 예시로 연결. Prompt 이전 전체와 마지막 검증 문단은 HEAD와 바이트 동등함을 확인. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/analytical-modeling.md": {
-      "ko_sha256": "7f0e00ac70e79a4e1a0408738b41902f07059fa19c55ef5c2daee2d8c613f9c4",
-      "en_sha256": "6986fdab7434d62633a8501e0afba328de21f68a107c05c6c04628560db99256",
+      "ko_sha256": "5aeffb40254320b8ebaaf6c2a845f7d1ced9fafd719dfbff631f69e1051ea159",
+      "en_sha256": "05e9abd2cff314405c621aeddb156e3af9c5ba6bf24375615337de616da3b3e5",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/processing",
-      "notes": "원문 9.1–9.8과 KO/EN 전체를 읽음. 세 grain 예시, 네 fact 유형, 모든 주문 milestone, natural/surrogate key, star schema, SCD 필드, normalization/denormalization, AI 3종 fact와 모든 예시 필드, conformed dimension, metric 식·목록 모두 대조. Join 중복·SCD 구간·분모 0 보완이 양쪽에 같음. 짧고 직접적인 영어 문장과 표준 용어, 동일한 6요소 LLM 시나리오·비실행 경계를 확인함. 실제 개인정보·credential·내부 주소 없음. 이 검토는 실행 성능·운영 결과 검증이 아님."
+      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
+      "reviewed": "2026-09-24",
+      "notes": "기존 한영 전체 본문을 읽고, prompt 밖의 내용·source ID가 바뀌지 않았음을 HEAD 대조로 확인했다. 기존 영어 지시 전부를 유지해 한국어와 여러 줄 탭을 추가했다. Execution/call/event grain, SCD 유효 구간, metric 분자·분모와 0 처리, fact 유형, conformed dimension의 의미와 이력, denormalization trade-off를 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/cdc-debezium.md": {
-      "ko_sha256": "6a3a23b74f3661c785409e981eafa61e4b3cbc221864252b1196b875dfdd2e30",
-      "en_sha256": "1fa52d93c1dbaf7cda2187fd4e8c7895c603cdc90dada19e0826c736a4757106",
+      "ko_sha256": "976b7e0b9bac3d82e13dac63b3ddf89b107711a503ff40ad52d41d3e9b3ad910",
+      "en_sha256": "7b9b7ed52948aa03fa5ddc63ca349ba21dca3e4d0ee02915556a9bec3cf58c33",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/processing",
-      "notes": "원문 6.1–6.9 전부와 KO/EN 전체를 읽음. Polling SQL, 주문 100 순서, before/after/op, source·transaction metadata, snapshot·offset, 삭제/tombstone, schema chain, history/current-state, late change, recovery/idempotency 모두 대조. REPLICA IDENTITY·snapshot mode·DDL 미전달·재snapshot의 잃은 이력 한계가 양쪽에 같음. 짧고 직접적인 영어 문장과 표준 용어, 동일한 6요소 LLM 시나리오·비실행 경계를 확인함. 실제 개인정보·credential·내부 주소 없음. 이 검토는 실행 성능·운영 결과 검증이 아님."
+      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
+      "reviewed": "2026-09-24",
+      "notes": "기존 한영 전체 본문을 읽고, prompt 밖의 내용·source ID가 바뀌지 않았음을 HEAD 대조로 확인했다. 기존 영어 지시 전부를 유지해 한국어와 여러 줄 탭을 추가했다. Snapshot/offset/WAL 복구 범위, DELETE/tombstone 차이, DDL·schema 영향, transaction/partition 순서, polling 삭제 한계, history/current-state 대사의 서로 다른 기준을 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/dbt.md": {
-      "ko_sha256": "5d9c4bc607a2457599d054bf1a3bfa4dd898f1d17c8b333c701518355de3d765",
-      "en_sha256": "e9955874fb36450e27f1770940a1379c7b326d4209d31235d69408945e99303f",
+      "ko_sha256": "ba90a31704e4e73cef06124e01e206490c04225355435429f0b7b4212b1f19a7",
+      "en_sha256": "0d008433893978594def77bbec4ee3ba75ea11b6e107627ef3517f254c69d94e",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/processing",
-      "notes": "원문 8.1–8.10과 KO/EN 전체를 읽음. 디렉터리 구조, ref SQL, 세 계층별 역할·예시, incremental filter·lookback·full refresh, 5종 test, snapshot/SCD와 CDC 중복, LLM call lineage, engine 역할 모두 대조. Adapter·unique_key·최초 실행·snapshot 관측 사이 변경 한계가 양쪽에 같음. 짧고 직접적인 영어 문장과 표준 용어, 동일한 6요소 LLM 시나리오·비실행 경계를 확인함. 실제 개인정보·credential·내부 주소 없음. 이 검토는 실행 성능·운영 결과 검증이 아님."
+      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
+      "reviewed": "2026-09-24",
+      "notes": "기존 한영 전체 본문을 읽고, prompt 밖의 내용·source ID가 바뀌지 않았음을 HEAD 대조로 확인했다. 기존 영어 지시 전부를 유지해 한국어와 여러 줄 탭을 추가했다. 계층별 책임, ref/source와 외부 lineage, 기본/custom test와 gate, snapshot/CDC 중간 이력, grain/key·최초/반복 실행, logic 변경 및 source 보존 범위를 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/orchestration.md": {
-      "ko_sha256": "4881ebda9e6785a6166b227cf753f3a2ffe2229f89bd64903a0cd32d1d53610b",
-      "en_sha256": "f2cfebf7ce3ac11966fb2fbf4f4a90f9162ddf080b1463b3b76782f14e12ecb0",
+      "ko_sha256": "ce53790f77525a36ac5d30ca34155f0499a13426b640b22b0b1420faf594b366",
+      "en_sha256": "841f1a04e97b3e284786a462965904279387cadb1ea5889b74e34abce0b4319c",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/processing",
-      "notes": "원문 7.1–7.8과 KO/EN 전체를 읽음. DAG/task/dependency/schedule·operator 예시, 일시/영구 실패, retry-safe write 경계, backfill 원인·범위, sensor, 모든 parameter와 날짜, 부분 실패 상태, alert 필드, 4가지 anti-pattern 대조. Trigger rule 예외가 양쪽에 같음. 짧고 직접적인 영어 문장과 표준 용어, 동일한 6요소 LLM 시나리오·비실행 경계를 확인함. 실제 개인정보·credential·내부 주소 없음. 이 검토는 실행 성능·운영 결과 검증이 아님."
+      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
+      "reviewed": "2026-09-24",
+      "notes": "기존 한영 전체 본문을 읽고, prompt 밖의 내용·source ID가 바뀌지 않았음을 HEAD 대조로 확인했다. 기존 영어 지시 전부를 유지해 한국어와 여러 줄 탭을 추가했다. Schedule/준비 상태, 일시/영구 실패와 부분 쓰기, upstream 재사용, trigger rule 실패/skip, XCom/compute 역할, timezone·구간 재실행을 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/trino.md": {
-      "ko_sha256": "dfcad6b74ded41e3652b83a3e01391d0c064ba8047b3b940188febde84e60b26",
-      "en_sha256": "e50fa7e6b95a8f0e0324c6c2e1c50b7d912d6bd4a7eb85008c888632a7745eaf",
+      "ko_sha256": "375a14f916458a3a5e0834adf236db67989543fad45093b79ee838f10b0e078e",
+      "en_sha256": "2b0d74214b4d72be0a3fa49b16f421ca768e82a089c2b6bd4f6001f21fdd6110",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/processing",
-      "notes": "원문 10.1–10.8과 KO/EN 전체를 읽음. Coordinator/worker·Spark 비유, 3종 connector와 2개 catalog.schema.table, stage/task/split/exchange, 3종 pushdown, join/skew/memory/spill, Spark 비교의 모든 사용 예, S3/Parquet/Iceberg/Trino 역할 대조. Pushdown 지원 조건과 spill legacy·OOM 비보장이 양쪽에 같음. 짧고 직접적인 영어 문장과 표준 용어, 동일한 6요소 LLM 시나리오·비실행 경계를 확인함. 실제 개인정보·credential·내부 주소 없음. 이 검토는 실행 성능·운영 결과 검증이 아님."
+      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
+      "reviewed": "2026-09-24",
+      "notes": "기존 한영 전체 본문을 읽고, prompt 밖의 내용·source ID가 바뀌지 않았음을 HEAD 대조로 확인했다. 기존 영어 지시 전부를 유지해 한국어와 여러 줄 탭을 추가했다. Plan의 pushdown 근거, broadcast/partitioned memory, key skew의 상관/인과, spill 및 retry 적용 조건, Iceberg pruning 계층, Trino/Spark 작업 배치 근거를 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/data-quality.md": {
-      "ko_sha256": "b562024db2af6cff4ca22ed151a8886ae2e1ed4ed6b7479265300a9e2aab0543",
-      "en_sha256": "f4f37e5e7e039fc6479c1323b47e17871cc635021a344affd6ef9061b565fb7f",
+      "ko_sha256": "755621a0d56ffccfe19f42dd9e54831c3881a4cbb067e8a45a682a7b5766fea5",
+      "en_sha256": "cfb11822ea304061092a2252913143cdb3851296d12f4aa8d0204790920384d6",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/governance",
-      "notes": "Ch11 전체와 한영 전체를 대조함. 7개 품질 차원의 fact_llm_call 질문, ingestion/silver/gold 검사항목, quarantine 필드와 재처리/모니터링, dbt 4개 검사, Soda/GX/Deequ 범주, 5분·99.9%·0.01% 예시, 5단계 장애 대응을 보존함. dbt 정적 검증 표현을 실제 데이터 SQL 검사로 명확히 하고 별도 freshness 기능을 공식 문서로 보완함. 동일 Mermaid, 동일 LLM prompt, 대응되는 6요소 시나리오를 확인함. 영어 전체를 짧고 직접적인 문장과 표준 용어 관점에서 검토함. 원문 범위와 두 공개 문서에 실제 비밀·자격증명·개인/조직 식별값·내부 URL 없음. 제품 개념과 가상 예시만 포함하며 구현 경험을 주장하지 않음. Front matter/ID/상대링크/코드펜스/공백 stdlib 검사 통과. Mermaid parser는 jsdom 미설치로 실행 불가하여 통합 단계에서 별도 검증 필요."
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
+      "reviewed": "2026-09-24",
+      "notes": "7가지 품질 차원·계층·규칙 경계·격리·SLO·청구 대조·재개 조건을 양쪽 대조했다. 유효성과 정확성, job 성공과 복구를 구분하고 업무 목표를 꾸며 넣지 않았다. 기존 전체 본문과 6요소 예시를 검토했고 기존 지식 본문·frontmatter·ID는 prompt 탭 및 연결 외에 byte 일치를 확인했다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/data-observability.md": {
-      "ko_sha256": "f7c274d620b6158b64f41baee7d4173fc1c69c1dddfbe91c623780b514db98fb",
-      "en_sha256": "9a830726dcb537e09c5b7b5b629853851d8908f33568b3b7b22fdf65d71e5205",
+      "ko_sha256": "bb5fb702dddbf19e365c3e94072fbf7d0f1e18bfedda9abaaba491de5fd18e95",
+      "en_sha256": "5900ccfcd80c514ebbac02f1a0521847f4ab9efc7602042c98f452a4c5f9b37e",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/governance",
-      "notes": "Ch12 전체와 한영 전체를 대조함. source/pipeline/downstream freshness, 급감/급증 원인과 missing partition, 요일·계절 기준선, 모든 schema 변화, 4종 drift, FAILED 5%→45%, green job/0 rows 사례, 3분·0.5%·98M 및 5분·1%·20% 목표, threshold/duration/severity/context와 tier·alert fatigue를 보존함. 수치가 가상 예시이며 기준선 없이 편차를 판정하지 않는 점, 상관관계/원인 구분, 동일 LLM 시나리오를 확인함. 영어 전체를 짧고 직접적인 문장과 표준 용어 관점에서 검토함. 원문 범위와 두 공개 문서에 실제 비밀·자격증명·개인/조직 식별값·내부 URL 없음. 제품 개념과 가상 예시만 포함하며 구현 경험을 주장하지 않음. Front matter/ID/상대링크/코드펜스/공백 stdlib 검사 통과. Mermaid parser는 jsdom 미설치로 실행 불가하여 통합 단계에서 별도 검증 필요."
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
+      "reviewed": "2026-09-24",
+      "notes": "시각 기준·요일 baseline·partition·분포·schema·알림·pipeline/data health를 양쪽 대조했다. 상관과 원인을 구분하고 관측되지 않은 값을 지어내지 않았다. 기존 전체 본문과 6요소 예시를 검토했고 기존 지식 본문·frontmatter·ID는 prompt 탭 및 연결 외에 byte 일치를 확인했다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/lineage-metadata.md": {
-      "ko_sha256": "45cd8c7d29957a4dee0df88525ee1200a3426d82b1799cccfcc06f05c2fcbddb",
-      "en_sha256": "6c263b987d2d748ffd45f45e19ece844dc2921c1124e3d9a090316706452c5f3",
+      "ko_sha256": "9e53cf78109a7c11de8fe36317bced4687bc39f272cc3b99452f299d63578f49",
+      "en_sha256": "0735a75fcc5d2a3366e3a953bc8e4048c7941bbe62a305261bf34721e8c40b27",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/governance",
-      "notes": "Ch13 전체(13.1A 포함)와 한영 전체를 대조함. 세 metadata 종류의 모든 필드와 질문, semantic layer 보충 질문과 Revenue/VAT/refund/Finance 예시 및 계산식, raw_user_events 경로, bronze.orders/transform_orders/silver.orders, column amount/discount 관계, type 변경 downstream 경로, Marquez 역할, catalog 통합의 모든 출처/정보/기능을 보존함. OpenLineage 비실행 metadata event와 수집 범위 한계, 정책 표시/강제 구분을 추가함. 2개 Mermaid와 LLM 시나리오가 양쪽에서 동일 범위를 다룸. 영어 전체를 짧고 직접적인 문장과 표준 용어 관점에서 검토함. 원문 범위와 두 공개 문서에 실제 비밀·자격증명·개인/조직 식별값·내부 URL 없음. 제품 개념과 가상 예시만 포함하며 구현 경험을 주장하지 않음. Front matter/ID/상대링크/코드펜스/공백 stdlib 검사 통과. Mermaid parser는 jsdom 미설치로 실행 불가하여 통합 단계에서 별도 검증 필요."
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
+      "reviewed": "2026-09-24",
+      "notes": "metadata 3분류·semantic 계산·Job/Run/Dataset·수집 공백·upstream·column 경로·catalog 출처를 양쪽 대조했다. 그래프 완전성이나 정책 강제를 주장하지 않는다. 기존 전체 본문과 6요소 예시를 검토했고 기존 지식 본문·frontmatter·ID는 prompt 탭 및 연결 외에 byte 일치를 확인했다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/governance.md": {
-      "ko_sha256": "1270f1fc49a5e516760d4eaf7700b31c8ca6f4a0089c0240eea0fe814114927f",
-      "en_sha256": "00ca58966eb1b81f9d6087308ccf942de5ed998b810afe59a2b16fa01ecc97e2",
+      "ko_sha256": "89301e119316ac4e93c9445e2f47b21df52fa9e349f6c3261c26236680467a75",
+      "en_sha256": "e953db52d73ff85c126fa812f102b40a4b152f25a857dc47262238087ac59607",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/governance",
-      "notes": "Ch14 전체와 한영 전체를 대조함. 기술/업무 owner, 모든 분류와 email/team_id 예, 14일·1년·장기 및 Hot/Cold/Archive, PostgreSQL→Kafka→Bronze→Silver→Gold→Backup 삭제 범위, logical/physical 삭제와 snapshot/file cleanup, static/dynamic masking 및 encryption 구분, row/column/RBAC, 감사 필드/변경 목록, contract 필드 및 숫자/가상 owner, 세 플랫폼 기능 범주와 8개 검토 질문을 보존함. 보관기간은 법적 기준 아님, snapshot 비가시성은 물리삭제 아님, 엔진/API/edition 제약을 양쪽에 명시함. 동일 Mermaid와 동일 6요소 LLM 시나리오를 확인함. 영어 전체를 짧고 직접적인 문장과 표준 용어 관점에서 검토함. 원문 범위와 두 공개 문서에 실제 비밀·자격증명·개인/조직 식별값·내부 URL 없음. 제품 개념과 가상 예시만 포함하며 구현 경험을 주장하지 않음. Front matter/ID/상대링크/코드펜스/공백 stdlib 검사 통과. Mermaid parser는 jsdom 미설치로 실행 불가하여 통합 단계에서 별도 검증 필요."
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
+      "reviewed": "2026-09-24",
+      "notes": "소유권·분류·접근과 masking·retention/snapshot·감사·계약 범위를 양쪽 대조했다. 법적 기준·승인·삭제 완료를 꾸미지 않고 실제 조치를 금지한다. 기존 전체 본문과 6요소 예시를 검토했고 기존 지식 본문·frontmatter·ID는 prompt 탭 및 연결 외에 byte 일치를 확인했다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/ai-ready-data.md": {
-      "ko_sha256": "192fdbc4465eb18fdffeb23b79c07a9dbf8ff228fb11f391ba46e0ffd28cca5a",
-      "en_sha256": "e863f8f26e7ccf883a9d584c01a410185965ee4c7fd767aa00a5bf4183bf8cca",
+      "ko_sha256": "e8833820ae9d37b77d8523048a983cef62fde3bcc1cb4c7bc0985998d97b2f18",
+      "en_sha256": "74b6dd47e54bff44d11a71064679f191cc6e1bdccbf14bb06e495658355e498a",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review + processing independent full-page review",
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
       "reviewed": "2026-09-24",
-      "notes": "원문 15 전체와 양쪽 페이지의 telemetry 필드·1000/1500 사례·dataset와 snapshot 구분·재현성·regression·embedding 필드·retrieval 권한·provenance·30/7일 label 지연을 대조. 공식 문서 조건과 LLM 6요소 동등. processing 담당의 독립 전체 대조에서도 누락 없음."
+      "notes": "telemetry 연결·평가 사례·embedding 버전·retrieval/generation·provenance·feature/label 시각을 양쪽 대조했다. 권한 없는 근거 제공·결정성·실제 실행을 주장하지 않는다. 기존 전체 본문과 6요소 예시를 검토했고 기존 지식 본문·frontmatter·ID는 prompt 탭 및 연결 외에 byte 일치를 확인했다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/online-evaluation.md": {
-      "ko_sha256": "3e3939e8a2ad3f17f193d79724a4d9ce53ca84e5e50c2f98f5055005e472979c",
-      "en_sha256": "e47e38fe9a647d05d05ecc4b4d2b7cbcca423b3253089a3b1bdb2994cce8707f",
+      "ko_sha256": "172882410cea89d1bb74e6153100104795680e16bd731412e4143f7989053852",
+      "en_sha256": "9da622446fb6de5df8b827429aebaa2229c921dcea6c5888803c2fac52292172",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review + processing independent full-page review",
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
       "reviewed": "2026-09-24",
-      "notes": "원문 16.1 전체의 score=0.4·연결 ID·feedback·자동 검사·Langfuse 활용·실제 traffic 실패 범위 보존. 미평가 상태와 격리 검증 권고 및 LLM 6요소 양쪽 동등. processing 담당 독립 전체 대조 통과."
+      "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 기존 전체 본문과 6요소 예시를 검토했고 기존 지식 본문·frontmatter·ID는 prompt 탭 및 연결 외에 byte 일치를 확인했다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/architecture.md": {
       "ko_sha256": "1b65adeed8973e7809c2bc416c5fa4cd202e1295b39e301a0013d2d65fa6a06f",
@@ -195,6 +209,186 @@
       "reviewer": "Codex root author review + processing independent full-page review",
       "reviewed": "2026-09-24",
       "notes": "원문 도입부와 18장 전체 대조. 복원된 1~4장 한계, Chapter와 Phase 번호 구분, 16.2~21 모든 후속 목차, 최종 10개 질문 양쪽 보존. 미학습을 완료로 주장하지 않음. processing 담당 독립 전체 대조 통과."
+    },
+    "prompts/foundations.md": {
+      "ko_sha256": "b1acc6e268b70285385edabf60a2b14dd51d9cdb05ad012b54a20041d700895a",
+      "en_sha256": "1f71075f3975c4e226aad794212df25b538fae7fb9a555c678eabc64c380cbea",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
+      "reviewed": "2026-09-24",
+      "notes": "OLTP/OLAP 부하 분리, column pruning, Parquet 통계, 시간 partition, bucket/sort, 원격 I/O 비용의 6개 사례를 직접 대조. 상관관계·통계 부재·과분할·hot key·요청 비용 경계를 보존. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/event-architecture.md": {
+      "ko_sha256": "af7b0c7b63a3c2f9f6a0a2b824ab8902da1949735e5465061e885fe87f898505",
+      "en_sha256": "202c8a3b71207d58ab46e87a532f3603aecb0538f04a87730e090a3397a468d5",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
+      "reviewed": "2026-09-24",
+      "notes": "계약 의미·단위, 과거 schema 호환성, dedup 보존, dual-path 결과 차이, 시간 정의, 정정 이벤트의 6개 사례를 직접 대조. Registry 의미 한계·transitive 범위·event identity·보장 경계를 보존. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다. 독립 검토에서 찾은 역직렬화 범위와 source concurrency 상한 표현을 수정 후 대조했다."
+    },
+    "prompts/lakehouse-iceberg.md": {
+      "ko_sha256": "09d7f3d478c51da9effe8bafe91b822e6ab28ebb84966bae11e511d9ffeae8ab",
+      "en_sha256": "20d4e427c4da1d1b8449da0d8c52c4d2a94bc23f7fc2f859e0a55ac5b57bd62e",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
+      "reviewed": "2026-09-24",
+      "notes": "Snapshot 조회, partition evolution, COW/MOR, maintenance 우선순위, snapshot 보존, catalog/governance의 6개 사례를 직접 대조. 과거 파일·참조·지원 버전·진행 중 write·삭제 명령 금지 경계를 보존. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/spark.md": {
+      "ko_sha256": "e587779332cb4e23cf7f32e8f928e2449a9912f69b7d4ebdccae77287c584dd0",
+      "en_sha256": "4e6f2a00b2a30fa4910dc81f88c297af9ed979d0f39d51dbd8801dfa979881d7",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
+      "reviewed": "2026-09-24",
+      "notes": "Join grain 폭증, broadcast 메모리, 쓰기 partition, cache 수명, foreachBatch 재시도, streaming output mode의 6개 사례를 직접 대조. 원인 진단과 실행 계획·메모리·멱등성·watermark 한계를 보존. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/flink.md": {
+      "ko_sha256": "5e73af6ec9b5ff9286a9f5a243b08723a763afedcc3ffc7975384c26e208f26b",
+      "en_sha256": "bf1ccd11dbfbbc9feb7fd264679e37ce5bb2d9d4a65d5e89f2653462dccfa335",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
+      "reviewed": "2026-09-24",
+      "notes": "Window 선택, TTL, checkpoint 방식, savepoint 변경, backpressure 병렬성, sink 보장의 6개 사례를 직접 대조. Event-time·processing-time·in-flight data·state 호환성·sink 포화·exactly-once 경계를 보존. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다. 독립 검토에서 찾은 역직렬화 범위와 source concurrency 상한 표현을 수정 후 대조했다."
+    },
+    "prompts/cdc-debezium.md": {
+      "ko_sha256": "baa7da7608878233aea4b5075a76d96f38eee02e4962eb030d046878c6b24fb4",
+      "en_sha256": "c953c9c7b60a7c58f7e64c8a0c3c454665ba6ca02dcd178363a3585d2dd4886e",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
+      "reviewed": "2026-09-24",
+      "notes": "직접 작성한 6개 가상 사례의 상황·맥락·요청·기대 결과·오류 가능성·검증을 한영 대조했다. overview/빈 source ID 및 미실행·파생 예시 표시를 확인했다. Snapshot/offset/WAL 복구 범위, DELETE/tombstone 차이, DDL·schema 영향, transaction/partition 순서, polling 삭제 한계, history/current-state 대사의 서로 다른 기준을 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/orchestration.md": {
+      "ko_sha256": "c27b4ac770da52e9f19ce18a8f99437354ba6152b307b1cd52fa131e8a490667",
+      "en_sha256": "d7d7d47523a0abe44ea2b5bb049e28a24583d64f79852cc26e6adc7db55ec63a",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
+      "reviewed": "2026-09-24",
+      "notes": "직접 작성한 6개 가상 사례의 상황·맥락·요청·기대 결과·오류 가능성·검증을 한영 대조했다. overview/빈 source ID 및 미실행·파생 예시 표시를 확인했다. Schedule/준비 상태, 일시/영구 실패와 부분 쓰기, upstream 재사용, trigger rule 실패/skip, XCom/compute 역할, timezone·구간 재실행을 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/dbt.md": {
+      "ko_sha256": "dc0c35f40ae0d95d8d1ca3b66cddba5571a1fc4430c8f4d9c75295d059eaf04e",
+      "en_sha256": "8efae202d88d9203cf790668d254d85c3bbbe70fbecf7039ccec62c9b5d4d4e9",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
+      "reviewed": "2026-09-24",
+      "notes": "직접 작성한 6개 가상 사례의 상황·맥락·요청·기대 결과·오류 가능성·검증을 한영 대조했다. overview/빈 source ID 및 미실행·파생 예시 표시를 확인했다. 계층별 책임, ref/source와 외부 lineage, 기본/custom test와 gate, snapshot/CDC 중간 이력, grain/key·최초/반복 실행, logic 변경 및 source 보존 범위를 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/analytical-modeling.md": {
+      "ko_sha256": "1422c6cba4c8559c002a37e5f6e7a0412fa0fbe7672d1deb6ee1c8608a7669fe",
+      "en_sha256": "616e7192ff11f4c8b29e44225976e0bc5e47ea4a0fbe782c06991f202be989ac",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
+      "reviewed": "2026-09-24",
+      "notes": "직접 작성한 6개 가상 사례의 상황·맥락·요청·기대 결과·오류 가능성·검증을 한영 대조했다. overview/빈 source ID 및 미실행·파생 예시 표시를 확인했다. Execution/call/event grain, SCD 유효 구간, metric 분자·분모와 0 처리, fact 유형, conformed dimension의 의미와 이력, denormalization trade-off를 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/trino.md": {
+      "ko_sha256": "6814f9d905f8312f7eb4de6e2a1cbbb29209885e62ada23aa756403ec03da96e",
+      "en_sha256": "7313052120226d3c10d8480325111c8a67ac8230dafba1ab53f15dbf9ed74632",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
+      "reviewed": "2026-09-24",
+      "notes": "직접 작성한 6개 가상 사례의 상황·맥락·요청·기대 결과·오류 가능성·검증을 한영 대조했다. overview/빈 source ID 및 미실행·파생 예시 표시를 확인했다. Plan의 pushdown 근거, broadcast/partitioned memory, key skew의 상관/인과, spill 및 retry 적용 조건, Iceberg pruning 계층, Trino/Spark 작업 배치 근거를 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/data-quality.md": {
+      "ko_sha256": "471e24c7305b0f330563b2bfdd58020de37665373fcb831179c5df59804ff493",
+      "en_sha256": "bd55b5e5f4abd182b5090519bbb7cd2a382eafc378b659d018ebbbe3eb4ba524",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
+      "reviewed": "2026-09-24",
+      "notes": "7가지 품질 차원·계층·규칙 경계·격리·SLO·청구 대조·재개 조건을 양쪽 대조했다. 유효성과 정확성, job 성공과 복구를 구분하고 업무 목표를 꾸며 넣지 않았다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/data-observability.md": {
+      "ko_sha256": "6c74a3a39cbe340f79722a2d43f5a9afef6f7bf79ecce86e7fa33ef029358a1e",
+      "en_sha256": "a38acf71fcf2951b149e0616a2187558bc9af41bfd0c14a306d2619fd770ed63",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
+      "reviewed": "2026-09-24",
+      "notes": "시각 기준·요일 baseline·partition·분포·schema·알림·pipeline/data health를 양쪽 대조했다. 상관과 원인을 구분하고 관측되지 않은 값을 지어내지 않았다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/lineage-metadata.md": {
+      "ko_sha256": "c90e68c1c674efe928e79c5d4ce969bfd681f167ba6723ccafd01200805c26bd",
+      "en_sha256": "8471355f945c6b82132368021fa2b9cd1a101b1b6ba2582f44bb89319fd27ab2",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
+      "reviewed": "2026-09-24",
+      "notes": "metadata 3분류·semantic 계산·Job/Run/Dataset·수집 공백·upstream·column 경로·catalog 출처를 양쪽 대조했다. 그래프 완전성이나 정책 강제를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/governance.md": {
+      "ko_sha256": "2926b4a50ac896cd92c07a17980bf3b869309bff9f4df00677f76506f0021258",
+      "en_sha256": "2c472a107ee37c05a31ea513d8119faf161172667bbf28702a0e2f335dd083d0",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
+      "reviewed": "2026-09-24",
+      "notes": "소유권·분류·접근과 masking·retention/snapshot·감사·계약 범위를 양쪽 대조했다. 법적 기준·승인·삭제 완료를 꾸미지 않고 실제 조치를 금지한다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/ai-ready-data.md": {
+      "ko_sha256": "0e4049666f40af739362795ae603ff6042755b146295031e87a71c407244bea4",
+      "en_sha256": "c07de8c257c3ab5f87f7e0f2a3b0d9324809c0eca2063e418c04ce9ae40eb632",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
+      "reviewed": "2026-09-24",
+      "notes": "telemetry 연결·평가 사례·embedding 버전·retrieval/generation·provenance·feature/label 시각을 양쪽 대조했다. 권한 없는 근거 제공·결정성·실제 실행을 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/online-evaluation.md": {
+      "ko_sha256": "7dce473ccb4937784242b4c4fb81feef4308e9451b163ff4f100d073c7dcc011",
+      "en_sha256": "47e071ef6a461eace85ccb8dc7f7027f3b4de2140e67898c414e449a7dd84984",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
+      "reviewed": "2026-09-24",
+      "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+    },
+    "prompts/index.md": {
+      "ko_sha256": "63c775fc5f68217918a956c0e860d4fa277c6106b625120d32c58488b0cf441f",
+      "en_sha256": "35eda6d1e22774a23318065abca7b3e83a9f72bc2d96a674c014ad0f7c4bf057",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex root author review + processing/governance_ai independent review",
+      "reviewed": "2026-09-24",
+      "notes": "17주제·100개 예시·탭/복사 안내·대괄호 입력과 검증 방법·파생 예시와 실제 학습의 구분을 전체 대조했다. 짧은 영어와 비밀값 없는 가상 입력을 확인했다."
+    },
+    "prompts/knowledge-workflow.md": {
+      "ko_sha256": "956f10f22a2b3c54f85c471ae5aa2eb96989f9dbe749087cb382f2164a3202ba",
+      "en_sha256": "e968d49b189093af63bdf25e9c2d03d1204d57ece642cfe277a1edc5a82dd81e",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex root author review + processing/governance_ai independent review",
+      "reviewed": "2026-09-24",
+      "notes": "추출 우선·번역 제약 보존·중복 병합 추적·갱신 근거 4개 시나리오의 한영 본문과 프롬프트 전체를 대조했다. 독립 검토 지적에 따라 영어 검증 방법에도 사람의 최종 검토를 명시했다. 짧은 영어와 비밀값 없는 가상 입력을 확인했다."
     }
   }
 }

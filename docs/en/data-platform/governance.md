@@ -132,17 +132,43 @@ Keep these questions when reviewing a platform:
 
 **Example Prompt:**
 
-```text
-Review this deletion policy; do not execute deletion.
-Inputs: sanitized lineage, retention rules, snapshot and backup
-structure, consumers, access policies, and unknown copy locations.
-Separate logical deletion, physical cleanup, and unverified scope.
-List copies and derived data to inspect from PostgreSQL through
-Kafka, Bronze, Silver, Gold, and backups.
-Separate facts, assumptions, risks, and missing evidence.
-Give verification criteria and questions for the policy owners.
-Do not invent legal requirements or claim deletion is complete.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Lineage, retention rules, snapshots, and backups: [sanitized material]
+    Consumers, access policies, and unknown copy locations: [list]
+    [Task]
+    Review this deletion policy; do not execute deletion.
+    Separate logical deletion, physical cleanup, and unverified scope.
+    Inspect copies across PostgreSQL, Kafka, Bronze, Silver, Gold, and backups.
+    Separate facts, assumptions, risks, and missing evidence.
+    [Output]
+    List the copies and derived data to inspect.
+    Give verification criteria and questions for the policy owners.
+    [Checks]
+    Do not invent legal requirements or claim deletion is complete.
+    Compare storage, snapshot references, backups, consumers, and approved policies.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    lineage·보관 규칙·snapshot 및 backup 구조: [비식별 자료]
+    consumer·접근 정책·알 수 없는 사본 위치: [목록]
+    [요청]
+    삭제 정책을 검토하되 삭제는 실행하지 마세요.
+    논리 삭제·물리 정리·미검증 범위를 구분하세요.
+    PostgreSQL·Kafka·Bronze·Silver·Gold·backup의 사본을 조사하세요.
+    사실·가정·위험·누락 근거를 구분하세요.
+    [출력]
+    확인할 사본과 파생 데이터 목록을 주세요.
+    검증 기준과 정책 owner에게 할 질문을 주세요.
+    [검증]
+    법적 요구를 만들거나 삭제 완료를 주장하지 마세요.
+    storage·snapshot 참조·backup·consumer 상태·승인 정책을 대조하세요.
+    ```
 
 **Expected Output:** A list of copies to trace, questions for owners, a distinction between logical deletion and physical cleanup, and scope without completion evidence.
 
@@ -151,3 +177,5 @@ Do not invent legal requirements or claim deletion is complete.
 **How to Validate:** Check actual storage, snapshot references, backup policies, consumer state, and approved retention and deletion policies. The responsible owners verify legal requirements. The LLM helps review; it does not replace policy approval or evidence of deletion.
 
 [Lineage and metadata](lineage-metadata.md) · [Data quality](data-quality.md) · [Data observability](data-observability.md) · [Handbook home](../index.md)
+
+[More practical prompts](../prompts/governance.md)

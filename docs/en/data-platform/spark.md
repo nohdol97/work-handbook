@@ -198,8 +198,42 @@ A watermark tracks event-time progress and supports state cleanup; it is not jus
 
 Example prompt:
 
-```text
-Diagnose this slow stage before proposing a redesign. Rank skew, memory pressure, and slow I/O hypotheses. Separate evidence from assumptions. Request missing metrics and propose one controlled test per hypothesis.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Plan and distribution: [physical plan, key counts, executor resources]
+    Task metrics: [input, shuffle, spill, GC, duration]
+
+    [Task]
+    Diagnose the slow stage before proposing a redesign.
+    Rank skew, memory-pressure, and slow-I/O hypotheses by evidence.
+
+    [Output]
+    Separate evidence from assumptions; request missing metrics and falsification checks.
+
+    [Checks]
+    Propose one controlled test per hypothesis, changing one condition on the same input.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    계획과 분포: [physical plan·key 빈도·executor 자원]
+    Task 지표: [입력·shuffle·spill·GC·실행 시간]
+
+    [요청]
+    재설계 제안 전에 느린 stage를 진단해 줘.
+    Skew·메모리 압박·느린 I/O 가설을 근거에 따라 순위로 정리해 줘.
+
+    [출력]
+    근거와 가정을 구분하고 누락된 측정 및 반증 조건을 작성해 줘.
+
+    [검증]
+    가설마다 동일 입력으로 한 조건만 바꾸는 통제된 실험을 제안해 줘.
+    ```
+
+[See six more practical prompts for this topic](../prompts/spark.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.

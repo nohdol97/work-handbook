@@ -620,8 +620,42 @@ Watermark는 단순한 대기 타이머가 아니라 event-time 진행 및 state
 
 예시 프롬프트:
 
-```text
-Diagnose this slow stage before proposing a redesign. Rank skew, memory pressure, and slow I/O hypotheses. Separate evidence from assumptions. Request missing metrics and propose one controlled test per hypothesis.
-```
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    계획과 분포: [physical plan·key 빈도·executor 자원]
+    Task 지표: [입력·shuffle·spill·GC·실행 시간]
+
+    [요청]
+    재설계 제안 전에 느린 stage를 진단해 줘.
+    Skew·메모리 압박·느린 I/O 가설을 근거에 따라 순위로 정리해 줘.
+
+    [출력]
+    근거와 가정을 구분하고 누락된 측정 및 반증 조건을 작성해 줘.
+
+    [검증]
+    가설마다 동일 입력으로 한 조건만 바꾸는 통제된 실험을 제안해 줘.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Plan and distribution: [physical plan, key counts, executor resources]
+    Task metrics: [input, shuffle, spill, GC, duration]
+
+    [Task]
+    Diagnose the slow stage before proposing a redesign.
+    Rank skew, memory-pressure, and slow-I/O hypotheses by evidence.
+
+    [Output]
+    Separate evidence from assumptions; request missing metrics and falsification checks.
+
+    [Checks]
+    Propose one controlled test per hypothesis, changing one condition on the same input.
+    ```
+
+[이 주제의 실무 프롬프트 6개 더 보기](../prompts/spark.md)
 
 LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.

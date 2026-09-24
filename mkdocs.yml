@@ -14,6 +14,7 @@ theme:
   features:
     - navigation.sections
     - content.code.copy
+    - content.tabs.link
   palette:
     primary: indigo
 plugins:
@@ -36,6 +37,10 @@ plugins:
             지식 관리: Knowledge workflow
             용어집: Glossary
             데이터 플랫폼: Data platform
+            실무 프롬프트: Practical prompts
+            프롬프트 모음: Prompt library
+            저장·분석 기초: Storage and analytics
+            계보·메타데이터: Lineage and metadata
             전체 구조: Architecture
             학습 범위와 다음 과정: Study scope and next steps
             저장과 분석 기초: Storage and analytics foundations
@@ -77,6 +82,25 @@ nav:
       - 거버넌스: data-platform/governance.md
       - AI-ready 데이터: data-platform/ai-ready-data.md
       - 온라인 AI 평가: data-platform/online-evaluation.md
+  - 실무 프롬프트:
+      - 프롬프트 모음: prompts/index.md
+      - 저장·분석 기초: prompts/foundations.md
+      - 이벤트 아키텍처: prompts/event-architecture.md
+      - Lakehouse / Iceberg: prompts/lakehouse-iceberg.md
+      - Spark: prompts/spark.md
+      - Flink: prompts/flink.md
+      - CDC / Debezium: prompts/cdc-debezium.md
+      - Orchestration: prompts/orchestration.md
+      - dbt: prompts/dbt.md
+      - 분석 모델링: prompts/analytical-modeling.md
+      - Trino: prompts/trino.md
+      - 데이터 품질: prompts/data-quality.md
+      - 데이터 관측: prompts/data-observability.md
+      - 계보·메타데이터: prompts/lineage-metadata.md
+      - 거버넌스: prompts/governance.md
+      - AI-ready 데이터: prompts/ai-ready-data.md
+      - 온라인 AI 평가: prompts/online-evaluation.md
+      - 지식 관리: prompts/knowledge-workflow.md
   - 용어집: glossary/index.md
 markdown_extensions:
   - admonition
@@ -87,11 +111,15 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+extra_css:
+  - assets/stylesheets/prompts.css
 validation:
   nav:
     omitted_files: warn

@@ -101,13 +101,48 @@ A semantic layer centrally defines the meaning and calculation of business metri
 
 Situation: execution cost grows with the number of calls. Give the LLM each table's grain, keys, relationship cardinality, join SQL, a small synthetic sample, and metric definitions.
 
-```text
-Review this cost query using the stated grain of each table.
-Show row counts and duplicated measures after each join.
-Separate observed facts from hypotheses and missing information.
-Propose a minimal correction and a small example that checks the total.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Grains, keys, cardinality, and join SQL by table: [context]
+    Small synthetic data and metric definitions: [samples and definitions]
+
+    [Task]
+    Review this cost query using the stated grain of each table.
+    Show row counts and duplicated measures after each join.
+    Separate observed facts from hypotheses and missing information.
+    Propose a minimal correction and a small example that checks the total.
+
+    [Output]
+    Return the location of repeated measures and a validation example.
+
+    [Checks]
+    Compare totals at the original grain and after joins; check multiple calls, zero calls, and SCD boundaries.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    Table별 grain·key·cardinality·join SQL: [맥락]
+    작은 가상 데이터와 metric 정의: [샘플·정의]
+
+    [요청]
+    각 table에 명시된 grain을 사용해 이 비용 query를 검토해 주세요.
+    각 join 이후 행 수와 중복되는 measure를 보여 주세요.
+    관찰한 사실·가설·부족한 정보를 구분해 주세요.
+    최소 수정안과 합계를 확인하는 작은 예시를 제안해 주세요.
+
+    [출력]
+    Measure가 반복되는 위치와 검증 예시를 주세요.
+
+    [검증]
+    원본 grain 합계와 join 합계를 비교하고 여러 호출·0회 호출·SCD 경계를 확인해 주세요.
+    ```
 
 Expected output identifies where a join repeats measures and provides a validation example. The LLM may hide symptoms with `DISTINCT` or combine costs at different grains. Compare totals at the original grain with totals after joins. Include multiple calls, zero calls, and SCD version boundaries. This page does not record an actual query run.
 
 [dbt](dbt.md) · [Trino](trino.md) · [Handbook home](../index.md)
+
+[Six related practical prompts](../prompts/analytical-modeling.md)

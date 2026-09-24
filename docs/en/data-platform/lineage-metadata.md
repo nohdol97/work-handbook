@@ -125,16 +125,43 @@ A catalog can show descriptions, owners, freshness, quality, upstream/downstream
 
 **Example Prompt:**
 
-```text
-Assess this proposed type change before suggesting a redesign.
-Inputs: before/after schemas for raw_orders.amount, table and column
-lineage, transformations, job/run history, KPI definitions,
-and known gaps in lineage collection.
-List likely downstream impacts and upstream evidence to inspect.
-Separate facts, assumptions, hypotheses, and missing dependencies.
-Give validation checks for stg_orders, fact_sales,
-mart_daily_sales, and its dashboard.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Before/after schemas for raw_orders.amount: [proposed type change]
+    Table/column lineage and transformations: [sanitized definitions]
+    Job/run history, KPI definitions, and known collection gaps: [material]
+    [Task]
+    Assess this proposed type change before suggesting a redesign.
+    List likely downstream impacts and upstream evidence to inspect.
+    Separate facts, assumptions, hypotheses, and missing dependencies.
+    [Output]
+    Give validation checks for stg_orders and fact_sales.
+    Include checks for mart_daily_sales and its dashboard.
+    [Checks]
+    Compare actual SQL, configuration, events, catalog entries, and sample results.
+    Do not treat this review as approval or a complete impact analysis.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    raw_orders.amount 전후 schema: [타입 변경안]
+    table·column lineage와 변환식: [비식별 정의]
+    job/run 이력·KPI 정의·알려진 수집 누락: [자료]
+    [요청]
+    재설계를 제안하기 전에 이 타입 변경안을 평가하세요.
+    downstream 영향 후보와 확인할 upstream 근거를 나열하세요.
+    사실·가정·가설·누락 의존성을 구분하세요.
+    [출력]
+    stg_orders·fact_sales의 검증 항목을 주세요.
+    mart_daily_sales와 해당 대시보드의 검증 항목도 주세요.
+    [검증]
+    실제 SQL·설정·수집 이벤트·catalog·샘플 결과를 대조하세요.
+    검토를 변경 승인이나 완전한 영향 분석으로 취급하지 마세요.
+    ```
 
 **Expected Output:** A review of affected transformations, KPIs, and dashboards. It should list evidence to check and uncertainty caused by missing lineage.
 
@@ -143,3 +170,5 @@ mart_daily_sales, and its dashboard.
 **How to Validate:** Compare real SQL, run configuration, collected events, catalog entries, and sample results. Do not treat an LLM's estimate as change approval or a complete impact analysis.
 
 [Data observability](data-observability.md) · [Governance](governance.md) · [Handbook home](../index.md)
+
+[More practical prompts](../prompts/lineage-metadata.md)

@@ -109,13 +109,48 @@ dbt lineage covers part of the platform. Do not assume it automatically tracks i
 
 Situation: a daily usage model misses late LLM calls. Give the LLM the model SQL, grain, key, adapter and engine versions, event and ingestion times, observed lateness, and rerun results.
 
-```text
-Review this incremental model before rewriting it.
-Separate observations, assumptions, and missing evidence.
-Check late arrivals, key uniqueness, null keys, first-run SQL, and rerun safety.
-Propose small tests and explain what a lookback window cannot recover.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Model SQL, grain, keys, and adapter and engine versions: [context]
+    Event and ingestion times, lateness, and rerun results: [synthetic samples]
+
+    [Task]
+    Review this incremental model before rewriting it.
+    Separate observations, assumptions, and missing evidence.
+    Check late arrivals, key uniqueness, null keys, first-run SQL, and rerun safety.
+    Propose small tests and explain what a lookback window cannot recover.
+
+    [Output]
+    Return missed-data conditions and testable change candidates.
+
+    [Checks]
+    Validate with official adapter documentation, compiled SQL, and synthetic late and duplicate rows.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    Model SQL·grain·key·adapter/engine 버전: [맥락]
+    Event/ingestion time·지연 범위·재실행 결과: [가상 샘플]
+
+    [요청]
+    이 incremental model을 다시 작성하기 전에 검토해 주세요.
+    관찰·가정·부족한 근거를 구분해 주세요.
+    Late arrival·key uniqueness·null key·최초 실행 SQL·재실행 안전성을 확인해 주세요.
+    작은 테스트를 제안하고 lookback window가 복구할 수 없는 것을 설명해 주세요.
+
+    [출력]
+    누락 조건과 검증 가능한 수정 후보를 주세요.
+
+    [검증]
+    공식 adapter 문서·compiled SQL·가상 지연 및 중복 행으로 검증해 주세요.
+    ```
 
 Expected output is a list of missed-data conditions and testable fixes. The LLM may treat the maximum `event_time` as a safe watermark or assume every adapter supports MERGE. Check official adapter documentation, actual compiled SQL, and a small run with late rows and duplicate keys. No such run was performed here.
 
 [Orchestration](orchestration.md) · [Analytical modeling](analytical-modeling.md) · [Trino](trino.md) · [Handbook home](../index.md)
+
+[Six related practical prompts](../prompts/dbt.md)

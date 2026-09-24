@@ -101,13 +101,48 @@ Semantic layer는 DAU, Total Cost, Error Rate, Average Latency 같은 업무 met
 
 상황: 실행 비용이 호출 수에 비례해 커진다. 제공할 맥락은 각 table의 grain, key, 관계 cardinality, join SQL, 소규모 가상 sample, metric 정의다.
 
-```text
-Review this cost query using the stated grain of each table.
-Show row counts and duplicated measures after each join.
-Separate observed facts from hypotheses and missing information.
-Propose a minimal correction and a small example that checks the total.
-```
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    Table별 grain·key·cardinality·join SQL: [맥락]
+    작은 가상 데이터와 metric 정의: [샘플·정의]
+
+    [요청]
+    각 table에 명시된 grain을 사용해 이 비용 query를 검토해 주세요.
+    각 join 이후 행 수와 중복되는 measure를 보여 주세요.
+    관찰한 사실·가설·부족한 정보를 구분해 주세요.
+    최소 수정안과 합계를 확인하는 작은 예시를 제안해 주세요.
+
+    [출력]
+    Measure가 반복되는 위치와 검증 예시를 주세요.
+
+    [검증]
+    원본 grain 합계와 join 합계를 비교하고 여러 호출·0회 호출·SCD 경계를 확인해 주세요.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Grains, keys, cardinality, and join SQL by table: [context]
+    Small synthetic data and metric definitions: [samples and definitions]
+
+    [Task]
+    Review this cost query using the stated grain of each table.
+    Show row counts and duplicated measures after each join.
+    Separate observed facts from hypotheses and missing information.
+    Propose a minimal correction and a small example that checks the total.
+
+    [Output]
+    Return the location of repeated measures and a validation example.
+
+    [Checks]
+    Compare totals at the original grain and after joins; check multiple calls, zero calls, and SCD boundaries.
+    ```
 
 기대 결과는 join에서 measure가 반복되는 위치와 검증 예시다. LLM은 `DISTINCT`로 증상을 숨기거나 다른 grain의 비용을 합칠 수 있다. 원본 grain에서 계산한 합계와 join 후 합계를 비교하고 여러 호출·0회 호출·SCD version 경계 사례를 확인한다. 이 문서는 실제 query를 실행한 기록이 아니다.
 
 [dbt](dbt.md) · [Trino](trino.md) · [핸드북 홈](../index.md)
+
+[관련 실무 프롬프트 6개](../prompts/analytical-modeling.md)

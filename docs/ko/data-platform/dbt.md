@@ -111,13 +111,48 @@ dbt lineage는 전체 플랫폼 lineage의 일부다. 수집 서비스, dbt 외�
 
 상황: daily usage model에서 늦게 도착한 LLM call이 빠진다. 제공할 맥락은 model SQL, grain·key, adapter/engine 버전, event/ingestion time, late arrival 범위, 재실행 결과다.
 
-```text
-Review this incremental model before rewriting it.
-Separate observations, assumptions, and missing evidence.
-Check late arrivals, key uniqueness, null keys, first-run SQL, and rerun safety.
-Propose small tests and explain what a lookback window cannot recover.
-```
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    Model SQL·grain·key·adapter/engine 버전: [맥락]
+    Event/ingestion time·지연 범위·재실행 결과: [가상 샘플]
+
+    [요청]
+    이 incremental model을 다시 작성하기 전에 검토해 주세요.
+    관찰·가정·부족한 근거를 구분해 주세요.
+    Late arrival·key uniqueness·null key·최초 실행 SQL·재실행 안전성을 확인해 주세요.
+    작은 테스트를 제안하고 lookback window가 복구할 수 없는 것을 설명해 주세요.
+
+    [출력]
+    누락 조건과 검증 가능한 수정 후보를 주세요.
+
+    [검증]
+    공식 adapter 문서·compiled SQL·가상 지연 및 중복 행으로 검증해 주세요.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Model SQL, grain, keys, and adapter and engine versions: [context]
+    Event and ingestion times, lateness, and rerun results: [synthetic samples]
+
+    [Task]
+    Review this incremental model before rewriting it.
+    Separate observations, assumptions, and missing evidence.
+    Check late arrivals, key uniqueness, null keys, first-run SQL, and rerun safety.
+    Propose small tests and explain what a lookback window cannot recover.
+
+    [Output]
+    Return missed-data conditions and testable change candidates.
+
+    [Checks]
+    Validate with official adapter documentation, compiled SQL, and synthetic late and duplicate rows.
+    ```
 
 기대 결과는 누락 조건과 검증 가능한 수정 후보다. LLM은 `event_time` 최대값을 안전한 watermark로 단정하거나 모든 adapter에 MERGE를 적용할 수 있다. 공식 adapter 문서, 실제 compiled SQL, 늦은 행·중복 key를 넣은 제한된 실행으로 검증한다. 여기서는 실행하지 않았다.
 
 [오케스트레이션](orchestration.md) · [분석 데이터 모델링](analytical-modeling.md) · [Trino](trino.md) · [핸드북 홈](../index.md)
+
+[관련 실무 프롬프트 6개](../prompts/dbt.md)

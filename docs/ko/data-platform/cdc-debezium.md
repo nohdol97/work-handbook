@@ -91,13 +91,48 @@ Offset을 잃거나 필요한 WAL이 이미 사라졌다면 재초기화 snapsho
 
 상황: replay 이후 SHIPPED 주문이 PAID로 되돌아갔다. 제공할 맥락은 익명화한 같은 key의 event 순서·source position, offset, 적용 SQL, connector 설정이다.
 
-```text
-Review this CDC replay example. Separate observations from hypotheses.
-Check event order, source positions, duplicate handling, and delete handling.
-List missing evidence and the smallest tests before proposing a fix.
-Do not assume all before fields are complete or all positions are globally ordered.
-```
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    같은 key의 익명화한 event·source position: [샘플]
+    Offset·적용 SQL·connector 설정: [맥락]
+
+    [요청]
+    이 CDC replay 예시를 검토하고 관찰과 가설을 구분해 주세요.
+    Event 순서·source position·중복 처리·삭제 처리를 확인해 주세요.
+    수정안을 제안하기 전에 부족한 근거와 가장 작은 테스트를 나열해 주세요.
+    모든 before 필드가 완전하거나 모든 position이 전역 순서를 갖는다고 가정하지 말아 주세요.
+
+    [출력]
+    원인 후보와 각 후보의 확인 순서를 주세요.
+
+    [검증]
+    가상 중복·역순·삭제 event와 실제 설정으로 가설을 검증해 주세요.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Anonymized events and source positions for one key: [sample]
+    Offsets, write SQL, and connector settings: [context]
+
+    [Task]
+    Review this CDC replay example. Separate observations from hypotheses.
+    Check event order, source positions, duplicate handling, and delete handling.
+    List missing evidence and the smallest tests before proposing a fix.
+    Do not assume all before fields are complete or all positions are globally ordered.
+
+    [Output]
+    Return possible causes and checks for each one.
+
+    [Checks]
+    Validate hypotheses with synthetic duplicate, reversed, and delete events and actual settings.
+    ```
 
 기대 결과는 원인 후보와 확인 순서다. LLM은 timestamp만으로 순서를 정하거나 `MERGE`만으로 멱등성이 완성된다고 오해할 수 있다. 실제 event와 설정을 대조하고 중복·역순·삭제 이벤트를 넣은 제한된 재현으로 검증한다. 여기서는 해당 재현을 실행하지 않았다.
 
 [오케스트레이션](orchestration.md) · [dbt](dbt.md) · [핸드북 홈](../index.md)
+
+[관련 실무 프롬프트 6개](../prompts/cdc-debezium.md)

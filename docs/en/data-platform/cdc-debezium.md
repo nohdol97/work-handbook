@@ -91,13 +91,48 @@ A lost offset or missing WAL may require a new snapshot. A snapshot can restore 
 
 Situation: an order moved from SHIPPED back to PAID after replay. Give the LLM anonymized events for the same key, source positions, offsets, write SQL, and connector settings.
 
-```text
-Review this CDC replay example. Separate observations from hypotheses.
-Check event order, source positions, duplicate handling, and delete handling.
-List missing evidence and the smallest tests before proposing a fix.
-Do not assume all before fields are complete or all positions are globally ordered.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Anonymized events and source positions for one key: [sample]
+    Offsets, write SQL, and connector settings: [context]
+
+    [Task]
+    Review this CDC replay example. Separate observations from hypotheses.
+    Check event order, source positions, duplicate handling, and delete handling.
+    List missing evidence and the smallest tests before proposing a fix.
+    Do not assume all before fields are complete or all positions are globally ordered.
+
+    [Output]
+    Return possible causes and checks for each one.
+
+    [Checks]
+    Validate hypotheses with synthetic duplicate, reversed, and delete events and actual settings.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    같은 key의 익명화한 event·source position: [샘플]
+    Offset·적용 SQL·connector 설정: [맥락]
+
+    [요청]
+    이 CDC replay 예시를 검토하고 관찰과 가설을 구분해 주세요.
+    Event 순서·source position·중복 처리·삭제 처리를 확인해 주세요.
+    수정안을 제안하기 전에 부족한 근거와 가장 작은 테스트를 나열해 주세요.
+    모든 before 필드가 완전하거나 모든 position이 전역 순서를 갖는다고 가정하지 말아 주세요.
+
+    [출력]
+    원인 후보와 각 후보의 확인 순서를 주세요.
+
+    [검증]
+    가상 중복·역순·삭제 event와 실제 설정으로 가설을 검증해 주세요.
+    ```
 
 Expected output is a set of possible causes and checks. The LLM may order events only by timestamp or assume MERGE alone guarantees idempotency. Check actual events and settings. Validate with a small test containing duplicate, reversed, and delete events. That test has not been run here.
 
 [Orchestration](orchestration.md) · [dbt](dbt.md) · [Handbook home](../index.md)
+
+[Six related practical prompts](../prompts/cdc-debezium.md)

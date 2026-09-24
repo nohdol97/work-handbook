@@ -637,8 +637,43 @@ Parquet의 column chunk는 row group 내부에 있다. 통계나 page index의 �
 
 예시 프롬프트:
 
-```text
-Review this file layout before suggesting changes. Separate observations, assumptions, and hypotheses. Compare compaction, partition changes, and sorting. List missing evidence and one measurable check for each option.
-```
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    쿼리와 배치: [SQL·partition key·파일 크기 분포]
+    측정: [scan bytes·planning time·task 분포]
+
+    [요청]
+    변경 제안 전에 현재 파일 배치를 검토해 줘.
+    관찰, 가정, 가설을 나누고 compaction·partition 변경·정렬을 비교해 줘.
+
+    [출력]
+    선택지별 비용 원인·trade-off·누락 근거를 작성해 줘.
+
+    [검증]
+    선택지마다 하나의 측정 가능한 검증을 제안해 줘.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Queries and layout: [SQL, partition keys, file-size distribution]
+    Measurements: [scan bytes, planning time, task distribution]
+
+    [Task]
+    Review the current file layout before suggesting changes.
+    Separate observations, assumptions, and hypotheses.
+    Compare compaction, partition changes, and sorting.
+
+    [Output]
+    List cost drivers, trade-offs, and missing evidence for each option.
+
+    [Checks]
+    Propose one measurable check for each option.
+    ```
+
+[이 주제의 실무 프롬프트 6개 더 보기](../prompts/foundations.md)
 
 LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.

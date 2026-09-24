@@ -98,15 +98,43 @@ Volume이 정상이어도 값의 분포는 달라질 수 있다. Null rate drift
 
 **예시 프롬프트:**
 
-```text
-Investigate this hypothetical incident before suggesting a redesign.
-The Gold job succeeded, but today's dashboard shows zero rows.
-Use the supplied row counts, freshness by stage, partition list,
-schema and filter changes, logs, weekday baseline, and SLOs.
-Separate facts, assumptions, hypotheses, and missing evidence.
-Rank the next checks and explain what each result would support.
-Do not infer a root cause from correlation alone.
-```
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    Gold 작업은 성공했지만 오늘 대시보드는 0 rows입니다.
+    단계별 row count·freshness와 partition 목록: [측정]
+    schema·filter 변경과 실행 로그: [비식별 이력]
+    같은 요일 기준선과 SLO: [정의와 값]
+    [요청]
+    재설계를 제안하기 전에 이 가상 장애를 조사하세요.
+    사실·가정·가설·누락 근거를 구분하세요.
+    상관관계만으로 근본 원인을 추론하지 마세요.
+    [출력]
+    다음 확인의 우선순위와 각 결과가 지지할 가설을 주세요.
+    [검증]
+    단계별 실제 query 결과·시각·변경 이력·화면 갱신을 대조하세요.
+    가설을 증거로 확인하기 전에는 운영 조치를 실행하지 마세요.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    The Gold job succeeded, but today's dashboard shows zero rows.
+    Row counts, freshness by stage, and partition list: [measurements]
+    Schema and filter changes and run logs: [sanitized history]
+    Same-weekday baseline and SLOs: [definitions and values]
+    [Task]
+    Investigate this hypothetical incident before suggesting a redesign.
+    Separate facts, assumptions, hypotheses, and missing evidence.
+    Do not infer a root cause from correlation alone.
+    [Output]
+    Rank the next checks and explain what each result would support.
+    [Checks]
+    Compare stage query results, times, change history, and dashboard refresh.
+    Do not execute operational actions before evidence supports the hypothesis.
+    ```
 
 **기대 결과:** 원본 미도착, partition 누락, filter 오류, downstream 갱신 지연 등을 구별하는 조사 순서다.
 
@@ -115,3 +143,5 @@ Do not infer a root cause from correlation alone.
 **검증 방법:** 각 단계의 실제 쿼리 결과와 시각, 변경 이력, 대시보드 갱신 상태를 확인한다. LLM의 가설을 증거로 확인한 뒤 조치한다.
 
 [데이터 품질](data-quality.md) · [Lineage와 metadata](lineage-metadata.md) · [핸드북 홈](../index.md)
+
+[더 많은 실무 프롬프트](../prompts/data-observability.md)

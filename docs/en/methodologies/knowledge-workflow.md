@@ -59,12 +59,35 @@ Provide the sanitized source, manifest, coverage matrix, and complete Korean and
 
 #### Example Prompt
 
-```text
-Compare the source items with both handbook pages.
-List missing concepts, examples, constraints, and failure cases.
-Separate observations from hypotheses.
-Do not invent missing facts. Point to evidence for each finding.
-```
+=== "English"
+
+    ```text {.prompt}
+    [Context]
+    Source items and bilingual pages: [sanitized source / complete pages]
+    [Task]
+    1. Compare each source item with both handbook pages.
+    2. Find missing concepts, examples, constraints, and failure cases.
+    [Output]
+    Return: source ID | missing location | evidence | question to verify.
+    [Checks]
+    Separate observations from hypotheses and support every finding with evidence.
+    Do not invent facts to fill gaps in the source.
+    ```
+
+=== "한국어"
+
+    ```text {.prompt}
+    [맥락]
+    원문 항목과 한영 문서: [비식별 원문 / 전체 페이지]
+    [요청]
+    1. 각 원문 항목을 한국어·영어 페이지와 비교해 주세요.
+    2. 빠진 개념·예시·제약·실패 사례를 찾아 주세요.
+    [출력]
+    원문 ID | 누락 위치 | 근거 | 확인 질문 표를 주세요.
+    [검증]
+    관찰과 가설을 구분하고 지적마다 근거를 연결해 주세요.
+    원문에 없는 사실을 만들어 채우지 마세요.
+    ```
 
 #### Expected Output
 
@@ -81,3 +104,5 @@ Compare each finding with the source and both pages. Check technical facts using
 ## Related topics
 
 [Glossary](../glossary/index.md) · [Home](../index.md)
+
+[Four more practical prompts](../prompts/knowledge-workflow.md)
