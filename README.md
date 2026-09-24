@@ -76,3 +76,13 @@ README·운영 계약·출처·한영 문서·자체 스킬 등 first-party `.md
 `make validate`는 단위 테스트, 하네스 구조, 한영·출처·검토 증거, Mermaid 구문, strict 빌드와 HTML 링크·언어 전환·게시 범위를 검사한다. 의미 검토는 에이전트/사람이 수행하고 자동화는 해시가 최신인지 검사한다. 외부 링크 가용성, 실제 기술 주장, 예제 운영 적합성은 별도 증거가 필요하다.
 
 검토 hash 오류는 실제 변경 내용을 다시 읽고 양쪽 언어의 scope를 확인한 뒤 해결한다. vault 오류는 로컬 설정, 접근 권한, 수동 편집 충돌을 확인한다. 원격 push는 branch SHA가 로컬 HEAD와 같은지 확인한다. 새로운 로컬 스킬의 자동 검색은 새 CLI 세션에서 가장 확실하다.
+
+### 권한 제한 환경에서 npm 캐시 오류
+
+`npm ci --ignore-scripts`가 기존 사용자 캐시에 쓰지 못해 `EPERM`으로 실패하면, Git에서 제외된 작업 폴더 안의 캐시로 다시 설치할 수 있다.
+
+```bash
+npm ci --ignore-scripts --cache _workspace/npm-cache
+```
+
+이 명령은 고정된 `package-lock.json`을 사용하며 현재 `node_modules`를 다시 구성한다. 기존 사용자 캐시의 소유권이나 시스템 권한을 바꾸지 않아도 된다. 설치 후 `npm run check:mermaid`로 구문 검사 도구를 확인한다.
