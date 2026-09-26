@@ -38,6 +38,12 @@
 
 `audit(root)`는 오류 문자열 목록을 반환한다. CLI의 기본 root는 스크립트가 속한 저장소이며 `--root`를 지원한다. 오류가 있으면 종료 코드 1을 반환한다. 손상된 YAML/JSON과 비정상 자료형은 성공으로 처리하지 않는다.
 
+### R7. 기록된 원문 복원 무결성
+
+원문 정규화 기록의 `ORIGINAL SOURCE START`, `원본 bytes`, `whitespace_restoration` 중 하나가 있으면 정확히 하나씩의 경계·byte 수/SHA-256 기록·JSON ledger를 요구한다. 본문의 지정 행 끝에 ledger의 공백을 복원한 UTF-8 bytes가 기록된 크기와 hash 모두에 맞아야 한다. 행 번호는 중복 없는 유효한 정수이며 복원 문자열은 비어 있지 않은 space/tab만 허용한다. 오류는 읽기 전용 audit에서 실패하며 본문·ledger를 자동 수정하지 않는다. 이 메타데이터가 없는 기존 일반 source 파일은 기존 추적 규칙을 유지한다. 이는 기록된 업로드와의 byte 동일성만 검사하며 개인정보·의미 검토를 대신하지 않는다.
+
+인수 기준은 한글·CRLF·끝 공백 복원 통과, 같은 길이 본문 변조 검출, 손상·중복·범위 밖 ledger 거부, 불완전 기록 거부, 기존 일반 source fixture 통과다.
+
 ## 완료 기준
 
 `python -m unittest discover -s tests -p test_handbook.py -v`로 올바른 최소 저장소 통과와 각 규칙 위반의 실패를 확인한다. MkDocs 빌드, Mermaid, 브라우저 언어 전환 검증은 별도 통합 검증이다.

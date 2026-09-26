@@ -199,3 +199,47 @@ class ValidFixtureTests(unittest.TestCase):
         self.source('Deferred', '', 'Needs redaction', 'Pending', 'Pending')
         report = (self.root / 'sources/study/coverage-report.md').read_text()
         self.assertIn('Bilingual synchronization: 0 / 0 (N/A (no published items))', report)
+
+    def normalized_source(self, ledger=None):
+        import hashlib
+        import json
+        self.source()
+        raw = '원문  \r\nsecond\t\n'.encode()
+        if ledger is None:
+            ledger = [{'line': 1, 'removed': '  '}, {'line': 2, 'removed': '\t'}]
+        header = ('<!-- 반입 기록\n원본 bytes: ' + str(len(raw)) + '; SHA-256: ' + hashlib.sha256(raw).hexdigest()
+                  + '\nwhitespace_restoration: ' + json.dumps(ledger) + '\n-->\n<!-- ORIGINAL SOURCE START -->\n')
+        path = self.root / 'sources/study/source.md'
+        path.write_bytes(header.encode() + '원문\r\nsecond\n'.encode())
+        return path
+
+    def test_restored_source_bytes_match_recorded_upload(self):
+        self.normalized_source()
+        self.assertEqual(checker.audit(self.root), [])
+
+    def test_source_content_drift_with_same_byte_length_is_rejected(self):
+        path = self.normalized_source()
+        path.write_bytes(path.read_bytes().replace(b'second', b'edited'))
+        self.assert_error('source integrity')
+
+    def test_invalid_source_restoration_ledger_is_rejected(self):
+        for ledger in [[{'line': 99, 'removed': ' '}],
+                       [{'line': True, 'removed': ' '}],
+                       [{'line': 1, 'removed': 'x'}],
+                       [{'line': 1, 'removed': ' '}, {'line': 1, 'removed': ' '}]]:
+            with self.subTest(ledger=ledger):
+                self.normalized_source(ledger)
+                self.assert_error('source integrity')
+
+    def test_incomplete_source_integrity_record_is_rejected(self):
+        path = self.normalized_source()
+        path.write_bytes(path.read_bytes().replace(b'whitespace_restoration:', b'missing_ledger:'))
+        self.assert_error('source integrity')
+
+    def test_duplicate_source_integrity_metadata_is_rejected(self):
+        for extra in ['whitespace_restoration: INVALID_JSON',
+                      '원본 bytes: 0; SHA-256: ' + '0' * 64]:
+            with self.subTest(extra=extra):
+                path = self.normalized_source()
+                path.write_bytes(path.read_bytes().replace(b'-->\n', extra.encode() + b'\n-->\n', 1))
+                self.assert_error('source integrity')

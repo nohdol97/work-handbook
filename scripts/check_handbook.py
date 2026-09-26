@@ -131,6 +131,47 @@ def _load_yaml(path, errors):
         return {}
 
 
+def _source_integrity(path, errors):
+    """Verify an opt-in normalization record without altering source bytes."""
+    try:
+        text = path.read_bytes().decode('utf-8')
+        marker = '<!-- ORIGINAL SOURCE START -->\n'
+        if not any(token in text for token in
+                   ['ORIGINAL SOURCE START', '원본 bytes:', 'whitespace_restoration:']):
+            return
+        if text.count(marker) != 1:
+            raise ValueError('expected one source boundary')
+        header, body = text.split(marker)
+        for field in ['원본 bytes:', 'whitespace_restoration:']:
+            if len(re.findall('^' + re.escape(field), header, re.M)) != 1:
+                raise ValueError('expected one record per metadata field')
+        record = re.search(r'^원본 bytes: (\d+); SHA-256: ([a-f0-9]{64})$', header, re.M)
+        ledger_record = re.search(r'^whitespace_restoration: (.+)$', header, re.M)
+        if not record or not ledger_record:
+            raise ValueError('incomplete restoration metadata')
+        ledger = json.loads(ledger_record.group(1))
+        if not isinstance(ledger, list):
+            raise ValueError('ledger must be a list')
+        lines = body.splitlines(keepends=True)
+        seen = set()
+        for item in ledger:
+            if not isinstance(item, dict):
+                raise ValueError('invalid ledger entry')
+            line, removed = item.get('line'), item.get('removed')
+            if (type(line) is not int or not 1 <= line <= len(lines) or line in seen
+                    or not isinstance(removed, str) or not re.fullmatch(r'[ \t]+', removed)):
+                raise ValueError('invalid restoration line or whitespace')
+            seen.add(line)
+            current = lines[line - 1]
+            content = current.rstrip('\r\n')
+            lines[line - 1] = content + removed + current[len(content):]
+        restored = ''.join(lines).encode('utf-8')
+        if len(restored) != int(record.group(1)) or hashlib.sha256(restored).hexdigest() != record.group(2):
+            raise ValueError('restored bytes or SHA-256 differ from upload record')
+    except (OSError, UnicodeError, ValueError, TypeError) as exc:
+        errors.append(f'{path}: source integrity: {exc}')
+
+
 def _source_rows(root, pages, errors):
     batches = []
     all_ids = set()
@@ -141,6 +182,7 @@ def _source_rows(root, pages, errors):
         for name in ['source.md', 'content-manifest.md', 'coverage-matrix.md', 'coverage-report.md', 'mapping.md']:
             if not (batch / name).is_file():
                 errors.append(f'{batch}: missing {name}')
+        _source_integrity(batch / 'source.md', errors)
         manifest, _ = _frontmatter(batch / 'content-manifest.md', errors)
         coverage, _ = _frontmatter(batch / 'coverage-matrix.md', errors)
         entries = {}
