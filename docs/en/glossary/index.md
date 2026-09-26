@@ -1,8 +1,8 @@
 ---
 id: handbook-glossary
 status: overview
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-26
+last_reviewed: 2026-09-26
 knowledge_ids: []
 ---
 
@@ -63,3 +63,21 @@ knowledge_ids: []
 | Online evaluation | Attaching feedback, rule checks, or judge signals to real AI executions. | [online-evaluation](../data-platform/online-evaluation.md) |
 
 [Knowledge workflow](../methodologies/knowledge-workflow.md) · [Home](../index.md)
+
+## Evaluation, managed platforms, and recovery
+
+| Term | Meaning | Canonical topic |
+|---|---|---|
+| Rubric | Scoring and decision criteria for each evaluation dimension. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| Groundedness | How well a response is supported by the supplied evidence. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| Inter-rater agreement | Agreement among people evaluating the same cases. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| Bundle version | A version of the combined agent, prompt, tool, model, and retrieval configuration. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| TTFT | Time to first token: the delay from a request to its first output token. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| Cost per success | Total cost divided by successful executions, with explicit success criteria and measurement scope. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| DBU | A Databricks usage unit. Check compute type, contract, and other factors for actual charges. | [databricks](../data-platform/databricks.md) |
+| Photon | A vectorized query execution engine in Databricks. | [databricks](../data-platform/databricks.md) |
+| UniForm | Provides metadata for Iceberg readers of Delta tables; it does not imply equal writer support. | [databricks](../data-platform/databricks.md) |
+| Micro-partition | A Snowflake-managed columnar storage unit with metadata used for pruning. | [snowflake](../data-platform/snowflake.md) |
+| Dynamic Table | A Snowflake object that refreshes a declared query result toward a target lag. | [snowflake](../data-platform/snowflake.md) |
+| RTO | Recovery time objective: the target time allowed for recovery. | [production-operations](../data-platform/production-operations.md) |
+| RPO | Recovery point objective: acceptable data loss expressed as a time window. | [production-operations](../data-platform/production-operations.md) |

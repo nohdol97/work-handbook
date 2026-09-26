@@ -1,8 +1,8 @@
 ---
 id: data-platform-curriculum
 status: overview
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-26
+last_reviewed: 2026-09-26
 knowledge_ids:
   - DPE-00-01
   - DPE-18-01
@@ -12,9 +12,13 @@ knowledge_ids:
   - DPE-18-05
   - DPE-18-06
   - DPE-18-07
+  - DPE2-00-01
+  - DPE2-00-02
+  - DPE2-23-01
+  - DPE2-23-02
 ---
 
-# 학습 범위와 남은 커리큘럼
+# 학습 범위와 완료 현황
 
 ## 출처와 학습 깊이
 
@@ -22,7 +26,7 @@ knowledge_ids:
 
 원문은 Chapter 1~4를 이전에 완료한 학습 범위에 맞춰 **복원한 노트**, Chapter 5 이후를 실제 이어서 학습한 흐름이라고 명시한다. 원래 대화나 복원 이전 자료는 제공되지 않아 복원의 정확성을 별도로 확인하지 못했다. 아래 “완료”는 제공 자료의 학습 상태다.
 
-원문 목차의 Chapter 17은 보충 설명, Chapter 18은 진행 현황이다. 아래 **Phase 17~21**은 앞으로 학습할 과정이며 그 Chapter 번호와 구분한다.
+첫 자료의 Chapter 17은 보충 설명, Chapter 18은 당시 진행 현황이다. 2026-09-26 추가 자료의 Chapter 16~21은 아래 Phase 번호에 대응하며 **Phase 1~21의 개념 학습 완료**를 명시한다. 첫 자료의 미학습 표시는 당시 이력으로 보존하고 현재 상태는 이번 자료로 갱신했다.
 
 ## 완료: Phase 1~15
 
@@ -42,9 +46,9 @@ knowledge_ids:
 14. [거버넌스](governance.md) — 개념 학습 완료.
 15. [AI-ready 데이터](ai-ready-data.md) — 개념 학습 완료.
 
-## 진행 중: Phase 16
+## 완료: Phase 16 — AI 평가 데이터 플랫폼
 
-[16.1 Online Evaluation Events](online-evaluation.md)만 학습 완료다. 아래 항목은 **not-started**이며, AI-ready 문서에서 일부 개념을 언급했더라도 별도 과정의 학습 완료를 뜻하지 않는다.
+[16.1 온라인 평가](online-evaluation.md)와 [16.2~16.12 AI 평가 플랫폼](ai-evaluation.md)을 개념 학습했다. 새 자료의 예시·숫자·버전 표는 학습용이며 실제 모델 평가 실행 결과가 아니다.
 
 - 16.2 Offline Evaluation Datasets
 - 16.3 Human Feedback
@@ -56,10 +60,11 @@ knowledge_ids:
 - 16.9 Regression Datasets
 - 16.10 Cost / Quality / Latency Analysis
 - 16.11 Langfuse + Iceberg Integration
+- 16.12 버전별 관리 위치와 bundle 연결
 
-## 미학습: Phase 17 — Databricks Deep Dive
+## 완료: Phase 17 — Databricks Deep Dive
 
-상태: **not-started**. 아래는 원문이 제시한 후속 학습 목차다. 제품 기능을 검증하거나 과정을 완료했다는 주장이 아니다.
+상태: **studied — 개념 학습 완료**. [Databricks](databricks.md)에 제공된 내용을 정리했다. 제품별 공식 문서 확인은 실제 배포·성능 시험을 대신하지 않는다.
 
 - Lakehouse Architecture
 - Spark Runtime
@@ -74,9 +79,9 @@ knowledge_ids:
 - Cost Model
 - Which self-managed components Databricks replaces
 
-## 미학습: Phase 18 — Snowflake Deep Dive
+## 완료: Phase 18 — Snowflake Deep Dive
 
-상태: **not-started**. 아래는 원문이 제시한 후속 학습 목차다. 제품 기능을 검증하거나 과정을 완료했다는 주장이 아니다.
+상태: **studied — 개념 학습 완료**. [Snowflake](snowflake.md)에 제공된 내용을 정리했다. 새 자료는 condensed 요약 범위이며 내부 구현 심화를 주장하지 않는다. 제품별 공식 문서 확인은 실제 배포·성능 시험을 대신하지 않는다.
 
 - Architecture
 - Micro-partitions
@@ -85,15 +90,16 @@ knowledge_ids:
 - Streams
 - Tasks
 - Dynamic Tables
-- Snowpipe
+- Snowpipe / Snowpipe Streaming
 - Iceberg Tables
 - Governance
 - Cortex / AI capabilities
 - Cost / Scaling Model
+- Snowflake Mental Model
 
-## 미학습: Phase 19 — Databricks vs Snowflake vs Open Lakehouse
+## 완료: Phase 19 — Databricks vs Snowflake vs Open Lakehouse
 
-상태: **not-started**. 아래는 원문이 제시한 후속 학습 목차다. 제품 기능을 검증하거나 과정을 완료했다는 주장이 아니다.
+상태: **studied — 개념 학습 완료**. [플랫폼 비교](platform-comparison.md)에 제공된 내용을 정리했다. 제품별 공식 문서 확인은 실제 배포·성능 시험을 대신하지 않는다.
 
 - Storage Ownership
 - Iceberg Openness
@@ -109,9 +115,9 @@ knowledge_ids:
 - Vendor Lock-in
 - Total Cost
 
-## 미학습: Phase 20 — Production Data Platform Engineering
+## 완료: Phase 20 — Production Data Platform Engineering
 
-상태: **not-started**. 아래는 원문이 제시한 후속 학습 목차다. 제품 기능을 검증하거나 과정을 완료했다는 주장이 아니다.
+상태: **studied — 개념 학습 완료**. [운영 엔지니어링](production-operations.md)에 제공된 내용을 정리했다. 장애 사례는 개념 시나리오이며 실제 drill 결과가 아니다. 제품별 공식 문서 확인은 실제 배포·성능 시험을 대신하지 않는다.
 
 - Backfills
 - Reprocessing
@@ -121,9 +127,9 @@ knowledge_ids:
 - DR / Recovery
 - Data Platform SLOs
 
-## 미학습: Phase 21 — 최종 End-to-End 프로젝트
+## 완료: Phase 21 — 최종 End-to-End 아키텍처
 
-상태: **not-started**. 목표는 [전체 구조](architecture.md)의 Applications → Kafka → Flink/Spark Streaming → Bronze Iceberg → Spark/dbt → Silver → Gold → Trino/BI/AI Evaluation 흐름과 PostgreSQL → Debezium → Kafka 경로다.
+상태: **studied — 아키텍처 개념 통합 완료**. 학습 구조는 [전체 구조](architecture.md)의 Applications → Kafka → Flink/Spark Streaming → Bronze Iceberg → Spark/dbt → Silver → Gold → Trino/BI/AI Evaluation 흐름과 PostgreSQL → Debezium → Kafka 경로다.
 
 주변 기능은 Airflow orchestration, data quality, OpenLineage, catalog/discovery/governance, data observability의 freshness/correctness, Langfuse AI telemetry/evaluation이다. 구현 전후 다음 질문에 근거를 붙일 수 있어야 한다.
 
@@ -138,6 +144,12 @@ knowledge_ids:
 9. Recovery는 어떻게 하는가?
 10. 규모가 작으면 어떤 구성 요소를 제거할 수 있는가?
 
-설계·구축·장애 실험·성능 측정 자료는 아직 없다. 다음 원문이 들어오면 해당 범위를 보완하고 학습 상태를 갱신한다.
+새 자료는 구성 요소별 존재 이유, 실패 동작, 보장 경계, backfill, 확장·비용, 작은 규모의 생략 후보, open/managed 대안, 7개 설계 원칙을 제공한다. 모두 [전체 구조](architecture.md)에 통합했다.
+
+구축·장애 실험·성능 측정 자료는 아직 없다. 완료는 overview curriculum의 개념 이해 범위이며 운영 숙련도를 인증하지 않는다. 학습자는 OLTP/OLAP·Parquet·object storage·Iceberg, Spark/Flink·Kafka/CDC, Airflow/dbt/Trino·분석 모델, 품질/관측·metadata/lineage/catalog/governance, AI-ready 데이터·telemetry/evaluation/versioning·Langfuse/MLflow, managed 통합과 open 대안, 복구·규모별 단순화의 역할을 설명하는 것을 목표로 한다.
+
+## 제품 근거의 범위
+
+후속 원문은 Unity Catalog, Lakeflow Jobs, managed Delta/Iceberg, Iceberg REST Catalog, Dynamic Tables, Horizon Catalog, Snowflake Iceberg 공식 문서를 참고했다고 기록하지만 URL·버전·조회일은 제공하지 않는다. 따라서 현재 공식 근거는 각 제품 정규 페이지에서 별도로 확인하고 날짜·제약을 표시했다. 실제 cloud·region·edition·버전·설정은 적용 전에 확인한다.
 
 [전체 구조](architecture.md) · [홈](../index.md)

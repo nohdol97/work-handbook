@@ -1,24 +1,24 @@
 {
   "pages": {
     "glossary/index.md": {
-      "ko_sha256": "46d73de1fdaa3e719968a6e78c32b334b13c181e59dd61874a058f34797ef256",
-      "en_sha256": "94d8d7ac17cccf4359858e0d2f73c237c3972c41fce7609e2eb139211e2ff203",
+      "ko_sha256": "2801b6e04c427b4b08dc4a46a98a331e1dcd5a0c7abbc94d0e129107e4539b2e",
+      "en_sha256": "0d544b4848503a2bbcd9f93494d7c957404f0ddf3a6a08b668ace39234a9630f",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review + processing independent full-page review",
-      "reviewed": "2026-09-24",
-      "notes": "기존 6개 정의와 신규 40개 기술 용어 정의·정규 주제 링크를 전체 양쪽 대조. 표준 용어·쉬운 영어·의미 동등, 개인 식별값 없음. processing 담당 독립 전체 대조 통과."
+      "reviewer": "Codex root author review; independent review: evaluation or vendors",
+      "reviewed": "2026-09-26",
+      "notes": "기존46개 정의를 그대로 보존하고 평가·제품·복구13개 용어를 양언어 추가. vendors 독립검토로쉬운영어와의미확인. 실제민감정보없는가상내용이며모델/DB실행을주장하지않는다."
     },
     "index.md": {
-      "ko_sha256": "f7ba43b55838decff5c95856ef412a34501cba7ab86061eb4e527fbdc7cf2cd6",
-      "en_sha256": "c1e0f037a17b72d33ad38d822ce7bb372b9119621f032397f41733886395e4b7",
+      "ko_sha256": "7c11646386a2cbb4bbdf70fcb7cc4032bd76fdbdcb99c91cd92d11fa9e8f1534",
+      "en_sha256": "b2929ddd2556fd5ad37131cf34e31ea77238b56704dc1ddca9bf729ffdb3d3cf",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review + processing/governance_ai independent review",
-      "reviewed": "2026-09-24",
-      "notes": "한영 39쌍, 신규 실무 예시 100개, 탐색 링크와 실제 학습 범위의 구분을 양쪽 전체에서 대조했다. 짧은 영어와 비밀값 없는 가상 입력을 확인했다."
+      "reviewer": "Codex root author review; independent review: evaluation or vendors",
+      "reviewed": "2026-09-26",
+      "notes": "자료2건·주제23/모음18/총44쌍·prompt123개·복원/condensed/미실행한계·새5쌍링크를 양쪽 대조. vendors 독립검토통과 후 링크표시명만 현행화. 실제민감정보없는가상내용이며모델/DB실행을주장하지않는다."
     },
     "methodologies/knowledge-workflow.md": {
       "ko_sha256": "89573a872e5ef93c553e1f37044b3c266ea8c2b8b3ed3cce03055480ef77f615",
@@ -181,34 +181,34 @@
       "notes": "telemetry 연결·평가 사례·embedding 버전·retrieval/generation·provenance·feature/label 시각을 양쪽 대조했다. 권한 없는 근거 제공·결정성·실제 실행을 주장하지 않는다. 기존 전체 본문과 6요소 예시를 검토했고 기존 지식 본문·frontmatter·ID는 prompt 탭 및 연결 외에 byte 일치를 확인했다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "data-platform/online-evaluation.md": {
-      "ko_sha256": "172882410cea89d1bb74e6153100104795680e16bd731412e4143f7989053852",
-      "en_sha256": "9da622446fb6de5df8b827429aebaa2229c921dcea6c5888803c2fac52292172",
+      "ko_sha256": "cb5b90e63f49cad3bc8a7959f02e146b62efab3074db23a07f4b1b64cc69853c",
+      "en_sha256": "fb9926ef3e2b1c14a280552cb40f5081d56fcf1b7a24b63dd9afda2920f23020",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
-      "reviewed": "2026-09-24",
-      "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 기존 전체 본문과 6요소 예시를 검토했고 기존 지식 본문·frontmatter·ID는 prompt 탭 및 연결 외에 byte 일치를 확인했다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex /root/import_evaluation (author full-page source and bilingual review); independent review: vendors",
+      "reviewed": "2026-09-26",
+      "notes": "기존 전체 본문과 LLM 시나리오를 유지하고 첫 원문의 범위 설명만 현재 상태에 맞췄다. 추가 원문의 rating/reason/comment 예시, trace 진단 질문, 올바르고 허용된 tool 검사와 운영 edge case 환류를 양쪽 전체 대조했다. 기존 DPE-16-01을 보존하고 DPE2-16-01을 병합했다. 기존 본문·prompt 보존을 바이트 부분문자열 및 렌더링 검사로 확인했다. 짧고 직접적인 영어·표준 용어를 사용한다. 가상 수치와 식별자를 명시했고 실데이터·개인정보·credential·내부 URL은 없다. 개념 학습이며 구현/실행/운영 측정은 주장하지 않는다. 해당 원문 전체와 한영 전체를 독립 검토자가 대조했으며 보완 사항을 반영했다."
     },
     "data-platform/architecture.md": {
-      "ko_sha256": "1b65adeed8973e7809c2bc416c5fa4cd202e1295b39e301a0013d2d65fa6a06f",
-      "en_sha256": "7abe3a8f00f3becfd61da8c5ba56f49251a3e8f025f4bf685fc27e13e45a1631",
+      "ko_sha256": "5d174daefa597731eb640f0d27b456dd98fa9aa2a97ccea3e0046b6ceef27ce7",
+      "en_sha256": "51611ab28b9a4ea8ee8ea6ecc86066a34288aad8ecf297286fcae7f4f44f38a8",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review + processing independent full-page review",
-      "reviewed": "2026-09-24",
-      "notes": "원문 17.1~17.5 및 최종 모델 전체 역할·경로·횡단 관심사 대조. Spark→Silver/dbt→Gold 설명, dbt 실행 엔진 경계, quality/observability 및 metadata/semantic layer 구분 양쪽 일치. 동일 Mermaid. processing 담당 독립 전체 대조 통과."
+      "reviewer": "Codex root author review; independent review: evaluation or vendors",
+      "reviewed": "2026-09-26",
+      "notes": "기존 본문 의미·6 ID를 보존하고 새37 ID의 역할·실패·일관성·backfill·확장·비용·작은규모·managed/open·최종원칙을 양쪽 전체 대조. evaluation 독립검토의 Gold 병렬소비·at-least-once·링크설명 범위3항을 양언어 보완함. 실제민감정보없는가상내용이며모델/DB실행을주장하지않는다."
     },
     "data-platform/curriculum.md": {
-      "ko_sha256": "754f1e0a645b4515de457f9c23ca8639d7fefd994b377e1947f786def7ddd272",
-      "en_sha256": "d06d9bf82105cd50e22a341adeb75209f5c81e6ea673fbb98d9afb6d2c4d949e",
+      "ko_sha256": "418f3be48837312da6d1aec689356adbb423683331124828583eb97d1f1fe84c",
+      "en_sha256": "26d7e25eb814c4aa6525c89b63d00a221fd7e04c9ecdf942ac47e8c9b5fe37d4",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review + processing independent full-page review",
-      "reviewed": "2026-09-24",
-      "notes": "원문 도입부와 18장 전체 대조. 복원된 1~4장 한계, Chapter와 Phase 번호 구분, 16.2~21 모든 후속 목차, 최종 10개 질문 양쪽 보존. 미학습을 완료로 주장하지 않음. processing 담당 독립 전체 대조 통과."
+      "reviewer": "Codex root author review; independent review: evaluation or vendors",
+      "reviewed": "2026-09-26",
+      "notes": "기존8 ID와 전체목차·복원노트 제약을 보존. 후속완료선언4 ID로 현재 Phase1~21 개념완료를 갱신하되구축미검증·Snowflake요약범위를 양쪽 명시. vendors 독립검토통과 후 문서제목/링크label을 현재상태로 정정. 실제민감정보없는가상내용이며모델/DB실행을주장하지않는다."
     },
     "prompts/foundations.md": {
       "ko_sha256": "b1acc6e268b70285385edabf60a2b14dd51d9cdb05ad012b54a20041d700895a",
@@ -371,14 +371,14 @@
       "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "prompts/index.md": {
-      "ko_sha256": "63c775fc5f68217918a956c0e860d4fa277c6106b625120d32c58488b0cf441f",
-      "en_sha256": "35eda6d1e22774a23318065abca7b3e83a9f72bc2d96a674c014ad0f7c4bf057",
+      "ko_sha256": "9748db467567e83e6b024c8cf42ec80031ebbab12bbb878dc230633a46ab025e",
+      "en_sha256": "6dfc7fccb8a2aa9bb547be3a0ef914772cb53a070b4a7ccf6d1f3942f0efd760",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review + processing/governance_ai independent review",
-      "reviewed": "2026-09-24",
-      "notes": "17주제·100개 예시·탭/복사 안내·대괄호 입력과 검증 방법·파생 예시와 실제 학습의 구분을 전체 대조했다. 짧은 영어와 비밀값 없는 가상 입력을 확인했다."
+      "reviewer": "Codex root author review; independent review: evaluation or vendors",
+      "reviewed": "2026-09-26",
+      "notes": "library100개와개념23개총123개집계,신규6정규페이지예시링크,학습상태구분을양쪽대조. vendors 독립검토통과. 실제민감정보없는가상내용이며모델/DB실행을주장하지않는다."
     },
     "prompts/knowledge-workflow.md": {
       "ko_sha256": "956f10f22a2b3c54f85c471ae5aa2eb96989f9dbe749087cb382f2164a3202ba",
@@ -389,6 +389,56 @@
       "reviewer": "Codex root author review + processing/governance_ai independent review",
       "reviewed": "2026-09-24",
       "notes": "추출 우선·번역 제약 보존·중복 병합 추적·갱신 근거 4개 시나리오의 한영 본문과 프롬프트 전체를 대조했다. 독립 검토 지적에 따라 영어 검증 방법에도 사람의 최종 검토를 명시했다. 짧은 영어와 비밀값 없는 가상 입력을 확인했다."
+    },
+    "data-platform/ai-evaluation.md": {
+      "ko_sha256": "bfeb8849eb0602807e21c671845994e27d68a0d7b9db5bce079fa63372759b9f",
+      "en_sha256": "30596d89965d680dd0678f4aba0b6bc1fd35b45edfe3fb41c307402d977cbf0b",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/import_evaluation (author full-page source and bilingual review); independent review: vendors",
+      "reviewed": "2026-09-26",
+      "notes": "16.2–16.12 전체 원문을 추출 후 작성했다. 모든 사례·필드·평가 범주·숫자 비교·release gate·모델/프롬프트/agent/judge 버전·실험 통제·Git/Langfuse/MLflow/Iceberg 책임 구분과 9자산 매핑을 한영 전체 읽기로 대조했다. 공식 Langfuse/MLflow 문서에서 dataset item/schema 버전 범위, mutable alias, export/API를 확인하고 제품별 주의사항을 추가했다. 한영 prompt 본문 동일성과 4개 섹션·다중행 렌더링을 확인했다. Mermaid 2개는 양쪽 동일하며 전체 parser 검증은 root 통합 단계다. 짧고 직접적인 영어·표준 용어를 사용한다. 가상 수치와 식별자를 명시했고 실데이터·개인정보·credential·내부 URL은 없다. 개념 학습이며 구현/실행/운영 측정은 주장하지 않는다. 해당 원문 전체와 한영 전체를 독립 검토자가 대조했으며 보완 사항을 반영했다."
+    },
+    "data-platform/production-operations.md": {
+      "ko_sha256": "d83671a88daada9d2c9f3ba0e2fff517b3caf7af577ebd32306f5022cdab18a5",
+      "en_sha256": "2288ec2ea0e4456552b85e3bd3a4647360fe7520975f5596094e56783c066bdd",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/import_operations; independent review: evaluation",
+      "reviewed": "2026-09-26",
+      "notes": "Chapter20 원문 전체(3342–4130행)를 먼저 읽고 22개 ID를 추출했다. 완성된 KO/EN 본문 전체를 재독하며 backfill 범위·멱등성, Kafka/Bronze/snapshot/source replay, 7개 장애 흐름, 모든 용량 변수와 10k×크기×86400 산식, 1TB 파일수 및 90일 backfill 예시, 비용 항목·태그, DR/catalog/table/checkpoint, fact_llm_call 7일 가상 정책, RTO/RPO와 모든 SLO 수치, tier 및 runbook 필드를 원본과 대조했다. 두 언어의 동일 의미·짧은 영어·가상 예시 구분·개인정보 비포함을 확인했다. Iceberg 삭제 제약, Debezium offset/WAL 복구 조건, Flink checkpoint/savepoint 경계를 2026-09-26 공식 stable/latest 문서로 검증했다. 의미 있는 Mermaid는 한영 각각 parser 통과; 실제 Markdown 설정의 탭 렌더링·4부분 prompt 검사·KO/EN prompt 동일성·내부링크 검사 통과. 실제 제품 실행·장애훈련·성능시험은 하지 않았다. 자체 재검토에서 원문 <7일/otherwise 경계를 명확히 하도록 두 언어 표를 7일 미만 Kafka / 7일 이상 Bronze로 보완하고 해당 문구를 재독했다. 해당 원문 전체와 한영 전체를 독립 검토자가 대조했으며 보완 사항을 반영했다."
+    },
+    "data-platform/databricks.md": {
+      "ko_sha256": "1ef5390ac8ea2b3e19b115e74389f14a9820719ae72046ee99c524412291ae9d",
+      "en_sha256": "4d89b705d1900fa390fe9df9c307b99713127f7d9eae80cb78902635a69f4284",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/import_vendors author review; /root/import_operations independent review; independent review: operations",
+      "reviewed": "2026-09-26",
+      "notes": "원문 해당 장 전체 선추출 후 전체 한영 문서를 대조했다. 40개 절의 개념·표·예시·제약을 보존하고 Snowflake 요약 학습 및 실제 구현 부재를 표시했다. 공식 문서로 포맷/스토리지/catalog 경계, UniForm 비동기 읽기, AI Search 권한 제한, target lag를 확인했다. LLM 6요소와 양언어 탭 문구·섹션 렌더링 검사 통과. 독립 검토의 Langfuse UC 외부 통합·AI Search 증분/부분 재구축 보완 반영. 비밀·실제 개인/회사식별자 없음. 해당 원문 전체와 한영 전체를 독립 검토자가 대조했으며 보완 사항을 반영했다."
+    },
+    "data-platform/snowflake.md": {
+      "ko_sha256": "4748f47cb1ca50bd6f29a23b82c1eb68b35a48db3933cad9db7cb086e9ab5371",
+      "en_sha256": "945247cc724d7062a1a5a22ed10dd654b7501c68253b826b8473feb95f57bc30",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/import_vendors author review; /root/import_operations independent review; independent review: operations",
+      "reviewed": "2026-09-26",
+      "notes": "원문 해당 장 전체 선추출 후 전체 한영 문서를 대조했다. 40개 절의 개념·표·예시·제약을 보존하고 Snowflake 요약 학습 및 실제 구현 부재를 표시했다. 공식 문서로 포맷/스토리지/catalog 경계, UniForm 비동기 읽기, AI Search 권한 제한, target lag를 확인했다. LLM 6요소와 양언어 탭 문구·섹션 렌더링 검사 통과. 독립 검토의 Langfuse UC 외부 통합·AI Search 증분/부분 재구축 보완 반영. 비밀·실제 개인/회사식별자 없음. 해당 원문 전체와 한영 전체를 독립 검토자가 대조했으며 보완 사항을 반영했다."
+    },
+    "data-platform/platform-comparison.md": {
+      "ko_sha256": "81995dc03417a3326b966fab9586d220e8894f586a6b87c7406cb9b5c9c85aac",
+      "en_sha256": "e8f07dd577e696cb8339bcf8d9560db6e809dc2e89e389c7663a4c4313da1086",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/import_vendors author review; /root/import_operations independent review; independent review: operations",
+      "reviewed": "2026-09-26",
+      "notes": "원문 해당 장 전체 선추출 후 전체 한영 문서를 대조했다. 40개 절의 개념·표·예시·제약을 보존하고 Snowflake 요약 학습 및 실제 구현 부재를 표시했다. 공식 문서로 포맷/스토리지/catalog 경계, UniForm 비동기 읽기, AI Search 권한 제한, target lag를 확인했다. LLM 6요소와 양언어 탭 문구·섹션 렌더링 검사 통과. 독립 검토의 Langfuse UC 외부 통합·AI Search 증분/부분 재구축 보완 반영. 비밀·실제 개인/회사식별자 없음. 해당 원문 전체와 한영 전체를 독립 검토자가 대조했으며 보완 사항을 반영했다. 통합 링크검사에서잘못된자동anchor를발견해기존Databricks정규페이지링크로수정후의미대조."
     }
   }
 }

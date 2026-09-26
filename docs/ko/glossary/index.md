@@ -1,8 +1,8 @@
 ---
 id: handbook-glossary
 status: overview
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-26
+last_reviewed: 2026-09-26
 knowledge_ids: []
 ---
 
@@ -63,3 +63,21 @@ knowledge_ids: []
 | Online evaluation | 실제 AI 실행에 feedback·규칙·judge 등의 평가 신호를 연결하는 과정. | [online-evaluation](../data-platform/online-evaluation.md) |
 
 [지식 관리 방법](../methodologies/knowledge-workflow.md) · [홈](../index.md)
+
+## 평가·managed 플랫폼·복구
+
+| 용어 | 의미 | 정규 주제 |
+|---|---|---|
+| Rubric | 평가 항목별 점수·판정 기준표. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| Groundedness | 응답이 제공된 근거에 기반하는 정도. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| Inter-rater agreement | 같은 사례를 평가한 사람들의 판정 일치도. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| Bundle version | Agent·prompt·tool·model·retrieval 구성 조합의 버전. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| TTFT | Time to first token. 요청부터 첫 출력 token까지 걸린 시간. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| Cost per success | 전체 비용을 성공 실행 수로 나눈 값. 성공 정의와 측정 범위도 명시한다. | [ai-evaluation](../data-platform/ai-evaluation.md) |
+| DBU | Databricks 사용량 단위. 실제 요금은 compute 유형·계약 등과 함께 확인한다. | [databricks](../data-platform/databricks.md) |
+| Photon | Databricks의 벡터화된 query execution engine. | [databricks](../data-platform/databricks.md) |
+| UniForm | Delta table에 Iceberg reader용 metadata를 제공한다. Writer 동등성을 뜻하지 않는다. | [databricks](../data-platform/databricks.md) |
+| Micro-partition | Snowflake가 자동 관리하며 pruning용 metadata를 가진 columnar 저장 단위. | [snowflake](../data-platform/snowflake.md) |
+| Dynamic Table | 선언한 query 결과를 target lag 목표에 맞춰 갱신하는 Snowflake 객체. | [snowflake](../data-platform/snowflake.md) |
+| RTO | Recovery time objective. 복구에 허용하는 목표 시간. | [production-operations](../data-platform/production-operations.md) |
+| RPO | Recovery point objective. 시간으로 표현한 허용 데이터 손실 범위. | [production-operations](../data-platform/production-operations.md) |

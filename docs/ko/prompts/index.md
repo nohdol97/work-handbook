@@ -1,14 +1,14 @@
 ---
 id: prompt-library
 status: overview
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-26
+last_reviewed: 2026-09-26
 knowledge_ids: []
 ---
 
 # 실무 프롬프트 모음
 
-설계 검토·SQL 리뷰·장애 조사·데이터 검증·문서화에 바로 맞춰 쓸 수 있는 **새 예시 100개**다. 기존 개념 문서의 17개 예시도 한영 탭과 여러 줄 형식으로 개선했다. 아래에서 주제를 고르면 각 페이지의 상황별 목차로 이동할 수 있다.
+설계 검토·SQL 리뷰·장애 조사·데이터 검증·문서화에 바로 맞춰 쓸 수 있는 **새 예시 100개**다. 개념 문서의 예시 23개를 합치면 총 123개이며, 모두 한영 탭과 여러 줄 형식으로 읽을 수 있다. 아래에서 주제를 고르면 각 페이지의 상황별 목차로 이동할 수 있다.
 
 ## 사용 방법
 
@@ -17,7 +17,7 @@ knowledge_ids: []
 3. 복사 버튼으로 prompt를 복사하고 `[입력 항목]`을 비식별 자료로 바꾼다. 문서 본문의 설명 언어는 상단 언어 메뉴로 바꾼다.
 4. LLM의 답을 관찰·가설·추가 확인으로 나누어 읽고 각 예시의 검증 방법을 수행한다.
 
-이 예시는 기존 핸드북의 학습 개념을 적용해 새로 작성했다. 실제 업무 빈도·모델 성능을 측정하거나 production 작업을 실행한 기록이 아니다. 원문 학습 상태와 미학습 후속 과정은 그대로 유지한다.
+이 예시는 기존 핸드북의 학습 개념을 적용해 새로 작성했다. 실제 업무 빈도·모델 성능을 측정하거나 production 작업을 실행한 기록이 아니다. 프롬프트 작성 자체로 원문 학습 상태가 달라지지는 않는다. 현재 완료 범위는 [학습 현황](../data-platform/curriculum.md)에서 확인한다.
 
 ## 주제별로 찾기
 
@@ -46,3 +46,7 @@ knowledge_ids: []
 증상과 기대 동작, 제품·connector 버전, 실제 설정, 비교 기간, 비식별 sample, 관찰한 로그·metric, 바꿀 수 없는 조건을 함께 제공한다. 아직 모르는 값은 모른다고 적는다. 예시는 운영계 변경을 자동 승인하는 명령이 아니며, 제안된 조치는 담당자가 실제 권한과 복구 절차를 확인한 뒤 수행한다.
 
 [데이터 플랫폼 전체 구조](../data-platform/architecture.md) · [학습 범위](../data-platform/curriculum.md) · [지식 관리 방법](../methodologies/knowledge-workflow.md)
+
+## 후속 학습 주제의 예시
+
+새 자료를 반영한 [AI 평가](../data-platform/ai-evaluation.md), [Databricks](../data-platform/databricks.md), [Snowflake](../data-platform/snowflake.md), [플랫폼 비교](../data-platform/platform-comparison.md), [운영·복구](../data-platform/production-operations.md), [전체 구조](../data-platform/architecture.md)에도 각각 한영 예시가 있다.

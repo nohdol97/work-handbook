@@ -42,7 +42,7 @@ plugins:
             저장·분석 기초: Storage and analytics
             계보·메타데이터: Lineage and metadata
             전체 구조: Architecture
-            학습 범위와 다음 과정: Study scope and next steps
+            학습 범위와 완료 현황: Study scope and completion
             저장과 분석 기초: Storage and analytics foundations
             이벤트 아키텍처: Event architecture
             Lakehouse와 Iceberg: Lakehouse and Iceberg
@@ -59,13 +59,16 @@ plugins:
             거버넌스: Governance
             AI-ready 데이터: AI-ready data
             온라인 AI 평가: Online AI evaluation
+            AI 평가 플랫폼: AI evaluation platform
+            플랫폼 비교: Platform comparison
+            운영·복구: Production operations
 nav:
   - 홈: index.md
   - 방법론:
       - 지식 관리: methodologies/knowledge-workflow.md
   - 데이터 플랫폼:
       - 전체 구조: data-platform/architecture.md
-      - 학습 범위와 다음 과정: data-platform/curriculum.md
+      - 학습 범위와 완료 현황: data-platform/curriculum.md
       - 저장과 분석 기초: data-platform/foundations.md
       - 이벤트 아키텍처: data-platform/event-architecture.md
       - Lakehouse와 Iceberg: data-platform/lakehouse-iceberg.md
@@ -82,6 +85,11 @@ nav:
       - 거버넌스: data-platform/governance.md
       - AI-ready 데이터: data-platform/ai-ready-data.md
       - 온라인 AI 평가: data-platform/online-evaluation.md
+      - AI 평가 플랫폼: data-platform/ai-evaluation.md
+      - Databricks: data-platform/databricks.md
+      - Snowflake: data-platform/snowflake.md
+      - 플랫폼 비교: data-platform/platform-comparison.md
+      - 운영·복구: data-platform/production-operations.md
   - 실무 프롬프트:
       - 프롬프트 모음: prompts/index.md
       - 저장·분석 기초: prompts/foundations.md

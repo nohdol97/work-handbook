@@ -1,15 +1,16 @@
 ---
 id: data-platform-online-evaluation
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-26
+last_reviewed: 2026-09-26
 knowledge_ids:
   - DPE-16-01
+  - DPE2-16-01
 ---
 
 # Online AI evaluation events
 
-Only section 16.1 of Phase 16 was studied in the source. This page records those concepts; it does not claim a production implementation.
+The first source studied only section 16.1 of Phase 16. The added source extends that material. This page records the concepts in 16.1; it does not claim a production implementation. Continue with sections 16.2–16.12 in [AI evaluation data platform](ai-evaluation.md).
 
 ## 16.1 Online evaluation events
 
@@ -34,6 +35,19 @@ A judge or rule check can evaluate the response. Example questions are: is the S
 The conceptual trace groups the prompt, LLM calls, tool calls, response, and scores or feedback. It supports finding low-score traces, studying thumbs-down cases, comparing agent versions, and moving production failures into evaluation datasets.
 
 The goal is to observe quality in real user conditions. Offline tests may miss new questions, tool outages, long context, actual permissions, and changes in production data.
+
+## 16.1 Additional examples and diagnostic questions
+
+The source added on 2026-09-26 keeps the same principle: link online evaluation to real production executions. Beyond thumbs up/down, user feedback can contain `rating=1~5`, `reason=inaccurate`, and `comment="wrong tool was selected"`. These are teaching examples.
+
+Keeping the trace, execution, agent, prompt, and model versions with scores and feedback supports these questions:
+
+- Why was this response poor?
+- Which prompt and model produced it?
+- Which tools were called?
+- Which agent release produced it?
+
+Alongside SQL execution, citation, prohibited-information, and format checks, automatic evaluation can ask whether the agent called the **correct and authorized tool**. Expected schema compliance and tool authorization are separate checks. A score starts an investigation; it does not prove the cause. Add production-only edge cases to [fixed offline evaluation and regression datasets](ai-evaluation.md) and check them again in later releases.
 
 ## Limits of evaluation data
 

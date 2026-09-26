@@ -1,14 +1,14 @@
 ---
 id: prompt-library
 status: overview
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-26
+last_reviewed: 2026-09-26
 knowledge_ids: []
 ---
 
 # Practical prompt library
 
-These **100 new examples** support design reviews, SQL reviews, incident investigation, data checks, and documentation. The 17 existing examples in concept guides also use bilingual tabs and multiple lines. Choose a topic, then use its scenario list.
+These **100 new examples** support design reviews, SQL reviews, incident investigation, data checks, and documentation. Together with 23 examples in concept guides, there are 123 examples with bilingual tabs and multiple lines. Choose a topic, then use its scenario list.
 
 ## How to use
 
@@ -17,7 +17,7 @@ These **100 new examples** support design reviews, SQL reviews, incident investi
 3. Copy the prompt and replace `[input fields]` with sanitized material. Use the top language menu to change the surrounding page language.
 4. Separate observations, hypotheses, and next checks in the answer. Follow the example's validation steps.
 
-These are newly authored applications of existing handbook concepts. They do not claim measured work frequency, model performance, or executed production work. Source study status and unstudied future topics remain unchanged.
+These are newly authored applications of existing handbook concepts. They do not claim measured work frequency, model performance, or executed production work. Writing prompts does not change source study status. See the [study scope](../data-platform/curriculum.md) for current completion.
 
 ## Browse by topic
 
@@ -46,3 +46,7 @@ These are newly authored applications of existing handbook concepts. They do not
 Provide symptoms, expected behavior, product and connector versions, actual settings, comparison periods, sanitized samples, observed logs and metrics, and fixed constraints. Mark unknown values as unknown. These templates do not authorize production changes. Responsible owners check actual permissions and recovery procedures before acting on a proposal.
 
 [Data platform architecture](../data-platform/architecture.md) · [Study scope](../data-platform/curriculum.md) · [Knowledge workflow](../methodologies/knowledge-workflow.md)
+
+## Examples from the continuation
+
+[AI evaluation](../data-platform/ai-evaluation.md), [Databricks](../data-platform/databricks.md), [Snowflake](../data-platform/snowflake.md), [platform comparison](../data-platform/platform-comparison.md), [operations and recovery](../data-platform/production-operations.md), and [architecture](../data-platform/architecture.md) each include another bilingual example based on the new source.

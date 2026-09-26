@@ -1,15 +1,16 @@
 ---
 id: data-platform-online-evaluation
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-26
+last_reviewed: 2026-09-26
 knowledge_ids:
   - DPE-16-01
+  - DPE2-16-01
 ---
 
 # 온라인 AI 평가 이벤트
 
-원문에서 Phase 16은 16.1만 학습했다. 이 페이지는 해당 범위의 개념 학습 기록이며 운영 시스템을 구현했다는 주장이 아니다.
+첫 원문에서는 Phase 16의 16.1만 학습했고, 추가 원문으로 이 내용을 보강했다. 이 페이지는 16.1의 개념 학습 기록이며 운영 시스템을 구현했다는 주장이 아니다. 16.2–16.12는 [AI 평가 데이터 플랫폼](ai-evaluation.md)에서 이어진다.
 
 ## 16.1 Online Evaluation Events
 
@@ -129,6 +130,19 @@ Offline Test에서 드러나지 않는:
 를 관찰할 수 있다.
 
 ---
+
+## 16.1 추가 사례와 진단 질문
+
+2026-09-26에 추가한 원문도 online 평가를 실제 운영 실행에 연결하는 원칙을 유지한다. 사용자 feedback은 단순한 👍/👎 외에 `rating=1~5`, `reason=inaccurate`, `comment="wrong tool was selected"`처럼 더 상세하게 남길 수 있다. 이 값들은 설명용 예시다.
+
+Trace·실행·agent·prompt·model 버전과 점수·feedback을 함께 보존하면 다음 질문을 조사할 수 있다.
+
+- 왜 이 응답의 품질이 낮았는가?
+- 어떤 prompt와 model을 사용했는가?
+- 어떤 tool을 호출했는가?
+- 어떤 agent 릴리스에서 생성했는가?
+
+자동 검사는 기존 SQL 실행 가능성·citation·금지 정보·형식 검사에 더해 **올바르고 허용된 tool을 호출했는지** 확인할 수 있다. 예상 schema 준수와 tool 권한 준수는 다른 검사다. 점수는 조사 출발점이며 원인을 자동 증명하지 않는다. 운영 전용 edge case도 [고정 offline 평가와 회귀 데이터셋](ai-evaluation.md)에 추가해 다음 릴리스에서 다시 확인한다.
 
 ## 평가 데이터의 한계
 
