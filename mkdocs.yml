@@ -37,6 +37,11 @@ plugins:
             지식 관리: Knowledge workflow
             용어집: Glossary
             데이터 플랫폼: Data platform
+            플랫폼·인프라: Platform and infrastructure
+            학습 범위: Study scope
+            Linux·컨테이너: Linux and containers
+            Kubernetes 핵심: Kubernetes core
+            Kubernetes 운영: Kubernetes operations
             실무 프롬프트: Practical prompts
             프롬프트 모음: Prompt library
             저장·분석 기초: Storage and analytics
@@ -90,6 +95,11 @@ nav:
       - Snowflake: data-platform/snowflake.md
       - 플랫폼 비교: data-platform/platform-comparison.md
       - 운영·복구: data-platform/production-operations.md
+  - 플랫폼·인프라:
+      - 학습 범위: platform-infrastructure/index.md
+      - Linux·컨테이너: platform-infrastructure/linux-containers.md
+      - Kubernetes 핵심: platform-infrastructure/kubernetes-core.md
+      - Kubernetes 운영: platform-infrastructure/kubernetes-operations.md
   - 실무 프롬프트:
       - 프롬프트 모음: prompts/index.md
       - 저장·분석 기초: prompts/foundations.md

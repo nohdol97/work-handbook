@@ -1,8 +1,8 @@
 ---
 id: handbook-home
 status: overview
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids: []
 ---
 
@@ -12,17 +12,19 @@ knowledge_ids: []
 
 ## 현재 범위
 
-학습 자료 2건에서 데이터 플랫폼의 저장·이벤트·처리·분석·품질·관측·거버넌스·AI 평가와 managed 플랫폼·운영·최종 구조를 정리했다. 기술·구조·커리큘럼 23쌍, 실무 프롬프트 모음 18쌍, 홈·지식 관리 방법·용어집을 합쳐 한영 44쌍이다.
+학습 자료 3건에서 데이터 플랫폼의 저장·이벤트·처리·분석·품질·관측·거버넌스·AI 평가와 managed 플랫폼·운영·최종 구조를 정리했다. 데이터 플랫폼 기술·구조·커리큘럼 23쌍, 플랫폼·인프라 4쌍, 실무 프롬프트 모음 18쌍, 홈·지식 관리 방법·용어집을 합쳐 한영 48쌍이다.
 
-후속 자료로 Phase 1~21의 개념 학습 완료 범위를 통합했다. 첫 자료의 Chapter 1~4는 복원된 노트이고 Snowflake는 요약 범위라는 한계를 유지한다. 학습 내용을 실제 구축·운영·장애 실험 경험으로 표현하지 않는다.
+데이터 플랫폼 후속 자료로 Phase 1~21의 개념 학습 완료 범위를 통합했다. 첫 자료의 Chapter 1~4는 복원된 노트이고 Snowflake는 요약 범위라는 한계를 유지한다. 학습 내용을 실제 구축·운영·장애 실험 경험으로 표현하지 않는다.
 
 새로 추가한 주제: [AI 평가 플랫폼](data-platform/ai-evaluation.md) · [Databricks](data-platform/databricks.md) · [Snowflake](data-platform/snowflake.md) · [플랫폼 비교](data-platform/platform-comparison.md) · [운영·복구](data-platform/production-operations.md). [전체 구조](data-platform/architecture.md)에는 일관성·복구·확장·비용·규모별 축소와 open/managed 대안을 통합했다.
+
+[플랫폼·인프라 기초](platform-infrastructure/index.md) 영역도 추가했다. [Linux·컨테이너](platform-infrastructure/linux-containers.md), [Kubernetes 핵심](platform-infrastructure/kubernetes-core.md), [Kubernetes 운영](platform-infrastructure/kubernetes-operations.md)의 Chapter 1~3은 Basic 개념 학습 범위다. Redis·vLLM·GPU·보안 등 Chapter 4~15장은 미학습 후속 목차다.
 
 소프트웨어, 데이터, AI, 플랫폼, 인프라, 아키텍처, 운영 등 실제 자료가 들어온 분야부터 확장한다. 새로운 역할이나 기술을 기존 분류에 억지로 끼워 넣지 않는다.
 
 ## 바로 쓸 수 있는 실무 예시
 
-[실무 프롬프트 모음](prompts/index.md)에서 주제별 새 예시 100개를 찾을 수 있다. 개념 문서의 23개를 합친 총 123개 예시를 모두 한국어·English 탭으로 선택하고 복사할 수 있다. 입력 자료·요청·출력·검증을 여러 줄로 구분했다. 예시는 실제 운영 결과가 아니라 학습 개념을 적용한 작성 템플릿이다.
+[실무 프롬프트 모음](prompts/index.md)에서 주제별 새 예시 100개를 찾을 수 있다. 개념 문서의 26개를 합친 총 126개 예시를 모두 한국어·English 탭으로 선택하고 복사할 수 있다. 입력 자료·요청·출력·검증을 여러 줄로 구분했다. 예시는 실제 운영 결과가 아니라 학습 개념을 적용한 작성 템플릿이다.
 
 ## 읽는 방법
 

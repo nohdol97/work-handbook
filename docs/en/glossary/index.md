@@ -1,8 +1,8 @@
 ---
 id: handbook-glossary
 status: overview
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids: []
 ---
 
@@ -81,3 +81,24 @@ knowledge_ids: []
 | Dynamic Table | A Snowflake object that refreshes a declared query result toward a target lag. | [snowflake](../data-platform/snowflake.md) |
 | RTO | Recovery time objective: the target time allowed for recovery. | [production-operations](../data-platform/production-operations.md) |
 | RPO | Recovery point objective: acceptable data loss expressed as a time window. | [production-operations](../data-platform/production-operations.md) |
+
+## Platform and infrastructure basics
+
+| Term | Meaning | Canonical topic |
+|---|---|---|
+| Process / PID | A running program / its identifier within a PID namespace. | [linux-containers](../platform-infrastructure/linux-containers.md) |
+| File descriptor (FD) | An integer a process uses to refer to an open file, socket, or other I/O object. | [linux-containers](../platform-infrastructure/linux-containers.md) |
+| Linux namespace | A kernel feature that isolates views such as PIDs, networking, and mounts. | [linux-containers](../platform-infrastructure/linux-containers.md) |
+| cgroup | A Linux feature for controlling and accounting for resource use by groups of processes. | [linux-containers](../platform-infrastructure/linux-containers.md) |
+| OCI | Open Container Initiative, which defines compatibility specifications such as image and runtime formats. | [linux-containers](../platform-infrastructure/linux-containers.md) |
+| Pod | The basic Kubernetes deployment and scheduling unit. Its colocated containers share execution context such as networking. | [kubernetes-core](../platform-infrastructure/kubernetes-core.md) |
+| Reconciliation | A controller continually adjusting observed state toward declared desired state. | [kubernetes-core](../platform-infrastructure/kubernetes-core.md) |
+| Request / Limit | Requested resources used for scheduling and allocation / runtime resource limits. CPU and memory limits behave differently. | [kubernetes-core](../platform-infrastructure/kubernetes-core.md) |
+| Readiness / Liveness / Startup probe | Checks that distinguish traffic readiness, health requiring restart, and completion of startup. | [kubernetes-core](../platform-infrastructure/kubernetes-core.md) |
+| CNI | A standard plugin interface for configuring container networking. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| CSI | Container Storage Interface, which connects orchestrators and storage drivers. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| etcd / Quorum | A distributed key-value store for Kubernetes API state / the majority needed for consensus. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| HPA / VPA | Autoscaling approaches that adjust workload replica count / container resource requests. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| Cluster Autoscaler | A component that adjusts node count using conditions such as unschedulable Pods. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| PodDisruptionBudget (PDB) | A budget limiting voluntary disruptions through the Eviction API. It does not prevent every failure. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| Cordon / Drain | Mark a node unschedulable / perform Pod eviction and related work for node maintenance. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |

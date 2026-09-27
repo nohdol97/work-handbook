@@ -1,14 +1,14 @@
 ---
 id: prompt-library
 status: overview
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids: []
 ---
 
 # 실무 프롬프트 모음
 
-설계 검토·SQL 리뷰·장애 조사·데이터 검증·문서화에 바로 맞춰 쓸 수 있는 **새 예시 100개**다. 개념 문서의 예시 23개를 합치면 총 123개이며, 모두 한영 탭과 여러 줄 형식으로 읽을 수 있다. 아래에서 주제를 고르면 각 페이지의 상황별 목차로 이동할 수 있다.
+설계 검토·SQL 리뷰·장애 조사·데이터 검증·문서화에 바로 맞춰 쓸 수 있는 **새 예시 100개**다. 개념 문서의 예시 26개를 합치면 총 126개이며, 모두 한영 탭과 여러 줄 형식으로 읽을 수 있다. 아래에서 주제를 고르면 각 페이지의 상황별 목차로 이동할 수 있다.
 
 ## 사용 방법
 
@@ -50,3 +50,7 @@ knowledge_ids: []
 ## 후속 학습 주제의 예시
 
 새 자료를 반영한 [AI 평가](../data-platform/ai-evaluation.md), [Databricks](../data-platform/databricks.md), [Snowflake](../data-platform/snowflake.md), [플랫폼 비교](../data-platform/platform-comparison.md), [운영·복구](../data-platform/production-operations.md), [전체 구조](../data-platform/architecture.md)에도 각각 한영 예시가 있다.
+
+## 플랫폼·인프라 예시
+
+[Linux·컨테이너](../platform-infrastructure/linux-containers.md), [Kubernetes 핵심](../platform-infrastructure/kubernetes-core.md), [Kubernetes 운영](../platform-infrastructure/kubernetes-operations.md)에도 각각 진단·설계 검토용 한영 예시가 있다. 운영 명령 실행이나 변경 승인을 대신하지 않는다.

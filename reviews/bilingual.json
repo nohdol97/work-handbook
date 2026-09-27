@@ -1,24 +1,24 @@
 {
   "pages": {
     "glossary/index.md": {
-      "ko_sha256": "2801b6e04c427b4b08dc4a46a98a331e1dcd5a0c7abbc94d0e129107e4539b2e",
-      "en_sha256": "0d544b4848503a2bbcd9f93494d7c957404f0ddf3a6a08b668ace39234a9630f",
+      "ko_sha256": "666d421324023aa5886277777ca485d416880810cbea32d789f6de24bc1f65ca",
+      "en_sha256": "65a9439951b55e4e458f491d45b039d65b7ff9ff4a32d67283a3e97166be5bef",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review; independent review: evaluation or vendors",
-      "reviewed": "2026-09-26",
-      "notes": "기존46개 정의를 그대로 보존하고 평가·제품·복구13개 용어를 양언어 추가. vendors 독립검토로쉬운영어와의미확인. 실제민감정보없는가상내용이며모델/DB실행을주장하지않는다."
+      "reviewer": "Codex root author review; independent review: infra_ops / infra_core",
+      "reviewed": "2026-09-27",
+      "notes": "기존59개용어정의를보존하고runtime/cluster16개용어를양언어추가. infra_core가전체대조했고지적한PDB의가용수를제한한다는오역을필요한가용수를지키도록중단을제한으로교정해EN과재대조. 실제비밀값·개인식별정보를발견하지않았다."
     },
     "index.md": {
-      "ko_sha256": "7c11646386a2cbb4bbdf70fcb7cc4032bd76fdbdcb99c91cd92d11fa9e8f1534",
-      "en_sha256": "b2929ddd2556fd5ad37131cf34e31ea77238b56704dc1ddca9bf729ffdb3d3cf",
+      "ko_sha256": "64fc7412422a56671ba0b7f9ccdf982fef2fa2f3628abbfe97eaab5143f27367",
+      "en_sha256": "6b09fce3d0d84be3c53e2b11cd21a91ea2bae812f5c617b506b9bb6688401ef4",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review; independent review: evaluation or vendors",
-      "reviewed": "2026-09-26",
-      "notes": "자료2건·주제23/모음18/총44쌍·prompt123개·복원/condensed/미실행한계·새5쌍링크를 양쪽 대조. vendors 독립검토통과 후 링크표시명만 현행화. 실제민감정보없는가상내용이며모델/DB실행을주장하지않는다."
+      "reviewer": "Codex root author review; independent review: infra_ops / infra_core",
+      "reviewed": "2026-09-27",
+      "notes": "기존데이터플랫폼의범위·제약·링크를보존하고자료3건/48쌍/126prompt/신규인프라와미학습범위를양쪽대조. infra_core 독립검토PASS. 실제비밀값·개인식별정보를발견하지않았다."
     },
     "methodologies/knowledge-workflow.md": {
       "ko_sha256": "89573a872e5ef93c553e1f37044b3c266ea8c2b8b3ed3cce03055480ef77f615",
@@ -371,14 +371,14 @@
       "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "prompts/index.md": {
-      "ko_sha256": "9748db467567e83e6b024c8cf42ec80031ebbab12bbb878dc230633a46ab025e",
-      "en_sha256": "6dfc7fccb8a2aa9bb547be3a0ef914772cb53a070b4a7ccf6d1f3942f0efd760",
+      "ko_sha256": "2efd5ed97b5034436dea0c6ec98a88537fbe83800601751aaaa90e90b7c704df",
+      "en_sha256": "156ec0e6cb3b84725583687c5b8a79ed34e87a992424ba1765874a1bb0007b54",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review; independent review: evaluation or vendors",
-      "reviewed": "2026-09-26",
-      "notes": "library100개와개념23개총123개집계,신규6정규페이지예시링크,학습상태구분을양쪽대조. vendors 독립검토통과. 실제민감정보없는가상내용이며모델/DB실행을주장하지않는다."
+      "reviewer": "Codex root author review; independent review: infra_ops / infra_core",
+      "reviewed": "2026-09-27",
+      "notes": "모음100개를보존하고정규문서26개총126개와새인프라3개예시링크를양쪽대조. infra_core 독립검토PASS. 실제비밀값·개인식별정보를발견하지않았다."
     },
     "prompts/knowledge-workflow.md": {
       "ko_sha256": "956f10f22a2b3c54f85c471ae5aa2eb96989f9dbe749087cb382f2164a3202ba",
@@ -439,6 +439,46 @@
       "reviewer": "Codex /root/import_vendors author review; /root/import_operations independent review; independent review: operations",
       "reviewed": "2026-09-26",
       "notes": "원문 해당 장 전체 선추출 후 전체 한영 문서를 대조했다. 40개 절의 개념·표·예시·제약을 보존하고 Snowflake 요약 학습 및 실제 구현 부재를 표시했다. 공식 문서로 포맷/스토리지/catalog 경계, UniForm 비동기 읽기, AI Search 권한 제한, target lag를 확인했다. LLM 6요소와 양언어 탭 문구·섹션 렌더링 검사 통과. 독립 검토의 Langfuse UC 외부 통합·AI Search 증분/부분 재구축 보완 반영. 비밀·실제 개인/회사식별자 없음. 해당 원문 전체와 한영 전체를 독립 검토자가 대조했으며 보완 사항을 반영했다. 통합 링크검사에서잘못된자동anchor를발견해기존Databricks정규페이지링크로수정후의미대조."
+    },
+    "platform-infrastructure/linux-containers.md": {
+      "ko_sha256": "4c806d5b46fada1abe75070f9b63d3c647455119803aae310c1f8c2eab7dd3fa",
+      "en_sha256": "4b1a2e79b0074ef4c702869b58781ddba82ec095583077c25f90dd6e4ccc7b2f",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex infra_linux author: full source and full KO/EN semantic review; independent review: infra_ops",
+      "reviewed": "2026-09-27",
+      "notes": "원문 Chapter 1 전체 9~1628행과 한영 전체를 대조했다. 12절 개념·모든 예시 수치·명령·YAML·Dockerfile·질문·증상/진단 순서를 보존했다. 반복 요약은 영어에서 통합했고 PIS-01-01~12 추적 유지. request/반응적 OOM/PID 1/namespace/bind/publish/캐시/비밀/저장소 경계는 공식 1차 문서로 확인해 양 언어 동등 보완. 쉬운 영어·한영 prompt 동일본문·공개용 예시/주소·실행하지 않은 예시 경계 검토. 자격증명·사내정보 없음; 실제 런타임 테스트 주장 없음. 원문 전체와 한영 전문을 독립 담당자가 검토했다. 명령 실행·실제 운영 경험은 주장하지 않는다. OOM 도식의 회수불가/종료가능 조건도 본문 교정과 대조했다."
+    },
+    "platform-infrastructure/kubernetes-core.md": {
+      "ko_sha256": "2563fadf706cc82324dbb3f849861dd709ea56fb24f1122d6b9d9c8a1f1a5eec",
+      "en_sha256": "4258e61869e2af63d212229c60f1a89274980e2a73e5cee4b6ec5dac9958492f",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/infra_core author review; independent review: infra_linux",
+      "reviewed": "2026-09-27",
+      "notes": "원문 Chapter 2 전체 14절과 양언어 전체를 읽고 개념·예시·수치·설정 조각·제약을 대조했다. revision 생성, QoS 조건, base64/암호화, probes/Pod phase, Service/CNI/proxy 경계를 Kubernetes 공식 문서로 보완했다. 양언어 프롬프트·도표 동등성 확인. 실제 클러스터·명령·YAML 적용은 미실행이며 snippet은 설명용으로 명시했다. 모든 주소·자격증명 키는 학습 예시이며 실제 secret 없음. 독립 검토 /root/infra_linux가 발견한 순차 종료 설명을 공식 StatefulSet 문서와 대조하고 OrderedReady 생성 오름차순·scale-down 역순·리소스 삭제 예외로 양언어 보완했다. 원문 전체와 한영 전문을 독립 담당자가 검토했다. 명령 실행·실제 운영 경험은 주장하지 않는다. 독립검토의 StatefulSet 순차종료 보완을 양언어 반영하고 재검토했다."
+    },
+    "platform-infrastructure/kubernetes-operations.md": {
+      "ko_sha256": "38094a5db394b58a2a4f8d1e3bea0c72c7384180f8a8e8b41e38aaf37b606487",
+      "en_sha256": "01a22605f8406a3c93937ebc4e850378ff3f4022bef8344afe5ba1930e16b8e7",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex infra_ops author review; independent review: infra_core",
+      "reviewed": "2026-09-27",
+      "notes": "Chapter 3 전체 2891–4111행 및 작성한 한영 전체 재독. 3.1–3.10 개념·예시·수치·명령·장애원인·제약, Mermaid 3개, 실무 활용 6요소 1개 보존. PDB/etcd/CNI/CSI/DNS/autoscaling/drain/version-skew/lifecycle 공식 문서 보완 양언어 대조. 실제 주소·자격증명 없음; 10.0.0.10은 원문 가상주소로 명시. 클러스터·kubectl·모델 미실행이며 studied는 Basic 개념 범위. 실제 Markdown 설정 렌더링 및 prompt 구조·양쪽 tab본문 일치 통과. 원문 전체와 한영 전문을 독립 담당자가 검토했다. 명령 실행·실제 운영 경험은 주장하지 않는다."
+    },
+    "platform-infrastructure/index.md": {
+      "ko_sha256": "19cb7b51ef368211a9128a8703cae89dcedaec0955bba0ed603a1f6cd2fc3fda",
+      "en_sha256": "3ee6b3c9b627f06b8f96fe226f582f8a5b1d42b0963707ba9b8962cce7d0eb25",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex root author review; independent review: infra_ops / infra_core",
+      "reviewed": "2026-09-27",
+      "notes": "원문 범위와 완료 상태 2개ID·Basic1~3/미학습4~15목차·다른데이터과정과의구분·명령미실행·관련링크를양쪽전체대조. infra_ops 독립검토PASS. 실제비밀값·개인식별정보를발견하지않았다."
     }
   }
 }

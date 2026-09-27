@@ -1,8 +1,8 @@
 ---
 id: handbook-glossary
 status: overview
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids: []
 ---
 
@@ -81,3 +81,24 @@ knowledge_ids: []
 | Dynamic Table | 선언한 query 결과를 target lag 목표에 맞춰 갱신하는 Snowflake 객체. | [snowflake](../data-platform/snowflake.md) |
 | RTO | Recovery time objective. 복구에 허용하는 목표 시간. | [production-operations](../data-platform/production-operations.md) |
 | RPO | Recovery point objective. 시간으로 표현한 허용 데이터 손실 범위. | [production-operations](../data-platform/production-operations.md) |
+
+## 플랫폼·인프라 기초
+
+| 용어 | 의미 | 정규 주제 |
+|---|---|---|
+| Process / PID | 실행 중인 프로그램 / 특정 PID namespace에서 process를 식별하는 번호. | [linux-containers](../platform-infrastructure/linux-containers.md) |
+| File descriptor (FD) | 열린 파일·socket 등의 입출력 대상을 process가 참조하는 정수 번호. | [linux-containers](../platform-infrastructure/linux-containers.md) |
+| Linux namespace | Process가 보는 PID·network·mount 등의 범위를 분리하는 kernel 기능. | [linux-containers](../platform-infrastructure/linux-containers.md) |
+| cgroup | Process 묶음의 CPU·memory 등 자원 사용을 제어·집계하는 Linux 기능. | [linux-containers](../platform-infrastructure/linux-containers.md) |
+| OCI | Container image와 runtime 등의 호환 규격을 정의하는 Open Container Initiative. | [linux-containers](../platform-infrastructure/linux-containers.md) |
+| Pod | Kubernetes 배포·스케줄링의 기본 단위. 함께 배치되는 container들이 network 등 실행 맥락을 공유한다. | [kubernetes-core](../platform-infrastructure/kubernetes-core.md) |
+| Reconciliation | 선언한 원하는 상태와 관측 상태의 차이를 controller가 지속적으로 조정하는 과정. | [kubernetes-core](../platform-infrastructure/kubernetes-core.md) |
+| Request / Limit | 스케줄링·자원 배분에 쓰는 요청량 / runtime에서 적용하는 자원 제한. CPU와 memory의 제한 동작은 다르다. | [kubernetes-core](../platform-infrastructure/kubernetes-core.md) |
+| Readiness / Liveness / Startup probe | 트래픽을 받을 준비 / 재시작이 필요한 건강 상태 / 초기 시작 완료를 구분하는 검사. | [kubernetes-core](../platform-infrastructure/kubernetes-core.md) |
+| CNI | Container network 설정을 연결하는 표준 plugin 인터페이스. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| CSI | Orchestrator와 storage driver를 연결하는 Container Storage Interface. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| etcd / Quorum | Kubernetes API 상태를 보존하는 분산 key-value store / 합의에 필요한 과반수. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| HPA / VPA | Workload의 replica 수 / container의 요청 자원 크기를 조정하는 autoscaling 방식. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| Cluster Autoscaler | 스케줄되지 못한 Pod 등의 조건을 바탕으로 node 수를 조절하는 구성 요소. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| PodDisruptionBudget (PDB) | Eviction API를 따르는 자발적 중단에서 workload에 필요한 가용 수를 지키도록 중단을 제한하는 예산. 모든 장애를 막는 보장은 아니다. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+| Cordon / Drain | Node를 새 스케줄링 대상에서 제외 / node 유지보수를 위해 Pod 퇴거 등을 진행하는 작업. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |

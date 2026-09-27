@@ -1,14 +1,14 @@
 ---
 id: prompt-library
 status: overview
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids: []
 ---
 
 # Practical prompt library
 
-These **100 new examples** support design reviews, SQL reviews, incident investigation, data checks, and documentation. Together with 23 examples in concept guides, there are 123 examples with bilingual tabs and multiple lines. Choose a topic, then use its scenario list.
+These **100 new examples** support design reviews, SQL reviews, incident investigation, data checks, and documentation. Together with 26 examples in concept guides, there are 126 examples with bilingual tabs and multiple lines. Choose a topic, then use its scenario list.
 
 ## How to use
 
@@ -50,3 +50,7 @@ Provide symptoms, expected behavior, product and connector versions, actual sett
 ## Examples from the continuation
 
 [AI evaluation](../data-platform/ai-evaluation.md), [Databricks](../data-platform/databricks.md), [Snowflake](../data-platform/snowflake.md), [platform comparison](../data-platform/platform-comparison.md), [operations and recovery](../data-platform/production-operations.md), and [architecture](../data-platform/architecture.md) each include another bilingual example based on the new source.
+
+## Platform and infrastructure examples
+
+[Linux and containers](../platform-infrastructure/linux-containers.md), [Kubernetes core](../platform-infrastructure/kubernetes-core.md), and [Kubernetes operations](../platform-infrastructure/kubernetes-operations.md) each include a bilingual diagnosis or design-review example. These do not execute operational commands or approve changes.
