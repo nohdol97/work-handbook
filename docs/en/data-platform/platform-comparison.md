@@ -727,7 +727,7 @@ Managed platforms observe their own execution systems. This can help capture `Jo
 
 ### 19.9 AI Ecosystem
 
-More freedom adds integration and operations work. Check migration of prompt, agent, retrieval, and evaluation versions, not only model replacement. [AI-ready data](ai-ready-data.md), [Online evaluation](online-evaluation.md).
+More freedom adds integration and operations work. Check migration of prompt, agent, retrieval, and evaluation versions, not only model replacement. [AI-ready data](ai-ready-data.md), [Online evaluation](ai-evaluation.md#161-online-evaluation-events).
 
 ### 19.10 Portability
 

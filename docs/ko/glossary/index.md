@@ -60,7 +60,7 @@ knowledge_ids: []
 | Provenance | 데이터·AI 결과의 출처와 생성 맥락을 추적하는 정보. | [ai-ready-data](../data-platform/ai-ready-data.md) |
 | Reproducibility | 과거 실험 조건을 다시 구성하는 능력. 동일 LLM 문장 생성의 보장은 아니다. | [ai-ready-data](../data-platform/ai-ready-data.md) |
 | Regression dataset | 과거 실패가 재발하는지 확인하는 평가 사례 모음. | [ai-ready-data](../data-platform/ai-ready-data.md) |
-| Online evaluation | 실제 AI 실행에 feedback·규칙·judge 등의 평가 신호를 연결하는 과정. | [online-evaluation](../data-platform/online-evaluation.md) |
+| Online evaluation | 실제 AI 실행에 feedback·규칙·judge 등의 평가 신호를 연결하는 과정. | [online-evaluation](../data-platform/ai-evaluation.md#161-online-evaluation-events) |
 
 [지식 관리 방법](../methodologies/knowledge-workflow.md) · [홈](../index.md)
 

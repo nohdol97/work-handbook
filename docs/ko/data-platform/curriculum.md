@@ -50,7 +50,7 @@ knowledge_ids:
 
 ## 완료: Phase 16 — AI 평가 데이터 플랫폼
 
-[16.1 온라인 평가](online-evaluation.md)와 [16.2~16.12 AI 평가 플랫폼](ai-evaluation.md)을 개념 학습했다. 새 자료의 예시·숫자·버전 표는 학습용이며 실제 모델 평가 실행 결과가 아니다.
+[16.1~16.12 AI 평가 플랫폼](ai-evaluation.md)을 개념 학습했다. 새 자료의 예시·숫자·버전 표는 학습용이며 실제 모델 평가 실행 결과가 아니다.
 
 - 16.2 Offline Evaluation Datasets
 - 16.3 Human Feedback

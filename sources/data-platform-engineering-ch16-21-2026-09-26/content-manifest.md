@@ -355,7 +355,7 @@ items:
 |---|---|---|---|
 | DPE2-00-01 | 1–19 | 후속 자료의 범위와 개념 중심 학습 깊이;  | data-platform/curriculum.md |
 | DPE2-00-02 | 20–49 | Phase 1~21 개념 학습 완료 선언;  | data-platform/curriculum.md |
-| DPE2-16-01 | 52–175 | 운영 실행과 평가 이벤트 연결; trace/execution/agent/prompt/model ID와 점수·feedback 연결; rating1~5와 부정확/잘못된tool선택; SQL실행/citation/금지정보/schema/권한tool검사; 신규사용패턴·데이터변화·tool장애·긴맥락·실제권한·운영edgecase | data-platform/online-evaluation.md |
+| DPE2-16-01 | 52–175 | 운영 실행과 평가 이벤트 연결; trace/execution/agent/prompt/model ID와 점수·feedback 연결; rating1~5와 부정확/잘못된tool선택; SQL실행/citation/금지정보/schema/권한tool검사; 신규사용패턴·데이터변화·tool장애·긴맥락·실제권한·운영edgecase | data-platform/ai-evaluation.md |
 | DPE2-16-02 | 176–308 | 고정 offline 평가 데이터셋; Dataset v5의 일반/tool/권한침해/RAG/운영회귀5사례로agent10/11비교; input,expected_output/behavior/tool,rubric,category,difficulty,metadata; 팀별지난주AI비용의허용데이터·집계·PII제외; 전체88%와범주95/91/84/100/70%; 운영실패를회귀케이스로환류 | data-platform/ai-evaluation.md |
 | DPE2-16-03 | 309–402 | 사람 피드백과 rubric; thumbs/rating4/5,5/5,3/5; 전문가의기술정확성/tool/정책/citation/도메인검토; 정확성/관련성/groundedness/tool/format각0~2; 사람5대3불일치와inter-rateragreement; trace→negative→human→failurelabel→regression 및5실패label | data-platform/ai-evaluation.md |
 | DPE2-16-04 | 403–508 | 모델 judge와 보정; 입력+응답+선택맥락→judge→점수+이유; 7평가차원과RAG근거평가; judge모델/버전/프롬프트/score/reason/time; 같은agent judgev1 .85 vs v2 .72; human표본보정;100000자동+중요1000사람검토 예시 | data-platform/ai-evaluation.md |

@@ -60,7 +60,7 @@ knowledge_ids: []
 | Provenance | Information tracing the origin and production context of data or AI output. | [ai-ready-data](../data-platform/ai-ready-data.md) |
 | Reproducibility | The ability to restore experiment conditions; it does not guarantee identical LLM wording. | [ai-ready-data](../data-platform/ai-ready-data.md) |
 | Regression dataset | Evaluation cases used to check whether past failures return. | [ai-ready-data](../data-platform/ai-ready-data.md) |
-| Online evaluation | Attaching feedback, rule checks, or judge signals to real AI executions. | [online-evaluation](../data-platform/online-evaluation.md) |
+| Online evaluation | Attaching feedback, rule checks, or judge signals to real AI executions. | [online-evaluation](../data-platform/ai-evaluation.md#161-online-evaluation-events) |
 
 [Knowledge workflow](../methodologies/knowledge-workflow.md) · [Home](../index.md)
 

@@ -10,7 +10,7 @@ knowledge_ids: []
 
 기존 학습 개념에서 파생해 작성한 재사용 가능한 가상 실무 예시다. 모델 호출·실제 운영·실험을 수행한 기록이 아니다. 대괄호 입력을 공개 가능한 비식별 정보로 채우고, 결과를 가설과 초안으로 검토한다.
 
-[개념 문서](../data-platform/online-evaluation.md) · [프롬프트 모음](index.md)
+[개념 문서](../data-platform/ai-evaluation.md#161-online-evaluation-events) · [프롬프트 모음](index.md)
 
 | 사례 | 바로가기 |
 | --- | --- |

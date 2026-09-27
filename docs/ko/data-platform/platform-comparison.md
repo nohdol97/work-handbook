@@ -727,7 +727,7 @@ Managed 플랫폼은 내부 실행을 관찰하므로 `Job → Table → Dashboa
 
 ### 19.9 AI Ecosystem
 
-자유도는 통합·운영 부담과 함께 증가한다. 모델 교체뿐 아니라 prompt/agent/retrieval/evaluation version을 옮길 수 있는지도 확인한다. [AI-ready data](ai-ready-data.md), [Online evaluation](online-evaluation.md).
+자유도는 통합·운영 부담과 함께 증가한다. 모델 교체뿐 아니라 prompt/agent/retrieval/evaluation version을 옮길 수 있는지도 확인한다. [AI-ready data](ai-ready-data.md), [Online evaluation](ai-evaluation.md#161-online-evaluation-events).
 
 ### 19.10 Portability
 

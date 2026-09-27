@@ -10,7 +10,7 @@ knowledge_ids: []
 
 These reusable, hypothetical work examples were authored from existing study concepts. They are not records of model runs, production work, or experiments. Fill placeholders with sanitized information safe to share. Treat results as hypotheses and drafts.
 
-[Concept guide](../data-platform/online-evaluation.md) · [Prompt library](index.md)
+[Concept guide](../data-platform/ai-evaluation.md#161-online-evaluation-events) · [Prompt library](index.md)
 
 | Case | Jump to example |
 | --- | --- |

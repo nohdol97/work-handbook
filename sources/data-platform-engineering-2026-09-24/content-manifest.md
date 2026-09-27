@@ -1501,7 +1501,7 @@ items:
 
 - 원문 위치: 원문 5496–5614행, `16.1 Online Evaluation Events`.
 - 범위: User Feedback; Automatic Evaluation; Langfuse 연결.
-- 목적지: `data-platform/online-evaluation.md`.
+- 목적지: `data-platform/ai-evaluation.md`.
 - 이 ID는 위 절 안의 예시·숫자·질문·실패 조건·제약을 포함한다. 원문 보존본과 양쪽 문서를 함께 검토한다.
 
 ## DPE-17-01

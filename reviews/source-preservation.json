@@ -106,19 +106,11 @@
       "verbatim_language": "ko"
     },
     {
-      "page": "data-platform/online-evaluation.md",
-      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
-      "start": "# Chapter 16 — AI Evaluation Data Platform",
-      "end": "## 16.2 Offline Evaluation Datasets",
-      "verbatim_language": "en"
-    },
-    {
       "page": "data-platform/ai-evaluation.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
-      "start": "## 16.2 Offline Evaluation Datasets",
+      "start": "# Chapter 16 — AI Evaluation Data Platform",
       "end": "# Chapter 17 — Databricks Deep Dive",
-      "verbatim_language": "en",
-      "include_start": true
+      "verbatim_language": "en"
     },
     {
       "page": "data-platform/databricks.md",

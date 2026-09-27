@@ -824,7 +824,7 @@ items:
   reason: 원문 절의 설명·예시·제약을 한영 정규 문서에 보존함
 - id: DPE-16-01
   state: Included
-  destination: data-platform/online-evaluation.md
+  destination: data-platform/ai-evaluation.md
   ko: Synced
   en: Synced
   reason: 원문 절의 설명·예시·제약을 한영 정규 문서에 보존함

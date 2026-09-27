@@ -24,11 +24,14 @@
 
 | 정규 문서 | 신규 자료 ID 수 |
 |---|---:|
-| `data-platform/ai-evaluation.md` | 11 |
+| `data-platform/ai-evaluation.md` | 12 |
 | `data-platform/architecture.md` | 37 |
 | `data-platform/curriculum.md` | 4 |
 | `data-platform/databricks.md` | 12 |
-| `data-platform/online-evaluation.md` | 1 |
 | `data-platform/platform-comparison.md` | 15 |
 | `data-platform/production-operations.md` | 22 |
 | `data-platform/snowflake.md` | 13 |
+
+## 2026-09-27 16장 통합
+
+사용자 요청으로 16.1과 16.2–16.12를 `data-platform/ai-evaluation.md` 한영 한 쌍에 통합했다. DPE-16-01과 DPE2-16-01~12의 전체 내용과 기존 보완·실무 예시를 유지한다. 기존 `data-platform-online-evaluation` 페이지 ID는 `data-platform-ai-evaluation`으로 병합되며 이전 경로의 내부 링크도 새 목적지로 옮겼다. 원문 파일은 변경하지 않는다.

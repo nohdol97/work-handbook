@@ -50,7 +50,7 @@ The current study body follows `data_platform_engineering_complete_source_ch01_2
 
 ## Completed: Phase 16 — AI evaluation data platform
 
-Conceptual study now covers [16.1 online evaluation](online-evaluation.md) and [16.2–16.12 AI evaluation](ai-evaluation.md). Examples, numbers, and version tables are learning examples, not actual model evaluation results.
+Conceptual study now covers [16.1–16.12 AI evaluation](ai-evaluation.md). Examples, numbers, and version tables are learning examples, not actual model evaluation results.
 
 - 16.2 Offline Evaluation Datasets
 - 16.3 Human Feedback

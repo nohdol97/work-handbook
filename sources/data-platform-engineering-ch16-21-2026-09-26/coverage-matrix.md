@@ -14,7 +14,7 @@ items:
   reason: 기존 정규 지식의 의미·예시·제약을 보존하고 후속 자료와 합집합으로 통합함
 - id: DPE2-16-01
   state: Merged
-  destination: data-platform/online-evaluation.md
+  destination: data-platform/ai-evaluation.md
   ko: Synced
   en: Synced
   reason: 기존 정규 지식의 의미·예시·제약을 보존하고 후속 자료와 합집합으로 통합함

@@ -15,7 +15,23 @@ theme:
     - content.code.copy
     - content.tabs.link
   palette:
-    primary: indigo
+    - media: "(prefers-color-scheme)"
+      primary: indigo
+      toggle:
+        icon: material/brightness-auto
+        name: 라이트 모드로 전환 / Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: 다크 모드로 전환 / Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: 시스템 설정 사용 / Use system preference
 plugins:
   - search
   - i18n:
@@ -88,7 +104,6 @@ nav:
       - 계보와 메타데이터: data-platform/lineage-metadata.md
       - 거버넌스: data-platform/governance.md
       - AI-ready 데이터: data-platform/ai-ready-data.md
-      - 온라인 AI 평가: data-platform/online-evaluation.md
       - AI 평가 플랫폼: data-platform/ai-evaluation.md
       - Databricks: data-platform/databricks.md
       - Snowflake: data-platform/snowflake.md

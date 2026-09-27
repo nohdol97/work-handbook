@@ -1640,7 +1640,7 @@ Metadata describes data. A catalog makes metadata searchable. Business metadata 
 
 Tools such as Langfuse handle traces, LLM/tool calls, prompts/responses, tokens/cost/latency, scores, datasets, and experiments. Do not assume they replace enterprise analytics, lakehouse storage, cross-domain joins, governance, long-term history, or a unified catalog. In this learning design, Langfuse handles execution-level telemetry and evaluation; the data platform holds durable analytical assets. This is not a final product adoption decision.
 
-[AI-ready data](ai-ready-data.md) · [Online evaluation](online-evaluation.md) · [Study scope and next steps](curriculum.md)
+[AI-ready data](ai-ready-data.md) · [Online evaluation](ai-evaluation.md#161-online-evaluation-events) · [Study scope and next steps](curriculum.md)
 
 ### Why each component exists
 

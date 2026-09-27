@@ -597,6 +597,6 @@ Read the “physical table state version” in 15.3 as a consistent set of files
 
 ## Related topics
 
-[Online evaluation](online-evaluation.md) · [Governance](governance.md) · [Lineage and metadata](lineage-metadata.md) · [Architecture](architecture.md)
+[Online evaluation](ai-evaluation.md#161-online-evaluation-events) · [Governance](governance.md) · [Lineage and metadata](lineage-metadata.md) · [Architecture](architecture.md)
 
 [More practical prompts](../prompts/ai-ready-data.md)

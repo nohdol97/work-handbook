@@ -1,14 +1,14 @@
 {
   "pages": {
     "glossary/index.md": {
-      "ko_sha256": "666d421324023aa5886277777ca485d416880810cbea32d789f6de24bc1f65ca",
-      "en_sha256": "65a9439951b55e4e458f491d45b039d65b7ff9ff4a32d67283a3e97166be5bef",
+      "ko_sha256": "a0a9e1f1a3e8c49ebd560160913362f74d52f172667407e0504532155b0a066a",
+      "en_sha256": "047985a30aef4826a4ce708a0faeca9e387199f51e3542cc524ae46b80f16805",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review; independent review: infra_ops / infra_core",
+      "reviewer": "Codex subagent /root/review_ch16 independent review",
       "reviewed": "2026-09-27",
-      "notes": "기존59개용어정의를보존하고runtime/cluster16개용어를양언어추가. infra_core가전체대조했고지적한PDB의가용수를제한한다는오역을필요한가용수를지키도록중단을제한으로교정해EN과재대조. 실제비밀값·개인식별정보를발견하지않았다."
+      "notes": "기존59개용어정의를보존하고runtime/cluster16개용어를양언어추가. infra_core가전체대조했고지적한PDB의가용수를제한한다는오역을필요한가용수를지키도록중단을제한으로교정해EN과재대조. 실제비밀값·개인식별정보를발견하지않았다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
     },
     "index.md": {
       "ko_sha256": "224f33f42f045d75dd4a60cef41f8b391f472373f7ff202e3eb57953a0dcfc91",
@@ -171,44 +171,34 @@
       "notes": "원문 전체의 개념·목록·예시·흐름을 절별로 대조했다. 한글 핵심 본문은 원문과 완전 동일하고 영어는 동일 번호·하위 제목·단락 및 예시 순서를 유지한다. 기존 올바른 보완점·링크·Mermaid·한영 프롬프트를 보존했다. 실무 수행이나 버전 재검증을 주장하지 않는다. 실제 개인정보나 비밀값 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
     },
     "data-platform/ai-ready-data.md": {
-      "ko_sha256": "903a04c4e0e3fcf5ae9599848f6dc08489193a3f435ffeac5a00099fbf201ac2",
-      "en_sha256": "fe87dbff013915ebb1804ff8cb6df2c03a72cb406e5ca9e1c437bf0b5e9fd474",
+      "ko_sha256": "061a41b70a32611e54a88cf0f778f9cfe6c8ee0fba21ef1f1500377b411cd6d9",
+      "en_sha256": "b936391255e8021477667717ae7d8b7562153b0ba9b8af4f1d828def8b6bedf7",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/rewrite_ch9_11 (full source and bilingual author review); Codex root title/reading-note integration review",
+      "reviewer": "Codex subagent /root/review_ch16 independent review",
       "reviewed": "2026-09-27",
-      "notes": "15.2A 세션질문과대답,15.3 물리table상태표현을 원문대로 복원. 실제 계측/연동범위·미검증개념도·metadata가참조하는파일집합·snapshot/dataset경계 차이는 번호별 보완. 기존Langfuse trace/observation/session,version/schema,수집/identity/검색권한 주의와 모든links/prompts 보존. 한국어본문은 source outerblank만 제외 byte동일. 영어는 한국어source와 모든 heading level/number·단락·목록·인용·fence·text도식행·hardbreak·구분선을 대응시켜 전문 완역 검토. 기존 압축요약은 같은 번호의 완전한 source본문으로 대체했으며 비중복 지식은 보완에 남김. source교정사항을 silentlyoverwrite하지 않고 첫머리에서 보완링크 안내. 실제 개인정보/비밀값 없음, 학습예시·미실행구분 유지. 새 공식확인일/시험버전 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
-    },
-    "data-platform/online-evaluation.md": {
-      "ko_sha256": "75d38ffe325ac320902676ccaa7a34bf3f7f3b7c6ac66f6a275e43f43dc93fe2",
-      "en_sha256": "b1749b95744c366aa1b046cbf6b5936178319afc35d0e61f415f0762752a9f1a",
-      "semantic": "pass",
-      "simple_english": "pass",
-      "privacy": "pass",
-      "reviewer": "Codex root full changed-content review; independent source/core review: rewrite_ch6_8",
-      "reviewed": "2026-09-27",
-      "notes": "최신16.1 영어원문그대로와 동일구조 한국어완역을 전문 대조했다. 독립검토 지적을 반영해 기존 Langfuse 흐름도·활용목록을 영어보완에도 복원하고 schema/도구선택/권한 검사를 구분하는 조건을 양언어 보완했다. 기존prompt 그대로, 실제운영실행주장/실제비밀값 없음. 원문 Chapter제목과 보완안내 한영대조."
+      "notes": "15.2A 세션질문과대답,15.3 물리table상태표현을 원문대로 복원. 실제 계측/연동범위·미검증개념도·metadata가참조하는파일집합·snapshot/dataset경계 차이는 번호별 보완. 기존Langfuse trace/observation/session,version/schema,수집/identity/검색권한 주의와 모든links/prompts 보존. 한국어본문은 source outerblank만 제외 byte동일. 영어는 한국어source와 모든 heading level/number·단락·목록·인용·fence·text도식행·hardbreak·구분선을 대응시켜 전문 완역 검토. 기존 압축요약은 같은 번호의 완전한 source본문으로 대체했으며 비중복 지식은 보완에 남김. source교정사항을 silentlyoverwrite하지 않고 첫머리에서 보완링크 안내. 실제 개인정보/비밀값 없음, 학습예시·미실행구분 유지. 새 공식확인일/시험버전 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
     },
     "data-platform/architecture.md": {
-      "ko_sha256": "ae794b5e8fe12f82d708cde65c72d66bb77b6d37cf7337e898b49b23b0a42e8e",
-      "en_sha256": "3894d070ddd5144de7cd4796aa1b3eb51bda42e26fd0235d8d8b4a79668105f6",
+      "ko_sha256": "63dc3b31043d08e730f963e05217f0ee8628b7cfa3f4535dba79e5d4dca6e2b2",
+      "en_sha256": "a3fd566118840e6404895de665e63a5ccbde9b7aec5d75f3edc73f9d462e54f8",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/rewrite_ch9_11 (full-source and full bilingual author review); Codex root title/reading-note integration review",
+      "reviewer": "Codex subagent /root/review_ch16 independent review",
       "reviewed": "2026-09-27",
-      "notes": "완성본 Chapter21 도입문과29절 및 Final Mental Model/7개EngineeringPrinciples EN literal/KO 대응번역. AppendixA 한국어5절은 literal, 영어는 원형 대응번역. 전체구조·도입이유·AI평가/버전·장애/일관성·재처리·확장/비용·작은규모·managed/open·선택질문을 누락없이 대조. 각언어의 원문 line-by-line 구조(빈줄·heading level/number·code fence·목록·blockquote·hardbreak·구분선) 비교 PASS. 기존본문전체는 heading깊이 외 byte 동일하게 보완부록에 보존하여 첫batch 지식·정확한주의사항·Mermaid·링크·프롬프트 누락 없음. 삭제한 중복요약 없음. 코드식별자/SQL/기술명 유지, 자연어 설명과 text 질문을 대응번역. 실제 개인정보·비밀값 없음, 가상훈련/예시·미실행구분 유지. EN 원문과 기존영어는 짧은 문장으로 검토, 신규 번역 AppendixA도 단순영어 의미대조. 공식문서확인일2026-09-26 그대로, 이번편집에서 신규브라우징/실험 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다. Root가 보완 부록에서 기존 LLM 섹션과 후속 근거 섹션의 제목 수준을 원래 H2로 복원해 기존 실무 예시 분류를 유지했다. 본문·원문 구역은 변경하지 않았다."
+      "notes": "완성본 Chapter21 도입문과29절 및 Final Mental Model/7개EngineeringPrinciples EN literal/KO 대응번역. AppendixA 한국어5절은 literal, 영어는 원형 대응번역. 전체구조·도입이유·AI평가/버전·장애/일관성·재처리·확장/비용·작은규모·managed/open·선택질문을 누락없이 대조. 각언어의 원문 line-by-line 구조(빈줄·heading level/number·code fence·목록·blockquote·hardbreak·구분선) 비교 PASS. 기존본문전체는 heading깊이 외 byte 동일하게 보완부록에 보존하여 첫batch 지식·정확한주의사항·Mermaid·링크·프롬프트 누락 없음. 삭제한 중복요약 없음. 코드식별자/SQL/기술명 유지, 자연어 설명과 text 질문을 대응번역. 실제 개인정보·비밀값 없음, 가상훈련/예시·미실행구분 유지. EN 원문과 기존영어는 짧은 문장으로 검토, 신규 번역 AppendixA도 단순영어 의미대조. 공식문서확인일2026-09-26 그대로, 이번편집에서 신규브라우징/실험 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다. Root가 보완 부록에서 기존 LLM 섹션과 후속 근거 섹션의 제목 수준을 원래 H2로 복원해 기존 실무 예시 분류를 유지했다. 본문·원문 구역은 변경하지 않았다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
     },
     "data-platform/curriculum.md": {
-      "ko_sha256": "33e55af024bc3670017103e3edd14e606f568d95bb1e2d67b2acbfb2ccb06509",
-      "en_sha256": "eaf9870ad7fdf3384470defa368834bb7017de179ac3e9bba68c623cce825e28",
+      "ko_sha256": "86632b8389388e53dac0e9627857519a94854b888856ff8a97222b70dba4f321",
+      "en_sha256": "d3b6ce8b7f3f535ca9532febc2788a9a704c0419cc430a2f6c369bc0d2d86f2e",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root full changed-content review",
+      "reviewer": "Codex subagent /root/review_ch16 independent review",
       "reviewed": "2026-09-27",
-      "notes": "양언어 기존 범위·링크·제약을 보존하며 최신통합본과인프라두기준자료, 원문그대로/동일구조번역/보완분리 안내를 대조했다. 48쌍126prompt수치와실제경험미주장유지. Curriculum의과거원문복원한계·과거상태를 보존하고Appendix A의17번표기와Databricks구분설명확인. 실제민감정보없음."
+      "notes": "양언어 기존 범위·링크·제약을 보존하며 최신통합본과인프라두기준자료, 원문그대로/동일구조번역/보완분리 안내를 대조했다. 48쌍126prompt수치와실제경험미주장유지. Curriculum의과거원문복원한계·과거상태를 보존하고Appendix A의17번표기와Databricks구분설명확인. 실제민감정보없음. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
     },
     "prompts/foundations.md": {
       "ko_sha256": "b1acc6e268b70285385edabf60a2b14dd51d9cdb05ad012b54a20041d700895a",
@@ -361,14 +351,14 @@
       "notes": "telemetry 연결·평가 사례·embedding 버전·retrieval/generation·provenance·feature/label 시각을 양쪽 대조했다. 권한 없는 근거 제공·결정성·실제 실행을 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
     },
     "prompts/online-evaluation.md": {
-      "ko_sha256": "7dce473ccb4937784242b4c4fb81feef4308e9451b163ff4f100d073c7dcc011",
-      "en_sha256": "47e071ef6a461eace85ccb8dc7f7027f3b4de2140e67898c414e449a7dd84984",
+      "ko_sha256": "d65d58b4f3c89416187e4533a2c30a3a712c04b7b18fdd5fdac2186a55a0f8a3",
+      "en_sha256": "f05b01362d4390876b7795f496d4bff7bbfc4002233c262e6a7ca324d0b2a868",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
-      "reviewed": "2026-09-24",
-      "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex subagent /root/review_ch16 independent review",
+      "reviewed": "2026-09-27",
+      "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
     },
     "prompts/index.md": {
       "ko_sha256": "2efd5ed97b5034436dea0c6ec98a88537fbe83800601751aaaa90e90b7c704df",
@@ -391,14 +381,14 @@
       "notes": "추출 우선·번역 제약 보존·중복 병합 추적·갱신 근거 4개 시나리오의 한영 본문과 프롬프트 전체를 대조했다. 독립 검토 지적에 따라 영어 검증 방법에도 사람의 최종 검토를 명시했다. 짧은 영어와 비밀값 없는 가상 입력을 확인했다."
     },
     "data-platform/ai-evaluation.md": {
-      "ko_sha256": "3f56151a3a8126eb69b00655bb5c180ea9b972f2a12faf30ef8c114509ec1e05",
-      "en_sha256": "923a5cb2c23401f0bc4b8d24b2de072ca6e86b77605785d310d18b83a4844a45",
+      "ko_sha256": "29bf431624a599444da48b4d4e1e592911ed4a109df71eee22ff6a920a18a2b6",
+      "en_sha256": "ef9086ba812a32b04a8a9ad77945218122072a6e3b013140986ac349d5dd7d01",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/rewrite_ch6_8; Codex root title/reading-note integration review",
+      "reviewer": "Codex subagent /root/review_ch16 independent review",
       "reviewed": "2026-09-27",
-      "notes": "EN 본문 literal byte 일치. KO는 모든 설명 문단·인용·목록과 표를 같은 순서로 번역하고 technical names/field/example values는 보존했다. 원문과 같은 줄 수·제목 수준·번호·fence 언어 순서·표 행 수 확인. 기존 추가 조건과 양언어 prompt 유지. 설명용 가상 값 외 실제 내부 endpoint/credential/인물정보 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "notes": "통합 전 네 문서와 최종 KO/EN 두 문서를 전체 읽어 16.1–16.12 의미·예시·조건·번호 대응을 검토했다. Git HEAD 두 core의 정확한 연결과 기존 보완·두 LLM 실습·Mermaid 2개 보존을 문자열 비교로 확인했다. 최신 원문 영어 전체 span과 일치하며 한국어는 같은 구조의 번역이다. 가상 값·실행 미검증·평가 한계 설명을 보존했고 실제 민감 값은 발견하지 않았다. 렌더링·배포 확인은 이 의미 검토에 포함하지 않았다."
     },
     "data-platform/production-operations.md": {
       "ko_sha256": "b2d1a04f1771c9bc63dd6be34ce40a4d58c88ea08b1b8b2152f7e6bec5345f21",
@@ -431,14 +421,14 @@
       "notes": "최신 전체 원문 17/18장과 기존 한영 전문을 읽었다. 영어 본문은 chapter H1 제외 원문과 완전 동일하다. 한국어는 모든 문단·인용·목록·표를 번역하고 원문 제목·번호·text diagram/코드 블록을 그대로 보존했다. 기존 올바른 상세 설명과 공식 조건은 별도 보완 절, Mermaid와 한영 프롬프트도 보존했다. 제품 검토일 2026-09-26을 유지하며 재검증/실행 경험을 주장하지 않는다. 예시 이름과 값은 가상이며 실제 식별/비밀 데이터 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
     },
     "data-platform/platform-comparison.md": {
-      "ko_sha256": "fa71d0a5a53f85bcebe2dd0aa7714e6abf927e05d8672e1b35debebc724d151c",
-      "en_sha256": "45f022c79a44b5d32f8c55e61b7ee0f449cfa9e5e475446ad83a1f9c4171cc9f",
+      "ko_sha256": "9e14ed27e9e9b25dab085fce7a575ebb81c78f2bf25e0fc5823ec9d9312e18ba",
+      "en_sha256": "d6a162096973296617de80442cd90628e89a4e5156e7ba1cc74b7aa1e181b61c",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/rewrite_ch6_8; Codex root title/reading-note integration review",
+      "reviewer": "Codex subagent /root/review_ch16 independent review",
       "reviewed": "2026-09-27",
-      "notes": "EN 본문 literal byte 일치. KO는 모든 설명 문단·인용·목록과 표를 같은 순서로 번역하고 technical names/field/example values는 보존했다. 원문과 같은 줄 수·제목 수준·번호·fence 언어 순서·표 행 수 확인. 기존 추가 조건과 양언어 prompt 유지. 설명용 가상 값 외 실제 내부 endpoint/credential/인물정보 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "notes": "EN 본문 literal byte 일치. KO는 모든 설명 문단·인용·목록과 표를 같은 순서로 번역하고 technical names/field/example values는 보존했다. 원문과 같은 줄 수·제목 수준·번호·fence 언어 순서·표 행 수 확인. 기존 추가 조건과 양언어 prompt 유지. 설명용 가상 값 외 실제 내부 endpoint/credential/인물정보 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
     },
     "platform-infrastructure/linux-containers.md": {
       "ko_sha256": "a8e56f5663730397bc73727294c408efba18f0899bd80aa59baca2215a168517",

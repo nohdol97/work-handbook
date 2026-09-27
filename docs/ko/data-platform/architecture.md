@@ -1640,7 +1640,7 @@ Metadata는 데이터를 설명하는 정보이고 catalog는 이를 검색·탐
 
 Langfuse 같은 도구는 trace, LLM/tool call, prompt/response, token/cost/latency, score, dataset, experiment를 다룬다. Enterprise analytics, lakehouse storage, cross-domain join, governance, 장기 이력, 통합 catalog 전체를 대체한다고 가정하지 않는다. 학습 구조에서는 AI 실행 단위 관측·평가는 Langfuse가, 장기 분석 자산은 데이터 플랫폼이 담당한다. 이것은 제품 도입을 확정한 결정이 아니다.
 
-[AI-ready 데이터](ai-ready-data.md) · [온라인 평가](online-evaluation.md) · [학습 범위와 다음 과정](curriculum.md)
+[AI-ready 데이터](ai-ready-data.md) · [온라인 평가](ai-evaluation.md#161-online-evaluation-events) · [학습 범위와 다음 과정](curriculum.md)
 
 ### 구성 요소를 도입하는 이유
 

@@ -36,7 +36,7 @@
 | `data-platform/governance.md` | 9 |
 | `data-platform/lakehouse-iceberg.md` | 11 |
 | `data-platform/lineage-metadata.md` | 8 |
-| `data-platform/online-evaluation.md` | 1 |
+| `data-platform/ai-evaluation.md` | 1 |
 | `data-platform/orchestration.md` | 8 |
 | `data-platform/spark.md` | 14 |
 | `data-platform/trino.md` | 8 |
@@ -60,3 +60,7 @@ Git 공백 검사를 위해 원문 6개 행의 Markdown hard-break용 끝 공백
 - 공개 학습 본문의 원문 구간은 `reviews/source-preservation.json`에 등록한다. 번호·단락을 합친 기존 정규화는 철회하고 원래 언어는 literal, 반대 언어는 동일 구조로 번역한다. 기존 올바른 보완은 별도 구역으로 이동한다.
 
 개인정보 검토는 기존 공개 가능한 본문과의 전구간 diff 및 새 서두·목차·Appendix 대응 대조로 수행한다. 실제 비밀값이나 개인·회사 식별정보를 발견하지 않았다. 전체 읽기는 장별 담당과 통합 담당이 분담하며 최신 파일의 모든 장·서두·말미를 대조한다. 지식 ID 100% 연결은 원문 형태 보존이나 가독성을 증명하지 않으므로 별도 검사와 전문 검토를 수행한다.
+
+## 2026-09-27 16장 통합
+
+사용자 요청으로 16.1과 16.2–16.12를 `data-platform/ai-evaluation.md` 한영 한 쌍에 통합했다. DPE-16-01과 DPE2-16-01~12의 전체 내용과 기존 보완·실무 예시를 유지한다. 기존 `data-platform-online-evaluation` 페이지 ID는 `data-platform-ai-evaluation`으로 병합되며 이전 경로의 내부 링크도 새 목적지로 옮겼다. 원문 파일은 변경하지 않는다.

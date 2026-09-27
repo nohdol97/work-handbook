@@ -597,6 +597,6 @@ Langfuse의 실제 수집 범위는 계측과 연동에 달려 있다. 원문 �
 
 ## 관련 주제
 
-[온라인 평가](online-evaluation.md) · [거버넌스](governance.md) · [계보와 메타데이터](lineage-metadata.md) · [전체 구조](architecture.md)
+[온라인 평가](ai-evaluation.md#161-online-evaluation-events) · [거버넌스](governance.md) · [계보와 메타데이터](lineage-metadata.md) · [전체 구조](architecture.md)
 
 [더 많은 실무 프롬프트](../prompts/ai-ready-data.md)
