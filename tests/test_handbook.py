@@ -69,6 +69,11 @@ class ValidFixtureTests(unittest.TestCase):
     def test_valid_minimal_handbook(self):
         self.assertEqual(checker.audit(self.root), [])
 
+    def test_additional_source_upload_integrity_is_checked(self):
+        self.source()
+        self.write('sources/study/complete-source.md', '원본 bytes: 1; SHA-256: ' + '0' * 64 + '\n<!-- ORIGINAL SOURCE START -->\nchanged\n')
+        self.assert_error('source integrity')
+
     def test_stale_review_detects_unreviewed_page_change(self):
         path = self.root / 'docs/en/index.md'
         path.write_text(path.read_text() + '\nNew warning.\n')

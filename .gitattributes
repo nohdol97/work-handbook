@@ -1,0 +1,2 @@
+# Markdown hard breaks use trailing spaces; preserve uploaded source form.
+*.md whitespace=-blank-at-eol

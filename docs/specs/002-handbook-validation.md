@@ -44,6 +44,8 @@
 
 인수 기준은 한글·CRLF·끝 공백 복원 통과, 같은 길이 본문 변조 검출, 손상·중복·범위 밖 ledger 거부, 불완전 기록 거부, 기존 일반 source fixture 통과다.
 
+통합본 재공유를 보존한 추가 원문도 놓치지 않도록 각 batch의 `*source*.md`를 검사한다. 기존 `source.md`가 유효해도 추가 `complete-source.md`의 복원 기록이 잘못되면 실패해야 한다.
+
 ## 완료 기준
 
 `python -m unittest discover -s tests -p test_handbook.py -v`로 올바른 최소 저장소 통과와 각 규칙 위반의 실패를 확인한다. MkDocs 빌드, Mermaid, 브라우저 언어 전환 검증은 별도 통합 검증이다.

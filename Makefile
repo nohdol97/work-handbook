@@ -6,6 +6,7 @@ validate:
 	$(PYTHON) -m unittest discover -s tests -v
 	$(PYTHON) scripts/check_harness.py
 	$(PYTHON) scripts/check_handbook.py
+	$(PYTHON) scripts/check_source_preservation.py
 	npm run check:mermaid
 	$(MKDOCS) build --strict
 	$(PYTHON) scripts/check_prompts.py

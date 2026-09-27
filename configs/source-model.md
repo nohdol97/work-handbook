@@ -8,6 +8,28 @@
 
 `mapping.md`에는 Source, Source language, Curriculum, Primary domain, Topics discovered, Existing canonical pages, New pages required, Potential duplicates, Cross-links, Open questions, Expected bilingual page pairs를 기록한다.
 
+사용자가 기존 자료의 통합본을 다시 제공하면 최신 지정 파일과 이전 파일을 먼저 비교한다. 새 지식이 없고 기존 ID로 전부 대응할 수 있으면 같은 batch의 `complete-source-YYYY-MM-DD.md`처럼 별도 원문으로 보존하고 mapping에 새 파일·hash·기존 ID 대응을 기록한다. 이전 원문은 삭제하지 않으며 같은 지식을 새 ID로 중복 집계하지 않는다. `*source*.md`에 기록된 업로드 byte·hash·공백 복원 metadata는 모두 무결성 검사 대상이다.
+
+## 원문 형태 대응
+
+학습 본문을 임의 요약·병합하지 않는다. 원래 언어는 지정 구간을 그대로 두고 반대 언어는 동일 구조로 번역한다. `reviews/source-preservation.json`의 `spans`에 다음과 같이 등록한다.
+
+```json
+{
+  "spans": [{
+    "page": "data-platform/topic.md",
+    "source": "sources/batch/source.md",
+    "start": "# Chapter 6 — Topic",
+    "end": "# Chapter 7 — Next topic",
+    "verbatim_language": "ko"
+  }]
+}
+```
+
+기본 구간은 시작 제목 다음 줄부터 끝 제목 직전까지다. 시작 제목도 포함하려면 `include_start: true`, 파일 끝까지면 `end: null`을 쓴다. 양언어 페이지에 `<!-- SOURCE CORE START -->`와 `<!-- SOURCE CORE END -->`를 넣는다. 같은 페이지의 다른 원문 구역은 `marker`에 `SOURCE APPENDIX` 같은 별도 이름을 등록한다. `verbatim_language`는 `ko` 또는 `en`이다. 보완·정정·추가 그림·실무 예시는 경계 밖에 두고 원래 절 번호와 연결한다.
+
+검사기의 원문 동일성·구조 signature 통과는 의미 동등성과 가독성의 증거가 아니다. 전문 대조 및 화면 확인을 별도로 수행한다.
+
 ## content-manifest.md
 
 ```yaml

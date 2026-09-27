@@ -1,0 +1,197 @@
+{
+  "spans": [
+    {
+      "page": "data-platform/foundations.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 1 — Data Engineering Foundations",
+      "end": "# Chapter 2 — Event Data Architecture",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/event-architecture.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 2 — Event Data Architecture",
+      "end": "# Chapter 3 — Lakehouse / Iceberg",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/lakehouse-iceberg.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 3 — Lakehouse / Iceberg",
+      "end": "# Chapter 4 — Spark",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/spark.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 4 — Spark",
+      "end": "# Chapter 5 — Flink",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/flink.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 5 — Flink",
+      "end": "# Chapter 6 — CDC / Debezium",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/cdc-debezium.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 6 — CDC / Debezium",
+      "end": "# Chapter 7 — Orchestration",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/orchestration.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 7 — Orchestration",
+      "end": "# Chapter 8 — dbt",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/dbt.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 8 — dbt",
+      "end": "# Chapter 9 — Analytical Data Modeling",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/analytical-modeling.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 9 — Analytical Data Modeling",
+      "end": "# Chapter 10 — Trino",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/trino.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 10 — Trino",
+      "end": "# Chapter 11 — Data Quality Engineering",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/data-quality.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 11 — Data Quality Engineering",
+      "end": "# Chapter 12 — Data Observability",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/data-observability.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 12 — Data Observability",
+      "end": "# Chapter 13 — Lineage & Metadata Platform",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/lineage-metadata.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 13 — Lineage & Metadata Platform",
+      "end": "# Chapter 14 — Data Governance",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/governance.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 14 — Data Governance",
+      "end": "# Chapter 15 — AI-Ready Data",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/ai-ready-data.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 15 — AI-Ready Data",
+      "end": "# Chapter 16 — AI Evaluation Data Platform",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "data-platform/online-evaluation.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 16 — AI Evaluation Data Platform",
+      "end": "## 16.2 Offline Evaluation Datasets",
+      "verbatim_language": "en"
+    },
+    {
+      "page": "data-platform/ai-evaluation.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "## 16.2 Offline Evaluation Datasets",
+      "end": "# Chapter 17 — Databricks Deep Dive",
+      "verbatim_language": "en",
+      "include_start": true
+    },
+    {
+      "page": "data-platform/databricks.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 17 — Databricks Deep Dive",
+      "end": "# Chapter 18 — Snowflake Deep Dive (Condensed)",
+      "verbatim_language": "en"
+    },
+    {
+      "page": "data-platform/snowflake.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 18 — Snowflake Deep Dive (Condensed)",
+      "end": "# Chapter 19 — Databricks vs Snowflake vs Open Lakehouse",
+      "verbatim_language": "en"
+    },
+    {
+      "page": "data-platform/platform-comparison.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 19 — Databricks vs Snowflake vs Open Lakehouse",
+      "end": "# Chapter 20 — Production Data Platform Engineering",
+      "verbatim_language": "en"
+    },
+    {
+      "page": "data-platform/production-operations.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 20 — Production Data Platform Engineering",
+      "end": "# Chapter 21 — Final End-to-End Data Platform Architecture",
+      "verbatim_language": "en"
+    },
+    {
+      "page": "data-platform/architecture.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Chapter 21 — Final End-to-End Data Platform Architecture",
+      "end": "# Final Mental Model",
+      "verbatim_language": "en"
+    },
+    {
+      "page": "data-platform/architecture.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Final Mental Model",
+      "end": "# Study Session Status",
+      "include_start": true,
+      "verbatim_language": "en",
+      "marker": "SOURCE FINAL"
+    },
+    {
+      "page": "data-platform/architecture.md",
+      "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
+      "start": "# Appendix A — Supplementary Clarifications",
+      "end": null,
+      "verbatim_language": "ko",
+      "marker": "SOURCE APPENDIX"
+    },
+    {
+      "page": "platform-infrastructure/linux-containers.md",
+      "source": "sources/platform-infrastructure-basic-2026-09-27/source.md",
+      "start": "# Chapter 1. Linux, Networking, Containers",
+      "end": "# Chapter 2. Kubernetes Core",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/kubernetes-core.md",
+      "source": "sources/platform-infrastructure-basic-2026-09-27/source.md",
+      "start": "# Chapter 2. Kubernetes Core",
+      "end": "# Chapter 3. Kubernetes Production Operations",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/kubernetes-operations.md",
+      "source": "sources/platform-infrastructure-basic-2026-09-27/source.md",
+      "start": "# Chapter 3. Kubernetes Production Operations",
+      "end": "# 현재까지 학습 완료 상태",
+      "verbatim_language": "ko"
+    }
+  ]
+}

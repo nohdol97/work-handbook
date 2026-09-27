@@ -182,7 +182,8 @@ def _source_rows(root, pages, errors):
         for name in ['source.md', 'content-manifest.md', 'coverage-matrix.md', 'coverage-report.md', 'mapping.md']:
             if not (batch / name).is_file():
                 errors.append(f'{batch}: missing {name}')
-        _source_integrity(batch / 'source.md', errors)
+        for source_path in sorted(batch.glob('*source*.md')):
+            _source_integrity(source_path, errors)
         manifest, _ = _frontmatter(batch / 'content-manifest.md', errors)
         coverage, _ = _frontmatter(batch / 'coverage-matrix.md', errors)
         entries = {}
