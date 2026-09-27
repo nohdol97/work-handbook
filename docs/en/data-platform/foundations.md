@@ -1,8 +1,8 @@
 ---
 id: data-platform-foundations
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-01-01
   - DPE-01-02
@@ -13,34 +13,145 @@ knowledge_ids:
   - DPE-01-07
 ---
 
-# Data engineering foundations
+# Chapter 1 — Data Engineering Foundations
 
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. SQL and numbers are illustrative and were not run.
 
+The body translates the latest supplied source without merging its headings, paragraphs, lists, or examples. Corrections, conditions on simplified statements, and previous additions appear separately under **Qualifications for real use**.
+
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+<!-- SOURCE CORE START -->
+
 ## 1.1 OLTP vs OLAP
 
-**Online Transaction Processing (OLTP)** handles live service transactions. Examples include user registration, order creation, payment, inventory changes, and posting a message. It reads or changes a small set of rows often. INSERT, UPDATE, and DELETE are common. Fast responses for individual requests matter. Normalized models are common. PostgreSQL and MySQL are typical examples. An application might use `users`, `orders`, and `payments` tables.
+### OLTP
 
-**Online Analytical Processing (OLAP)** answers questions across large datasets. For example: What was each team's LLM cost over the last year? What is the average latency by model? How did users behave over the last six months? Large scans, aggregations, and joins are common. Reads often dominate writes. Columnar storage and denormalized models such as star schemas suit these workloads.
+OLTP stands for **Online Transaction Processing**.
 
-PostgreSQL can run analytics. The concern is workload competition when hundreds of millions or billions of historical rows require large scans and aggregations. A common separation is:
+Its main purpose is to process live service transactions.
+
+Example:
+
+- User registration
+- Order creation
+- Payment
+- Inventory changes
+- Creating a post
+
+Characteristics:
+
+- Frequently reads and writes a small set of rows.
+- Many INSERT / UPDATE / DELETE operations.
+- Fast responses to individual requests matter.
+- Often uses normalized data models.
+
+Typical systems:
+
+- PostgreSQL
+- MySQL
+
+Example:
 
 ```text
-Application → PostgreSQL → CDC / Event Pipeline → Lakehouse / Warehouse
+users
+orders
+payments
 ```
 
-OLTP handles the service's current state quickly. OLAP analyzes large histories. Data size alone does not set a universal migration threshold.
+Service applications commonly use these OLTP databases.
 
-## 1.2 Row-oriented vs column-oriented storage
+---
 
-Row-oriented storage keeps a row's values together:
+### OLAP
+
+OLAP stands for **Online Analytical Processing**.
+
+Its purpose is to analyze large amounts of data.
+
+Example:
+
+```text
+Over the last year,
+what was the LLM usage cost by team?
+
+What was the average latency by model?
+
+What were user behavior patterns over the last six months?
+```
+
+Characteristics:
+
+- Reads very large numbers of rows.
+- Many large scans, aggregations, and joins.
+- Reads account for more work than writes.
+- Works well with columnar storage.
+- Often uses analytical models such as denormalized tables or star schemas.
+
+---
+
+### Why PostgreSQL can become less suitable for growing analytical history
+
+PostgreSQL can run analytics.
+
+However, as data accumulates:
+
+```text
+Hundreds of millions to billions of rows
++
+Large scans
++
+Large aggregations
++
+Long-term history
+```
+
+these needs can cause analytical workloads to compete with service transactions in the database.
+
+A common approach is:
+
+```text
+Application
+   ↓
+PostgreSQL
+   ↓
+CDC / Event Pipeline
+   ↓
+Lakehouse / Warehouse
+```
+
+to separate operational and analytical systems in this way.
+
+Key point:
+
+> **OLTP quickly handles the service's current state; OLAP analyzes large histories.**
+
+---
+
+## 1.2 Row-Oriented vs Column-Oriented Storage
+
+### Row-Oriented
+
+Row-oriented storage keeps the values of one row together.
+
+Conceptually:
 
 ```text
 Row 1: user_id, name, age, team
 Row 2: user_id, name, age, team
 ```
 
-This suits a request for all details of one user. Column-oriented storage groups values from the same column:
+This is useful for OLTP.
+
+For example, row-oriented storage is a natural fit when reading all the information about one user.
+
+---
+
+### Column-Oriented
+
+Column-oriented storage keeps values from the same column together.
+
+Conceptually:
 
 ```text
 user_id: 1, 2, 3, 4 ...
@@ -48,95 +159,491 @@ age:     20, 30, 40, 50 ...
 team:    A, A, B, A ...
 ```
 
-An analytical query often needs only a few columns:
+Analytical queries often read only certain columns.
+
+Example:
 
 ```sql
 SELECT AVG(latency_ms)
-FROM llm_calls;
+FROM llm_calls
 ```
 
-It does not need `prompt`, `response`, or `user_id`. Similar values within one column also compress well. For example, `team_id = A, A, A, A, B, B, B` has repeated values. Less data and better compression can reduce I/O and improve analytical queries.
+This query does not need to read `prompt`, `response`, or `user_id`.
 
-**Column pruning** reads only the columns the query needs:
+This is why columnar formats suit OLAP.
+
+---
+
+### Compression
+
+Similar values often repeat within the same column.
+
+Example:
+
+```text
+team_id:
+A
+A
+A
+A
+B
+B
+B
+```
+
+Patterns like this compress well.
+
+Columnar storage therefore helps with:
+
+- Reading less data
+- Improving compression efficiency
+- Improving analytical query performance
+
+These are useful benefits.
+
+---
+
+### Column Pruning
+
+This optimization reads only the columns a query needs.
+
+Example:
 
 ```sql
 SELECT model_id, latency_ms
-FROM fact_llm_call;
+FROM fact_llm_call
 ```
 
-Parquet is columnar because its layout lets readers access these columns efficiently.
+Only the required columns need to be read for this query.
+
+Key point:
+
+> **Parquet is called a columnar file format because it stores data by column, letting analytical queries efficiently read only the columns they need.**
+
+---
 
 ## 1.3 Parquet
 
-Parquet is a columnar file format for analytical data. It is not a database. Object storage may hold `part-0001.parquet`, `part-0002.parquet`, and `part-0003.parquet`.
+Parquet is a widely used **Columnar File Format**.
 
-Its main layout is:
+Role:
+
+> **A file format for efficiently storing large analytical datasets.**
+
+Parquet itself is not a database.
 
 ```text
-Parquet File → Row Group → Column Chunk → Page
+S3
+├─ part-0001.parquet
+├─ part-0002.parquet
+└─ part-0003.parquet
 ```
 
-A file has row groups. Each row group contains a chunk for each column. Column chunks contain pages. The useful mental model is a hierarchy of data units with metadata that can help skip work; this page does not cover the full binary format.
+The data can be stored as files in object storage, as shown above.
 
-Encoding and compression reduce storage and I/O. Repeated values, numeric patterns, and string dictionaries can help. These are related but distinct steps.
+---
 
-Row-group statistics and optional page statistics or indexes can narrow a scan. Suppose a row group has `latency_ms min = 100, max = 500`. This condition cannot match that group:
+### Row Group
+
+Data inside a Parquet file is divided into large units called **Row Groups**.
+
+```text
+Parquet File
+├─ Row Group 1
+├─ Row Group 2
+└─ Row Group 3
+```
+
+Within each row group, data is stored by column.
+
+---
+
+### Page
+
+Column data within a row group can be further divided into pages.
+
+Big picture:
+
+```text
+Parquet File
+  ↓
+Row Group
+  ↓
+Column Chunk
+  ↓
+Page
+```
+
+This session does not need to go deeply into the binary format. The key idea is that **Parquet divides data into hierarchical units and uses statistics to reduce unnecessary scans**.
+
+---
+
+### Encoding / Compression
+
+Parquet applies encoding and compression based on column characteristics.
+
+Purpose:
+
+```text
+Less storage space
++
+Less I/O
+```
+
+Example:
+
+- Repeated values
+- Numeric data
+- String dictionaries
+
+These can be compressed efficiently.
+
+---
+
+### Statistics
+
+Parquet can store statistics for row groups or pages.
+
+Example:
+
+```text
+latency_ms
+min = 100
+max = 500
+```
+
+If the query is:
 
 ```sql
 WHERE latency_ms > 1000
 ```
 
-Skipping it is min/max pruning. Predicate pushdown lets a lower layer use a filter. Pruning uses evidence to avoid reading units that cannot match. For example, `WHERE event_date = '2026-09-24'` may remove files or row groups where supported. Column pruning removes columns that the query does not use. Together these reduce both the data range and column set read. They do not promise arbitrary row access like a row index.
+there is no need to read this row group.
 
-## 1.4 Object storage
+This optimization is **Min/Max Pruning**.
 
-Examples include Amazon S3, S3-compatible storage, Azure Blob Storage, and Google Cloud Storage. Lakehouses use object storage for large capacity, independent compute scaling, shared access by several engines, and often lower bulk-storage cost.
+---
 
-Object storage manages objects such as `s3://example-bucket/path/file.parquet`. Unlike block devices or a local file system, it is commonly used for large objects that are replaced rather than edited through frequent small random writes.
+### Predicate Pushdown / Pruning
 
-Storage and compute can have separate lifecycles:
+Use conditions to avoid reading unnecessary data.
 
-```text
-Storage: S3
-Compute: Spark / Trino / Flink / Databricks
+Example:
+
+```sql
+WHERE event_date = '2026-09-24'
 ```
 
-Compute can scale independently or stop while stored data remains. Several engines may read the same data. Remote file access adds network I/O, so pruning, sensible file sizes, caching, and avoiding unnecessary scans matter. Actual cost depends on requests, transfer, and the workload.
+Where possible, read only the required row groups or files.
 
-## 1.5 File layout engineering
+---
 
-Millions of tiny files, such as 1 MB, 2 MB, and 800 KB Parquet files, create a **small file problem**. They increase metadata, open requests, query planning work, object-store requests, and often task overhead.
+### Column Pruning
 
-Very large files also have trade-offs. Depending on scan splitting, they may reduce parallel work or create long tasks. They can increase the cost of rewriting data. Choose a target file size for the workload rather than one universal value.
+Read only the required columns.
 
-**Compaction** combines small files into more useful sizes. For example, 5 MB, 10 MB, 8 MB, and 7 MB files can be rewritten into a larger file. It matters especially for streaming ingestion into a lakehouse.
+An important benefit of Parquet is:
 
-**Write amplification** occurs when a small logical change requires much more physical writing. Rewriting a large file to change a few rows is one example. Layout and table-format choices affect this cost.
+```text
+Only the required row range
++
+Only the required columns
+```
 
-## 1.6 Partitioning fundamentals
+the ability to limit reading in this way.
 
-Partitioning divides data by a physical or logical rule. For example:
+---
+
+## 1.4 Object Storage
+
+Typical object storage systems:
+
+- Amazon S3
+- S3-compatible storage
+- Azure Blob Storage
+- Google Cloud Storage
+
+Reasons lakehouses commonly use object storage:
+
+- Can store very large amounts of data
+- Can separate compute and storage
+- Relatively low-cost bulk storage
+- Several compute engines can share the same data
+
+---
+
+### Object vs Block/File Storage
+
+Object storage manages data as objects.
+
+Example:
+
+```text
+s3://bucket/path/file.parquet
+```
+
+It suits large, mostly immutable objects better than frequent random writes like those on a traditional local file system.
+
+---
+
+### Storage / Compute Separation
+
+Traditional databases often tightly couple compute and storage in one system.
+
+A lakehouse can use:
+
+```text
+Storage
+→ S3
+
+Compute
+→ Spark / Trino / Flink / Databricks
+```
+
+this separation of storage and compute.
+
+Advantages:
+
+- Scale compute independently
+- Read the same data from several engines
+- Keep storage when compute stops
+
+---
+
+### Remote I/O
+
+Because compute and storage are separate, files must be read over the network.
+
+Therefore:
+
+- Reduce unnecessary scans
+- Optimize file sizes
+- pruning
+- caching
+
+these practices become important.
+
+---
+
+## 1.5 File Layout Engineering
+
+The size of an individual file can affect lakehouse performance.
+
+---
+
+### Small File Problem
+
+Example:
+
+```text
+file1.parquet  1MB
+file2.parquet  2MB
+file3.parquet  800KB
+...
+Millions of files
+```
+
+When files are too small:
+
+- More metadata
+- More file-open cost
+- More query-planning cost
+- Too many tasks
+- More object-storage requests
+
+these problems can occur.
+
+---
+
+### Too-Large File
+
+Conversely, when files are too large:
+
+- Fewer units of parallel work
+- Some tasks may take a long time
+- Higher rewrite cost
+
+these problems can occur.
+
+Choose a **Target File Size** that suits the workload.
+
+---
+
+### Compaction
+
+Combine small files into larger files.
+
+```text
+5MB
+10MB
+8MB
+7MB
+  ↓
+Compaction
+  ↓
+A suitably sized Parquet file
+```
+
+This is especially important for streaming into a lakehouse.
+
+---
+
+### Write Amplification
+
+Rewriting an entire large file to change a small amount of data can cause far more physical writing than the logical change.
+
+Account for this cost when designing file layout and choosing a table format.
+
+---
+
+## 1.6 Partitioning Fundamentals
+
+Partitioning divides data physically or logically according to a rule.
+
+Example:
 
 ```text
 event_date=2026-09-23
 event_date=2026-09-24
 ```
 
-**Partition pruning** allows `WHERE event_date = '2026-09-24'` to select the relevant partition instead of scanning every date.
+---
 
-**Cardinality** is the number of distinct values. `country` and `status` are often lower-cardinality keys. `user_id` and `request_id` can have very high cardinality. Directly partitioning by each user can create too many partitions.
+### Partition Pruning
 
-A useful key appears in common filters, creates a manageable number of partitions, and avoids severe imbalance. Day or hour is often useful. The right granularity still depends on volume and query patterns. Too many partitions cause small files, more metadata, and greater management work.
+Query:
 
-A partition is not one file. A date partition may contain `file1.parquet`, `file2.parquet`, and `file3.parquet`.
+```sql
+WHERE event_date = '2026-09-24'
+```
 
-## 1.7 Bucketing, sorting, and indexing
+the query can read only the partition for that date.
 
-**Bucketing** hashes values into a fixed number of groups. The conceptual example `bucket(user_id, 32)` means 32 buckets for users. This avoids a separate partition for every distinct user. Actual APIs use their own argument order, such as Iceberg's conceptual `bucket(32, user_id)` transform.
+In other words:
 
-**Sorting** puts values in key order within the written layout. Sorting by `user_id` can narrow min/max ranges and make pruning more useful. **Clustering** places data commonly read together near each other to reduce scans.
+> **Read only the required partitions instead of scanning all the data.**
 
-OLTP systems often use row-level indexes such as B-trees. Lakehouse scans commonly depend on partitions, file statistics, sort order, data skipping, and clustering. These are ways to reduce scan work; they are not identical to an OLTP index.
+---
+
+### Cardinality
+
+Cardinality matters when choosing a partition key.
+
+Low-cardinality examples:
+
+```text
+country
+status
+```
+
+High-cardinality examples:
+
+```text
+user_id
+request_id
+```
+
+Directly partitioning by a column with many distinct values, such as `user_id`, can create too many partitions.
+
+---
+
+### Good / Bad Partition Keys
+
+A good partition key:
+
+- Appears often in query filters
+- Does not create too many partitions
+- Avoids excessive concentration of data in one partition
+
+Common time-based choices include:
+
+```text
+day
+hour
+```
+
+These are often used.
+
+---
+
+### Over-Partitioning
+
+When partitions become too fine-grained:
+
+- More small files
+- More metadata
+- More management complexity
+
+these effects occur.
+
+---
+
+### Partition vs File
+
+A partition is a logical division of data. One partition can contain several files.
+
+```text
+date=2026-09-24
+├─ file1.parquet
+├─ file2.parquet
+└─ file3.parquet
+```
+
+---
+
+## 1.7 Bucketing / Sorting / Indexing
+
+### Bucketing
+
+Use a hash to divide data into a fixed number of buckets.
+
+Example:
+
+```text
+bucket(user_id, 32)
+```
+
+This distributes high-cardinality keys across a fixed number of groups instead of creating a partition for each key.
+
+---
+
+### Sorting
+
+Sort data within files by a particular key.
+
+Example:
+
+```text
+sort by user_id
+```
+
+When similar values are close together, file min/max statistics can become more useful.
+
+---
+
+### Clustering
+
+Place data that is often queried together physically close to reduce scan ranges.
+
+---
+
+### Lakehouse Indexing vs OLTP Index
+
+OLTP databases often use row-level indexes such as B-trees.
+
+Because lakehouses focus on large-scan workloads:
+
+- Partition
+- File Statistics
+- Sort Order
+- Data Skipping
+- Clustering
+
+these techniques are often used to reduce the amount read.
+
+---
+
+<!-- SOURCE CORE END -->
 
 ## Qualifications for real use
 
@@ -145,6 +652,12 @@ These sections are starting models. Choose whether to separate PostgreSQL analyt
 Parquet column chunks live inside row groups. Pruning depends on available statistics or indexes and reader support. Pushdown sends a filter to a lower layer; pruning skips storage units that cannot match. Neither is arbitrary row lookup. Encoding and compression are distinct steps. [Apache Parquet file format](https://parquet.apache.org/docs/file-format/)
 
 A large Parquet file can have several scan splits. One file is not always one task. Balance parallelism, rewrite cost, and request cost when setting file-size targets. Bucket notation is conceptual; check the engine's argument order and syntax.
+
+### Sections 1.3 and 1.6: statistics and cardinality
+
+The source's phrase “only the required row range” means skipping units such as row groups when statistics allow it. It does not promise row-index access to only the exact matching rows.
+
+Cardinality is the number of distinct values. Choose day or hour partition granularity based on actual data volume and query patterns. The Iceberg transform notation is conceptually `bucket(32, user_id)`.
 
 ## Related reading
 

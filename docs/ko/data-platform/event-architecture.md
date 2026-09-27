@@ -1,8 +1,8 @@
 ---
 id: data-platform-event-architecture
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-02-01
   - DPE-02-02
@@ -12,11 +12,20 @@ knowledge_ids:
   - DPE-02-06
 ---
 
-# 이벤트 데이터 아키텍처
+# Chapter 2 — Event Data Architecture
 
 문서 유형: Learn. 제공된 학습 자료의 개념과 설계 예시를 정리했다. `studied`는 개념 학습을 뜻하며, 직접 구현하거나 운영 검증했다는 뜻이 아니다. SQL과 수치는 설명용 예시이며 실행하지 않았다.
 
 Kafka Broker, ISR, Replica 운영 상세는 범위 밖이다. 여기서는 데이터 엔지니어링 관점의 이벤트 의미를 다룬다.
+
+본문은 제공된 최신 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 표현에 필요한 정정·조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에 구분했다.
+
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+<!-- SOURCE CORE START -->
+
+> Kafka Broker 운영, ISR, Replica 운영 같은 인프라 상세는 별도 Platform 세션의 범위다.  
+> 이 장에서는 Data Engineering 관점의 Event Semantics에 집중한다.
 
 ## 2.1 Event Modeling
 
@@ -81,6 +90,8 @@ session_id
 execution_id
 ```
 
+---
+
 ## 2.2 Event Contracts
 
 Event Contract는 Producer와 Consumer 사이에서 Event의 의미를 합의하는 것이다.
@@ -115,6 +126,8 @@ Contract에 포함할 수 있는 항목:
 - 5초
 
 중 무엇인지 Contract가 정의해야 한다.
+
+---
 
 ## 2.3 Schema Evolution
 
@@ -193,13 +206,15 @@ Breaking Change 방지
 - incompatible type 변경
 - 의미 변경
 
+---
+
 ## 2.4 Delivery Semantics
 
 ### At-Most-Once
 
 최대 한 번 전달.
 
-보장 범위 안에서는 중복 전달하지 않지만 유실 가능.
+중복은 적지만 유실 가능.
 
 ```text
 0회 또는 1회
@@ -260,6 +275,8 @@ event_id
 
 를 이용해 중복을 찾을 수 있다.
 
+---
+
 ## 2.5 Replay
 
 Kafka 같은 Event Log의 중요한 장점은 과거 Event를 다시 읽을 수 있다는 것이다.
@@ -309,16 +326,19 @@ Replay에서는 중복 이벤트가 발생할 수 있으므로:
 
 이 중요하다.
 
+---
+
 ## 2.6 Event → Serving + Lakehouse Dual Path
 
 하나의 논리적 Event가 여러 목적에 materialize될 수 있다.
 
-```mermaid
-flowchart TD
-    A[Application] --> K[Kafka]
-    K --> S[Search Store]
-    K --> O[Operational Serving Store]
-    K --> L[Lakehouse / Iceberg]
+```text
+Application
+   ↓
+Kafka
+   ├─→ Search Store
+   ├─→ Operational Serving Store
+   └─→ Lakehouse / Iceberg
 ```
 
 예를 들어 사용자 click event 하나가:
@@ -334,11 +354,29 @@ flowchart TD
 
 > **Event Stream은 전달 경로이고, 하나의 Event가 목적에 따라 여러 저장 형태로 materialize될 수 있다.**
 
+---
+
+<!-- SOURCE CORE END -->
+
 ## 적용 시 보완할 점
 
 위 `owner` 값은 가상의 팀 이름이다. JSON 자체와 JSON Schema를 통한 검증을 구분한다. Schema Registry가 단위 변경 같은 모든 의미 오류를 막아 주지는 않는다. Backward/Forward의 정확한 허용 변경은 포맷·필드 기본값·설정에 따라 다르다. 전체 이력 replay가 필요하면 직전 버전과의 호환성만 확인하는지, 전체 과거 버전까지 확인하는 transitive 설정인지 구분한다. [Confluent 스키마 호환성](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)
 
 At-least-once는 시스템의 보존·복구 가정 안에서 설명하는 보장이다. Deduplication은 event ID 정의와 상태 보존 기간이 필요하며, replay 범위가 그 기간보다 길면 별도 검증이 필요하다. Kafka replay는 남아 있는 이력에 한정된다. 처리 로직이 과거 schema도 읽는지 확인한다. 분리된 serving/lakehouse 경로는 각자의 lag, 복구, 결과 일관성을 확인해야 한다.
+
+### 2.4 보완: 전달 보장의 범위
+
+원문 at-most-once의 “중복은 적지만”은 간략한 표현이다. 보장 범위 안에서는 최대 한 번 전달하므로 중복 전달하지 않지만 유실은 가능하다. Exactly-once는 정의된 경계 안에서 한 번 commit된 효과를 뜻하며 Kafka transaction, processor state, 외부 sink의 범위는 서로 구분한다.
+
+### 기존 보완 흐름도
+
+```mermaid
+flowchart TD
+    A[Application] --> K[Kafka]
+    K --> S[Search Store]
+    K --> O[Operational Serving Store]
+    K --> L[Lakehouse / Iceberg]
+```
 
 ## 연결해서 읽기
 

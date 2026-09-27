@@ -1,8 +1,8 @@
 ---
 id: data-platform-analytical-modeling
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-09-01
   - DPE-09-02
@@ -14,40 +14,313 @@ knowledge_ids:
   - DPE-09-08
 ---
 
-# Analytical data modeling
+# Chapter 9 — Analytical Data Modeling
 
 This page records study of grain, facts, dimensions, and metrics. The AI platform schema is a hypothetical design. It contains no real user or company data and does not claim implementation experience.
 
-## Start with grain
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
 
-Grain defines what one row means.
+<!-- SOURCE CORE START -->
 
-| Table | Meaning of one row |
-| --- | --- |
-| `fact_order` | One order |
-| `fact_order_item` | One order item |
-| `fact_llm_call` | One LLM call |
+## 9.1 Grain
 
-A wrong understanding of grain can cause double counting after a join. For example, joining an order to several items repeats the order amount. Summing it again can overcount. A useful study sequence is `Grain → Fact → Dimension → Metric`. Agree on the business meaning of a row before choosing physical columns. [Kimball: Grain](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/grain/)
+Grain:
 
-## Facts and dimensions
+> **What one row in a table means.**
 
-A fact table stores events or measurements.
+Examples:
 
-| Fact type | Example |
-| --- | --- |
-| Event fact | Click or API call |
-| Transaction fact | Order or payment |
-| Periodic snapshot fact | State at regular intervals, such as daily inventory or balance |
-| Accumulating snapshot fact | Progress of one process through several steps |
+```text
+fact_order
+→ 1 row = 1 order
 
-An order's accumulating snapshot can include `order_created_at`, `paid_at`, `shipped_at`, and `delivered_at`. One row holds the milestones of the order process. The event/transaction distinction here helps explain business events. It is not a claim that every modeling method treats them as separate, exclusive fact types.
+fact_order_item
+→ 1 row = 1 order item
 
-A dimension describes a fact. Examples are `dim_customer`, `dim_product`, `dim_model`, and `dim_team`. A natural key comes from the source system. A surrogate key is created in the analytical system. It helps identify different SCD Type 2 versions.
+fact_llm_call
+→ 1 row = 1 LLM call
+```
 
-## Star schemas and history
+A wrong understanding of grain can cause double counting after a join.
 
-A star schema has a central fact and surrounding dimensions. This structure is easy to explain and gives BI queries clear roles.
+Modeling order:
+
+```text
+1. Grain
+2. Fact
+3. Dimension
+4. Metric
+```
+
+---
+
+## 9.2 Fact Tables
+
+Fact table:
+
+> **Events or measurements.**
+
+### Event Fact
+
+Examples: clicks and API calls.
+
+### Transaction Fact
+
+Examples: orders and payments.
+
+### Periodic Snapshot Fact
+
+State at regular intervals, such as daily inventory or daily balances.
+
+### Accumulating Snapshot Fact
+
+The progress of one process through its stages.
+
+Example:
+
+```text
+order_created_at
+paid_at
+shipped_at
+delivered_at
+```
+
+---
+
+## 9.3 Dimension Tables
+
+Dimension:
+
+> **Attributes that describe a fact.**
+
+Examples:
+
+```text
+dim_customer
+dim_product
+dim_model
+dim_team
+```
+
+### Natural Key
+
+An identifier from the source system.
+
+### Surrogate Key
+
+A separate key created in the analytical system.
+
+It helps distinguish SCD Type 2 versions.
+
+---
+
+## 9.4 Star Schema
+
+A star schema has a central fact table and surrounding dimensions.
+
+```text
+             dim_agent
+                 |
+dim_team — fact_llm_call — dim_model
+                 |
+              dim_date
+```
+
+Benefits:
+
+- Easy to understand.
+- Easy to query from BI tools.
+- Clear roles for tables.
+
+---
+
+## 9.5 SCD
+
+SCD means Slowly Changing Dimension.
+
+### Type 1
+
+Overwrite.
+
+Only the current value matters.
+
+### Type 2
+
+Keep past states.
+
+Example:
+
+```text
+customer_sk | customer_id | region | valid_from | valid_to
+```
+
+This supports analysis of past states.
+
+---
+
+## 9.6 Denormalization
+
+Allow some duplication to simplify analytical queries and reduce joins.
+
+OLTP:
+
+```text
+Focus on normalization
+```
+
+OLAP:
+
+```text
+Some denormalization for query convenience and performance
+```
+
+Putting too much information in one table also creates problems.
+
+---
+
+## 9.7 AI Platform Modeling
+
+Do not mix grains.
+
+### fact_agent_execution
+
+```text
+1 row = 1 agent execution
+```
+
+Example fields:
+
+- execution_id
+- agent_id
+- user_id
+- team_id
+- started_at
+- completed_at
+- status
+- total_latency
+- total_cost
+
+### fact_llm_call
+
+```text
+1 row = 1 LLM call
+```
+
+Example fields:
+
+- llm_call_id
+- execution_id
+- model_id
+- input_tokens
+- output_tokens
+- latency
+- cost
+
+### fact_user_event
+
+```text
+1 row = 1 user event
+```
+
+### dim_agent
+
+Describes the agent.
+
+### dim_model
+
+Describes the model.
+
+### dim_team
+
+Describes the organization.
+
+Several facts can share the same dimensions as conformed dimensions.
+
+Remember:
+
+```text
+Agent Execution
+≠ LLM Call
+≠ User Event
+```
+
+---
+
+## 9.8 Metrics Modeling
+
+Purpose:
+
+> **Manage KPI definitions consistently.**
+
+Example:
+
+```text
+agent_execution_error_rate
+=
+failed execution count / total execution count
+```
+
+### Base Metric
+
+- execution_count
+- token_count
+- cost
+
+### Derived Metric
+
+- error_rate
+- cost_per_execution
+
+### Semantic Layer
+
+Centrally define the business meaning and calculation of metrics.
+
+Examples:
+
+```text
+DAU
+Total Cost
+Error Rate
+Average Latency
+```
+
+Dashboards, analysts, and AI agents can use the same definitions.
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Appendix: existing application notes
+
+The main text follows the supplied chapter’s headings, examples, and order. These existing explanations and caveats are separate from the source text.
+
+### Grain and double counting
+
+Joining one order to several items repeats its order amount. Summing that amount again can overcount. Agree on the business meaning of a row before choosing physical columns. [Kimball: Grain](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/grain/)
+
+The event/transaction distinction explains business events. It does not mean that every modeling method treats them as separate, exclusive fact types.
+
+### SCD and denormalization
+
+Type 2 keeps old rows and adds new versions. Join to the version valid at the analysis time. Overlapping validity periods for one natural key can multiply rows. Define the meaning of the end boundary.
+
+OLTP often uses normalization to manage consistent changes.
+
+Mixing grains and update schedules during denormalization can cause repeated values and wrong totals. Compare query convenience with history and maintenance costs.
+
+### Shared dimensions and AI platform costs
+
+One agent execution can include several LLM calls. When joining execution costs to calls, check whether the execution row repeats once per call before summing.
+
+Conformed dimensions need consistent meanings and key rules. Define `fact_user_event` fields separately for the business event schema. Names such as `user_id` are schema examples and contain no real personal identifiers.
+
+### Metric calculation conditions
+
+Use the same period, filters, and population for the numerator and denominator. Define the result when the denominator is zero. Matching names do not make metrics equivalent if their grain or exclusions differ.
+
+### Existing conceptual diagram
+
+This preserves the existing Mermaid diagram separately from the source’s text diagram.
 
 ```mermaid
 flowchart TD
@@ -56,46 +329,6 @@ flowchart TD
   M[dim_model] --- F
   D[dim_date] --- F
 ```
-
-SCD means Slowly Changing Dimension. Type 1 overwrites an attribute when only its current value matters. Type 2 keeps old rows and adds a new version.
-
-```text
-customer_sk | customer_id | region | valid_from | valid_to
-```
-
-This structure supports analysis using a past region. Join to the version valid at the analysis time. Overlapping validity periods for the same natural key can multiply rows. Define validity periods and the meaning of their end boundaries.
-
-## How much to denormalize
-
-OLTP often uses normalization to manage consistent changes. OLAP may allow some duplication to simplify queries and reduce joins. Putting everything in one table also creates problems. Mixed grains and update schedules can cause repeated values and wrong totals. Compare convenience with history and maintenance costs.
-
-## AI platform example
-
-An agent execution, an LLM call, and a user event have different grains. One agent execution may include several LLM calls. Do not treat them as the same row unit.
-
-| Table | Grain | Example fields |
-| --- | --- | --- |
-| `fact_agent_execution` | One agent execution | `execution_id`, `agent_id`, `user_id`, `team_id`, `started_at`, `completed_at`, `status`, `total_latency`, `total_cost` |
-| `fact_llm_call` | One LLM call | `llm_call_id`, `execution_id`, `model_id`, `input_tokens`, `output_tokens`, `latency`, `cost` |
-| `fact_user_event` | One user event | Defined separately by the business event schema |
-| `dim_agent` | Agent description | Agent attributes |
-| `dim_model` | Model description | Model attributes |
-| `dim_team` | Organization description | Team attributes |
-
-Dimensions can be conformed when several facts share the same meaning and key rules. If you join executions to LLM calls and sum execution costs, check whether each execution repeats once per call. Field names such as `user_id` are schema examples. They contain no actual personal identifiers.
-
-## Metrics and the semantic layer
-
-Metric modeling keeps KPI definitions consistent. This example uses execution grain:
-
-```text
-agent_execution_error_rate
-= failed execution count / total execution count
-```
-
-Base metrics include `execution_count`, `token_count`, and `cost`. Derived metrics include `error_rate` and `cost_per_execution`. Use the same period, filters, and population for the numerator and denominator. Define the result when the denominator is zero.
-
-A semantic layer centrally defines the meaning and calculation of business metrics such as DAU, Total Cost, Error Rate, and Average Latency. It helps dashboards, analysts, and AI agents use the same definitions. Matching names do not make metrics equivalent when their grain or exclusions differ.
 
 ## LLM in Practice: review duplicated costs
 

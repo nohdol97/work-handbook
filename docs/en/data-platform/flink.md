@@ -1,8 +1,8 @@
 ---
 id: data-platform-flink
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-05-01
   - DPE-05-02
@@ -20,169 +20,575 @@ knowledge_ids:
   - DPE-05-14
 ---
 
-# Apache Flink
+# Chapter 5 — Flink
 
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run.
 
-## 5.1 Why Flink?
+The source body keeps its numbering, order, and form. [Source qualifications](#source-notes) separate applicable corrections and conditions by source section number.
 
-A useful historical mental model is that Spark grew from batch processing toward streaming, while Flink centers on continuous stream processing. Spark Structured Streaming commonly uses micro-batches. Flink commonly processes a continuous stream as records arrive.
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
 
-Flink is useful for stateful streaming, event time, watermarks, windows, timers, low latency, and complex real-time rules. Example workloads include anomaly detection, session analysis, error rate over the last five minutes, and live feature calculation. Its short definition is **a stateful stream-processing engine**.
+<!-- SOURCE CORE START -->
 
-## 5.2 Architecture
+## 5.1 Why Flink
 
-The **JobManager** coordinates the job. It is roughly comparable to Spark's driver for this introductory mental model. **TaskManagers** execute tasks, roughly like Spark executors. The systems are not identical.
+Key point:
 
-An **operator** is a processing step:
+> **Spark expanded from batch-first processing to streaming, while Flink was designed streaming-first.**
+
+Spark Structured Streaming can mainly be understood as micro-batch processing.
+
+Flink centers on a continuous streaming model that processes events as they arrive.
+
+Areas where Flink is strong:
+
+- Event Time
+- Watermark
+- Window
+- State
+- Timer
+- Stateful Streaming
+- Low latency
+- Complex real-time processing
+
+Common examples:
+
+- Real-time anomaly detection
+- Session analysis
+- Error rate over the last five minutes
+- Real-time feature calculation
+
+Key point:
+
+> **Flink = Stateful Stream Processing Engine**
+
+---
+
+## 5.2 Flink Architecture
+
+### JobManager
+
+Manage the whole job.
+
+Conceptually similar to a Spark driver.
+
+### TaskManager
+
+Execute actual tasks.
+
+Conceptually similar to a Spark executor.
+
+### Operator
+
+A processing step.
+
+Example:
 
 ```text
 Source → Filter → KeyBy → Window → Aggregate → Sink
 ```
 
-**Parallelism** is the number of parallel instances of an operator. A **task slot** is a logical resource-allocation unit within a TaskManager. It is not simply a synonym for a CPU core.
+### Parallelism
 
-## 5.3 DataStream model
+Run several instances of the same operator in parallel.
 
-```text
-Source → Transformation → Sink
-```
+### Task Slot
 
-Sources can read Kafka, CDC, or files. Transformations include filter, map, keyBy, window, and aggregate. Sinks can write to Iceberg, Kafka, a database, or a search store.
+A logical execution space inside a TaskManager.
 
-`keyBy(user_id)` groups events by key for downstream keyed processing. It enables state for each key:
+---
 
-```text
-Stream → KeyBy → Stateful Processing
-```
+## 5.3 DataStream Model
 
-## 5.4 Event time
-
-Distinguish **event time**, when an action happened; **processing time**, when the operator processes it; and **ingestion time**, when it enters the system. Events can arrive late or out of order. Event-time processing lets analysis follow the real occurrence time instead of arrival order.
-
-## 5.5 Watermarks
-
-A watermark is an estimate of event-time progress. It means the system expects most earlier events to have arrived under its chosen strategy. It is not proof that every earlier event arrived.
+Basic flow:
 
 ```text
-Latest observed event time = 10:01:10
-Assumed out-of-order bound = 5 seconds
-Illustrative watermark ≈ 10:01:05
+Source
+ ↓
+Transformation
+ ↓
+Sink
 ```
 
-An event behind the watermark is late for event-time progress. Operators decide what to do with it. Options include dropping it, allowing lateness, or routing it separately.
+### Source
 
-Waiting longer can include more late data, but increases result latency and state needs. Moving faster lowers latency but can omit more late events. Neither choice guarantees accuracy by itself. An idle input partition can hold back progress, so idle-source detection may be needed.
+Kafka, CDC, files, and other sources.
 
-## 5.6 Windows
+### Transformation
 
-An unbounded stream needs a defined scope for aggregation.
+filter / map / keyBy / window / aggregate.
 
-| Window | Behavior | Example |
-| --- | --- | --- |
-| Tumbling | Fixed, non-overlapping ranges | 10:00–10:01, then 10:01–10:02 |
-| Sliding | Overlapping ranges | Calculate the last five minutes every minute |
-| Session | Groups activity separated by an inactivity gap | Close a session after ten minutes with no activity |
+### Sink
 
-Windows and watermarks work together in event-time processing. A session's event-time completion depends on time progress, not merely waiting on a wall clock.
+Iceberg / Kafka / DB / Search Store.
+
+### KeyBy
+
+Group the same key into the same logical processing unit.
+
+```text
+keyBy(user_id)
+```
+
+Keyed state can then be maintained.
+
+Key point:
+
+```text
+Stream
+ ↓
+KeyBy
+ ↓
+Stateful Processing
+```
+
+---
+
+## 5.4 Event Time
+
+Main time concepts:
+
+- Event Time
+- Processing Time
+- Ingestion Time
+
+Event time is when the event actually happened.
+
+Streaming events can arrive late or in a different order.
+
+This is called **out-of-order arrival**.
+
+Event-time processing supports analysis based on the time events actually happened.
+
+---
+
+## 5.5 Watermark
+
+Watermark:
+
+> **A progress boundary that assumes most events before this time have arrived**
+
+Example:
+
+```text
+Latest event time = 10:01:10
+Allowed delay = 5 seconds
+
+Watermark ≈ 10:01:05
+```
+
+A watermark does not guarantee that every event has arrived.
+
+An event older than the watermark that arrives later is a **late event**.
+
+Late-event handling:
+
+- Drop it
+- Allowed Lateness
+- Handle it separately
+
+Trade-off:
+
+```text
+Slow watermark
+→ Accuracy ↑
+→ Result latency ↑
+
+Fast watermark
+→ latency ↓
+→ Late events may be omitted
+```
+
+An idle partition can block watermark progress, so idle detection may be needed.
+
+---
+
+## 5.6 Window
+
+A stream has no end, so aggregation divides it into defined ranges.
+
+### Tumbling Window
+
+Fixed, non-overlapping ranges.
+
+```text
+10:00~10:01
+10:01~10:02
+```
+
+### Sliding Window
+
+Overlapping moving ranges.
+
+```text
+Calculate the last five minutes of data every minute
+```
+
+### Session Window
+
+Close a session after a defined period without events.
+
+Example:
+
+```text
+User activity
+→ 10 minutes of inactivity
+→ Session close
+```
+
+Watermarks and windows work together.
+
+---
 
 ## 5.7 State
 
-State is information remembered from earlier records. For example, user A may have `click_count = 3` and user B `click_count = 1`.
+State:
 
-**Keyed state** stores values per key after `keyBy()`. `ValueState` holds one value, `ListState` holds a list, and `MapState` holds key-value entries. Windows also keep state internally.
+> **Information Flink remembers from earlier processing**
 
-**State TTL** can expire old state under configured rules. Do not assume that every state item is removed immediately after a fixed period of inactivity. Update rules, visibility, and cleanup behavior matter.
-
-## 5.8 Checkpoints
-
-A checkpoint stores consistent processing state and source positions for recovery:
+Example:
 
 ```text
-TaskManager failure → Restore checkpoint → Restore Kafka offsets → Resume
+user A → click_count = 3
+user B → click_count = 1
 ```
 
-A distributed snapshot coordinates state across operators. Checkpoint barriers mark the stream boundary included in a checkpoint. **Aligned checkpoints** wait for the required input barriers to line up. **Unaligned checkpoints** also record in-flight data and can reduce waiting under backpressure.
+### Keyed State
 
-A checkpoint is execution state for resuming a streaming job. It is not a general-purpose backup of all external systems.
+State per key after `keyBy()`.
 
-## 5.9 Savepoints
+### ValueState
 
-A savepoint is a state snapshot intentionally created for an operational change. Uses include upgrades, migration, rescaling, and planned stop/restart.
+One value.
 
-Checkpoints are primarily automatic recovery points. Savepoints are primarily operator-controlled change points. For example, a job might resume with parallelism increased from four to eight. State schema compatibility, migration rules, and operator identity still need checking.
+### ListState
 
-## 5.10 Exactly-once processing
+A list of values.
 
-Exactly-once means one committed effect within the promised scope. Flink's internal state guarantee is not automatically an end-to-end guarantee.
+### MapState
 
-The complete path includes:
+Key-value entries.
+
+### State TTL
+
+Automatically clean up state that has not been used for a long time.
+
+Windows can also be understood as using state internally.
+
+---
+
+## 5.8 Checkpoint
+
+Checkpoint:
+
+> **A recovery point that periodically stores Flink's execution state and processing position**
+
+When a failure occurs:
 
 ```text
-Source positions + Flink state + Sink consistency
+TaskManager failure
+ ↓
+Restore checkpoint
+ ↓
+Restore Kafka offsets
+ ↓
+Resume processing
 ```
 
-If a sink repeats an external write on recovery, the full system may still produce duplicates. A supported transactional or idempotent sink can help close the boundary. At-least-once processing with an idempotent sink is another design, with its own assumptions.
+### Distributed Snapshot
+
+Store the state of multiple TaskManagers/operators in a consistent checkpoint.
+
+### Checkpoint Barrier
+
+Barriers flow through the stream to coordinate the boundary included in the snapshot.
+
+### Aligned Checkpoint
+
+Align barriers from multiple inputs before proceeding.
+
+### Unaligned Checkpoint
+
+Include in-flight data to take snapshots quickly in situations such as backpressure.
+
+A checkpoint is not a general backup. It is **execution state stored to resume a streaming job**.
+
+---
+
+## 5.9 Savepoint
+
+Savepoint:
+
+> **A job-state snapshot deliberately created by an operator**
+
+Main uses:
+
+- Job Upgrade
+- Migration
+- Rescaling
+- Planned Stop/Restart
+
+Difference:
+
+```text
+Checkpoint
+→ Automatic
+→ Focused on failure recovery
+
+Savepoint
+→ Deliberate
+→ Focused on operational changes
+```
+
+It can also support rescaling, such as changing parallelism from 4 to 8.
+
+When changing the state structure, consider state migration and compatibility.
+
+---
+
+## 5.10 Exactly-Once Processing
+
+Exactly-once:
+
+> **Each event's effect appears once in the final result**
+
+Important:
+
+> **Flink's internal exactly-once and end-to-end exactly-once are different.**
+
+Required scope:
+
+```text
+Source Offset
++
+Flink State
++
+Sink Consistency
+```
+
+If the sink allows duplicate writes, the whole system is not exactly-once.
+
+Alternative:
+
+```text
+At-Least-Once
++
+Idempotent Sink
+```
+
+---
 
 ## 5.11 Backpressure
 
-Backpressure occurs when a slow downstream stage reduces the rate of upstream stages:
+Backpressure:
+
+> **A slow downstream stage slows processing in upstream stages too**
+
+Example:
 
 ```text
-Kafka → Filter → Aggregate → Slow Database
+Kafka
+ ↓
+Filter
+ ↓
+Aggregate
+ ↓
+Slow Database
+
+Slow database
+→ Aggregation backs up
+→ Filtering backs up
+→ Kafka consumption slows
 ```
 
-A slow database backs up aggregation, then filtering, then Kafka consumption. Consumer lag may rise. Causes include a slow sink, an expensive operator, network limits, skew, or an external database/API bottleneck.
+Kafka consumer lag may increase as a result.
 
-Possible responses include more useful parallelism, better sink performance, batched writes, external-system scaling, and skew reduction. Backpressure is also normal flow control that protects the system from overload. More parallelism is not a universal fix, especially when an external service is already saturated.
+Causes:
 
-## 5.12 Flink and Kafka
+- Slow sink
+- Heavy operator
+- Network
+- Skew
+- External database/API bottleneck
 
-Kafka stores and delivers events. Flink performs stateful processing.
+Responses:
 
-Kafka partition count limits useful concurrent source readers in the usual source model. If a topic has four partitions and source parallelism is eight, only four readers can actively own those partitions at one time. Downstream operators may still have different parallelism.
+- Increase parallelism
+- Improve the sink
+- Batch Write
+- Scale the external system
+- Reduce skew
 
-Flink checkpoints source offsets for recovery. Kafka or payload timestamps can supply event time. Kafka preserves order within a partition, not a total global order across partitions.
+Backpressure is also natural flow control that protects the system from overload.
 
-Kafka partitioning and Flink `keyBy` are different:
+---
 
-| Mechanism | Main purpose |
-| --- | --- |
-| Kafka partition | Log placement and parallel consumption |
-| Flink `keyBy` | Redistribution for keyed state processing |
+## 5.12 Flink + Kafka
 
-## 5.13 Flink and Iceberg
+Roles:
 
 ```text
-Application → Kafka → Flink → Iceberg
+Kafka
+→ Event storage/delivery
+
+Flink
+→ Stateful Stream Processing
 ```
 
-A streaming append path keeps adding events to a lakehouse table. Flink tasks write files, and coordinated Iceberg commits make snapshots visible. Frequent writes and commits can produce small files, so compaction remains important.
+### Kafka Partitions and Flink Parallelism
 
-One possible division of work is Flink for live processing and ingestion, with Spark for batch transforms, historical backfills, and compaction.
+Kafka partition count affects the upper limit of parallel source consumption.
 
-Current-state tables may need updates, deletes, or upserts. Do not assume that every Spark SQL MERGE pattern is available in a Flink sink. Check the connector's supported changelog, keys, and Iceberg format requirements.
+```text
+Kafka Partitions = 4
+Source Parallelism = 8
+```
+
+Even then, only four partitions can be actively read at the same time.
+
+### Offset
+
+Manage Kafka offsets with Flink checkpoints for recovery.
+
+### Timestamp
+
+Kafka/event timestamps can be used as event time.
+
+### Ordering
+
+Kafka preserves order within a partition but does not guarantee global ordering.
+
+### Kafka Partitioning vs Flink keyBy
+
+Their purposes differ.
+
+```text
+Kafka Partition
+→ Event storage and parallel consumption placement
+
+Flink keyBy
+→ Redistribution for state processing
+```
+
+---
+
+## 5.13 Flink + Iceberg
+
+Purpose:
+
+> **Continuously store streaming results in a lakehouse**
+
+```text
+Application
+ ↓
+Kafka
+ ↓
+Flink
+ ↓
+Iceberg
+```
+
+### Streaming Append
+
+Keep appending new events.
+
+### Commit Coordination
+
+Flink tasks create files, and Iceberg commits publish snapshots.
+
+### Small File Problem
+
+Frequent commits can produce many small files.
+
+### Compaction
+
+Combine small files into larger files.
+
+### Flink + Spark Role Split
+
+```text
+Flink
+→ Real-time processing/ingestion
+
+Spark
+→ Batch Transform / Backfill / Compaction
+```
+
+### Update / Upsert
+
+Current-state tables may need UPDATE / DELETE / MERGE.
+
+---
 
 ## 5.14 Flink vs Spark
 
-| Requirement | Common starting choice |
-| --- | --- |
-| Low latency, long-lived keyed state, event time, watermarks, sessions, complex live rules | Flink |
-| Large batch ETL, large joins, backfills, Silver/Gold transforms, ML datasets | Spark |
+### When Flink fits well
 
-Both support batch and streaming. This is a guide to common strengths, not an exclusive boundary. At a smaller scale, Spark Structured Streaming may be enough without adding Flink. Decide from latency, state, workload, and operational requirements.
+- Low latency
+- Stateful Streaming
+- Event Time
+- Watermark
+- Session
+- Complex real-time rules
 
-## Qualifications for real use
+### When Spark fits well
+
+- Large-scale batch processing
+- ETL
+- Large Join
+- Backfill
+- Silver/Gold creation
+- ML Dataset
+
+Both support batch and streaming, but their strengths differ.
+
+At a small scale, Spark Structured Streaming may be enough without adding Flink.
+
+Key point:
+
+```text
+Spark
+→ Large-scale processing
+
+Flink
+→ Stateful real-time streaming
+```
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Source qualifications {#source-notes}
+
+### 5.1–5.2 and 5.12 Execution models and resource units
 
 Spark and Flink's historical starting points help explain their strengths; they are not full lists of current execution modes. A task slot is a logical resource unit, not simply one CPU core. Source and downstream parallelism can differ.
 
+### 5.5–5.6 Watermark and window conditions
+
 The five-second watermark example is an out-of-order assumption, not a universal formula. Progress across inputs is generally limited by the slowest active input. Check idleness and late-event policy together. Waiting longer costs state and does not guarantee accuracy. Event-time session completion is not just wall-clock waiting. [Flink watermarks](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/event-time/generating_watermarks/)
+
+### 5.7 State TTL conditions
 
 State TTL is not immediate automatic deletion. The reviewed DataStream documentation describes processing-time TTL. Check update rules, expired-value visibility, and cleanup behavior. [Flink state](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/fault-tolerance/state/)
 
+### 5.8–5.10 Restore and consistency conditions
+
 Checkpoints do not back up all external systems. Unaligned checkpoints include in-flight data; they are not the same as simply skipping alignment in at-least-once mode. Source replay and restored state still need sink transaction or idempotency support. Savepoint restores also need compatible state schemas and operator identity. [Flink stateful processing](https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/)
 
+### 5.11 and 5.13 Sink bottlenecks and upsert conditions
+
 More parallelism may worsen an overloaded external sink. The reviewed Iceberg Flink upsert documentation requires v2, primary-key or identifier fields, and partition source columns in equality fields. Do not assume Spark SQL MERGE behavior applies to a Flink sink. [Iceberg Flink writes](https://iceberg.apache.org/docs/latest/flink-writes/)
+
+### 5.4 Time definitions and 5.10 Guarantee boundaries
+
+Processing time is when the operator processes an event. Ingestion time is when it enters the system. Distinguish both from event time.
+
+Exactly-once means one committed effect within the promised scope. A supported transactional or idempotent sink can help close the full boundary. At-least-once processing with an idempotent sink is another design with its own assumptions.
+
+### 5.14 Tool selection conditions
+
+The batch/streaming comparison is not an exclusive feature boundary. Choose based on latency, state, workload, and operational requirements.
 
 ## Related reading
 

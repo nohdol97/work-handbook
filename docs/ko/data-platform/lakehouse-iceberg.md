@@ -1,8 +1,8 @@
 ---
 id: data-platform-lakehouse-iceberg
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-03-01
   - DPE-03-02
@@ -17,9 +17,15 @@ knowledge_ids:
   - DPE-03-11
 ---
 
-# Lakehouse와 Apache Iceberg
+# Chapter 3 — Lakehouse / Iceberg
 
 문서 유형: Learn. 제공된 학습 자료의 개념과 설계 예시를 정리했다. `studied`는 개념 학습을 뜻하며, 직접 구현하거나 운영 검증했다는 뜻이 아니다. SQL과 수치는 설명용 예시이며 실행하지 않았다.
+
+본문은 제공된 최신 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 표현에 필요한 정정·조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에 구분했다.
+
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+<!-- SOURCE CORE START -->
 
 ## 3.1 Lakehouse Architecture
 
@@ -69,20 +75,26 @@ Control Plane:
 
 정도로 개념적으로 나눌 수 있다.
 
+---
+
 ## 3.2 Iceberg Metadata Internals
 
 Iceberg의 핵심은 단순히 Parquet 파일을 저장하는 것이 아니라 **Table Metadata를 관리하는 것**이다.
 
 구조를 단순화하면:
 
-```mermaid
-flowchart TD
-    C[Catalog] --> M[Metadata JSON]
-    M --> S[Snapshot]
-    S --> L[Manifest List]
-    L --> F[Manifest Files]
-    F --> D[Data Files]
-    F --> X[Delete Files where applicable]
+```text
+Iceberg Table
+   ↓
+Metadata JSON
+   ↓
+Snapshot
+   ↓
+Manifest List
+   ↓
+Manifest Files
+   ↓
+Data Files
 ```
 
 ---
@@ -151,6 +163,8 @@ Data File
 
 Merge-on-Read 같은 방식에서 삭제 정보를 별도 파일로 관리할 수 있다.
 
+---
+
 ## 3.3 Snapshot Semantics
 
 Snapshot은 특정 시점의 Table 상태다.
@@ -188,6 +202,8 @@ Query는 특정 Snapshot 기준으로 일관된 Table 상태를 읽는다.
 ### Snapshot Isolation Intuition
 
 동시에 Write가 발생하더라도 Query는 중간 상태가 아니라 특정 Snapshot의 일관된 상태를 읽는다고 이해하면 된다.
+
+---
 
 ## 3.4 Atomic Commit Model
 
@@ -229,6 +245,8 @@ Writer B
 File은 만들어졌는데 Commit에 실패하면 Table Metadata에서 참조되지 않는 파일이 남을 수 있다.
 
 이런 File은 나중에 cleanup 대상이 된다.
+
+---
 
 ## 3.5 Partitioning in Iceberg
 
@@ -283,6 +301,8 @@ Table을 다시 전체 Rewrite하지 않고 Partition Spec을 변경할 수 있�
 
 `user_id`처럼 cardinality가 높은 값은 직접 Partition하지 않고 bucket transform 등을 고려할 수 있다.
 
+---
+
 ## 3.6 Query Pruning
 
 Iceberg Query 성능에서 핵심은:
@@ -311,6 +331,8 @@ Column Pruning
 
 좋은 Layout은 이를 줄인다.
 
+---
+
 ## 3.7 Sort Order and Clustering
 
 File min/max statistics가 효과적이려면 값이 어느 정도 모여 있는 것이 좋다.
@@ -332,6 +354,8 @@ user_id 순으로 어느 정도 정렬
 핵심:
 
 > **Sort / Clustering은 Query Pattern을 기준으로 설계해야 한다.**
+
+---
 
 ## 3.8 UPDATE / DELETE / MERGE
 
@@ -392,6 +416,8 @@ Iceberg는 Table Format 차원에서 Update/Delete를 지원한다.
 
 CDC Upsert 등에 사용 가능하지만 큰 Table에서는 비용을 고려해야 한다.
 
+---
+
 ## 3.9 Maintenance
 
 Lakehouse는 파일 기반이므로 Maintenance가 중요하다.
@@ -420,6 +446,8 @@ Metadata에서 더 이상 참조되지 않는 File을 제거한다.
 
 > **Iceberg를 도입했다고 Maintenance가 사라지는 것은 아니다.**
 
+---
+
 ## 3.10 Catalogs
 
 Iceberg Table을 운영하려면 현재 Metadata를 찾을 수 있어야 한다.
@@ -438,6 +466,8 @@ Catalog의 역할:
 - JDBC Catalog
 - Nessie
 - Unity Catalog concepts
+
+---
 
 ## 3.11 Catalog vs Governance
 
@@ -485,6 +515,10 @@ Unity Catalog
 
 즉 Unity Catalog는 훨씬 넓은 Governance Layer로 이해하는 것이 맞다.
 
+---
+
+<!-- SOURCE CORE END -->
+
 ## 적용 시 보완할 점
 
 계층 그림은 책임을 나눈 개념 모델이다. Compute 다음에만 Catalog가 실행된다는 직렬 처리 순서가 아니다. Catalog가 현재 metadata를 찾게 하고 엔진이 metadata와 실제 파일을 읽는다. Pruning 목록도 여러 최적화 계층을 보여 주며 반드시 같은 순서로 실행되는 것은 아니다.
@@ -494,6 +528,39 @@ Unity Catalog
 현재 snapshot에 없는 파일도 유지 중인 과거 snapshot이 참조할 수 있다. Orphan 정리는 진행 중인 write보다 충분히 긴 보존 여유와 경로 일치 검증이 필요하다. 너무 이른 삭제는 데이터 손상을 일으킬 수 있다. Snapshot expiration은 time travel/rollback 가능 범위도 줄인다. [Iceberg 유지보수](https://iceberg.apache.org/docs/latest/maintenance/)
 
 Unity Catalog는 data/AI 자산의 접근 제어·lineage·audit 등을 포함하는 governance 계층이다. Iceberg 연동 가능 여부와 지원 방식은 실제 환경에서 따로 확인한다. [Databricks Unity Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
+
+### 3.1 보완: 계층별 책임
+
+| 계층 | 역할 |
+| --- | --- |
+| Object storage | 지속 보관할 object 저장 |
+| Parquet 같은 file format | 파일 안의 데이터 표현 |
+| Iceberg 같은 table format | 여러 파일에 걸친 일관된 table 설명 |
+| Spark·Trino·Flink 같은 compute | 데이터 읽기·변환·쓰기 |
+| Catalog | Table과 metadata 찾기 |
+| Governance | 정책과 책임 관리 |
+
+Data/control plane 구분은 개념적인 책임 분리이며 모든 제품의 배포 구조가 같다는 뜻은 아니다.
+
+### 3.2·3.5·3.7·3.8 보완: metadata, 배치, 변경 비용
+
+과거 metadata 파일이 남아 있어도 그 파일이 현재 table 상태를 가리킨다는 뜻은 아니다. Manifest는 data file 또는 delete file과 그 metadata를 설명한다.
+
+Partition transform의 실제 SQL 표기는 engine에 따라 다르다. User ID가 모든 파일에 무작위로 분포하면 넓은 min/max 범위가 겹칠 수 있다. 정렬은 그 범위를 좁혀 특정 사용자나 사용자 범위를 읽을 때 도움이 될 수 있다.
+
+큰 테이블의 MERGE는 상당한 scan·shuffle·rewrite를 일으킬 수 있다. 지원 연산과 물리적 delete 표현은 table format 버전과 engine에 따라 확인한다.
+
+### 기존 보완 흐름도
+
+```mermaid
+flowchart TD
+    C[Catalog] --> M[Metadata JSON]
+    M --> S[Snapshot]
+    S --> L[Manifest List]
+    L --> F[Manifest Files]
+    F --> D[Data Files]
+    F --> X[Delete Files where applicable]
+```
 
 ## 연결해서 읽기
 

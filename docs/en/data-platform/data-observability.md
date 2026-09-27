@@ -1,8 +1,8 @@
 ---
 id: data-platform-data-observability
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-12-01
   - DPE-12-02
@@ -13,82 +13,214 @@ knowledge_ids:
   - DPE-12-07
 ---
 
-# Data observability
+# Chapter 12 — Data Observability
 
 This Learn page covers continuous measurement of data health. The numbers and incidents are learning examples, not measurements or hands-on experience. Data quality defines expected conditions. Observability helps show the current state and locate where a problem starts.
 
-## Split freshness by stage
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
 
-| Stage | Question | Scope |
-| --- | --- | --- |
-| Source freshness | Is the source created and collected on time? | Source creation and collection |
-| Pipeline freshness | Where does processing delay grow? | Kafka → Bronze → Silver → Gold |
-| Downstream freshness | Does the user see current data? | Dashboards and BI |
+<!-- SOURCE CORE START -->
 
-Compare timestamps by stage to find where delay starts. For operational use, distinguish event time, collection time, processing completion time, and screen refresh time. They are different measurements.
+## 12.1 Data Freshness
 
-## Changes in volume
+### Source Freshness
 
-Unusually low or high counts and missing partitions are signals to investigate.
+Is source data created and collected on time?
 
-| Change | Possible causes |
-| --- | --- |
-| Sharp decrease | Collection failure, producer problem, filter bug |
-| Sharp increase | Duplicates, replay, retry storm, real traffic spike |
-| Missing partition | That scope may not have been created or processed |
+### Pipeline Freshness
 
-Compare recent averages, the same weekday, and seasonal patterns. An absolute threshold alone can flag a normal weekend decline or hide a missing partition inside a total count. These causes are hypotheses. A volume change alone does not prove one.
+Measure processing delay across Kafka → Bronze → Silver → Gold.
 
-## Monitor schema and distributions
+### Downstream Freshness
 
-Watch column additions, removals, renames, type changes, and nullable changes. A breaking change can break downstream consumers. Connect this information to [lineage](lineage-metadata.md) to help find affected consumers.
+Do dashboards and BI show current data?
 
-Volume can be normal while values change. Watch null rate drift, cardinality drift, category distributions, and numeric distributions.
+Freshness at each stage helps locate where delay starts.
+
+---
+
+## 12.2 Volume Monitoring
+
+Detect sharp decreases or increases in row counts compared with normal levels.
+
+Possible causes of a decrease:
+
+- Collection failure
+- Producer problem
+- Filter bug
+
+Possible causes of an increase:
+
+- Duplicates
+- Replay
+- Retry storm
+- Traffic spike
+
+A missing partition is another important signal.
+
+Rather than using only an absolute value:
+
+- Recent averages
+- The same weekday
+- Seasonal patterns
+
+Compare counts with baselines such as these.
+
+---
+
+## 12.3 Schema Monitoring
+
+Watch for these changes:
+
+- Column addition
+- Column removal
+- Rename
+- Type change
+- Nullable change
+
+A breaking change can break downstream consumers.
+
+Connecting schema monitoring with lineage helps find the affected consumers.
+
+---
+
+## 12.4 Distribution Drift
+
+Volume can remain normal while value distributions change.
+
+Common signals:
+
+- Null rate drift
+- Cardinality drift
+- Value distribution drift
+- Numeric distribution drift
+
+Example:
 
 ```text
 Usual FAILED rate = 5%
 Today's FAILED rate = 45%
-Total row count = within the usual range
 ```
 
-This example shows why counts alone cannot prove data health. Use more evidence to tell a real failure increase from a change in how status is recorded.
+Normal volume does not prove that data is healthy.
 
-## Pipeline health and data health
+---
 
-| Pipeline health | Data health |
-| --- | --- |
-| Job status | Freshness |
-| Kafka lag | Volume |
-| Runtime | Schema |
-| CPU and memory | NULLs and duplicates |
-| Execution failures | Distribution |
+## 12.5 Pipeline Health vs Data Health
 
-**Green pipeline ≠ healthy data.** A successful job can return zero rows because its query logic is wrong. If a job is late, check data health as well to learn which datasets and users are affected.
+Pipeline health:
 
-## SLIs and SLOs
+- Job status
+- Kafka lag
+- Runtime
+- CPU and memory
+- Failures
 
-Observability measures data state over time. These are hypothetical measurements and targets.
+Data health:
 
-| SLI measurement | Example SLO target |
-| --- | --- |
-| Freshness = 3 minutes | Freshness < 5 minutes |
-| NULL rate = 0.5% | NULL rate < 1% |
-| Volume = 98M rows | Volume deviation from the baseline < 20% |
+- Freshness
+- Volume
+- Schema
+- Nulls
+- Duplicates
+- Distributions
 
-The value 98M alone cannot show whether the deviation target is met. You need a baseline and a measurement window. Use several signals and define them for the dataset's business purpose. Share definitions with [quality SLOs](data-quality.md) so that measurement and response agree.
+The key idea:
 
-## Actionable alerts
+> **Green pipeline ≠ healthy data.**
 
-The aim is to report problems worth acting on, not to maximize alert count. Repeated ALERT and RECOVERY states near a threshold create a noisy alert. An actionable alert makes it clear where to investigate.
+A successful job can return zero rows because its query logic is wrong.
 
-Include these elements:
+---
+
+## 12.6 Data SLIs / SLOs
+
+Observability measures data state over time.
+
+Example SLIs:
+
+```text
+Freshness = 3 minutes
+NULL rate = 0.5%
+Volume = 98M
+```
+
+Example SLOs:
+
+```text
+Freshness < 5 minutes
+NULL rate < 1%
+Volume deviation < 20%
+```
+
+Use several signals together.
+
+---
+
+## 12.7 Alert Design
+
+The goal:
+
+> **Report problems worth acting on, rather than maximizing alert count.**
+
+### Noisy Alert
+
+ALERT and RECOVERY repeat near the threshold.
+
+### Actionable Alert
+
+The alert makes it clear where to investigate.
+
+A useful alert includes:
+
+```text
+Threshold
++
+Duration
++
+Severity
++
+Context
+```
+
+Warning and Critical can use different levels.
+
+Alert policies can also vary by dataset importance tier.
+
+Avoid alert fatigue.
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Details to check in practice
+
+### Freshness timestamps
+
+Event time, collection time, processing completion time, and screen refresh time are different measurements. Define which timestamps to compare before using them in operations.
+
+### Investigating volume and drift
+
+An absolute threshold alone can flag a normal weekend decline. A total count can hide a missing partition.
+
+The listed causes of decreases and increases are hypotheses. A volume change alone does not prove one. When the FAILED rate changes, check whether failures really increased or the way status is recorded changed.
+
+Connect schema changes to [lineage](lineage-metadata.md) to help find affected consumers. If a job is late, check data health too. Find which datasets and users are affected.
+
+### Interpreting SLIs and SLOs
+
+Volume = 98M alone cannot show whether the deviation target is met. You need a baseline and a measurement window.
+
+Define several signals for the dataset's business purpose. Share definitions with [quality SLOs](data-quality.md) so that measurement and response agree.
+
+### Concrete alert context
 
 - **Threshold:** Which condition failed?
 - **Duration:** How long has it lasted?
-- **Severity:** How large is the impact? Warning and Critical can use different levels.
+- **Severity:** How large is the impact?
 - **Context:** Which dataset, partition, stage, owner, and related run should be checked?
 
-Policies can vary by dataset importance tier. Define duration and context to reduce alert fatigue. Check that this does not hide important signals.
+Define duration and context to reduce alert fatigue. Check that this does not hide important signals.
 
 ## LLM in Practice: investigate empty output from a successful job
 

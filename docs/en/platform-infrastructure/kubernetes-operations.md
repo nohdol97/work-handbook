@@ -16,13 +16,1245 @@ knowledge_ids:
   - PIS-03-10
 ---
 
-# Kubernetes operations basics
+# Chapter 3. Kubernetes Production Operations
 
 This page records concept study from Basic Chapter 3. It does not claim completed cluster operations, failure drills, upgrades, or command execution. The goal is to understand how to keep services running through server failures, traffic growth, Node replacement, and upgrades. Start with [Kubernetes core](kubernetes-core.md) and [Linux and containers](linux-containers.md). See the [platform infrastructure study guide](index.md) for the full scope.
 
 The commands on this page are unrun learning examples. Use even read-only commands only in an authorized environment. `cordon`, `drain`, recovery, and replacement change operational state. Publishing these examples does not authorize real changes, deletion, or recovery.
 
-## 3.1 Cluster design: tolerate one server failure
+
+The source core below preserves the supplied study notes and their order in translation. Read **Corrections and additions by source section** after the core for simplified or incomplete claims. Before applying the material, check quorum and recovery scope in 3.2, PDBs in 3.7, drain in 3.8, and Pending and OOM explanations in 3.10.
+
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+<!-- SOURCE CORE START -->
+
+## 3.1 Cluster Design
+
+The core requirement for production Kubernetes:
+
+> The service should remain available even if one server fails
+
+### Control Plane HA
+
+A single Control Plane can become a single point of failure.
+
+Production systems use multiple Control Plane instances for HA.
+
+With managed Kubernetes such as EKS, the cloud provider manages this part.
+
+### Multiple Worker Nodes Too
+
+```text
+Node A → API Pod
+Node B → API Pod
+Node C → API Pod
+```
+
+If one Node fails, Pods on other Nodes should keep handling requests.
+
+### Node Pool
+
+A group of Nodes for a specific purpose.
+
+Example:
+
+```text
+General Node Pool
+→ General backend applications
+
+GPU Node Pool
+→ vLLM
+
+Batch Node Pool
+→ Batch Job
+```
+
+### Failure Domain
+
+Do not place all Pods in one location.
+
+```text
+Pod 1 → Node A
+Pod 2 → Node B
+Pod 3 → Node C
+```
+
+### Availability Zone
+
+In a cloud, also consider failures of an entire AZ.
+
+```text
+AZ-A
+├─ Node 1
+└─ Pod A
+
+AZ-B
+├─ Node 2
+└─ Pod B
+```
+
+### Platform Design Example
+
+```text
+Kubernetes Cluster
+
+AZ-A
+├─ General Node
+└─ GPU Node
+
+AZ-B
+├─ General Node
+└─ GPU Node
+```
+
+### Key Points
+
+```text
+Control Plane
+→ HA is needed
+
+Worker Node
+→ Operate multiple Nodes
+
+Node Pool
+→ Group Nodes by purpose
+
+Failure Domain
+→ Separate resources so failures do not affect everything together
+
+Availability Zone
+→ Consider Zone failures too
+```
+
+---
+
+## 3.2 etcd Operations
+
+etcd is the **cluster state store** for Kubernetes.
+
+> etcd = the memory of Kubernetes
+
+### What It Stores
+
+```text
+Pod information
+Deployment information
+Service information
+ConfigMap / Secret
+Cluster configuration
+```
+
+### Why It Matters
+
+If etcd fails, cluster management tasks such as creating Pods and changing Deployments or Services can have problems.
+
+### Quorum
+
+etcd usually has several members.
+
+Example:
+
+```text
+etcd 1
+etcd 2
+etcd 3
+```
+
+With three members, at least two must be alive.
+
+> Quorum = the minimum majority needed to maintain consensus
+
+### An Odd Number of Members
+
+Common configurations use an odd number, such as three or five members.
+
+### Backup / Restore
+
+```text
+Healthy cluster
+↓
+Create an etcd snapshot
+↓
+Failure occurs
+↓
+Restore from the snapshot
+```
+
+### Managed Kubernetes
+
+In managed Kubernetes such as EKS, the cloud provider operates etcd and the Control Plane.
+
+### Key Points
+
+```text
+etcd
+= Kubernetes cluster state store
+
+The API Server communicates with etcd
+
+In production,
+→ Use multiple etcd members for HA
+
+Quorum
+= A majority of members must be alive
+
+etcd backup
+= Important for restoring cluster state
+```
+
+---
+
+## 3.3 CNI
+
+CNI = **Container Network Interface**
+
+> The networking layer that assigns Pod IPs and allows Pods to communicate in Kubernetes
+
+### Role
+
+```text
+Create a Pod
+↓
+Assign an IP
+↓
+Communicate with other Pods
+```
+
+### Common CNIs
+
+```text
+Calico
+Cilium
+```
+
+Both support Pod networking and network policies.
+
+### Calico
+
+A common Kubernetes CNI.
+
+Main roles:
+
+```text
+Pod networking
+Routing
+NetworkPolicy
+```
+
+### Cilium
+
+A CNI that makes extensive use of eBPF.
+
+```text
+Cilium
+→ Network processing based on eBPF
+→ NetworkPolicy
+→ Strong observability features too
+```
+
+### Overlay vs Routed Network
+
+**Overlay**
+
+```text
+Pod
+↓
+Overlay Network
+↓
+Host Network
+```
+
+Adds another virtual network layer.
+
+**Routed**
+
+```text
+Pod IP
+↓
+Routing
+↓
+A Pod on another Node
+```
+
+Connects directly through routing.
+
+### eBPF
+
+A technology for efficient network processing and observation inside the Linux kernel.
+
+Cilium uses it for networking, security, and observability.
+
+### Key Points
+
+```text
+CNI
+= Implement Pod networking
+
+Calico
+= A common Kubernetes CNI
+
+Cilium
+= A CNI based on eBPF
+
+Overlay
+= Add a virtual network layer
+
+Routed
+= Connect directly through routing
+```
+
+---
+
+## 3.4 CSI
+
+CSI = **Container Storage Interface**
+
+> A standard interface for Kubernetes to connect to different storage systems
+
+### Why It Is Needed
+
+Different storage systems have different connection methods.
+
+Example:
+
+```text
+AWS EBS
+NFS
+Ceph
+Google Persistent Disk
+Azure Disk
+```
+
+Kubernetes requests storage, and the CSI Driver handles the actual work.
+
+### Basic Structure
+
+```text
+Pod
+ ↓
+PVC
+ ↓
+StorageClass
+ ↓
+CSI Driver
+ ↓
+Actual storage
+```
+
+AWS example:
+
+```text
+Pod
+↓
+PVC
+↓
+EBS CSI Driver
+↓
+AWS EBS Volume
+```
+
+### CSI Driver
+
+Connects Kubernetes to the actual storage system.
+
+Example:
+
+```text
+EBS CSI Driver
+EFS CSI Driver
+Ceph CSI
+```
+
+### Volume Attachment
+
+When a Pod runs on a Node, its storage may also need to be attached to that Node.
+
+```text
+Pod
+→ Scheduled on Node A
+→ Attach the EBS Volume to Node A
+→ Mount it in the container
+```
+
+### Storage Failures
+
+If a Pod remains in `Pending` or `ContainerCreating` for a long time:
+
+```text
+CSI Driver problem
+Failure in the storage system
+Permission problem
+Zone mismatch
+Volume attachment failure
+```
+
+Check these possibilities.
+
+Cloud disks, in particular, can be tied to an AZ.
+
+```text
+Volume = AZ-A
+Pod = AZ-B Node
+→ Attachment may be impossible
+```
+
+### Key Points
+
+```text
+CSI
+= A standard for connecting Kubernetes and storage
+
+CSI Driver
+= Communicate with the actual storage system
+
+Flow:
+Pod
+→ PVC
+→ StorageClass
+→ CSI Driver
+→ Actual storage
+```
+
+---
+
+## 3.5 CoreDNS
+
+CoreDNS is the internal DNS server for Kubernetes.
+
+> Resolves Service names to IP addresses
+
+### Basic Flow
+
+```text
+API Pod
+↓
+Request by the name redis
+↓
+CoreDNS
+↓
+Return the Redis Service IP
+↓
+Redis Service
+↓
+Redis Pod
+```
+
+### Kubernetes DNS Names
+
+Within the same Namespace, a Service name alone can be used for access.
+
+Example:
+
+```text
+redis
+postgres
+my-api
+```
+
+For another Namespace, a longer name can be used.
+
+Example:
+
+```text
+redis.cache
+```
+
+### CoreDNS Failures
+
+A Service can be running but unreachable by name.
+
+Example:
+
+```text
+Pod → postgres
+```
+
+If this fails but direct IP access succeeds, DNS may be the problem.
+
+### DNS Troubleshooting
+
+```bash
+nslookup postgres
+dig postgres
+kubectl get pods -n kube-system
+```
+
+### DNS Scaling
+
+More Pods and DNS requests can increase the load on CoreDNS.
+
+CoreDNS replica count and resource settings can matter in production.
+
+### Key Points
+
+```text
+CoreDNS
+= Internal Kubernetes DNS
+
+Service name
+→ CoreDNS
+→ Service IP
+
+When DNS fails,
+access by Service name can fail
+```
+
+---
+
+## 3.6 Autoscaling
+
+Key elements:
+
+```text
+HPA
+VPA
+Cluster Autoscaler
+KEDA
+```
+
+### HPA
+
+Horizontal Pod Autoscaler.
+
+> Increases and decreases the number of Pods.
+
+Example:
+
+```text
+Three API Pods
+↓
+CPU utilization rises
+↓
+HPA
+↓
+Six API Pods
+```
+
+Common signals:
+
+```text
+CPU
+Memory
+Custom Metric
+```
+
+### VPA
+
+Vertical Pod Autoscaler.
+
+> Adjusts the CPU and memory requested by one Pod
+
+```text
+Current
+CPU request = 500m
+Memory request = 1Gi
+
+↓ VPA
+
+CPU request = 1
+Memory request = 2Gi
+```
+
+### Cluster Autoscaler
+
+Adjusts the number of Nodes.
+
+```text
+HPA
+↓
+Ten Pods needed
+↓
+Insufficient Node capacity
+↓
+Pod Pending
+↓
+Cluster Autoscaler
+↓
+Add Nodes
+```
+
+### HPA + Cluster Autoscaler
+
+```text
+Traffic increases
+↓
+HPA
+↓
+Add Pods
+↓
+Insufficient Node resources
+↓
+Cluster Autoscaler
+↓
+Add Nodes
+↓
+Schedule new Pods
+```
+
+### KEDA
+
+Autoscaling based on events.
+
+Example:
+
+```text
+Kafka lag rises
+↓
+KEDA
+↓
+Add consumer Pods
+```
+
+It can also use queue message counts.
+
+### Scaling Is Not Instant
+
+```text
+Traffic spike
+↓
+HPA detects it
+↓
+Create new Pods
+↓
+Image Pull
+↓
+Start the app
+↓
+Readiness succeeds
+↓
+Handle traffic
+```
+
+vLLM can also need time for model loading.
+
+### Key Points
+
+```text
+HPA
+= Adjust the Pod count automatically
+
+VPA
+= Adjust Pod CPU and memory size
+
+Cluster Autoscaler
+= Adjust the Node count automatically
+
+KEDA
+= Scale from events such as queue depth or Kafka lag
+```
+
+---
+
+## 3.7 Reliability
+
+Reliability means keeping services available as much as possible during failures and deployments.
+
+Key elements:
+
+```text
+PDB
+Anti-Affinity
+Topology Spread
+Graceful Termination
+```
+
+### PodDisruptionBudget
+
+A rule that defines the minimum number of Pods that should remain alive during maintenance.
+
+Example:
+
+```text
+minAvailable = 2
+```
+
+It aims to keep at least two Pods during Node drain.
+
+### Anti-Affinity
+
+Spread Pods of the same service across different Nodes.
+
+```text
+Node A → API Pod 1
+Node B → API Pod 2
+Node C → API Pod 3
+```
+
+### Topology Spread
+
+Spread Pods evenly across Nodes or AZs.
+
+```text
+AZ-A → two Pods
+AZ-B → two Pods
+AZ-C → two Pods
+```
+
+### Graceful Termination
+
+Give a terminating Pod time to finish existing requests instead of killing it immediately.
+
+```text
+Start Pod termination
+↓
+Stop new traffic
+↓
+SIGTERM
+↓
+Finish existing requests
+↓
+Exit normally
+```
+
+### Combining Reliability Measures
+
+```text
+Multiple replicas
++
+Anti-Affinity / Topology Spread
++
+PDB
++
+Readiness Probe
++
+Graceful Shutdown
+```
+
+### Key Points
+
+```text
+PDB
+= Protect against too many Pods going down at once
+
+Anti-Affinity
+= Spread equivalent Pods across different Nodes
+
+Topology Spread
+= Spread evenly across Nodes and AZs
+
+Graceful Termination
+= Finish requests and exit safely
+```
+
+---
+
+## 3.8 Node Operations
+
+Key elements:
+
+```text
+Cordon
+Drain
+Node Pressure
+Replacement
+```
+
+### Cordon
+
+> Do not schedule any more new Pods on this Node
+
+```bash
+kubectl cordon node-a
+```
+
+Existing Pods remain; only new scheduling is blocked.
+
+### Drain
+
+> The work of safely clearing Pods from a Node
+
+```bash
+kubectl drain node-a
+```
+
+```text
+Node A
+↓
+Stop scheduling new Pods
+↓
+Move existing Pods to other Nodes
+↓
+Empty the Node
+```
+
+### Cordon vs Drain
+
+```text
+Cordon
+= Only new Pods are blocked from entering
+
+Drain
+= Existing Pods are removed too
+```
+
+### Node Pressure
+
+Common examples:
+
+```text
+MemoryPressure
+DiskPressure
+PIDPressure
+```
+
+#### MemoryPressure
+
+Insufficient memory. Pod eviction is possible.
+
+#### DiskPressure
+
+Insufficient disk space.
+
+Example causes:
+
+```text
+Too many container images
+Excessive logs
+Insufficient ephemeral storage
+```
+
+#### PIDPressure
+
+When there are too many processes.
+
+### Eviction
+
+When Node resources run short, some Pods can be removed to protect the Node.
+
+```text
+Insufficient Node resources
+↓
+Pressure occurs
+↓
+Evict some Pods
+↓
+Possible rescheduling on other Nodes
+```
+
+### Node Replacement
+
+In cloud environments, replacing Nodes is common instead of repairing them.
+
+```text
+Node fault
+↓
+cordon
+↓
+drain
+↓
+Remove the Node
+↓
+Create a new Node
+```
+
+### Key Points
+
+```text
+Cordon
+= Block new Pod scheduling
+
+Drain
+= Safely clear existing Pods too
+
+MemoryPressure
+= Insufficient memory
+
+DiskPressure
+= Insufficient disk space
+
+Eviction
+= Remove Pods to protect the Node
+
+Node Replacement
+= Remove a faulty Node and replace it with a new one
+```
+
+---
+
+## 3.9 Upgrade Strategy
+
+As Kubernetes versions advance, the Control Plane and Worker Nodes need safe upgrades.
+
+Key elements:
+
+```text
+Control Plane Upgrade
+Node Upgrade
+Version Skew
+```
+
+### Control Plane Upgrade
+
+Upgrade management components such as the API Server, Scheduler, Controller Manager, and etcd first.
+
+In managed Kubernetes, the cloud provider handles much of this work.
+
+### Worker Node Upgrade
+
+Real Pods run there, so do not change all Worker Nodes at once.
+
+Usually:
+
+```text
+Node A
+↓
+cordon
+↓
+drain
+↓
+Upgrade or replace
+↓
+Return to use
+```
+
+### Rolling Upgrade
+
+Replace Nodes one at a time or in small groups.
+
+```text
+Upgrade Node A
+↓
+Check health
+
+Upgrade Node B
+↓
+Check health
+
+Upgrade Node C
+```
+
+### Version Skew
+
+A large version difference between the Control Plane and Nodes may be unsupported.
+
+In other words:
+
+> There is an allowed version difference between components.
+
+### Checks Before an Upgrade
+
+```text
+1. Current Kubernetes version
+2. Compatibility with the new version
+3. CNI / CSI compatibility
+4. Ingress Controller compatibility
+5. Whether APIs in use are deprecated
+```
+
+### Connection to PDBs
+
+PDBs protect availability by limiting how many Pods go down together during Node drain.
+
+### Key Points
+
+```text
+Control Plane
+→ Upgrade safely first
+
+Worker Node
+→ Rolling upgrade one at a time or in small groups
+
+Node Upgrade
+→ cordon → drain → upgrade/replace
+
+Version Skew
+→ Components have an allowed version difference
+
+Before upgrading,
+→ Check CNI / CSI / API compatibility
+```
+
+---
+
+## 3.10 Kubernetes Troubleshooting
+
+In production Kubernetes, use error messages to narrow down the failing layer quickly.
+
+Main failure types:
+
+```text
+Pending
+CrashLoopBackOff
+OOMKilled
+ImagePullBackOff
+Network / DNS
+Storage
+Scheduling
+```
+
+### Pending
+
+The Pod has been created but has not been placed on a Node.
+
+Common causes:
+
+```text
+Insufficient CPU or memory
+Insufficient GPUs
+nodeSelector mismatch
+Taint or toleration problem
+PVC or storage problem
+```
+
+Check:
+
+```bash
+kubectl describe pod <pod>
+```
+
+`Events` are important.
+
+### CrashLoopBackOff
+
+```text
+Start
+↓
+Crash
+↓
+Restart
+↓
+Crash
+↓
+Restart
+```
+
+Common causes:
+
+```text
+Application error
+Incorrect ConfigMap or Secret
+Database connection failure
+Incorrect startup command
+Liveness probe failure
+```
+
+Check:
+
+```bash
+kubectl logs <pod>
+```
+
+CrashLoopBackOff is not a cause. It is a resulting state that means the container keeps failing.
+
+### OOMKilled
+
+Terminated after exceeding the memory limit.
+
+```text
+Memory grows
+↓
+Limit exceeded
+↓
+OOMKilled
+```
+
+Check:
+
+```bash
+kubectl describe pod <pod>
+```
+
+Possible directions for a fix:
+
+```text
+Check for a memory leak
+Adjust the memory limit
+Reduce application memory use
+```
+
+### ImagePullBackOff
+
+The image could not be pulled from the registry.
+
+Common causes:
+
+```text
+Typo in the image name
+Missing tag
+Registry authentication failure
+Network problem
+```
+
+### Network Problems
+
+Check in stages:
+
+```text
+Can the Pod itself be reached?
+↓
+Can the Service be reached?
+↓
+Can the Ingress be reached?
+```
+
+Items to check:
+
+```text
+Pod IP
+Service
+Endpoint
+CNI
+NetworkPolicy
+Port
+```
+
+Example:
+
+```text
+The Service sends traffic to 8080,
+but the application listens on 8000
+```
+
+In this case, it fails.
+
+### DNS Problems
+
+Symptom:
+
+```text
+Connection by IP succeeds
+Connection by name fails
+```
+
+Example:
+
+```text
+10.0.0.10:5432 → success
+postgres:5432  → failure
+```
+
+In this case, suspect CoreDNS.
+
+```bash
+nslookup postgres
+```
+
+### Storage Problems
+
+When a stateful Pod stays in `Pending` or `ContainerCreating` for a long time:
+
+```text
+PVC state
+PV state
+CSI Driver
+Volume Attach
+AZ
+```
+
+Check these items.
+
+### Scheduling Problems
+
+Common causes:
+
+```text
+Insufficient CPU
+Insufficient memory
+Insufficient GPUs
+
+nodeAffinity
+nodeSelector
+
+taint / toleration
+
+Pod anti-affinity
+```
+
+Events from `kubectl describe pod` are important here too.
+
+Example:
+
+```text
+0/5 nodes are available
+```
+
+### Basic Troubleshooting Order
+
+```text
+1. Check Pod state
+      ↓
+2. kubectl describe pod
+      ↓
+3. Check Events
+      ↓
+4. Check kubectl logs
+      ↓
+5. Check CPU / Memory
+      ↓
+6. Check scheduling conditions
+      ↓
+7. Check Network / DNS
+      ↓
+8. Check Storage
+```
+
+Common commands:
+
+```bash
+kubectl get pods
+kubectl describe pod <pod>
+kubectl logs <pod>
+```
+
+### Quick Mapping from Symptoms
+
+```text
+Pending
+→ Scheduling / Resource / Storage
+
+CrashLoopBackOff
+→ Application / Config / Probe
+
+OOMKilled
+→ Memory
+
+ImagePullBackOff
+→ Image / Registry
+
+Connection by name fails
+→ DNS / CoreDNS
+
+Service connection fails
+→ Service / Port / CNI / NetworkPolicy
+
+Stuck in ContainerCreating
+→ Possible image or storage issue
+```
+
+### Chapter 3 Summary
+
+```text
+Cluster HA
+↓
+etcd
+↓
+CNI / CSI / DNS
+↓
+Autoscaling
+↓
+Reliability
+↓
+Node Operations
+↓
+Upgrade
+↓
+Troubleshooting
+```
+
+The goal of production Kubernetes:
+
+> Go beyond starting Pods: operate reliably through failures, traffic growth, Node replacement, and upgrades.
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Corrections and additions by source section
+
+These existing official-documentation reviews and operational notes are separate from the source core. The original text diagrams remain in the core. Existing Mermaid diagrams stay in this supplement. Previously recorded review dates and the unrun status are unchanged.
+
+### 3.1 notes: Cluster design: tolerate one server failure
 
 A single Control Plane can become a single point of failure for cluster management. Use multiple Control Plane instances for HA and spread workloads across multiple Worker Nodes. For example, Nodes A, B, and C can each run an API Pod. If one Node fails, Pods on the others can serve requests. More replicas on the same Node do not separate failure domains.
 
@@ -52,7 +1284,7 @@ flowchart TB
 
 In managed Kubernetes such as EKS, the cloud provider operates the Control Plane and etcd. This does not mean application replicas, placement rules, Node capacity, and data protection are automatically solved. Check the responsibility boundary for each managed service.
 
-## 3.2 etcd: the cluster's memory
+### 3.2 notes: etcd: the cluster's memory
 
 etcd stores Kubernetes cluster state. It holds API object state such as Pods, Deployments, Services, ConfigMaps, Secrets, and cluster configuration. The API Server communicates with etcd. An etcd failure can affect management work such as creating Pods or changing Deployments and Services. It does not mean every running application immediately stops.
 
@@ -66,7 +1298,7 @@ Backups matter for cluster state recovery. An etcd snapshot is different from an
 
 The official etcd 3.6 recovery guide uses `etcdctl snapshot save` to save a snapshot and `etcdutl snapshot restore` to restore it. Restore creates a new logical cluster. Members use the same snapshot. In Kubernetes, moving back to an older revision can affect informer caches and watches. Review revision bumps and compaction handling. Real recovery needs a procedure for the installed version and validation in an isolated recovery environment. No recovery was run here. [etcd 3.6 recovery guide](https://etcd.io/docs/v3.6/op-guide/recovery/)
 
-## 3.3 CNI: Pod networking
+### 3.3 notes: CNI: Pod networking
 
 CNI means Container Network Interface. Kubernetes network plugins use CNI to assign Pod IPs and set up communication between Pods. CNI itself is an interface specification. The plugin and its settings determine routing and policy behavior.
 
@@ -85,7 +1317,7 @@ eBPF supports tasks such as network processing and observation inside the Linux 
 
 Do not map Overlay and Routed to fixed product names. Calico supports overlay and non-overlay modes. Cilium also offers several modes, including encapsulation and native routing. Review underlay routes for Pod IPs, MTU, and cloud constraints. [Calico network options](https://docs.tigera.io/calico/latest/networking/determine-best-networking), [Cilium routing](https://docs.cilium.io/en/stable/network/concepts/routing/)
 
-## 3.4 CSI: storage connections and failure boundaries
+### 3.4 notes: CSI: storage connections and failure boundaries
 
 CSI means Container Storage Interface. It provides a standard interface to storage systems such as AWS EBS, NFS, Ceph, Google Persistent Disk, and Azure Disk. Kubernetes declares storage needs. A CSI Driver handles integration with the actual system. Examples include EBS CSI Driver, EFS CSI Driver, and Ceph CSI.
 
@@ -112,7 +1344,7 @@ When a Pod stays in `Pending` or `ContainerCreating`, check these areas separate
 
 A cloud disk can be bound to an AZ. A Volume in AZ-A may not attach to a Node in AZ-B. What looks like a Pod problem may be a storage topology problem.
 
-## 3.5 CoreDNS: separate name resolution from connection
+### 3.5 notes: CoreDNS: separate name resolution from connection
 
 CoreDNS is a common internal DNS server in Kubernetes. Start with normal Service name resolution to a Service IP.
 
@@ -133,7 +1365,7 @@ kubectl get pods -n kube-system
 
 The `nslookup` and `dig` examples assume the tools exist in an authorized diagnostic environment with DNS conditions equivalent to the affected Pod. As Pod count and DNS requests grow, CoreDNS replica count and CPU/Memory settings matter. Observe errors, latency, resources, and request volume together.
 
-## 3.6 Autoscaling: Pod count, resource size, and Node count
+### 3.6 notes: Autoscaling: Pod count, resource size, and Node count
 
 | Tool | What it adjusts | Source learning example |
 | --- | --- | --- |
@@ -166,7 +1398,7 @@ flowchart TD
 
 A normal application may not need the model-loading step. In all cases, detection, Pod creation and scheduling, image pull, application startup, and readiness take time. vLLM may add model-loading time. Separate the time a scale request is made from the time real serving capacity increases. Review spare capacity and startup time for traffic spikes.
 
-## 3.7 Reliability: placement and shutdown
+### 3.7 notes: Reliability: placement and shutdown
 
 Reliability means keeping services available during failures and deployments. Review multiple replicas together with distribution, PDBs, readiness, and graceful shutdown.
 
@@ -182,7 +1414,7 @@ A PDB cannot prevent involuntary failures such as a failed Node. It also does no
 
 The source's shutdown mental model is `start termination → stop new traffic → SIGTERM → finish existing requests → exit normally`. In practice, endpoint updates and process shutdown are not guaranteed to follow one perfect serial order. The application must handle termination signals and finish work within the grace period. Also consider routing propagation and existing connections. [Pod lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
 
-## 3.8 Node operations: cordon, drain, pressure, and replacement
+### 3.8 notes: Node operations: cordon, drain, pressure, and replacement
 
 `cordon` marks a Node unschedulable. It blocks normal new scheduling while leaving existing Pods running. `drain` uses operations such as Pod eviction to empty a Node. The following change commands are unrun examples.
 
@@ -205,7 +1437,7 @@ Eviction can remove some Pods to protect a Node when resources run short. The fl
 
 Cloud operators may replace a faulty Node instead of repairing it. The source flow is `detect fault → cordon → drain → remove Node → create new Node`. Before real work, decide whether to add capacity first, how to protect local data and attached Volumes, and where to stop if a step fails.
 
-## 3.9 Upgrades: check compatibility and change in stages
+### 3.9 notes: Upgrades: check compatibility and change in stages
 
 First review compatibility for the Control Plane's API Server, Scheduler, Controller Manager, and etcd. Upgrade the management components in their supported order, then proceed with Workers. Managed Kubernetes providers handle some steps. Addon and application compatibility still need separate checks. This does not mean changing etcd to the same version number as Kubernetes.
 
@@ -222,7 +1454,7 @@ Before an upgrade, check:
 
 Version skew is the supported version difference between components. The official policy checked on 2026-09-27 requires HA API Servers to stay within one minor version of each other. A kubelet must not be newer than the API Server. It can generally be up to three minor versions older. For kubelet versions below 1.25, the limit is two minor versions. Mixed API Server versions narrow the allowed range. These rules alone do not prove support for every component combination. Tools and providers can impose stricter limits. Check the full policy for the actual target versions. [Version skew policy](https://kubernetes.io/releases/version-skew-policy/)
 
-## 3.10 Troubleshooting: move from symptoms to the failing layer
+### 3.10 notes: Troubleshooting: move from symptoms to the failing layer
 
 An error state helps narrow candidate causes. `Pending` includes scheduling waits, but it can also include preparation such as image setup. It does not always mean the Pod has no assigned Node. `CrashLoopBackOff` is also a waiting-state display caused by repeated restarts, not a Pod phase or the root cause. [Pod lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
 
@@ -236,7 +1468,7 @@ An error state helps narrow candidate causes. `Pending` includes scheduling wait
 | Service connection fails | Service/EndpointSlice, port, CNI, NetworkPolicy | Check Pod, Service, and then Ingress boundaries |
 | Long wait in ContainerCreating | Image preparation, storage attachment/mount, Pod network setup, or other causes | Events and the relevant Driver state |
 
-### Logs, resources, and scheduling
+#### Logs, resources, and scheduling
 
 The source's repeated-crash flow is `start → crash → restart → crash → restart`. Current logs may miss the cause, so also check logs from the previous instance. Below, `<pod>` is a placeholder for the actual authorized Pod name. For a Pod with multiple containers, also choose the right container.
 
@@ -251,7 +1483,7 @@ The OOM learning example is `memory grows → limit exceeded → OOMKilled`. Che
 
 For scheduling, check CPU, Memory, GPU, nodeAffinity, nodeSelector, taints/tolerations, and Pod anti-affinity. `0/5 nodes are available` is a clue that none of the five Nodes meets the placement requirements. Read detailed events for each reason.
 
-### Network, DNS, and storage
+#### Network, DNS, and storage
 
 Narrow the network boundary in this order: `direct Pod access → Service access → Ingress access`. Check Pod IPs, Services, Endpoints/EndpointSlices, CNI, NetworkPolicy, and ports. For example, a connection can fail if the Service targets port `8080` but the application listens on `8000`.
 
@@ -259,7 +1491,7 @@ Narrow the network boundary in this order: `direct Pod access → Service access
 
 If a Stateful Pod stays in `Pending` or `ContainerCreating`, check PVC state, PV state, the CSI Driver, Volume attachment, and AZ. Networking and storage are shared lower layers. Inspect events and actual connection boundaries before repeatedly restarting the application.
 
-### Investigation order and learning boundary
+#### Investigation order and learning boundary
 
 ```text
 1. Pod state

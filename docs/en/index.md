@@ -12,7 +12,7 @@ This handbook keeps useful knowledge from work and study. It supports concepts, 
 
 ## Current scope
 
-Three imported study sources cover storage, events, processing, analytics, quality, observability, governance, AI evaluation, managed platforms, operations, and final architecture. There are 23 data-platform topic, architecture, and curriculum pairs, four platform/infrastructure pairs, 18 prompt library pairs, and the home, workflow, and glossary: 48 Korean/English pairs in total.
+The complete data platform source for Chapters 1–21 and the infrastructure source for Chapters 1–3 cover storage, events, processing, analytics, quality, observability, governance, AI evaluation, managed platforms, operations, and final architecture. There are 23 data-platform topic, architecture, and curriculum pairs, four platform/infrastructure pairs, 18 prompt library pairs, and the home, workflow, and glossary: 48 Korean/English pairs in total.
 
 The data-platform continuation completes the conceptual scope of Phases 1–21. The first source labels Chapters 1–4 as reconstructed notes; Snowflake remains a condensed treatment. Studied concepts are not presented as actual implementation, production, or incident-drill experience.
 
@@ -25,6 +25,10 @@ The handbook expands into software, data, AI, platforms, infrastructure, archite
 ## Practical examples to adapt
 
 The [practical prompt library](prompts/index.md) contains 100 new examples by topic. All 126 examples, including 26 on concept pages, have Korean/English tabs and copy buttons. Inputs, tasks, outputs, and checks use separate lines. These are authored applications of study concepts, not actual production results.
+
+## Source and supplements
+
+Study pages retain the supplied Markdown headings, numbers, order, paragraphs, lists, and examples. The original language stays verbatim; the other language follows the same structure in translation. Additional explanations, corrections, and conditions appear after the source body. Read the linked conditions when a source statement is simplified.
 
 ## How to read
 

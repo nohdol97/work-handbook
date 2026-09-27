@@ -1,8 +1,8 @@
 ---
 id: data-platform-governance
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-14-01
   - DPE-14-02
@@ -15,41 +15,343 @@ knowledge_ids:
   - DPE-14-09
 ---
 
-# Data governance
+# Chapter 14 — Data Governance
 
 This Learn page covers studied concepts of ownership, policy, access, and audit. Durations and datasets are hypothetical. It does not claim that security policies were deployed or legal duties were verified. Governance asks, “Who may use this data, and under which conditions?”
 
-## Dataset ownership and classification
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
 
-| Responsibility | Scope |
-| --- | --- |
-| Technical owner | Pipeline, schema, quality, SLO |
-| Business owner | Business meaning, KPIs, business definitions |
+<!-- SOURCE CORE START -->
 
-Without an owner, responsibility for incidents and changes is unclear. Name both responsibilities for each dataset.
+## 14.1 Dataset Ownership
 
-Classification groups data by importance and sensitivity. Public, Internal, Confidential, PII, and Sensitive are possible labels. They are not a single strict order or a universal scheme. PII describes the kind of data and can be used alongside an importance level.
+Make responsibility clear for each dataset.
+
+### Technical Owner
+
+- Pipeline
+- Schema
+- Quality
+- SLO
+
+### Business Owner
+
+- Meaning
+- KPIs
+- Business definitions
+
+Without an owner, responding to problems and changes becomes harder.
+
+---
+
+## 14.2 Classification
+
+Classify data by importance and sensitivity.
+
+Examples:
+
+- Public
+- Internal
+- Confidential
+- PII
+- Sensitive
+
+Column-level classification also matters.
+
+Example:
 
 ```text
 email → PII
 team_id → Internal
 ```
 
-Column-level classification matters too. Connect classification to access, masking, and retention policies. These field names are examples; they contain no real organizational identifiers.
+Connect classification to access, masking, and retention policies.
 
-## Retention and deletion scope
+---
 
-Retention defines how long to keep data. Consider cost, legal or regulatory requirements, sensitivity, and analytical value. These durations are learning examples, not legal rules or recommended defaults.
+## 14.3 Retention Policies
 
-| Example data | Hypothetical retention |
-| --- | --- |
-| Debug log | 14 days |
-| User event | 1 year |
-| Aggregated metrics | Long-term storage |
+Retention defines:
 
-Storage can use Hot, Cold, and Archive tiers. Iceberg snapshot expiration is related to retention, but distinguish snapshot retention from source-data retention requirements.
+> **How long data is kept.**
 
-Deletion defines when, where, and how data is removed. Deleting the source does not remove every copy.
+Consider:
+
+- Cost
+- Legal and regulatory requirements
+- Sensitivity
+- Analytical value
+
+Example:
+
+```text
+Debug log → 14 days
+User event → 1 year
+Aggregated metrics → Long-term storage
+```
+
+Storage can use Hot, Cold, and Archive tiers.
+
+Iceberg snapshot expiration is also related to retention.
+
+---
+
+## 14.4 Deletion Policies
+
+Deletion defines:
+
+> **When, where, and how data is actually removed.**
+
+Deleting only the source may not be enough.
+
+```text
+PostgreSQL
+ ↓
+Kafka
+ ↓
+Bronze
+ ↓
+Silver
+ ↓
+Gold
+ ↓
+Backup
+```
+
+Consider all copies and derived data.
+
+### Logical Delete
+
+Mark a record as deleted.
+
+### Physical Delete
+
+Actually remove it.
+
+In Iceberg, data absent from the current snapshot may not be fully removed from storage.
+
+Consider older snapshots and file cleanup too.
+
+---
+
+## 14.5 Masking
+
+Masking hides real sensitive values when data is shown.
+
+### Static Masking
+
+Store masked values in a separate copy.
+
+### Dynamic Masking
+
+Show different values based on the querying user or role.
+
+The link to classification:
+
+```text
+PII
+ ↓
+Masking policy
+```
+
+AI prompts and responses may also need PII masking.
+
+Masking and encryption are different controls.
+
+---
+
+## 14.6 Row / Column Access
+
+### Row-Level Access
+
+Limit which rows a user or team can see.
+
+### Column-Level Access
+
+Restrict access to a sensitive column itself.
+
+The difference from masking:
+
+```text
+Column access
+→ The column cannot be read
+
+Masking
+→ The column is visible, but its values are hidden
+```
+
+### RBAC
+
+Manage permissions by role.
+
+---
+
+## 14.7 Auditability
+
+Record who accessed or changed which data and when.
+
+Access audit:
+
+```text
+user
+dataset
+time
+action
+query
+```
+
+Change audit:
+
+- Schema changes
+- Policy changes
+- Owner changes
+- Retention changes
+
+The difference from observability:
+
+```text
+Observability
+→ Are the system and data healthy?
+
+Audit
+→ Who did what?
+```
+
+---
+
+## 14.8 Data Contracts
+
+A data contract is an agreement between a producer and a consumer.
+
+It can include:
+
+- Schema
+- Semantics
+- Quality
+- SLO
+- Ownership
+- Version
+
+Example:
+
+```text
+event_id
+→ required + unique
+
+latency_ms
+→ integer
+→ millisecond
+→ >= 0
+
+Freshness
+→ < 5 min
+
+Owner
+→ AI Platform Team
+```
+
+A data contract is broader than a schema contract.
+
+---
+
+## 14.9 Governance Platforms
+
+### Databricks Unity Catalog
+
+The broad scope:
+
+- Catalog / discovery
+- Access control
+- Row / column control
+- Masking
+- Classification
+- Lineage
+- Audit
+- Data / AI governance
+
+Think of it as the central governance layer for the Databricks lakehouse.
+
+### AWS Lake Formation
+
+Governance centered on AWS S3 data lakes.
+
+- Glue Data Catalog
+- Table / column / row permissions
+- Integration with AWS analytics services
+
+### Snowflake Horizon Catalog
+
+Governance centered on Snowflake.
+
+- Catalog
+- Classification
+- Tags
+- Masking
+- Row access
+- Access history
+- Lineage
+- Data quality / AI governance
+
+The three products help answer these questions:
+
+```text
+What is this data?
+Who owns it?
+Who may see it?
+Is it sensitive?
+Where did it come from?
+Where is it used?
+Who accessed it?
+Is it healthy?
+```
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Details to check in practice
+
+### Examples and actual policy
+
+Public, Internal, Confidential, PII, and Sensitive are not a single ordered scale shared by every organization. PII describes the kind of data and can be used alongside an importance level.
+
+Retention durations are learning examples, not legal rules or recommended defaults.
+
+`email` and `team_id` are example field names, with no real organizational identifiers. The data contract's owner is a hypothetical team. Five minutes is not an approved operational SLO.
+
+An integer type alone does not define a unit. The contract also states milliseconds and the non-negative rule.
+
+### Iceberg retention and physical deletion
+
+Distinguish snapshot retention from source-data retention requirements. Data absent from the current snapshot may still be referenced by older snapshots.
+
+- Snapshot expiration relates to cleanup of files no longer needed by retained snapshots.
+- Orphan cleanup handles files that metadata does not reference.
+- Choose a retention interval that avoids mistaking files from active writes for orphans.
+
+Current query results alone do not prove physical deletion. [Iceberg maintenance](https://iceberg.apache.org/docs/latest/maintenance/)
+
+### Policy enforcement on actual access paths
+
+A policy shown in a catalog does not prove protection across every external engine and storage path.
+
+Databricks row filters and column masks have runtime, compute, and API limits. The checked documentation describes unsupported path-based and certain REST API access to tables with these policies. [Databricks filters and masks](https://docs.databricks.com/aws/en/data-governance/unity-catalog/filters-and-masks)
+
+### Scope of the product comparison
+
+Product descriptions are a category-level comparison checked against official docs on 2026-09-24. No platform was deployed, and not every feature was tested.
+
+- **Unity Catalog:** Separate broad capabilities from detailed runtime and access-path limits. [Official overview](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
+- **Lake Formation:** Check data-filter support by integrated engine and service. [Data filtering](https://docs.aws.amazon.com/lake-formation/latest/dg/data-filtering.html)
+- **Horizon Catalog:** Check edition and individual feature requirements. For example, Access History requires Enterprise Edition or higher. [Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon), [Access History](https://docs.snowflake.com/en/user-guide/access-history)
+
+The three products do not enforce every policy in the same way or scope.
+
+### Sensitive data in audit logs
+
+Real users and queries in audit logs can be sensitive. Do not copy them directly into public learning material.
+
+### Supplemental diagram of deletion scope
 
 ```mermaid
 flowchart LR
@@ -60,69 +362,7 @@ flowchart LR
     Gold --> Backup
 ```
 
-This is an example of copies and derived data to trace. Real backups can exist at several stages. Inspect all copies and derived data. A logical delete marks a record as deleted. A physical delete removes it.
-
-In Iceberg, data absent from the current snapshot may still be referenced by older snapshots. Snapshot expiration relates to cleanup of files no longer needed by retained snapshots. Orphan cleanup handles files that metadata does not reference. Choose a retention interval that avoids mistaking files from active writes for orphans. Current query results alone do not prove physical deletion. [Iceberg maintenance](https://iceberg.apache.org/docs/latest/maintenance/)
-
-## Masking and access control
-
-| Method | Meaning |
-| --- | --- |
-| Static masking | Store a separate copy with masked values |
-| Dynamic masking | Change visible values based on the querying user or role |
-| Row-level access | Limit which rows a user or team can see |
-| Column-level access | Restrict access to a sensitive column itself |
-| RBAC | Manage permissions by role |
-
-Column access controls whether a column can be read. Masking hides its real values even when the column is visible. Masking and encryption are different controls. PII classification can lead to a masking policy. AI prompts and responses can also fall under that policy.
-
-Check enforcement on the actual access path. For example, Databricks row filters and column masks have runtime, compute, and API limits. Its documented limits include unsupported path-based and certain REST API access to tables with these policies. A policy shown in a catalog does not prove protection across every external engine and storage path. [Databricks filters and masks](https://docs.databricks.com/aws/en/data-governance/unity-catalog/filters-and-masks)
-
-## Auditability
-
-Auditability records who accessed or changed which data and when. Conceptual access-audit fields include:
-
-```text
-user
-dataset
-time
-action
-query
-```
-
-Change audits record changes to schemas, policies, owners, and retention. Observability asks, “Are the system and data healthy?” Audit asks, “Who did what?” Real users and queries in audit logs can also be sensitive. Do not copy them directly into public learning material.
-
-## Data contracts
-
-A data contract is an agreement between a producer and a consumer. It is broader than a schema contract. It can cover schema, semantics, quality, SLOs, ownership, and version.
-
-```text
-event_id → required + unique
-latency_ms → integer, millisecond, >= 0
-Freshness → < 5 min
-Owner → AI Platform Team
-```
-
-An integer type alone does not define a unit. The contract also states milliseconds and the non-negative rule. The owner is a hypothetical team, and five minutes is not an approved operational SLO.
-
-## Governance platforms and their boundaries
-
-This is a category-level comparison checked against official docs on 2026-09-24. No platform was deployed, and not every feature was tested.
-
-| Platform | Main role studied in the source | Feature categories and boundaries to check |
-| --- | --- | --- |
-| Databricks Unity Catalog | Central data and AI governance for the Databricks lakehouse | Catalog/discovery, access control, row/column control, masking, classification, lineage, audit. Check runtime and access-path support |
-| AWS Lake Formation | Governance centered on AWS S3 data lakes | Glue Data Catalog integration, table/column/row permissions, and AWS analytics integrations. Check data-filter support by service |
-| Snowflake Horizon Catalog | Governance and catalog centered on Snowflake | Catalog, classification, tags, masking, row access, access history, lineage, data quality, AI governance. Check edition and feature requirements |
-
-This table does not mean each product enforces every policy in the same way or scope. Separate broad Unity Catalog capabilities from detailed limits, Lake Formation engine support, and individual Horizon requirements. For example, Snowflake Access History requires Enterprise Edition or higher. [Unity Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/), [Lake Formation data filtering](https://docs.aws.amazon.com/lake-formation/latest/dg/data-filtering.html), [Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon), [Snowflake Access History](https://docs.snowflake.com/en/user-guide/access-history)
-
-Keep these questions when reviewing a platform:
-
-- What is the data, and who owns it?
-- Who may see it, and is it sensitive?
-- Where did it come from, and where is it used?
-- Who accessed it, and is the data healthy?
+The source flow is an example of copies and derived data to trace. Real backups can exist at several stages.
 
 ## LLM in Practice: review copies covered by deletion
 

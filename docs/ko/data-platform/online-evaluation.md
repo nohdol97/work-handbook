@@ -1,101 +1,153 @@
 ---
 id: data-platform-online-evaluation
 status: studied
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-16-01
   - DPE2-16-01
 ---
 
-# 온라인 AI 평가 이벤트
+# Chapter 16 — AI Evaluation Data Platform
 
 첫 원문에서는 Phase 16의 16.1만 학습했고, 추가 원문으로 이 내용을 보강했다. 이 페이지는 16.1의 개념 학습 기록이며 운영 시스템을 구현했다는 주장이 아니다. 16.2–16.12는 [AI 평가 데이터 플랫폼](ai-evaluation.md)에서 이어진다.
 
+
+본문은 최신 통합본 16.1을 같은 구조로 번역했다. 기존 자료의 Langfuse 설명과 평가 적용 조건은 본문 뒤 보완 설명에서 구분한다.
+
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+<!-- SOURCE CORE START -->
+
 ## 16.1 Online Evaluation Events
 
-Online Evaluation:
+Online Evaluation은 다음을 뜻한다:
 
-> **실제 Production에서 발생한 AI 실행에 평가 데이터를 붙이는 것**
+> **실제 Production에서 일어난 AI 실행을 평가하고 해당 Trace에 평가 데이터를 연결하는 것.**
 
-흐름:
+기본 흐름:
 
 ```text
 User Request
- ↓
+   ↓
 Agent
- ↓
+   ↓
 LLM / Tool
- ↓
+   ↓
 Response
- ↓
+   ↓
 Evaluation
 ```
 
-Evaluation Event 예:
+가능한 평가 이벤트:
 
-- thumbs_up / thumbs_down
-- rating
-- user_feedback
-- LLM judge score
-- rule-based score
-- error type
+```text
+thumbs_up / thumbs_down
+rating
+user_feedback
+llm_judge_score
+rule_based_score
+error_type
+```
 
-중요:
+점수만으로는 충분하지 않다.
+
+부족한 예:
 
 ```text
 score = 0.4
 ```
 
-만 저장하면 부족하다.
+더 나은 예:
 
-Trace와 연결해야 한다.
+```text
+trace_id
+execution_id
+agent_version
+prompt_version
+model_version
+score
+feedback
+```
 
-함께 연결:
+이 정보를 연결하면 다음 질문에 답할 수 있다:
 
-- trace_id
-- execution_id
-- model_version
-- prompt_version
-- agent_version
-- score
-- feedback
-
----
+```text
+이 응답의 품질이 낮았던 이유는 무엇인가?
+어떤 Prompt를 사용했는가?
+어떤 Model이 생성했는가?
+어떤 Tool을 호출했는가?
+어떤 Agent 릴리스에서 생성했는가?
+```
 
 ### User Feedback
 
-Production Online Evaluation의 가장 단순한 형태.
+가장 단순한 Online Evaluation은 다음과 같다:
+
+```text
+Response
+  ↓
+👍 / 👎
+```
+
+더 상세하게 다음 정보를 남길 수도 있다:
+
+```text
+rating = 1~5
+reason = inaccurate
+comment = "wrong tool was selected"
+```
+
+### Automatic Evaluation
+
+Production 응답을 자동으로 평가할 수도 있다.
 
 ```text
 Response
  ↓
-👍 / 👎
+LLM Judge
+ ↓
+Score
 ```
 
----
-
-### Automatic Evaluation
-
-Response 직후:
+또는:
 
 ```text
-LLM Judge
+Response
+ ↓
 Rule Check
+ ↓
+Pass / Fail
 ```
 
-등으로 평가 가능.
+검사할 수 있는 항목:
 
-예:
+- 생성된 SQL을 실행할 수 있는가?
+- 필요한 Citation이 있는가?
+- 출력에 금지된 정보가 포함됐는가?
+- 응답이 예상 Schema를 따르는가?
+- Agent가 올바르거나 허용된 Tool을 호출했는가?
 
-- SQL 실행 가능?
-- Citation 존재?
-- 금지 정보 포함?
-- Output Format 준수?
+핵심:
+
+> **Online Evaluation은 실제 Production 조건에서 AI가 어떻게 동작하는지 보여 준다.**
+
+Offline Test에서 놓칠 수 있는 것:
+
+- 새로운 사용자 행동,
+- 변화하는 데이터,
+- Tool 장애,
+- 긴 Context,
+- 권한,
+- Production에서만 발생하는 Edge Case.
 
 ---
 
-### Langfuse 연결
+<!-- SOURCE CORE END -->
+
+## 보완 설명: 16.1 Langfuse 연결과 평가 조건
+
+### 기존 자료의 Langfuse 연결
 
 개념:
 
@@ -131,20 +183,8 @@ Offline Test에서 드러나지 않는:
 
 ---
 
-## 16.1 추가 사례와 진단 질문
 
-2026-09-26에 추가한 원문도 online 평가를 실제 운영 실행에 연결하는 원칙을 유지한다. 사용자 feedback은 단순한 👍/👎 외에 `rating=1~5`, `reason=inaccurate`, `comment="wrong tool was selected"`처럼 더 상세하게 남길 수 있다. 이 값들은 설명용 예시다.
-
-Trace·실행·agent·prompt·model 버전과 점수·feedback을 함께 보존하면 다음 질문을 조사할 수 있다.
-
-- 왜 이 응답의 품질이 낮았는가?
-- 어떤 prompt와 model을 사용했는가?
-- 어떤 tool을 호출했는가?
-- 어떤 agent 릴리스에서 생성했는가?
-
-자동 검사는 기존 SQL 실행 가능성·citation·금지 정보·형식 검사에 더해 **올바르고 허용된 tool을 호출했는지** 확인할 수 있다. 예상 schema 준수와 tool 권한 준수는 다른 검사다. 점수는 조사 출발점이며 원인을 자동 증명하지 않는다. 운영 전용 edge case도 [고정 offline 평가와 회귀 데이터셋](ai-evaluation.md)에 추가해 다음 릴리스에서 다시 확인한다.
-
-## 평가 데이터의 한계
+**Tool 평가 조건:** 예상 schema 준수와 tool 권한 준수는 별도 검사다. 선택한 tool이 적절한지와 그 사용이 허용됐는지를 각각 확인한다. 점수만으로 근본 원인을 증명할 수는 없다.
 
 Online 평가는 실제 traffic에 평가를 붙이고, offline 평가는 고정한 입력으로 변경을 비교한다. 사람의 feedback, 규칙, LLM judge는 서로 다른 신호이며 점수 하나를 절대적인 정답으로 취급하지 않는다. [Langfuse evaluation concepts](https://langfuse.com/docs/evaluation/core-concepts).
 

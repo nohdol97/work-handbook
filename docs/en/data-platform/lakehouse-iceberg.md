@@ -1,8 +1,8 @@
 ---
 id: data-platform-lakehouse-iceberg
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-03-01
   - DPE-03-02
@@ -17,130 +17,507 @@ knowledge_ids:
   - DPE-03-11
 ---
 
-# Lakehouse and Apache Iceberg
+# Chapter 3 — Lakehouse / Iceberg
 
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run.
 
-## 3.1 Lakehouse architecture
+The body translates the latest supplied source without merging its headings, paragraphs, lists, or examples. Corrections, conditions on simplified statements, and previous additions appear separately under **Qualifications for real use**.
 
-A lakehouse combines open lake storage with table-management features associated with a warehouse. Keep these responsibilities separate:
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
 
-| Layer | Role |
-| --- | --- |
-| Object storage | Holds persistent objects |
-| File format, such as Parquet | Encodes the data within files |
-| Table format, such as Iceberg | Describes a consistent table across files |
-| Compute, such as Spark, Trino, or Flink | Reads, transforms, and writes data |
-| Catalog | Finds tables and their metadata |
-| Governance | Manages policies and accountability |
+<!-- SOURCE CORE START -->
 
-The **data plane** includes actual data files and query, read, and write work. The **control plane** includes metadata, catalogs, access policies, governance, and table definitions. This is a conceptual separation, not a claim that every product has the same deployment layout.
+## 3.1 Lakehouse Architecture
 
-## 3.2 Iceberg metadata internals
+A lakehouse aims to combine the open storage of a data lake with the table-management features of a data warehouse.
 
-Iceberg manages table metadata, not just a directory of Parquet files. A simplified lookup is:
-
-```mermaid
-flowchart TD
-    C[Catalog] --> M[Metadata JSON]
-    M --> S[Snapshot]
-    S --> L[Manifest List]
-    L --> F[Manifest Files]
-    F --> D[Data Files]
-    F --> X[Delete Files where applicable]
-```
-
-Metadata JSON can contain the current snapshot reference, schema, partition specs, sort orders, and snapshot history. The current snapshot identifies the current table state. The snapshot log tracks changes to snapshot state over time.
-
-Can a table have several metadata files? Yes. Table changes create metadata versions. The catalog or metadata pointer identifies the current version. An older file does not automatically describe the current table.
-
-A snapshot refers through a manifest list to manifests. Manifests describe data or delete files and their metadata. This hierarchy makes file inventory and statistics manageable at scale. Data files may use Parquet, ORC, or Avro. Delete files can represent removals for merge-on-read processing.
-
-## 3.3 Snapshot semantics
-
-A snapshot describes a table at a point in time. It does not copy every data file:
+Big picture:
 
 ```text
-Snapshot 1 → A, B, C
-Snapshot 2 → A, B, C, D
+Object Storage
+   ↓
+Parquet Files
+   +
+Table Format
+   ↓
+Iceberg
+   ↓
+Compute
+Spark / Trino / Flink
+   ↓
+Catalog / Governance
 ```
 
-The snapshots share A, B, and C. The second adds D.
+Main layers:
 
-**Time travel** queries an older snapshot. **Rollback** changes the table back to a prior snapshot state. **Consistent reads** use one snapshot rather than a partially committed mix. The useful snapshot-isolation intuition is that concurrent writes do not expose half-finished changes to a reader already using a snapshot.
+- Storage Layer
+- Compute Layer
+- Table Format
+- Catalog
+- Governance / Control Plane
 
-## 3.4 Atomic commits
+---
 
-Iceberg uses optimistic concurrency. Suppose writers A and B both start from metadata M1. Each prepares a change. If A commits first, the current metadata changes. B must check whether its work can still commit and may retry or fail on a conflict.
+### Data Plane vs Control Plane
 
-The compare-and-swap mental model is: is the table version I based this update on still current? The actual atomic operation depends on the catalog. A retry is not a promise that every conflicting update will succeed.
+Data Plane:
 
-A writer can produce files and then fail before committing them. Files that no table metadata references may become **orphan files**. They require careful later cleanup.
+- Actual Parquet files
+- Actual query, read, and write operations
 
-## 3.5 Iceberg partitioning
+Control Plane:
 
-**Hidden partitioning** lets a query filter a logical column such as `event_time`. Iceberg uses the partition transform to derive applicable partition filters. Users do not always need to name a separate stored partition column.
+- Metadata
+- Catalog
+- Access Policy
+- Governance
+- Table Definition
 
-Common conceptual transforms include day, hour, bucket, and truncate:
+These are conceptual divisions of responsibility.
+
+---
+
+## 3.2 Iceberg Metadata Internals
+
+The core of Iceberg is **managing table metadata**, not simply storing Parquet files.
+
+A simplified structure:
+
+```text
+Iceberg Table
+   ↓
+Metadata JSON
+   ↓
+Snapshot
+   ↓
+Manifest List
+   ↓
+Manifest Files
+   ↓
+Data Files
+```
+
+---
+
+### Metadata JSON
+
+Describes the current state of the table.
+
+Information can include:
+
+- Current snapshot
+- Schema
+- Partition Spec
+- Sort Order
+- Snapshot History
+
+---
+
+### Current Snapshot
+
+The snapshot that identifies the current table state.
+
+---
+
+### Snapshot Log
+
+Records the history of past snapshots.
+
+Metadata JSON can therefore have several versions over time.
+
+Question:
+
+> Can Iceberg have several table metadata files?
+
+Answer:
+
+> Yes. Table-state changes create new metadata files. The catalog or metadata pointer identifies the current metadata.
+
+---
+
+### Manifest List / Manifest File
+
+Instead of listing every data file directly, a snapshot uses intermediate metadata layers.
+
+Concept:
+
+```text
+Snapshot
+  ↓
+Manifest List
+  ↓
+Manifest
+  ↓
+Data File
+```
+
+This manages file lists and statistics efficiently for large tables.
+
+---
+
+### Data Files
+
+Parquet, ORC, or Avro files that hold the actual data.
+
+### Delete Files
+
+Approaches such as merge-on-read can manage deletion information in separate files.
+
+---
+
+## 3.3 Snapshot Semantics
+
+A snapshot is the table state at a particular point in time.
+
+Important point:
+
+> A snapshot does not make a new copy of every file.
+
+Several snapshots can share the same data files.
+
+```text
+Snapshot 1
+→ A, B, C
+
+Snapshot 2
+→ A, B, C, D
+```
+
+A, B, and C can remain shared while only D is added.
+
+---
+
+### Time Travel
+
+Query an earlier snapshot.
+
+### Rollback
+
+Return the table to an earlier snapshot state.
+
+### Consistent Read
+
+A query reads a consistent table state based on a particular snapshot.
+
+### Snapshot Isolation Intuition
+
+Even when writes happen concurrently, a query reads a consistent snapshot state rather than an intermediate state.
+
+---
+
+## 3.4 Atomic Commit Model
+
+Several writers can change a table concurrently.
+
+Iceberg can be understood through **Optimistic Concurrency**.
+
+Conceptually:
+
+```text
+Current Metadata = M1
+
+Writer A
+→ Changes based on M1
+
+Writer B
+→ Changes based on M1
+```
+
+When one writer commits first, the current metadata changes.
+
+The other writer can:
+
+- Check for conflicts
+- Retry when needed
+
+These steps may be needed.
+
+---
+
+### Compare-and-Swap Intuition
+
+Think of a commit as checking: "Is the table state I started from still the current state?"
+
+---
+
+### Orphan Files
+
+If files are created but the commit fails, files not referenced by table metadata may remain.
+
+These files can become candidates for later cleanup.
+
+---
+
+## 3.5 Partitioning in Iceberg
+
+**Hidden Partitioning** is an important Iceberg concept.
+
+Users can filter logical columns without directly handling partition columns in the query.
+
+Example:
+
+```sql
+WHERE event_time >= ...
+```
+
+Iceberg can use its partition transforms for pruning.
+
+---
+
+### Partition Transforms
+
+Common examples:
+
+- day
+- hour
+- bucket
+- truncate
+
+Example:
 
 ```text
 day(event_time)
 bucket(32, user_id)
 ```
 
-Exact SQL spelling depends on the engine. **Partition evolution** can change a spec, for example from day to hour, without rewriting all historical files. Old and new files can retain different specs and remain readable through metadata. The change does not retroactively repartition old data.
+---
 
-For high-cardinality keys such as `user_id`, consider bounded buckets instead of one partition per user.
+### Partition Evolution
 
-## 3.6 Query pruning
+Change the partition spec without rewriting the entire table.
 
-The central performance question is how much data a query can avoid reading. Useful layers include:
+Example:
 
 ```text
-Partition filters → Manifest pruning → Data-file pruning
-→ Parquet row-group pruning → Column pruning
+Before: day(event_time)
+After: hour(event_time)
 ```
 
-This is a mental model of cooperating optimizations, not a mandatory physical execution order. **Scan amplification** means reading far more data than the query actually needs. Good layout reduces it.
+Metadata can manage old and new data even when they use different partition specs.
 
-## 3.7 Sort order and clustering
+---
 
-File min/max statistics help most when values have useful locality. Randomly spreading all user IDs across all files can leave broad overlapping ranges. Sorting by `user_id` can narrow those ranges and help queries for one user or a user range. Design sort order and clustering for real query patterns.
+### High Cardinality Design
 
-## 3.8 UPDATE, DELETE, and MERGE
+For high-cardinality values such as `user_id`, consider a bucket transform instead of direct partitioning.
 
-A Parquet object is not normally edited like one row in an OLTP database. Iceberg describes row changes at the table level.
+---
 
-| Strategy | Method | Trade-off |
-| --- | --- | --- |
-| Copy-on-write | Rewrite data files containing changed rows | Simpler reads, potentially more writing |
-| Merge-on-read | Keep data files and record removals separately; combine them on read | Potentially cheaper writes, more read work and delete maintenance |
+## 3.6 Query Pruning
 
-A **position delete** identifies a row position in a particular file. An **equality delete** identifies rows by key or value fields. An update can be understood as removing the old row and adding a new row. Replacement values still need to be stored as data.
+The central question for Iceberg query performance is:
 
-MERGE can apply CDC upserts to a current-state table. On large tables it may scan, shuffle, and rewrite significant data. Supported operations and physical delete representations depend on the table format version and engine.
+> **How little data can the query read?**
+
+Pruning stages:
+
+```text
+Partition Pruning
+   ↓
+Manifest Pruning
+   ↓
+Data File Pruning
+   ↓
+Parquet Row Group Pruning
+   ↓
+Column Pruning
+```
+
+---
+
+### Scan Amplification
+
+Scan amplification is high when a query reads far more data than it actually needs.
+
+Good layout reduces this.
+
+---
+
+## 3.7 Sort Order and Clustering
+
+Some locality of values helps file min/max statistics work well.
+
+Example:
+
+```text
+random user_id distribution
+```
+
+Compared with this:
+
+```text
+Partly sorted by user_id
+```
+
+this arrangement can improve file pruning when looking for a particular user range.
+
+Key point:
+
+> **Design sorting and clustering around query patterns.**
+
+---
+
+## 3.8 UPDATE / DELETE / MERGE
+
+It is difficult to modify small parts of a Parquet object immediately like rows in a regular database.
+
+Iceberg supports updates and deletes at the table-format level.
+
+---
+
+### Copy-on-Write
+
+Rewrite the data files containing changed rows.
+
+Advantages:
+- Simpler reads
+
+Disadvantages:
+- More write cost
+
+---
+
+### Merge-on-Read
+
+Keep the original data files, store change or deletion information separately, and combine them when reading.
+
+Advantages:
+- Potentially faster writes
+
+Disadvantages:
+- Reads can become more complex
+- Delete files need management
+
+---
+
+### Position Delete
+
+Mark a particular row position in a particular file for deletion.
+
+### Equality Delete
+
+Represent rows matching particular key or value conditions as deleted.
+
+---
+
+### UPDATE
+
+Conceptually:
+
+```text
+Delete the old row
++
+Insert the new row
+```
+
+This is a useful conceptual model.
+
+### MERGE
+
+MERGE can support CDC upserts, but its cost matters on large tables.
+
+---
 
 ## 3.9 Maintenance
 
-| Maintenance task | Purpose |
-| --- | --- |
-| Data-file compaction | Combine small files into useful sizes |
-| Delete-file rewrite | Reduce accumulated delete-file overhead |
-| Manifest rewrite | Reorganize metadata for more efficient planning |
-| Snapshot expiration | Retire old snapshots under a retention policy |
-| Orphan cleanup | Remove files that are no longer referenced |
+Maintenance matters because a lakehouse is file-based.
 
-Iceberg does not remove the need for maintenance. These tasks have different purposes. Do not treat a file absent from the current snapshot as automatically orphaned: a retained older snapshot may still use it.
+### Data File Compaction
+
+Combine small data files into suitably sized files.
+
+### Delete File Rewrite
+
+Rewrite when too many delete files accumulate.
+
+### Manifest Rewrite
+
+Reorganize manifests when there are too many for efficient use.
+
+### Snapshot Expiration
+
+Remove old snapshots.
+
+### Orphan Cleanup
+
+Remove files that metadata no longer references.
+
+Key point:
+
+> **Adopting Iceberg does not remove the need for maintenance.**
+
+---
 
 ## 3.10 Catalogs
 
-A catalog registers table names, manages namespaces, and helps find current table metadata. Examples in the study include Hive Metastore, AWS Glue, REST catalogs, JDBC catalogs, and Nessie. Unity Catalog is also relevant, but has a broader governance role. Check the actual integration and version before choosing a catalog.
+Operating an Iceberg table requires finding its current metadata.
 
-## 3.11 Catalog vs governance
+Catalog roles:
 
-The narrow catalog mental model is `table name → current metadata`. Governance also includes access policy, ownership, classification, audit, lineage, and masking.
+- Register table names
+- Manage the location of current metadata
+- Manage namespaces
 
-Is Unity Catalog just an Iceberg catalog with extra fields? That is too narrow. An Iceberg catalog handles Iceberg table discovery and metadata coordination. Unity Catalog combines catalog services with access control, lineage, governance, and management of several data and AI asset types. Product integration does not make the two concepts identical.
+Representative catalogs:
+
+- Hive Metastore
+- AWS Glue
+- REST Catalog
+- JDBC Catalog
+- Nessie
+- Unity Catalog concepts
+
+---
+
+## 3.11 Catalog vs Governance
+
+These concepts are related, but they are not the same.
+
+### Basic catalog role
+
+```text
+table name
+→ current metadata
+```
+
+This describes table registration and discovery.
+
+### Governance
+
+Broader responsibilities:
+
+- Access Policy
+- Ownership
+- Classification
+- Audit
+- Lineage
+- Masking
+
+---
+
+### Unity Catalog and Iceberg Catalog
+
+Question:
+
+> Is Unity Catalog an Iceberg catalog with extra information added?
+
+It is difficult to treat them as simply the same thing.
+
+Conceptually:
+
+```text
+Iceberg Catalog
+→ Find Iceberg tables and manage metadata pointers
+
+Unity Catalog
+→ Catalog functions + Access Control + Lineage + Governance + Management of multiple Data/AI assets
+```
+
+Unity Catalog is better understood as a much broader governance layer.
+
+---
+
+<!-- SOURCE CORE END -->
 
 ## Qualifications for real use
 
@@ -151,6 +528,39 @@ The catalog supplies the atomic commit operation. Not every conflict can be retr
 A retained old snapshot can still reference a file absent from the current snapshot. Orphan cleanup needs a retention margin longer than in-flight writes and correct path matching. Early cleanup can damage data. Snapshot expiration also limits time travel and rollback. [Iceberg maintenance](https://iceberg.apache.org/docs/latest/maintenance/)
 
 Unity Catalog governs data and AI assets, including access, lineage, and audit. Check the actual Iceberg integration in the target environment. [Databricks Unity Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
+
+### Section 3.1: responsibilities by layer
+
+| Layer | Role |
+| --- | --- |
+| Object storage | Holds persistent objects |
+| File format, such as Parquet | Encodes the data within files |
+| Table format, such as Iceberg | Describes a consistent table across files |
+| Compute, such as Spark, Trino, or Flink | Reads, transforms, and writes data |
+| Catalog | Finds tables and their metadata |
+| Governance | Manages policies and accountability |
+
+The data/control plane distinction is a conceptual separation of responsibilities. It does not mean every product has the same deployment layout.
+
+### Sections 3.2, 3.5, 3.7, and 3.8: metadata, layout, and change costs
+
+An older metadata file does not automatically describe the current table. Manifests describe data or delete files and their metadata.
+
+Exact SQL spelling for partition transforms depends on the engine. Randomly spreading user IDs across all files can leave broad, overlapping min/max ranges. Sorting can narrow those ranges and help queries for one user or a user range.
+
+On large tables, MERGE may scan, shuffle, and rewrite significant data. Check supported operations and physical delete representations for the table format version and engine.
+
+### Existing supplementary flow diagram
+
+```mermaid
+flowchart TD
+    C[Catalog] --> M[Metadata JSON]
+    M --> S[Snapshot]
+    S --> L[Manifest List]
+    L --> F[Manifest Files]
+    F --> D[Data Files]
+    F --> X[Delete Files where applicable]
+```
 
 ## Related reading
 

@@ -1,8 +1,8 @@
 ---
 id: data-platform-databricks
 status: studied
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE2-17-01
   - DPE2-17-02
@@ -18,11 +18,1128 @@ knowledge_ids:
   - DPE2-17-12
 ---
 
-# Databricks: an integrated Lakehouse and its boundaries
+# Chapter 17 — Databricks Deep Dive
 
 Page type: Learn. This page records concept study from Chapter 17. `studied` does not mean hands-on implementation or production experience. Examples are hypothetical and were not run. Product scope was checked against official documentation on 2026-09-26. Availability depends on cloud, region, Runtime, access mode, and table features.
 
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+<!-- SOURCE CORE START -->
+
 ## 17.1 Lakehouse Architecture
+
+Databricks can be understood as:
+
+> **A managed Data + AI Platform that combines many components previously studied separately.**
+
+Self-managed architecture might look like:
+
+```text
+Kafka
+ ↓
+Flink
+ ↓
+Iceberg
+ ↓
+Spark
+ ↓
+dbt
+ ↓
+Trino
+ ↓
+BI
+
+Around:
+Airflow
+Catalog
+Lineage
+Governance
+MLflow
+```
+
+Databricks integrates many of these responsibilities.
+
+High-level structure:
+
+```text
+Sources
+  ↓
+Ingestion
+  ↓
+Lakehouse Storage
+  ↓
+Transformation / Streaming
+  ↓
+SQL / BI
+  ↓
+ML / AI
+
+       ↕
+  Unity Catalog
+```
+
+### Storage / Compute separation
+
+```text
+Storage
+→ S3 / Cloud Object Storage
+
+Compute
+→ Databricks
+```
+
+### Table formats
+
+Databricks historically centers on Delta Lake but now also supports Iceberg.
+
+### Compute
+
+Databricks Runtime is Spark-based and also integrates Photon.
+
+### Medallion Architecture
+
+```text
+Bronze
+→ raw
+
+Silver
+→ cleaned / validated / joined
+
+Gold
+→ business-ready / fact / dimension / mart
+```
+
+### Unified workload idea
+
+Databricks combines:
+
+```text
+Data Engineering
++
+SQL Warehouse
++
+Governance
++
+ML
++
+AI
+```
+
+on the same data foundation.
+
+---
+
+## 17.2 Databricks Runtime and Photon
+
+Databricks Runtime can be understood as:
+
+> **Apache Spark packaged with Databricks optimizations, libraries, connectors, and platform integration.**
+
+Self-managed Spark:
+
+```text
+Spark
++
+JVM / Python
++
+Libraries
++
+Connectors
++
+Cluster Config
++
+Performance Tuning
+```
+
+Databricks:
+
+```text
+Databricks Runtime
+=
+Spark
++
+Managed Environment
++
+Optimization
++
+Platform Integration
+```
+
+### Runtime versions
+
+Runtime versions bundle:
+
+- Spark version
+- JDK
+- libraries
+- runtime features
+- behavior changes
+
+Production should manage runtime upgrades intentionally.
+
+### Photon
+
+Photon:
+
+> **Databricks' native vectorized execution engine for supported SQL/DataFrame operations.**
+
+Concept:
+
+```text
+SQL / DataFrame
+     ↓
+Catalyst Planning
+     ↓
+Photon
+     ↓
+Native Execution
+```
+
+Useful for:
+
+- scan,
+- filter,
+- joins,
+- aggregation,
+- shuffle,
+- Parquet operations.
+
+Photon does not conceptually replace Spark.
+
+```text
+Spark
+→ API / planner / distributed framework
+
+Photon
+→ optimized execution layer
+```
+
+---
+
+## 17.3 SQL Warehouses
+
+SQL Warehouse:
+
+> **Managed SQL compute for interactive analytics, BI, and dashboard workloads.**
+
+Architecture:
+
+```text
+Delta / Iceberg
+     ↓
+SQL Warehouse
+     ↓
+BI / Analyst / Dashboard
+```
+
+This is similar to the role Trino played in the open architecture.
+
+Use cases:
+
+- Ad-hoc SQL
+- BI
+- Dashboard
+- Reporting
+- Analyst exploration
+- SQL transformation
+
+Important:
+
+```text
+Storage
+→ object storage / tables
+
+SQL Warehouse
+→ compute
+```
+
+### Serverless SQL
+
+Serverless reduces cluster operations:
+
+```text
+Query Load ↑
+→ Compute scale ↑
+
+Query Load ↓
+→ Compute scale ↓
+```
+
+### Concurrency
+
+Designed for multiple concurrent SQL consumers.
+
+### Governance
+
+Queries pass through Unity Catalog governance.
+
+### Semantic layer connection
+
+Databricks Metric Views occupy the same conceptual area studied earlier:
+
+```text
+central metric definitions
++
+dimensions
++
+consistent business semantics
+```
+
+---
+
+## 17.4 Unity Catalog
+
+Unity Catalog:
+
+> **Databricks' unified governance layer for Data and AI assets.**
+
+Hierarchy:
+
+```text
+Metastore
+   ↓
+Catalog
+   ↓
+Schema
+   ↓
+Object
+```
+
+Three-part names:
+
+```text
+catalog.schema.table
+```
+
+Example:
+
+```text
+production.ai.fact_llm_call
+```
+
+### Object types
+
+Unity Catalog can govern:
+
+```text
+Tables
+Views
+Volumes
+Functions
+Models
+AI-related objects
+```
+
+### Volumes
+
+Useful for governed files:
+
+```text
+PDF
+Image
+JSON
+Documents
+Artifacts
+```
+
+RAG example:
+
+```text
+PDF / Document
+→ Volume
+
+Chunk / Embedding
+→ Table
+```
+
+### Managed vs External
+
+Managed Table:
+
+```text
+UC manages
+→ metadata
+→ storage location
+→ lifecycle
+→ optimization
+```
+
+External Table:
+
+```text
+Data lives at user-managed object path
+UC manages
+→ metadata
+→ access/governance
+```
+
+### Access
+
+Objects are securable.
+
+Privileges may apply at:
+
+```text
+Catalog
+Schema
+Table
+View
+Volume
+Model
+...
+```
+
+Hierarchy enables inherited policy.
+
+---
+
+## 17.5 Lakeflow Jobs
+
+Lakeflow Jobs:
+
+> **Databricks workflow orchestration.**
+
+Airflow mapping:
+
+```text
+Airflow DAG
+≈ Lakeflow Job
+```
+
+Inside a job:
+
+```text
+Task
+→ dependency
+→ schedule / trigger
+```
+
+Task types may include:
+
+- Notebook
+- SQL
+- dbt
+- Pipeline
+- Python/Spark
+- ML
+
+Triggers may include:
+
+```text
+time schedule
+file arrival
+table update
+continuous execution
+```
+
+### Airflow vs Lakeflow Jobs
+
+```text
+Lakeflow Jobs
+→ Databricks-centered orchestration
+
+Airflow
+→ broader cross-platform orchestration
+```
+
+If most workloads live inside Databricks, a separate Airflow may not be necessary.
+
+If workflows span:
+
+```text
+Databricks
+AWS Lambda
+Kubernetes
+Snowflake
+SaaS APIs
+internal systems
+```
+
+a general orchestrator can still be useful.
+
+---
+
+## 17.6 Lakeflow Pipelines
+
+Lakeflow high-level view:
+
+```text
+Lakeflow
+├─ Connect
+│   → ingestion
+├─ Pipelines
+│   → transformation
+└─ Jobs
+    → orchestration
+```
+
+### Jobs vs Pipelines
+
+Jobs:
+
+> **Define task execution order.**
+
+Pipelines:
+
+> **Define dataset transformation relationships declaratively.**
+
+Procedural style:
+
+```text
+1. Run Bronze notebook
+2. Run Silver notebook
+3. Run Gold SQL
+```
+
+Declarative style:
+
+```text
+bronze_events
+      ↓
+silver_events
+      ↓
+gold_metrics
+```
+
+The engine manages more of:
+
+- dependencies,
+- incremental updates,
+- execution order,
+- parallelization,
+- monitoring.
+
+### Batch + Streaming
+
+Pipelines can process both.
+
+They are conceptually connected to Spark Structured Streaming.
+
+### Important objects
+
+```text
+Pipeline
+Flow
+Streaming Table
+Materialized View
+```
+
+### DLT naming
+
+Older:
+
+```text
+Delta Live Tables (DLT)
+```
+
+Current direction:
+
+```text
+Lakeflow Pipelines
+```
+
+---
+
+## 17.7 Delta / Iceberg Interoperability
+
+Delta and Iceberg solve similar problems:
+
+```text
+Object Storage
++
+Parquet
++
+Table Metadata
+```
+
+with:
+
+- transactions,
+- snapshots,
+- schema evolution,
+- time travel,
+- table management.
+
+### Databricks default
+
+Delta is still the natural/native path for many Databricks-managed workloads.
+
+### Managed Iceberg
+
+Databricks also supports Unity Catalog managed Iceberg tables.
+
+Concept:
+
+```text
+Unity Catalog
+   ↓
+Managed Iceberg
+   ↓
+Parquet
+```
+
+### UniForm
+
+Core idea:
+
+> **Keep the same Parquet data while exposing compatible Iceberg metadata so Iceberg clients can read the table.**
+
+Conceptual diagram:
+
+```text
+           Parquet Files
+           /          \
+Delta Metadata    Iceberg Metadata
+      ↓                 ↓
+Databricks       External Iceberg clients
+```
+
+This reduces the need to duplicate table data.
+
+### Iceberg REST Catalog
+
+Unity Catalog can participate in Iceberg REST-based interoperability.
+
+External engines such as:
+
+```text
+Spark
+Flink
+Trino
+```
+
+can interact through Iceberg-compatible interfaces.
+
+### Important distinction
+
+```text
+Delta ≠ Iceberg
+```
+
+Interoperability layers do not mean both formats are identical.
+
+### Simple selection intuition
+
+```text
+Databricks-centric ecosystem
+→ Delta is natural
+
+Multi-engine / open ecosystem
+→ Iceberg is natural
+```
+
+Modern Databricks supports both far more than before.
+
+---
+
+## 17.8 Lineage / Governance
+
+Unity Catalog combines:
+
+```text
+Lineage
+Classification
+Access Control
+Masking
+Row Filters
+Audit
+```
+
+### Lineage
+
+Example:
+
+```text
+bronze.llm_calls
+      ↓
+Spark
+      ↓
+silver.llm_calls
+      ↓
+SQL/dbt
+      ↓
+gold.ai_usage
+      ↓
+Dashboard
+```
+
+Column-level lineage supports impact analysis.
+
+### Classification
+
+Example:
+
+```text
+email
+→ PII
+
+employee_id
+→ Sensitive Internal
+```
+
+### Tags
+
+Classification/tagging can drive policies.
+
+```text
+PII Tag
+   ↓
+Masking Policy
+```
+
+### RBAC / ABAC
+
+RBAC:
+
+```text
+role
+→ privilege
+```
+
+ABAC:
+
+```text
+attribute/tag
+→ policy
+```
+
+Example:
+
+```text
+Tag = PII
+
+General Analyst
+→ masked
+
+Security Admin
+→ clear text
+```
+
+### External lineage
+
+Enterprise lineage may include assets outside Databricks.
+
+### AI governance
+
+Governance scope increasingly includes:
+
+- models,
+- model services,
+- agents,
+- AI services.
+
+---
+
+## 17.9 MLflow
+
+MLflow now spans:
+
+```text
+Traditional ML
++
+GenAI / Agents
+```
+
+### Traditional ML
+
+Experiment Tracking:
+
+```text
+Run
+├─ Parameters
+├─ Metrics
+├─ Code Version
+└─ Artifacts
+```
+
+### Model Registry
+
+Tracks:
+
+```text
+model_name
+version
+alias
+tags
+lineage
+```
+
+In Databricks this integrates with Unity Catalog.
+
+### GenAI Tracing
+
+Concept:
+
+```text
+User
+ ↓
+Agent
+ ↓
+Retriever
+ ↓
+LLM
+ ↓
+Tool
+ ↓
+Response
+```
+
+Trace can capture:
+
+```text
+input
+output
+latency
+tokens
+cost
+tool calls
+retrieval
+```
+
+### GenAI Evaluation
+
+Supports:
+
+```text
+evaluation datasets
+scorers
+LLM judges
+custom rules
+```
+
+### Prompt Registry
+
+Prompts can be versioned and evaluated.
+
+### Human Feedback
+
+Review and labeling can be connected to traces/evaluation.
+
+### Langfuse overlap
+
+There is now significant overlap:
+
+| Capability | Langfuse | MLflow 3 |
+|---|---|---|
+| LLM tracing | Yes | Yes |
+| Tool/retrieval tracing | Yes | Yes |
+| Prompt management | Yes | Yes |
+| Evaluation | Yes | Yes |
+| LLM judge | Yes | Yes |
+| Human feedback | Yes | Yes |
+| Experiments | Yes | Yes |
+| Traditional ML | Limited focus | Strong |
+| Model Registry | Not core | Core |
+| Unity Catalog Integration | External | Native |
+
+If Databricks becomes the main enterprise platform, MLflow may cover many functions that would otherwise require Langfuse.
+
+---
+
+## 17.10 AI / Vector Capabilities
+
+Databricks connects Lakehouse data to AI application capabilities.
+
+High-level:
+
+```text
+Lakehouse
+   ↓
+AI Search
+   ↓
+Model / Agent
+   ↓
+Serving
+   ↓
+Application
+```
+
+### AI Search
+
+Role:
+
+> **Retrieve relevant enterprise data for RAG/search.**
+
+Typical flow:
+
+```text
+Documents
+ ↓
+Chunking
+ ↓
+Embeddings
+ ↓
+AI Search
+ ↓
+Retriever
+ ↓
+LLM
+```
+
+### Search index sync
+
+Source tables can be incrementally synchronized into search indexes.
+
+### Model Serving
+
+Models can be exposed as managed endpoints.
+
+Possible models:
+
+```text
+custom model
+foundation model
+external model provider
+```
+
+### Agents
+
+Agents can combine:
+
+```text
+LLM
+AI Search
+SQL Tool
+MCP
+External API
+```
+
+### Governance
+
+Unity Catalog permissions should apply before unauthorized data reaches retrieval.
+
+Important principle:
+
+> **Do not retrieve unauthorized documents and hide them later. Prevent unauthorized retrieval in the first place.**
+
+### Integrated AI stack
+
+```text
+Unity Catalog
+→ governance
+
+MLflow
+→ trace/evaluation
+
+Lakehouse
+→ data
+
+AI Search
+→ retrieval
+
+Model Serving
+→ inference
+```
+
+---
+
+## 17.11 Databricks Cost Model
+
+Main idea:
+
+> **Compute is the largest controllable cost dimension, with storage/network and AI services added around it.**
+
+### DBU
+
+DBU:
+
+> Databricks normalized billing unit for compute/service usage.
+
+Do not interpret it as a fixed CPU count.
+
+### Classic Compute
+
+Conceptually:
+
+```text
+Databricks DBU
++
+Cloud VM
++
+Storage / Network
+```
+
+### Serverless
+
+Infrastructure is managed by Databricks.
+
+Operational burden decreases.
+
+External storage/network costs can still exist.
+
+### Cost sources
+
+```text
+Spark Jobs
+SQL Warehouse
+Lakeflow Pipelines
+Serverless
+Model Serving
+AI Search
+Storage
+Network
+Background optimization
+```
+
+### Performance optimization = cost optimization
+
+```text
+Partition Pruning
+→ Scan ↓
+→ Runtime ↓
+→ Cost ↓
+```
+
+```text
+Compaction
+→ Query efficiency ↑
+→ Cost ↓
+```
+
+```text
+Incremental Processing
+→ Full recompute avoided
+→ Cost ↓
+```
+
+### Track by tags
+
+Useful dimensions:
+
+```text
+team
+project
+environment
+job
+workspace
+```
+
+### Serverless is not automatically cheaper
+
+It can improve:
+
+- operational simplicity,
+- startup time,
+- scaling,
+- idle reduction.
+
+Actual cost still depends on workload.
+
+---
+
+## 17.12 Which Self-Managed Components Databricks Can Replace
+
+Self-managed architecture:
+
+```text
+S3
++
+Iceberg
++
+Spark
++
+Trino
++
+Airflow
++
+dbt
++
+Catalog
++
+OpenLineage
++
+MLflow
++
+Vector DB
++
+AI Observability
+```
+
+Databricks can consolidate many responsibilities.
+
+### High replacement potential
+
+```text
+Spark Cluster
+→ Databricks Runtime / Serverless
+
+Trino-like BI serving
+→ SQL Warehouse
+
+Custom Spark pipeline framework
+→ Lakeflow Pipelines
+
+Catalog / Governance
+→ Unity Catalog
+
+OpenLineage / Marquez-like internal lineage
+→ Unity Catalog Lineage
+
+Self-hosted MLflow
+→ Managed MLflow
+
+Vector DB for Databricks-centric RAG
+→ AI Search
+```
+
+### Partial replacement
+
+```text
+Airflow
+→ Lakeflow Jobs can replace it for Databricks-centric workflows
+
+Langfuse
+→ MLflow 3 overlaps substantially
+
+dbt
+→ Databricks SQL / Pipelines overlap, but dbt remains valid
+```
+
+### Usually not a full replacement
+
+```text
+Kafka
+→ separate durable event log / event bus role
+
+Flink
+→ may remain for low-latency complex stateful streaming
+
+Cross-platform orchestrator
+→ may remain if the platform spans many systems
+```
+
+### Databricks' real value
+
+Not simply:
+
+> "Spark is faster."
+
+But:
+
+> **Reduce the number of platform components that must be installed, upgraded, integrated, secured, monitored, and operated independently.**
+
+Trade-off:
+
+```text
+Operational Complexity ↓
+Integration Speed ↑
+
+but
+
+Platform Dependency ↑
+Vendor Lock-in ↑ possible
+Cost ↑ possible
+```
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Operational review and official documentation notes
+
+The following notes are separate from the source. They retain the support conditions and cautions reviewed on 2026-09-26. This edit did not test new versions or recheck official documentation.
+
+### Lakehouse Architecture
 
 Databricks combines data engineering, SQL, governance, ML, and AI on a shared data foundation. A self-managed stack might use `Kafka → Flink → Iceberg → Spark → dbt → Trino → BI`, with Airflow, Catalog, Lineage, Governance, and MLflow around it. Databricks combines several of these responsibilities. It does not remove every role.
 
@@ -41,19 +1158,19 @@ flowchart TD
 
 Storage uses cloud object storage such as S3. Databricks supplies compute. The platform grew around Delta and also supports Iceberg. Runtime is Spark-based and can use Photon. Medallion layers separate **Bronze raw data → Silver cleaned, validated, joined data → Gold business facts, dimensions, and marts**. Turning on a tool does not guarantee layer quality. See [Lakehouse and Iceberg](lakehouse-iceberg.md).
 
-## 17.2 Databricks Runtime and Photon
+### Databricks Runtime and Photon
 
 Runtime bundles Spark with an execution environment, optimizations, libraries, connectors, and platform integration. It takes over some work needed to manage JVM/Python, libraries, connectors, cluster settings, and tuning in a self-managed Spark system. Runtime versions include Spark, JDK, libraries, and behavior changes. Plan production upgrades and test compatibility.
 
 A useful model is `SQL/DataFrame → Catalyst planning → Photon for supported operations`. Photon is a native vectorized execution layer for supported scans, filters, joins, aggregations, shuffles, and Parquet operations. It does not replace Spark's APIs, planning, and distributed framework. Inspect execution plans to see which operations use it. [Photon scope](https://docs.databricks.com/aws/en/compute/photon).
 
-## 17.3 SQL Warehouses
+### SQL Warehouses
 
 A SQL Warehouse supplies compute for ad-hoc SQL, BI, dashboards, reporting, analyst exploration, and SQL transformations. It is not table storage. The flow is `Delta/Iceberg tables → SQL Warehouse → analyst/BI`. Compare its role with [Trino](trino.md) in an open stack.
 
 Serverless SQL reduces cluster operations and adjusts compute to load. Measure concurrency and queue time when choosing capacity and settings. Queries connect to Unity Catalog governance. Metric Views cover central metric definitions, dimensions, and shared business semantics. Check feature requirements in [Databricks SQL](https://docs.databricks.com/aws/en/sql/) and [Metric Views](https://docs.databricks.com/aws/en/metric-views/).
 
-## 17.4 Unity Catalog
+### Unity Catalog
 
 Unity Catalog is a governance layer for data and AI assets. Its hierarchy is `Metastore → Catalog → Schema → Object`. Table names use `catalog.schema.table`. The hypothetical name `production.ai.fact_llm_call` does not identify a real organization.
 
@@ -67,19 +1184,19 @@ Unity Catalog is a governance layer for data and AI assets. Its hierarchy is `Me
 
 Catalogs, schemas, tables, views, volumes, and models are securable objects. Some privileges are inherited through the hierarchy. Do not assume every privilege or policy has the same inheritance rules. **UC policies alone do not govern direct external reads and writes to object paths.** Check cloud IAM and external engine access too. [Unity Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/), [external access boundaries](https://docs.databricks.com/aws/en/external-access).
 
-## 17.5 Lakeflow Jobs
+### Lakeflow Jobs
 
 A Lakeflow Job defines tasks, dependencies, and schedules or triggers, much like an Airflow DAG. Tasks can include notebooks, SQL, dbt, pipelines, Python/Spark, and ML work. Time schedules, file arrival, table updates, and continuous execution have task-specific requirements. [Lakeflow Jobs](https://docs.databricks.com/aws/en/jobs/).
 
 A separate Airflow system may add less value when most work runs inside Databricks. A [general orchestrator](orchestration.md) may still help coordinate Databricks, AWS Lambda, Kubernetes, Snowflake, SaaS APIs, and internal systems. Similar names do not imply identical DAG, retry, or backfill behavior.
 
-## 17.6 Lakeflow Pipelines
+### Lakeflow Pipelines
 
 Separate **Connect for ingestion / Pipelines for transformation / Jobs for execution order**. The source's Lakeflow Pipelines and older Delta Live Tables (DLT) names connect to the current Spark Declarative Pipelines documentation. Some documentation and environments also use Lakeflow Spark Declarative Pipelines. [Current Pipelines documentation](https://docs.databricks.com/aws/en/ldp/), [Lakeflow Connect](https://docs.databricks.com/aws/en/ingestion/lakeflow-connect).
 
 An imperative workflow says “run the Bronze notebook, run the Silver notebook, then run Gold SQL.” A declarative pipeline defines `bronze_events → silver_events → gold_metrics`. The engine manages more dependency, incremental update, execution order, parallelization, and monitoring work. Key objects are Pipeline, Flow, Streaming Table, and Materialized View. Pipelines handle batch and streaming and connect to Spark Structured Streaming. A declarative query is not automatically incremental in every case. It also needs suitable settings to meet freshness goals.
 
-## 17.7 Delta / Iceberg interoperability
+### Delta / Iceberg interoperability
 
 Delta and Iceberg add table metadata to object storage and Parquet. Both address transactions, snapshots, schema evolution, time travel, and table management. **Delta and Iceberg are different formats.** Delta can be a natural choice for Databricks-centered work. Iceberg can suit multiple engines. Test the actual reader and writer combination.
 
@@ -91,7 +1208,7 @@ Delta and Iceberg add table metadata to object storage and Parquet. Both address
 
 UniForm generates Iceberg metadata asynchronously. Do not assume a Delta commit is immediately visible as the same Iceberg version. Check metadata generation status and external read freshness. Table format, storage, catalog, and governance integration are separate dimensions. [Iceberg reads](https://docs.databricks.com/aws/en/delta/iceberg-reads), [external system access](https://docs.databricks.com/aws/en/external-access), [Iceberg REST specification](https://iceberg.apache.org/rest-catalog-spec/).
 
-## 17.8 Lineage and Governance
+### Lineage and Governance
 
 An example lineage is `bronze.llm_calls → Spark → silver.llm_calls → SQL/dbt → gold.ai_usage → Dashboard`. Column lineage helps assess change impact. Example classifications are `email → PII` and `employee_id → Sensitive Internal`. No real values are collected or published here.
 
@@ -99,7 +1216,7 @@ UC connects lineage, classification, access control, masking, row filters, and a
 
 Governance can extend to external lineage, models, model services, agents, and AI services. Check the collection and enforcement boundary of each integration. [UC governance scope](https://docs.databricks.com/aws/en/data-governance/unity-catalog/). See [Governance](governance.md) and [Lineage and Metadata](lineage-metadata.md).
 
-## 17.9 MLflow
+### MLflow
 
 MLflow covers traditional ML and GenAI/agents. An experiment Run links parameters, metrics, code versions, and artifacts. Model Registry tracks model names, versions, aliases, tags, and lineage. It integrates with UC on Databricks.
 
@@ -107,7 +1224,7 @@ A `User → Agent → Retriever → LLM → Tool → Response` trace can link in
 
 The source compares MLflow 3 and Langfuse because their **capability areas overlap** in tracing, tool/retrieval tracking, prompt management, evaluation, judges, human feedback, and experiments. This does not promise equal behavior, UI, retention, or operations. MLflow has a strong traditional ML and Model Registry focus and native Databricks UC integration. Langfuse focuses on LLM work; a traditional ML registry is not its main purpose. The source describes its UC connection as an external integration. A Databricks-centered team can consider reducing duplicate systems after checking required features.
 
-## 17.10 AI / Vector capabilities
+### AI / Vector capabilities
 
 The integrated flow is `Lakehouse → AI Search → Model/Agent → Serving → Application`. A RAG flow is `documents → chunking → embeddings → AI Search → retriever → LLM`. AI Search is the current name for Vector Search. Distinguish indexes that sync supported source tables from indexes updated directly. Not every index updates automatically. Supported sync indexes can apply source changes incrementally, but some endpoint types need partial index rebuilds. [AI Search](https://docs.databricks.com/aws/en/ai-search/ai-search).
 
@@ -115,13 +1232,13 @@ Model Serving can expose custom models, foundation models, and external provider
 
 **Retrieving unauthorized documents and hiding them later is unsafe.** Restrict access before retrieval. The checked AI Search documentation says row and column permissions are unsupported and application ACLs can use the filter API. Do not assume UC integration automatically carries source row policies to an index. Build filters from trusted server-side user and permission data. Test bypass attempts, unauthorized documents, and permission changes. [AI Search limitations](https://docs.databricks.com/aws/en/ai-search/ai-search#limitations).
 
-## 17.11 Databricks cost model
+### Databricks cost model
 
 A DBU is a normalized compute/service billing unit, not a fixed CPU count. Classic compute is conceptually **DBU + cloud VM + storage/network**. Serverless moves infrastructure operations to the vendor but can leave external storage/network charges. Include Spark Jobs, SQL Warehouses, Pipelines, Serverless, Model Serving, AI Search, storage, network, and background optimization.
 
 Pruning can reduce scans. Compaction can improve reads. Incremental processing can avoid full recomputation. Check billing units, always-on resources, and maintenance cost before equating shorter runtime with lower bills. Allocate costs by `team / project / environment / job / workspace`. Serverless can improve operations, startup, scaling, and idle use without always being cheaper. Use real workloads and current [cost management documentation](https://docs.databricks.com/aws/en/admin/account-settings/usage), not a fixed assumed price.
 
-## 17.12 Which self-managed components can it replace?
+### Which self-managed components can it replace?
 
 | Existing responsibility | Integration candidate | Decision boundary |
 |---|---|---|

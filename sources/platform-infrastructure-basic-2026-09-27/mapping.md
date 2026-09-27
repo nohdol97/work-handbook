@@ -28,3 +28,7 @@
 | platform-infrastructure/linux-containers.md | 12 |
 | platform-infrastructure/kubernetes-core.md | 14 |
 | platform-infrastructure/kubernetes-operations.md | 10 |
+
+## 재공유 원문과 형태 복원
+
+2026-09-27에 다시 제공된 동명 파일은 55,197 bytes, SHA-256 `9c5236418f74d28e84794d8a98e66742afbb000835354e2039a2212a953ae536`으로 기존 업로드와 같다. 원문 1~3장 본문은 한국어로 그대로 복원하고 영어는 같은 단락·목록·제목·코드 구조로 번역한다. 기존 보완 설명·Mermaid·프롬프트는 원문 구역 밖에 유지한다. 4~15장은 후속 목차 상태를 유지한다.

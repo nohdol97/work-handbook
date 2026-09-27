@@ -18,45 +18,38 @@ knowledge_ids:
   - PIS-01-12
 ---
 
-# Linux, networking, and containers
+# Chapter 1. Linux, Networking, Containers
 
 Page type: Learn / Reference. This page records concept study from Chapter 1. `studied` does not mean that Linux, Docker, or Kubernetes was deployed or tested in failure experiments. Commands, the Dockerfile, YAML, IP addresses, PIDs, and numbers are unexecuted examples. Replace `<PID>` and `<pod>` with the intended target. Use termination commands only in an isolated exercise after checking the target and permissions.
 
-## Overall model
 
-```mermaid
-flowchart TD
-    K[Kubernetes resource and lifecycle settings] --> R[Container runtime]
-    I[Image and filesystem] --> R
-    R --> P[Linux application process]
-    N[Namespaces: process view and network] --> P
-    C[cgroups: CPU and memory control] --> P
-    P --> F[Files and sockets via file descriptors]
-    P --> S[Signals and exit status]
-    S --> O[Observe logs, limits and restart policy]
-```
+The source core below translates Chapter 1 without merging its paragraphs, lists, or examples. Read **Source clarifications and applicability** after the core for simplified or incomplete claims. In particular, check the numbered notes for PID and restarts in 1.1, requests and OOM in 1.2/1.7, standard FDs in 1.3, network isolation and exposure in 1.4/1.6/1.10, PID 1 signals in 1.5, backoff in 1.8/1.9, and storage lifetime in 1.11.
 
-In practice, inspect the application process, resource control, networking, and storage together. The basic source model is preserved below. **Source clarifications** correct statements that were too broad.
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+<!-- SOURCE CORE START -->
 
 ## 1.1 Linux Process
 
-A process is a running program. For example:
+In Linux, **process = a running program**.
+
+Example:
 
 ```bash
 python app.py
 ```
 
-The program is loaded into memory and Linux manages its execution as a process.
+When a program runs, it is loaded into memory and Linux manages it as a process.
 
 ### PID
 
-A PID (Process ID) identifies a process within a PID namespace. Inspect processes with:
+Each process has a unique number called its **PID (Process ID)**.
 
 ```bash
 ps aux
 ```
 
-Example output:
+Example:
 
 ```text
 USER    PID   COMMAND
@@ -65,23 +58,25 @@ user   1523   python app.py
 user   1601   nginx
 ```
 
-Use the PID to inspect or signal a particular process:
+Knowing the PID lets you inspect or terminate a specific process.
 
 ```bash
 kill 1523
 ```
 
-### Parent and child processes
+### Parent / Child Process
 
-Most processes are created by another process:
+Most processes are created by another process.
 
 ```text
-bash (parent)
-  ↓
-python app.py (child)
+bash
+ ↓
+python app.py
 ```
 
-PPID means Parent Process ID. View it with:
+- `bash` = Parent Process
+- `python` = Child Process
+- The parent's PID = PPID (Parent Process ID)
 
 ```bash
 ps -ef
@@ -95,81 +90,173 @@ user  1000  900    bash
 user  1200  1000   python app.py
 ```
 
-This relationship matters for container PID 1, graceful shutdown, and zombie processes.
+This structure connects to **container PID 1**, **graceful shutdown**, and **zombie processes** later.
 
-### Process states
+### Process State
 
-| State | Meaning |
-|---|---|
-| Running | Running on a CPU or waiting for CPU time |
-| Sleeping | Waiting for I/O or an event |
-| Stopped | Paused |
-| Zombie | Execution has ended, but the parent has not collected the termination result |
+Common states:
 
-A zombie is not a live process consuming CPU. Only some process-table information remains.
+```text
+Running
+Sleeping
+Stopped
+Zombie
+```
 
-### Exit code
+- **Running**: running or waiting for CPU time
+- **Sleeping**: waiting for I/O or an event
+- **Stopped**: paused
+- **Zombie**: the process has exited, but its parent has not collected the termination result
 
-Programs return an exit status. By convention, `0` means success and nonzero means an error. Check the status of the preceding command:
+A zombie is not a live process using CPU. Its execution has ended, and only some information remains in the process table.
+
+### Exit Code
+
+A program returns a result to Linux when it exits.
+
+Usually:
+
+```text
+0     → normal exit
+nonzero → error
+```
+
+Check:
 
 ```bash
 ls /tmp
 echo $?
 ```
 
-An error example:
+An error-producing command example:
 
 ```bash
 ls /not-exist
 echo $?
 ```
 
-Docker and Kubernetes also expose container exit codes to help distinguish normal and abnormal termination.
+Docker and Kubernetes also use container exit codes to distinguish normal and abnormal termination.
 
-### /proc and the platform connection
+### /proc
 
-Linux exposes current system and process state through `/proc`. For PID 1200, inspect:
+Linux exposes current system and process state through `/proc`.
+
+For PID 1200:
 
 ```text
 /proc/1200
+```
+
+Common paths:
+
+```text
 /proc/1200/status
 /proc/1200/cmdline
 /proc/1200/fd
 ```
 
-The platform model is:
+### Connection to the Platform
 
 ```text
 Kubernetes Pod
-└── Container
-    └── Linux process, for example vLLM
+→ Container
+→ Ultimately a Linux process
 ```
 
-A process exits, leaves an exit status, and the container runtime observes it. Kubernetes may restart the container according to its restart policy.
+Example:
 
-Key points: a running program becomes a process; PID identifies it; processes have parent/child relationships; termination leaves a status; zombies await collection; `/proc` exposes process information.
+```text
+Pod
+└── Container
+     └── vLLM Process
+```
+
+The flow is process exit → exit code → detection by the container runtime → Kubernetes restart.
+
+### Key Points
+
+```text
+A running program becomes a process.
+A process has a PID.
+Processes have parent/child relationships.
+A process leaves an exit code when it ends.
+A zombie has exited, but its parent has not collected the result.
+Process information can be inspected through /proc.
+```
+
+---
 
 ## 1.2 CPU / Memory
 
-For platform work, ask why a service becomes slow or why it exits.
+For platform engineering, understand CPU and memory by asking **why things become slow and why they terminate**.
 
-### CPU and bottlenecks
+### CPU
 
-The CPU executes program instructions. High CPU use often means that much computation is required. CPU-bound examples include JSON processing, compression, encryption, large calculations, and some LLM inference work.
+The CPU executes process code.
 
-CPU-bound means computation is the bottleneck. I/O-bound means waiting for a database, API, file, network, or disk is the bottleneck.
+High CPU utilization usually means there is much computation to perform.
 
-An 8-core CPU can run multiple tasks in parallel. The Linux scheduler shares CPU time even when there are more processes than cores.
+Common CPU-bound tasks:
 
-### Memory, swap, and OOM
+```text
+JSON processing
+Compression
+Encryption
+Large calculations
+Some LLM inference calculations
+```
 
-RAM holds data needed by a process, including application code, cache, request data, and model data.
+### CPU-bound vs I/O-bound
 
-When RAM is short, the system can move some data to disk-backed swap. Disk is much slower than RAM. Heavy swapping can make the server very slow.
+**CPU-bound**:
+- Computation is the bottleneck
 
-OOM means Out Of Memory. The system cannot meet memory needs normally. Linux may kill a process through the OOM killer.
+**I/O-bound**:
+- Database responses
+- API responses
+- File reads
+- Waiting for the network or disk
 
-### Kubernetes requests and limits
+### CPU Core
+
+For example, an 8-core CPU can process several tasks in parallel.
+
+The Linux scheduler shares CPU time even when there are more processes than cores.
+
+### Memory
+
+Data needed by the process is loaded into RAM.
+
+Example:
+
+```text
+Application code
+Cache
+Request data
+Model data
+```
+
+### Swap
+
+When RAM runs short, some data can move to swap on disk.
+
+```text
+Insufficient RAM
+ ↓
+Move some data to swap on disk
+```
+
+Disk is much slower than RAM, so heavy swap use can make a server very slow.
+
+### OOM
+
+OOM = **Out Of Memory**
+
+A situation where insufficient memory prevents normal process operation.
+
+Linux can forcibly terminate a process in some circumstances. This is commonly called the **OOM killer**.
+
+### Connection to Kubernetes
 
 Example:
 
@@ -181,27 +268,70 @@ resources:
     memory: "4Gi"
 ```
 
-A request is the amount used for scheduling decisions. It does not preallocate memory or cap actual use. A limit controls resource use. A simplified failure path is:
+- `request` = the minimum resources you want to secure
+- `limit` = the maximum allowed usage
+
+A common result after exceeding the memory limit:
+
+```text
+OOMKilled
+```
+
+Flow:
 
 ```text
 Application memory grows
-  ↓
-Container memory limit is reached
-  ↓
-A process may be killed if memory cannot be reclaimed
-  ↓
-Container status may show OOMKilled
+        ↓
+Container memory limit exceeded
+        ↓
+Process termination
+        ↓
+Observe OOMKilled in the Pod
 ```
 
-Memory enforcement is reactive; exceeding a limit is not a promise of an immediate kill. See the source clarifications below.
+### CPU Limit
 
-CPU behaves differently. Reaching a CPU limit usually restricts CPU time and slows processing instead of killing the process. This is CPU throttling.
+Unlike memory, exceeding a CPU limit does not immediately kill the process.
 
-Key points: CPU performs computation; RAM stores working data; CPU-bound and I/O-bound workloads need different diagnosis; memory pressure can cause OOM; CPU limits commonly cause throttling.
+Usually:
+
+```text
+CPU limit exceeded
+↓
+Limit CPU time
+↓
+Processing slows down
+```
+
+This is called **CPU throttling**.
+
+### Key Points
+
+```text
+CPU = a resource that performs computations
+Memory = space where processes store data
+
+CPU-bound = computation is the bottleneck
+I/O-bound = database, network, disk, or similar I/O is the bottleneck
+
+Insufficient memory can cause OOM.
+
+Kubernetes memory limit exceeded
+→ OOMKilled
+
+Kubernetes CPU limit exceeded
+→ CPU throttling
+```
+
+---
 
 ## 1.3 File / File Descriptor
 
-A file descriptor (FD) is a process-local number for an open file, socket, or pipe. Programs conventionally use these standard descriptors, though they can close or redirect them:
+In Linux, a process manages files and network connections with numbers called **file descriptors (FDs)**.
+
+### stdin / stdout / stderr
+
+Every process has the following by default:
 
 ```text
 0 = stdin
@@ -209,13 +339,19 @@ A file descriptor (FD) is a process-local number for an open file, socket, or pi
 2 = stderr
 ```
 
-Redirect stdout to a file:
+These are its standard streams.
+
+Example:
 
 ```bash
 python app.py > output.log
 ```
 
-Opening more files creates descriptors such as:
+This sends stdout to a file.
+
+### File Descriptor
+
+When a process opens a file, Linux assigns it a number.
 
 ```text
 FD 0 → stdin
@@ -225,9 +361,11 @@ FD 3 → config.yaml
 FD 4 → log.txt
 ```
 
-### Sockets also use FDs
+### Sockets Also Use FDs
 
-Network connections consume descriptors too:
+Network connections are also managed through FDs.
+
+Example:
 
 ```text
 FD 5 → Client A TCP connection
@@ -235,105 +373,226 @@ FD 6 → Client B TCP connection
 FD 7 → Client C TCP connection
 ```
 
-Linux uses descriptors for files, sockets, and pipes.
+Linux handles the following through FDs in a similar way.
 
-### Too many open files and connection leaks
+```text
+File
+Socket
+Pipe
+```
 
-A process has an FD limit. Inspect the shell limit with:
+### Too many open files
+
+The number of FDs a process can use is limited.
 
 ```bash
 ulimit -n
 ```
 
-An example value is `1024`; it is not a universal default. Reaching the limit can produce `Too many open files`.
-
-A database or network connection leak follows this pattern:
+Example:
 
 ```text
-Create connection → use it → fail to close it
-  → descriptors accumulate → FD exhaustion
+1024
 ```
 
-The service can still be running while it can no longer accept new connections. Inspect the affected process:
+If FDs keep accumulating and reach the limit:
+
+```text
+Too many open files
+```
+
+This error can occur.
+
+### Connection Leak
+
+Creating database or network connections without closing them can cause FDs to accumulate.
+
+```text
+Create a database connection
+→ Use it
+→ Do not close it
+→ Keep accumulating
+→ FD exhaustion
+```
+
+This can leave a running service unable to accept new connections.
+
+### Commands to Inspect
 
 ```bash
 lsof -p <PID>
+```
+
+Or:
+
+```bash
 ls /proc/<PID>/fd
 ```
 
-An API server uses FDs for client sockets, database connections, Redis connections, and log files.
+### Platform View
 
-Key points: FDs are numbered handles; sockets consume them; limits exist; leaked connections can exhaust them; use `ulimit`, `lsof`, and `/proc/<PID>/fd` as diagnostic starting points.
+For example, an API server uses:
+
+```text
+API Server
+ ├─ Client Socket
+ ├─ DB Connection
+ ├─ Redis Connection
+ └─ Log File
+```
+
+FDs for all of these.
+
+### Key Points
+
+```text
+FD = a number a process uses to handle files, sockets, and similar objects
+
+0 = stdin
+1 = stdout
+2 = stderr
+
+Sockets also use FDs.
+FDs have limits.
+
+If FDs keep accumulating,
+→ Too many open files
+
+In operations,
+ulimit / lsof / /proc/<PID>/fd
+inspect these.
+```
+
+---
 
 ## 1.4 Linux Networking
 
-Understand IP, port, socket, DNS, and routing first.
+A platform engineer should first understand **IP, port, socket, DNS, and routing** clearly.
 
-### IP, port, and socket
+### IP and Port
 
-A beginner's model is “IP selects the machine; port selects the program.” For example, `10.0.0.10:8080`. More precisely, IP identifies an interface/address and port identifies a transport endpoint; namespace and protocol matter.
+- IP = which machine
+- Port = which program on that machine
 
-A socket is a communication endpoint. `IP + port + protocol` is a useful starting model.
-
-### TCP and UDP
-
-| Protocol | Properties and examples |
-|---|---|
-| TCP | Connection-oriented; reliable ordered delivery with retransmission; common for HTTP and database connections |
-| UDP | No connection setup; no built-in delivery or ordering guarantee; common for DNS; not guaranteed to be faster |
-
-TCP begins with a handshake:
+Example:
 
 ```text
-Client       Server
-  SYN      →
-           ← SYN-ACK
-  ACK      →
+10.0.0.10:8080
 ```
 
-Data exchange follows. These protocol examples are common uses, not an exhaustive rule for every HTTP or DNS transport.
+### Socket
 
-### 127.0.0.1 and 0.0.0.0
+A socket is an endpoint for network communication.
 
-`127.0.0.1` is localhost, reachable within the current network namespace. Binding to `0.0.0.0` means listening on all local IPv4 interfaces. If an application binds only to container loopback, requests arriving from outside that namespace may not reach it. Listening is separate from publishing a port and from firewall policy.
-
-### DNS, routing, CIDR, and NAT
-
-DNS maps a name to an address, for example:
+At a high level:
 
 ```text
-api.example.com → 10.0.0.20
+IP + Port + Protocol
 ```
 
-Inspect DNS:
+Think of it as this combination.
+
+### TCP vs UDP
+
+**TCP**
+- Connection-oriented
+- Reliable
+- Ordered delivery
+- Retransmission
+
+Commonly used for HTTP, database connections, and similar traffic.
+
+**UDP**
+- Send directly without a connection
+- Fast
+- No delivery or ordering guarantee
+
+Commonly used for DNS and similar traffic.
+
+### TCP Handshake
+
+```text
+Client      Server
+
+ SYN   →
+       ← SYN-ACK
+ ACK   →
+```
+
+Actual data exchange follows.
+
+### 127.0.0.1 vs 0.0.0.0
+
+**127.0.0.1**
+- localhost
+- Accessible only from the current machine itself
+
+**0.0.0.0**
+- Listen for requests on all network interfaces
+
+If an application binds only to 127.0.0.1 inside a container, it may be unreachable from outside the container.
+
+### DNS
+
+DNS resolves names to IP addresses.
+
+```text
+api.example.com
+↓
+10.0.0.20
+```
+
+Check:
 
 ```bash
 dig example.com
 ```
 
-Routing answers: “Which way should a packet go to reach this IP?” Inspect it with:
+### Routing
+
+Routing answers:
+
+> Which way should traffic go to reach this IP?
+
+It chooses the direction.
 
 ```bash
 ip route
 ```
 
-Example route:
+Example:
 
 ```text
 default via 10.0.0.1
 ```
 
-A subnet/CIDR such as `10.0.0.0/24` describes an address range. Kubernetes also uses terms such as Pod CIDR and Service CIDR.
+### Subnet / CIDR
 
-NAT translates an IP address or port. Example:
+Example:
 
 ```text
-Container IP 10.1.0.5
-  ↓ NAT
-Node IP 192.168.0.10
+10.0.0.0/24
 ```
 
-### Commands and initial network diagnosis
+This represents a network range.
+
+Kubernetes also uses terms such as `Pod CIDR` and `Service CIDR`.
+
+### NAT
+
+NAT translates IP addresses or ports.
+
+```text
+Container IP
+10.1.0.5
+   ↓
+NAT
+   ↓
+Node IP
+192.168.0.10
+```
+
+### Basic Commands
 
 ```bash
 ip addr
@@ -343,144 +602,336 @@ dig example.com
 curl http://server:8080
 ```
 
-Check in order:
+### Basic Troubleshooting
 
+```text
 1. Is the application running?
-2. Is it listening on the intended port?
-3. Is it bound to the correct address?
-4. Does DNS work?
-5. Is routing correct?
-6. Is a firewall or NetworkPolicy blocking traffic?
+2. Is it listening on the port?
+3. Is it bound to the correct IP?
+4. Is DNS working?
+5. Is routing working?
+6. Is there a firewall or NetworkPolicy problem?
+```
 
-Key points: IP and port locate endpoints; TCP provides reliable ordered streams; UDP does not guarantee delivery; loopback and all-interface binding differ; DNS resolves names; routing selects a path; CIDR describes a range; NAT translates addresses or ports.
+### Key Points
+
+```text
+IP = machine
+Port = process
+Socket = communication endpoint
+
+TCP = connection + reliability
+UDP = fast and simple
+
+127.0.0.1 = only the local machine itself
+0.0.0.0 = all interfaces
+
+DNS = name → IP
+Routing = the path a packet takes
+CIDR = network range
+NAT = IP/port translation
+```
+
+---
 
 ## 1.5 Signal / Process Lifecycle
 
-A process starts, receives signals, and exits. SIGTERM, SIGKILL, and graceful shutdown matter especially in platform work.
+A process starts, receives signals, and exits.
 
-### Signals
+**SIGTERM, SIGKILL, and graceful shutdown** are especially important for platforms.
 
-A signal is a control notification to a process: for example, a termination request, a forced termination, or an interrupt.
+### Signal
 
-`kill` sends SIGTERM by default:
+A signal is a control message from the operating system to a process.
+
+Example:
+
+```text
+"Terminate"
+"Force termination"
+"An interrupt occurred"
+```
+
+### SIGTERM
+
+A request to terminate normally.
 
 ```bash
 kill <PID>
 ```
 
-SIGTERM requests termination. An application with appropriate handlers can shut down gracefully:
+This sends SIGTERM by default.
+
+Normal flow:
 
 ```text
 Receive SIGTERM
-  → stop accepting new requests
-  → finish existing requests
-  → close database connections
-  → flush files
-  → exit
+↓
+Stop accepting new requests
+↓
+Finish existing requests
+↓
+Close database connections
+↓
+Flush files
+↓
+Exit
 ```
 
-SIGKILL forces termination without an application cleanup opportunity:
+This is called **graceful shutdown**.
+
+### SIGKILL
+
+Immediate forced termination.
 
 ```bash
 kill -9 <PID>
 ```
 
-SIGINT is usually generated by `Ctrl+C`.
-
-### Graceful shutdown and Kubernetes
-
-Killing an API server while it handles requests can fail those requests. Graceful shutdown stops new work, completes in-flight work, closes connections, and exits.
-
-The basic Kubernetes model is:
+There is no opportunity for cleanup.
 
 ```text
-Pod deletion
-  → termination signal, normally SIGTERM
-  → wait within the grace period
-  → SIGKILL if processes remain
+SIGTERM = clean up and exit
+SIGKILL = terminate immediately
 ```
 
-The source clarifications explain hooks and configurable stop signals.
+### SIGINT
+
+Usually, `Ctrl + C` sends SIGINT.
+
+### Graceful Shutdown
+
+If an API server dies while handling a request, the request fails.
+
+Graceful shutdown follows:
+
+```text
+Termination request
+↓
+Block new requests
+↓
+Finish existing requests
+↓
+Close connections
+↓
+Process exit
+```
+
+This is the shutdown flow.
+
+### Connection to Kubernetes
+
+A common Pod termination flow:
+
+```text
+Delete the Pod
+↓
+Send SIGTERM to the container process
+↓
+Wait for the grace period
+↓
+Send SIGKILL if it has not exited
+```
 
 ### PID 1
 
-The first process in a container PID namespace is usually PID 1:
+The first process started inside a container is usually PID 1.
 
 ```text
 Container
-└── python app.py (PID 1)
+└── python app.py
+    PID 1
 ```
 
-If PID 1 does not handle or forward termination signals correctly, shutdown can reach the grace-period deadline and require SIGKILL. PID 1 has special signal rules and a role in reaping orphaned children.
+If PID 1 does not handle signals correctly, it may ignore SIGTERM and eventually receive SIGKILL.
 
-Key points: SIGTERM requests orderly shutdown; SIGKILL allows no cleanup; Ctrl+C normally sends SIGINT; graceful shutdown finishes existing work; container PID 1 needs correct signal behavior.
+### Key Points
+
+```text
+Signal = a control message sent to a process
+
+SIGTERM
+= Request normal termination
+
+SIGKILL
+= Force immediate termination
+
+SIGINT
+= Usually Ctrl+C
+
+Graceful Shutdown
+= Finish existing work and exit normally
+
+Kubernetes Pod termination
+= SIGTERM → wait → SIGKILL if needed
+
+PID 1 signal handling matters in containers
+```
+
+---
 
 ## 1.6 Linux Namespace
 
-Namespaces give processes different views of Linux resources. They are a core part of container isolation.
+A namespace is:
 
-### PID namespace
+> A feature that gives processes different views of the Linux environment
 
-PID namespaces separate process views. The same processes may have different IDs inside a container and on the host:
+This is its basic role.
+
+It is one of the core technologies behind container isolation.
+
+### PID Namespace
+
+Separates process lists.
+
+Inside the container:
 
 ```text
-Container: PID 1 python app.py; PID 20 worker
-Host: PID 12345 python app.py; PID 12380 worker
+PID 1  python app.py
+PID 20 worker
 ```
 
-### Network, mount, and UTS namespaces
+Host:
 
-A network namespace has its own IP addresses, network interfaces, routing table, and ports. Containers in different network namespaces can therefore listen on the same port number on one host.
+```text
+PID 12345 python app.py
+PID 12380 worker
+```
 
-A mount namespace separates the view of filesystem mounts. Containers appear to have separate filesystems. A UTS namespace separates the hostname and related identity.
+PIDs inside a container can differ from host PIDs.
+
+### Network Namespace
+
+A network namespace can have independent:
+
+```text
+IP
+Network Interface
+Routing Table
+Port
+```
+
+These resources belong to its network view.
+
+This lets several containers on the same host each use the same port number.
+
+### Mount Namespace
+
+Separates filesystem mount state.
+
+Makes each container appear to have its own filesystem.
+
+### UTS Namespace
+
+Separates hostnames and related identity.
+
+### Connection to Containers
 
 ```text
 Linux Host
-├── Container A: PID / Network / Mount namespaces
-└── Container B: PID / Network / Mount namespaces
+ ├─ Container A
+ │   ├─ PID Namespace
+ │   ├─ Network Namespace
+ │   └─ Mount Namespace
+ │
+ └─ Container B
+     ├─ PID Namespace
+     ├─ Network Namespace
+     └─ Mount Namespace
 ```
 
-### VM and container comparison
+### VM vs Container
 
-A VM has its own guest OS. Linux containers isolate process environments while sharing the kernel of their Linux host.
+```text
+VM
+→ Separate the operating system itself
 
-Key points: namespaces control what a process can see; PID separates process views; network separates IP/port/routing state; mount separates mount views; UTS separates hostnames. cgroups, covered next, control how many resources a process can use.
+Container
+→ Isolate process environments on the same kernel
+```
+
+### Key Points
+
+```text
+Namespace = isolate the Linux environment a process sees
+
+PID Namespace
+→ Separate process lists
+
+Network Namespace
+→ Separate IP, port, and routing state
+
+Mount Namespace
+→ Separate filesystem mounts
+
+UTS Namespace
+→ Separate hostnames
+```
+
+Also:
+
+```text
+Namespace = isolate what a process can see
+cgroup    = limit how many resources it can use
+```
+
+---
 
 ## 1.7 cgroup
 
-A cgroup measures and controls resources such as CPU and memory for a group of processes.
+A cgroup is:
 
-### CPU and memory limits
+> A Linux feature that limits and measures resources such as CPU and memory available to processes
 
-Example CPU allocations:
+This is its basic role.
+
+### CPU Limits
 
 ```text
 Container A → maximum 1 CPU
 Container B → maximum 2 CPUs
 ```
 
-CPU limits usually cause throttling, not process termination.
+A CPU limit usually causes **CPU throttling**, not process termination.
 
-Example memory limit:
+### Memory Limits
 
-```text
-Container A → memory limit 2GB
-  → pressure beyond the limit
-  → possible OOM
-  → a process may be terminated
-```
-
-A conceptual container combines namespaces, cgroups, and a filesystem:
+Example:
 
 ```text
 Container A
-├── Namespaces: separate its environment
-└── cgroup: limit it to 1 CPU and 2GB memory
+Memory limit = 2GB
 ```
 
-The source uses `2GB` in this conceptual example and `2Gi` in YAML. Decimal GB and binary GiB are different units.
+When the limit is exceeded:
 
-### Kubernetes connection
+```text
+Memory limit exceeded
+↓
+OOM
+↓
+Possible process termination
+```
+
+### Containers and cgroups
+
+```text
+Container A
+├─ Namespace → separate from other containers
+└─ cgroup    → limit to 1 CPU and 2GB memory
+```
+
+The core container model is roughly:
+
+```text
+Namespace
++
+cgroup
++
+filesystem
+```
+
+### Connection to Kubernetes
 
 ```yaml
 resources:
@@ -489,81 +940,212 @@ resources:
     memory: "2Gi"
 ```
 
-The enforcement path is:
+Flow:
 
 ```text
 Kubernetes resource limit
-  → container runtime
-  → Linux cgroup
-  → actual CPU / memory control
+↓
+Container runtime
+↓
+Linux cgroup
+↓
+Actual CPU and memory limits
 ```
 
-Key points: cgroups control and measure resources; CPU limits throttle; memory limits can lead to OOM; namespaces define the view, while cgroups constrain usage.
+### Key Points
+
+```text
+cgroup = a feature that controls resources such as CPU and memory
+
+CPU limit exceeded
+→ throttling
+
+Memory limit exceeded
+→ Possible OOM
+
+Namespace
+→ What it can see
+
+cgroup
+→ How much it can use
+```
+
+---
 
 ## 1.8 Container Fundamentals
 
-A container runs a process in an isolated environment.
+A container is:
 
-### Containers and VMs
+> A way to run a process in an isolated environment
 
-A VM has a guest OS. Linux containers share their Linux host's kernel. Containers are generally lighter and faster to start, though actual performance depends on the workload and implementation.
+This is its basic role.
 
-This command still starts an ordinary Linux application process:
+### Container vs VM
+
+Each VM has its own guest OS.
+
+Containers share the host Linux kernel.
+
+They are therefore generally lighter and faster to start than VMs.
+
+### A Process Ultimately Runs inside the Container
 
 ```bash
 docker run nginx
 ```
 
-The process inside the container is `nginx`.
+This command ultimately runs an `nginx` process inside the container.
 
-### Docker, containerd, OCI, and runc
+### Docker
 
-Docker provides tools to build, run, stop, push, and pull containers or their images.
-
-containerd manages the container lifecycle. A common Kubernetes stack uses containerd. OCI defines common image and runtime specifications. runc is a low-level runtime that uses Linux facilities to create container processes.
-
-A representative stack is:
+Docker makes it easy for users to:
 
 ```text
-Kubernetes → containerd → runc → Linux process
+build
+run
+stop
+push
+pull
 ```
 
-This is a common implementation path, not a requirement that every Kubernetes cluster use containerd and runc.
+It provides tools for these actions.
 
-### Lifecycle
+### containerd
+
+The runtime layer that manages the container lifecycle.
+
+A common Kubernetes structure:
 
 ```text
-Image → container creation → start → process execution
-  → stop → container exit
+Kubernetes
+   ↓
+containerd
+   ↓
+Run the container
 ```
 
-When the main container process ends, the container exits:
+This is the usual model.
+
+### OCI
+
+Common container ecosystem standards for image formats and runtime behavior.
+
+### runc
+
+A low-level runtime that uses Linux features to create container processes.
 
 ```text
-Pod → Container → Application process
+Kubernetes
+   ↓
+containerd
+   ↓
+runc
+   ↓
+Linux Process
 ```
 
-CrashLoopBackOff means repeated container exits have led to restart attempts with a growing delay under the restart policy. It describes the backoff state, not the underlying cause.
+### Container Lifecycle
 
-Key points: a container is an isolated Linux process environment; a VM has a guest OS; Docker is the user-facing toolset; containerd manages lifecycle; runc creates processes; OCI defines standards; the main process controls container lifetime.
+```text
+Image
+↓
+Create a container
+↓
+Start
+↓
+Run the process
+↓
+Stop
+↓
+Container exit
+```
+
+The container exits when its main process ends.
+
+### Connection to Kubernetes
+
+```text
+Pod
+└─ Container
+   └─ Application Process
+```
+
+CrashLoopBackOff is a situation where the application process keeps terminating and the container restarts.
+
+### Key Points
+
+```text
+Container
+= A Linux process running in an isolated environment
+
+VM
+= Separate the OS too
+
+Container
+= Share the host kernel
+
+Docker
+= Tools for using containers easily
+
+containerd
+= Manage the container lifecycle
+
+runc
+= Run the actual container process
+
+OCI
+= Container standards
+
+When the container's main process ends,
+the container exits too
+```
+
+---
 
 ## 1.9 Container Image / OCI
 
-An image is the execution package used to create a container. It can contain a Python runtime, application code, libraries, and configuration:
+An image is needed before a container can run.
+
+> Image = an execution package used to create a container
+
+### Contents of an Image
+
+Example:
 
 ```text
-Image → create container → run process
+Python runtime
+Application code
+Library
+Config
 ```
 
-### Layers and Dockerfile
-
-Images can contain layers representing changes such as:
+Flow:
 
 ```text
-Base Linux → install Python → install libraries → add app code
+Image
+↓
+Create a container
+↓
+Run the process
 ```
 
-A Dockerfile defines how to build the image. Source example:
+### Image Layer
+
+An image can contain several layers.
+
+```text
+Base Linux
+↓
+Install Python
+↓
+Install libraries
+↓
+Add application code
+```
+
+### Dockerfile
+
+A file that defines how to build an image.
 
 ```dockerfile
 FROM python:3.12
@@ -577,71 +1159,153 @@ RUN pip install -r requirements.txt
 CMD ["python", "app.py"]
 ```
 
-Unchanged build inputs can allow cached build steps to be reused. The example has not been built. The tag is illustrative, not a tested version claim. See the clarifications for cache and secret-handling limits.
+### Build Cache
+
+Unchanged layers can be reused without rebuilding them.
 
 ### Registry
 
-A registry stores images. Examples include Docker Hub, Amazon ECR, Google Artifact Registry, and GitHub Container Registry.
+A server that stores images.
+
+Common examples:
 
 ```text
-Build → push to registry → server or Kubernetes pulls → run container
+Docker Hub
+Amazon ECR
+Google Artifact Registry
+GitHub Container Registry
 ```
 
-### Tag and digest
+Flow:
 
-Tags are readable names that can change:
+```text
+Build
+↓
+Push to the registry
+↓
+The server or Kubernetes pulls it
+↓
+Run the container
+```
+
+### Tag vs Digest
+
+Tag:
 
 ```text
 myapp:1.0
 myapp:latest
 ```
 
-A digest identifies image content:
+- Easy for people to read
+- Can change
+
+Digest:
 
 ```text
 myapp@sha256:abc123...
 ```
 
-The shortened digest is explanatory, not a valid runnable reference. A digest pins content; a tag alone does not.
+- Identifies the actual image content
+- Fixed
 
-### Multi-stage build
+### Multi-stage Build
 
-Separate build tools from runtime tools to reduce the final image size:
-
-```text
-Build stage: compiler included → produce binary
-Runtime stage: include the binary needed to run
-```
-
-### Kubernetes and image pulls
+Separate build tools from tools needed at runtime to make the final image smaller.
 
 ```text
-Create Pod → select node → pull image
-  → create container → run process
+Build Stage
+→ Include the compiler
+→ Produce a binary
+
+Runtime Stage
+→ Include only the binary
 ```
 
-ImagePullBackOff indicates failed pulls followed by delayed retries. Possible causes include an incorrect image name, wrong tag, registry authentication failure, or network failure.
+### Connection to Kubernetes
 
-Key points: an image packages execution inputs; Dockerfile defines its build; layers capture filesystem changes; registry stores it; tags are mutable names; digests identify content; multi-stage builds reduce unnecessary runtime contents.
+```text
+Create a Pod
+↓
+Select a Node
+↓
+Image Pull
+↓
+Create a container
+↓
+Run the process
+```
+
+When an image pull fails:
+
+```text
+ImagePullBackOff
+```
+
+Possible causes:
+
+```text
+Incorrect image name
+Incorrect tag
+Registry authentication failure
+Network problem
+```
+
+### Key Points
+
+```text
+Image
+= A package needed to run a container
+
+Dockerfile
+= Define how to build an image
+
+Layer
+= A structure that divides an image into layers
+
+Registry
+= Image storage
+
+Tag
+= A human-readable version name
+
+Digest
+= Identify the actual image content immutably
+
+Multi-stage build
+= Reduce the final image size
+```
+
+---
 
 ## 1.10 Container Networking
 
-A container commonly has a network namespace and its own IP. Example addresses:
+Containers need network communication, so they usually have their own network namespace and IP.
+
+### Container IP
+
+Example:
 
 ```text
 Container A → 172.18.0.2
 Container B → 172.18.0.3
 ```
 
-### veth pair and Linux bridge
+### veth pair
 
-A veth pair is like a virtual cable connecting network namespaces:
+A virtual cable connecting the container and host networks.
 
 ```text
-Container → veth pair → Host
+Container
+   │
+veth
+   │
+Host
 ```
 
-A Linux bridge can connect multiple containers to the host network:
+### Linux Bridge
+
+It can connect several containers inside a host.
 
 ```text
 Container A ─┐
@@ -649,49 +1313,107 @@ Container A ─┐
 Container B ─┘
 ```
 
-### Port mapping and NAT
+### Port Mapping
 
-Source example:
+Example:
 
 ```bash
 docker run -p 8080:80 nginx
 ```
 
-This maps host port 8080 to container port 80. Address translation may forward incoming traffic:
+Meaning:
 
 ```text
-External client → Host IP:8080 → NAT → Container IP:80
+Host 8080
+   ↓
+Container 80
 ```
 
-Omitting a host bind address can publish the port on all host interfaces. See the narrower local example in the source clarifications.
+### NAT
 
-### Communication between containers and Pods
+NAT can forward requests arriving at the host to a container IP and port.
 
-Containers on the same network can communicate when network policy allows it. Docker Compose commonly provides service-name lookup, for example `redis:6379`.
+```text
+External client
+    ↓
+Host IP:8080
+    ↓
+NAT
+    ↓
+Container IP:80
+```
 
-Kubernetes normally gives each Pod an IP and uses a CNI implementation for Pod networking. Containers within one Pod share its network namespace; each container does not necessarily have a separate Pod IP.
+### Communication between Containers
 
-Key points: network namespaces permit separate network views; veth pairs connect them; bridges connect multiple endpoints; port mapping connects host and container ports; NAT translates addresses or ports; these ideas underpin Pod networking, though implementations differ.
+Containers on the same network can communicate.
+
+Docker Compose often allows access by name.
+
+Example:
+
+```text
+redis:6379
+```
+
+### Connection to Kubernetes
+
+In Kubernetes, Pods communicate using their IPs, and CNI implements this networking.
+
+### Key Points
+
+```text
+Container
+→ A separate network namespace
+→ Can have a separate IP
+
+veth pair
+→ Connect the container and host
+
+Bridge
+→ Connect several containers
+
+Port Mapping
+→ Connect a host port to a container port
+
+NAT
+→ Translate addresses between the outside and the container
+
+These concepts also underpin Pod networking in Kubernetes
+```
+
+---
 
 ## 1.11 Container Storage
 
-A container's writable filesystem layer is tied to that container's lifetime:
+The filesystem inside a container is basically **tied to the container's lifetime**.
+
+### Ephemeral filesystem
+
+Files stored inside a container can disappear when it is removed and recreated.
 
 ```text
-Create container → create file → remove container → lose that layer's file
+Create a container
+↓
+Create a file
+↓
+Remove the container
+↓
+The file disappears too
 ```
 
-Removing and recreating a container is different from merely stopping and starting the same Docker container.
+### Bind Mount
 
-### Bind mount
-
-A bind mount connects a host directory to a container path:
+Connects a specific host directory to the container.
 
 ```text
-Host /data → Container /app/data
+Host
+/data
+  ↓
+Container
+/app/data
 ```
 
-Source example:
+Example:
 
 ```bash
 docker run -v /data:/app/data myapp
@@ -699,72 +1421,152 @@ docker run -v /data:/app/data myapp
 
 ### Volume
 
-A volume is storage managed separately by the container runtime. It can outlive a container:
+Separate storage managed by the container runtime.
 
 ```text
-Container → Volume → Persistent data
+Container
+   ↓
+Volume
+   ↓
+Persistent Data
 ```
 
-Examples include PostgreSQL data, Redis persistence data, and files stored by a file service.
+Used for persistent data in PostgreSQL, Redis, file storage services, and similar systems.
 
-### Separate application and data lifetimes
+### Separate Containers from Data
 
-Aim for an application container that can be recreated and persistent data stored separately. Stateless application containers are usually easier to operate.
-
-Kubernetes connects Pods to persistent storage through PVs, PVCs, and StorageClasses:
+A useful structure:
 
 ```text
-Pod → PVC → Persistent storage
+Application Container
+→ Can be recreated at any time
+
+Persistent Data
+→ Stored in separate storage
 ```
 
-Key points: the writable container layer is ephemeral; keep important data separately; a bind mount uses a host path directly; a volume has a separate lifetime; use PV/PVC concepts for Kubernetes persistent storage. Persistence is not a substitute for backups.
+Making application containers stateless where possible helps operations.
+
+### Connection to Kubernetes
+
+```text
+Pod
+ ↓
+PVC
+ ↓
+Persistent Storage
+```
+
+Kubernetes uses PVs, PVCs, and StorageClasses.
+
+### Key Points
+
+```text
+Filesystem inside the container
+→ Ephemeral by default
+
+Important data
+→ Store outside the container
+
+Bind Mount
+→ Connect a host path directly
+
+Volume
+→ Storage separate from the container
+
+Application Container
+→ Stateless where possible
+
+In Kubernetes,
+use persistent storage through PVs and PVCs
+```
+
+---
 
 ## 1.12 Linux / Container Troubleshooting
 
-Inspect layers rather than reading logs without a hypothesis.
+During an incident, check layers instead of reading logs without a direction.
 
-### CPU
+### CPU Problems
 
-Symptoms: slow responses, lower throughput, and high CPU use. Start with:
+Symptom:
+
+```text
+Slow responses
+Lower throughput
+High CPU utilization
+```
+
+Check:
 
 ```bash
 top
 ps aux
 ```
 
-For containers and Kubernetes, also inspect CPU throttling.
+For containers and Kubernetes, also check CPU throttling.
 
-### Memory
+### Memory Problems
 
-Symptoms: sudden process exit, container restarts, or `OOMKilled`.
+Symptom:
+
+```text
+The process exits suddenly
+Container restart
+OOMKilled
+```
+
+Check:
 
 ```bash
 free -h
+```
+
+Kubernetes:
+
+```bash
 kubectl describe pod <pod>
 ```
 
-Host memory alone does not show whether an individual container reached its cgroup limit.
-
-### Disk
+### Disk Problems
 
 ```bash
 df -h
 ```
 
-A disk at 100% can prevent log writes, database writes, and normal container behavior.
+A disk at 100% can cause failed log writes, failed database writes, and abnormal container behavior.
 
-### File descriptors
+### File Descriptor Problems
 
-Symptoms: `Too many open files` or failure to create new connections.
+Symptom:
+
+```text
+Too many open files
+Cannot create new connections
+```
+
+Check:
 
 ```bash
 ulimit -n
 lsof -p <PID>
 ```
 
-### Network
+### Network Problems
 
-Check DNS, reachability of the IP, the listening port, and the application response:
+Stages:
+
+```text
+Does DNS work?
+↓
+Can the IP be reached?
+↓
+Is the port open?
+↓
+Does the application respond?
+```
+
+Commands:
 
 ```bash
 dig example.com
@@ -773,47 +1575,97 @@ ss -lntp
 ip route
 ```
 
-### Process crash
+### Process Crash
 
-Correlate the exit code, application logs, OOM evidence, and signals. Do not infer a single cause from an exit code alone.
+Check:
 
-### Overall workflow
+```text
+Exit Code
+Application log
+Whether OOM occurred
+Whether a signal was involved
+```
 
+### Basic Troubleshooting Workflow
+
+```text
 1. Is the process alive?
 2. Are CPU and memory normal?
 3. Is the disk full?
-4. Are FDs exhausted?
-5. Is the intended port listening?
-6. Do DNS and network paths work?
-7. What do logs and exit status show?
+4. Are FDs running short?
+5. Is the port open?
+6. Are DNS and networking working?
+7. Check logs and exit codes
+```
 
-For containers, also inspect the image, resource limits, restart state, and volumes.
-
-The learning order is process → CPU/memory → FD → networking → signals → namespaces → cgroups → containers → images → container networking → container storage → troubleshooting.
-
-A useful compact model is:
+For containers, also check:
 
 ```text
-Container = Linux process + namespaces + cgroups + filesystem
+Image problem?
+Resource limit problem?
+Is the container restarting?
+Volume problem?
 ```
+
+### Chapter 1 Summary
+
+```text
+Linux Process
+↓
+CPU / Memory
+↓
+File Descriptor
+↓
+Networking
+↓
+Signal
+↓
+Namespace
+↓
+cgroup
+↓
+Container
+↓
+Image
+↓
+Container Networking
+↓
+Container Storage
+↓
+Troubleshooting
+```
+
+A compact description of a container:
+
+```text
+Container
+= Linux Process
++ Namespace
++ cgroup
++ filesystem
+```
+
+---
+
+<!-- SOURCE CORE END -->
 
 ## Source clarifications and applicability
 
 Official documents checked: 2026-09-27. These notes clarify the concepts. They do not claim execution tests or guarantee a particular installed version. Check the actual kernel, runtime, network mode, and Kubernetes configuration.
 
-### Resource requests, limits, and exit causes
+### 1.2 / 1.7 / 1.12 Resource requests, limits, and exit causes
 
 The source describes a request as the minimum resource amount desired. Treat it as an input to scheduling, not preallocated RAM. CPU limits commonly throttle; memory enforcement is reactive. Host free memory from `free -h` cannot rule out a container memory limit issue. [Kubernetes resource management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
 
 In cgroup v2, reaching `memory.max` without reclaiming memory can trigger OOM handling in that cgroup. It does not mean every brief excess immediately kills the whole Pod. The source's `2GB` and YAML `2Gi` use different units. [Linux cgroup v2](https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html)
 
-### PID 1 and graceful shutdown
+### 1.1 / 1.5 / 1.8 PID 1 and graceful shutdown
 
 PIDs are namespace-specific. A PID namespace's init has special signal rules and reaps orphaned children. Distinguish installing a handler from forwarding signals to children. “PID 1 always ignores SIGTERM” is incorrect. [Linux PID namespaces](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html)
 
 SIGTERM is the usual stop signal in the basic Pod termination model. A `preStop` hook also consumes the grace period. An image `STOPSIGNAL` or supported configuration can change the signal. Processes still running after the deadline are forcibly stopped. CrashLoopBackOff describes restart delay; inspect exit status, previous logs, and events for the cause. [Kubernetes Pod lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
 
-### Network addresses, isolation, and exposure
+### 1.4 / 1.6 / 1.8 / 1.10 Network addresses, isolation, and exposure
 
 “IP equals machine; port equals program” is a beginner's model. An IP identifies an address/interface, while a port helps identify a transport endpoint. Protocol and namespace matter too. HTTP and DNS are common examples, not exclusive transport rules. UDP is not always faster. `127.0.0.1` is loopback in the current network namespace. A `0.0.0.0` bind listens on all local IPv4 interfaces.
 
@@ -825,7 +1677,7 @@ docker run -p 127.0.0.1:8080:80 nginx
 
 Separate network namespaces allow reuse of port numbers. Containers in a Pod normally share a network namespace. Bridge/veth/NAT is one common model; host networking and other modes can differ. Kernel sharing refers to the Linux host. If Docker runs in a VM, distinguish that Linux host from the user's OS. containerd→runc is also a representative implementation. [Docker run modes](https://docs.docker.com/engine/containers/run/), [Kubernetes Pods](https://kubernetes.io/docs/concepts/workloads/pods/)
 
-### Images, cache, storage, and command limits
+### 1.3 / 1.9 / 1.11 / 1.12 Images, cache, storage, and command limits
 
 `python:3.12` is the source's example tag, not a tested version. `sha256:abc123...` is an abbreviated, unusable digest. Changes to `COPY . .` can invalidate the later `RUN pip install` cache. Consider copying less frequently changed dependency inputs first. [Docker build cache](https://docs.docker.com/build/cache/invalidation/)
 
@@ -836,6 +1688,34 @@ Deleting a writable layer differs from stopping and starting the same Docker con
 A writable bind mount can change host files. Consider read-only mounts for paths that only need reads. [Docker bind mounts](https://docs.docker.com/engine/storage/bind-mounts/)
 
 `ulimit -n` shows the current shell's limit, which may differ from a service process's limit. `1024` is an example, not a fixed default. `/proc`, `lsof`, and `ss` output depends on permissions and namespaces. `kill` changes state; it is not an observation command. An exit code alone cannot establish OOM or a particular signal as the cause.
+
+### 1.1 / 1.3 / 1.8–1.11 Additional conditions moved from the body
+
+- **1.1:** Whether Kubernetes restarts a container after process exit depends on its restart policy. Exit does not always mean restart.
+- **1.2:** A request is an input to scheduling, not a ceiling on actual usage. It does not immediately preallocate RAM either.
+- **1.3:** FDs are process-local numbers. `0/1/2` are conventional standard FDs. They can be closed or redirected. Not every process always has three open standard FDs.
+- **1.4 / 1.10:** Listening addresses, port publishing, and firewall policy are separate conditions. Communication on the same network still needs to be allowed by policy. A veth pair is a virtual connection between network namespaces.
+- **1.8:** Containers are usually lighter than VMs, but this does not guarantee actual performance across workloads and implementations. `containerd → runc` is a common path, not a requirement for every Kubernetes setup.
+- **1.8:** CrashLoopBackOff describes repeated exits and restart attempts with a growing delay under the restart policy. It is the restart backoff state, not the cause.
+- **1.9:** ImagePullBackOff is a waiting state for retries after failed image pulls. A tag alone does not pin image content; a digest identifies the content.
+- **1.10:** Containers in one Pod normally share its network namespace. Each container does not necessarily have a separate Pod IP.
+- **1.11:** Read the container-lifetime storage model as a description of its writable layer. A separate volume lifetime does not imply a backup.
+
+### 1.1–1.12 Supplemental diagram of the overall model
+
+In practice, inspect the application process, resource control, networking, and storage together. This supplemental diagram visualizes the relationship separately from the original text diagrams.
+
+```mermaid
+flowchart TD
+    K[Kubernetes resource and lifecycle settings] --> R[Container runtime]
+    I[Image and filesystem] --> R
+    R --> P[Linux application process]
+    N[Namespaces: process view and network] --> P
+    C[cgroups: CPU and memory control] --> P
+    P --> F[Files and sockets via file descriptors]
+    P --> S[Signals and exit status]
+    S --> O[Observe logs, limits and restart policy]
+```
 
 ## LLM in Practice
 

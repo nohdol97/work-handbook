@@ -1,8 +1,8 @@
 ---
 id: data-platform-dbt
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-08-01
   - DPE-08-02
@@ -16,66 +16,291 @@ knowledge_ids:
   - DPE-08-10
 ---
 
-# dbt로 SQL 변환 관리하기
+# Chapter 8 — dbt
 
 이 문서는 dbt의 역할과 모델 계층을 개념적으로 학습한 기록이다. 프로젝트 실행·성능 측정·운영 경험을 주장하지 않는다. 공식 문서는 2026-09-24에 확인했다.
 
-## 프로젝트와 실행 역할
+본문은 제공된 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 설명에 필요한 조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에서 구분한다.
 
-dbt는 SQL 기반 transformation을 체계적으로 정의·관리한다. Model은 SQL 변환 단위, source는 dbt 밖에서 만들어진 원본 table, test는 데이터 품질 규칙, macro는 반복 SQL logic을 재사용하는 기능이다.
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+<!-- SOURCE CORE START -->
+## 8.1 Project Structure
+
+dbt:
+
+> **SQL 기반 Transformation을 체계적으로 관리하는 도구**
+
+핵심 구성:
+
+### Models
+
+SQL Transformation 단위.
+
+### Sources
+
+dbt 밖에서 만들어진 원본 Table.
+
+### Tests
+
+데이터 품질 규칙.
+
+### Macros
+
+반복 SQL Logic 재사용.
+
+일반 구조:
 
 ```text
 models/
   staging/
   intermediate/
   marts/
+
 tests/
 macros/
 ```
 
-dbt 자체는 분산 compute engine이 아니다. dbt가 SQL과 의존성을 관리하면 Databricks, Snowflake, Trino 같은 연결된 engine이 query/compute를 수행한다. 지원 기능은 adapter와 engine 조합마다 다르다. Spark와 dbt는 함께 사용할 수 있다. Spark는 계산을 수행하고 dbt는 SQL 변환 정의를 관리하는 식이다.
+---
 
-## ref와 source
+## 8.2 ref()
 
-다른 dbt model을 참조할 때 `ref()`를 사용한다. 다음은 dbt template SQL 예시이며 standalone SQL로 실행하는 문장이 아니다.
+`ref()`:
+
+> **다른 dbt Model을 참조하며 Dependency를 선언**
+
+예:
 
 ```sql
 SELECT *
 FROM {{ ref('stg_orders') }}
 ```
 
-`ref()`는 relation을 참조하면서 dependency를 선언한다. 실행 순서, DAG, lineage, 환경별 relation 해석에 쓰인다. `source()`는 dbt 외부의 원본을 나타낸다는 점이 다르다. [dbt ref](https://docs.getdbt.com/reference/dbt-jinja-functions/ref)
+효과:
 
-## Staging, intermediate, mart
+- 실행 순서 계산
+- DAG 생성
+- Lineage 생성
+- 환경별 Relation 처리
 
-| 계층 | 역할 | 예시·경계 |
-| --- | --- | --- |
-| Staging | 원본을 정리하는 첫 계층 | Rename, type normalization, 기본 null 처리, 날짜 형식 통일, 필요한 column 선택. 복잡한 business logic은 최소화한다. |
-| Intermediate | 재사용 가능한 join·aggregation·business logic | `stg_orders + stg_customers → int_orders_with_customer`. 여러 mart가 재사용할 수 있고 작은 프로젝트에서는 생략할 수 있다. |
-| Mart | 최종 분석·소비 목적 | 사건·측정값인 fact, 설명 속성인 dimension, dashboard/report용 사전 집계 consumption table. |
+`source()`:
 
-`Staging → Intermediate → Mart`는 lakehouse의 Bronze/Silver에서 Gold로 가는 정제 흐름과 개념적으로 겹친다. 하지만 계층 이름이 일대일 대응하는 표준은 아니다. 원본의 형태와 품질 책임에 따라 경계를 정한다. Fact와 dimension은 [분석 데이터 모델링](analytical-modeling.md)에서 설명한다.
+```text
+dbt 외부 원본
+```
 
-## Incremental 모델
+`ref()`:
 
-Incremental은 매번 전체 table 대신 선택한 새 데이터나 변경분을 처리한다.
+```text
+다른 dbt model
+```
 
-- Append는 새 행을 추가한다.
-- Merge는 key를 기준으로 INSERT와 UPDATE를 수행하는 방식이다.
-- Incremental filter는 처리할 입력 범위를 정한다.
-- Full refresh는 logic 변경 등으로 전체 결과를 다시 만들어야 할 때 사용한다.
+---
 
-원문의 간단한 filter는 다음과 같다. 이 식은 누락 위험을 생각하기 위한 의사 SQL이며 그대로 배포할 설정이 아니다.
+## 8.3 Staging Models
+
+Staging:
+
+> **원본을 깨끗하게 정리하는 첫 변환 계층**
+
+주요 역할:
+
+- Rename
+- Type normalization
+- Basic null handling
+- 날짜 형식 통일
+- 필요한 Column 선택
+
+복잡한 Business Logic은 많이 넣지 않는다.
+
+---
+
+## 8.4 Intermediate Models
+
+Intermediate:
+
+> **Staging Data를 Join/Aggregation해 재사용 가능한 Business Logic을 만드는 계층**
+
+예:
+
+```text
+stg_orders
++
+stg_customers
+ ↓
+int_orders_with_customer
+```
+
+여러 Mart가 이를 재사용할 수 있다.
+
+작은 Project는 Intermediate를 생략할 수도 있다.
+
+---
+
+## 8.5 Marts
+
+Mart:
+
+> **최종 분석/소비 목적에 맞게 만든 Data Layer**
+
+### Fact
+
+사건/측정값.
+
+### Dimension
+
+Fact 설명 속성.
+
+### Consumption Table
+
+Dashboard/Report가 바로 사용할 수 있도록 미리 집계한 Table.
+
+Lakehouse의 Gold Layer와 개념적으로 많이 겹친다.
+
+```text
+Staging
+→ Intermediate
+→ Mart
+
+≈
+
+Bronze/Silver
+→ Gold
+```
+
+---
+
+## 8.6 Incremental Models
+
+매번 전체 Table을 다시 계산하지 않고 변경분만 처리.
+
+### Append
+
+새 데이터 추가만.
+
+### Merge
+
+INSERT + UPDATE.
+
+### Incremental Filter
+
+예:
 
 ```sql
 WHERE event_time > last_processed_time
 ```
 
-이벤트 시간이 오래된 late arrival은 이 조건에서 빠질 수 있다. 최근 며칠을 다시 읽는 lookback과 MERGE를 조합할 수 있다. Lookback 밖의 지연은 별도 backfill 대상으로 남는다. 데이터 grain에 맞는 `unique_key`를 정의하고 null·중복 여부를 검증한다. Key 설정이 그 자체로 uniqueness 검증을 실행하는 것은 아니다. Incremental SQL은 최초 전체 실행과 이후 incremental 실행 모두에서 유효해야 한다. Strategy 지원과 update 방식은 adapter·engine에 따라 다르다. [dbt incremental models](https://docs.getdbt.com/docs/build/incremental-models)
+Late Arrival을 고려해 최근 며칠을 다시 읽고 MERGE할 수도 있다.
 
-## Tests와 공개 조건
+### Full Refresh
 
-대표 test는 다음과 같다.
+Logic 변경 등 필요 시 전체 재생성.
+
+---
+
+## 8.7 dbt Tests
+
+대표 Test:
+
+- not_null
+- unique
+- relationships
+- accepted_values
+- custom test
+
+Pipeline 예:
+
+```text
+dbt run
+ ↓
+dbt test
+ ↓
+Pass
+ ↓
+Publish
+```
+
+dbt Test는 Data Quality 전체가 아니라 기본적인 Model/Table 규칙 검증에 특히 적합하다.
+
+---
+
+## 8.8 Snapshots
+
+dbt Snapshot:
+
+> **현재 Table을 비교해 변경 이력을 보존**
+
+주로 SCD Type 2와 연결.
+
+### Type 1
+
+기존 값 overwrite.
+
+### Type 2
+
+과거 row 유지 + 새 version row 생성.
+
+CDC History가 이미 충분히 있다면 별도의 Snapshot이 반드시 필요한 것은 아니다.
+
+---
+
+## 8.9 Documentation / Lineage
+
+Table/Column 설명을 Metadata로 관리할 수 있다.
+
+`source()`와 `ref()` 관계를 이용해 dbt Model Lineage를 생성한다.
+
+예:
+
+```text
+raw.llm_calls
+ ↓
+stg_llm_calls
+ ↓
+int_llm_calls
+ ↓
+fact_llm_call
+ ↓
+mart_daily_usage
+```
+
+dbt Lineage는 전체 Data Platform Lineage의 일부다.
+
+---
+
+## 8.10 dbt + Databricks / Snowflake / Trino
+
+dbt는 Compute Engine이 아니다.
+
+```text
+dbt
+ ↓ SQL 생성/관리
+Databricks / Snowflake / Trino
+ ↓
+실제 Compute
+```
+
+역할:
+
+```text
+dbt
+→ Transformation Definition
+
+Engine
+→ Query / Compute Execution
+```
+
+Spark와 dbt는 경쟁 관계가 아니라 함께 사용할 수 있다.
+
+---
+
+<!-- SOURCE CORE END -->
+
+## 적용 시 보완할 점
+
+### 원문 8.6·8.7의 설명 범위
+
+Incremental은 선택한 새 데이터나 변경분을 처리한다. MERGE는 key를 기준으로 INSERT와 UPDATE를 수행하는 방식이다.
 
 | Test | 확인하는 규칙 |
 | --- | --- |
@@ -85,27 +310,29 @@ WHERE event_time > last_processed_time
 | `accepted_values` | 값이 허용 집합에 속함 |
 | Custom test | 업무별 규칙 |
 
-개념적인 품질 gate는 `dbt run → dbt test → pass → publish`다. Test 실패가 실제로 publish를 막도록 orchestration 조건을 연결해야 한다. dbt test는 model/table 규칙에 특히 유용하지만 데이터 품질 전체를 보장하지 않는다. 예를 들어 의미상 잘못된 값이 모든 기본 test를 통과할 수 있다. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
+### Relation과 모델 계층
 
-## Snapshot과 SCD
+`ref()` 예시는 dbt template SQL이며 standalone SQL로 실행하는 문장이 아니다. `ref()`는 relation을 참조하면서 dependency를 선언한다. [dbt ref](https://docs.getdbt.com/reference/dbt-jinja-functions/ref)
 
-dbt snapshot은 시간에 따라 source table의 상태를 비교해 변경 이력을 보존하며 SCD Type 2와 연결된다. Type 1은 기존 값을 덮어쓰고, Type 2는 과거 행을 남기며 새 version 행을 만든다. 이미 충분한 CDC history가 있다면 별도 snapshot이 반드시 필요한 것은 아니다.
+Staging/Intermediate/Mart와 Bronze/Silver/Gold는 일대일 대응하는 표준이 아니다. 원본 형태와 품질 책임에 따라 경계를 정한다. Fact와 dimension은 [분석 데이터 모델링](analytical-modeling.md)에서 설명한다.
 
-Snapshot은 관측 시점 사이에 일어난 모든 중간 변경을 CDC처럼 자동 보존하지 않는다. 실행 간격과 변경 감지 기준을 설계해야 한다. [dbt snapshots](https://docs.getdbt.com/docs/build/snapshots)
+### Incremental 처리의 경계
 
-## Documentation과 lineage
+`event_time > last_processed_time`은 누락 위험을 생각하기 위한 의사 SQL이다. 이벤트 시간이 오래된 late arrival은 이 조건에서 빠질 수 있다. Lookback과 MERGE를 조합해도 lookback 밖의 지연은 별도 backfill 대상으로 남는다.
 
-Table·column 설명은 metadata로 관리한다. `source()`와 `ref()` 관계로 dbt 모델 lineage를 만든다. 예를 들어 다음 의존성을 추적할 수 있다.
+- 데이터 grain에 맞는 `unique_key`를 정의하고 null·중복 여부를 검증한다. Key 설정 자체가 uniqueness 검증을 실행하지는 않는다.
+- Incremental SQL은 최초 전체 실행과 이후 incremental 실행 모두에서 유효해야 한다.
+- Strategy 지원과 update 방식은 adapter·engine에 따라 다르다.
 
-```text
-raw.llm_calls
-  → stg_llm_calls
-  → int_llm_calls
-  → fact_llm_call
-  → mart_daily_usage
-```
+[dbt incremental models](https://docs.getdbt.com/docs/build/incremental-models)
 
-dbt lineage는 전체 플랫폼 lineage의 일부다. 수집 서비스, dbt 외부 job, BI 소비까지 자동으로 모두 추적한다고 가정하지 않는다.
+### 품질 gate, snapshot, lineage
+
+Test 실패가 실제로 publish를 막도록 orchestration 조건을 연결해야 한다. 의미상 잘못된 값이 모든 기본 test를 통과할 수도 있다. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
+
+Snapshot은 관측 시점 사이의 모든 중간 변경을 CDC처럼 자동 보존하지 않는다. 실행 간격과 변경 감지 기준을 설계해야 한다. [dbt snapshots](https://docs.getdbt.com/docs/build/snapshots)
+
+dbt lineage가 수집 서비스, dbt 외부 job, BI 소비까지 자동으로 모두 추적한다고 가정하지 않는다. 연결 engine에서 쓸 수 있는 기능도 adapter와 engine 조합마다 다르다.
 
 ## LLM 활용: incremental 누락 검토
 

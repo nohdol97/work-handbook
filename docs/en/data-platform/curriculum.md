@@ -1,8 +1,8 @@
 ---
 id: data-platform-curriculum
 status: overview
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-00-01
   - DPE-18-01
@@ -27,6 +27,8 @@ This page preserves the progress recorded in the supplied Data Platform Engineer
 The source calls Chapters 1–4 **reconstructed notes** of earlier completed study. Chapter 5 onward follows the continued study session. The original conversation and earlier material were not supplied, so the reconstruction could not be independently verified. “Completed” below means the study status reported in the source.
 
 In the first source, Chapter 17 contains supplementary explanations and Chapter 18 records progress at that time. Chapters 16–21 in the source added on 2026-09-26 match the Phase numbers below and declare **conceptual study of Phases 1–21 complete**. The first source keeps its historical not-started record; this page reflects the new material.
+
+The current study body follows `data_platform_engineering_complete_source_ch01_21.md`, supplied on 2026-09-27. Both earlier sources remain as provenance. Pages preserve the original numbers, headings, paragraphs, lists, and code; supplements and corrections follow separately. Appendix A retains earlier supplementary material and is separate from the numbered sections in the Databricks chapter.
 
 ## Completed: Phases 1–15
 

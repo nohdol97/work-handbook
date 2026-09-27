@@ -1,8 +1,8 @@
 ---
 id: data-platform-trino
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-10-01
   - DPE-10-02
@@ -14,62 +14,289 @@ knowledge_ids:
   - DPE-10-08
 ---
 
-# Distributed SQL with Trino
+# Chapter 10 — Trino
 
 This page records conceptual study of Trino. It does not claim verified query performance or production results. Official documentation was checked on 2026-09-24.
 
-## Architecture and connectors
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
 
-Trino is a distributed SQL query engine for data in external stores. It is not the primary data store itself. The coordinator parses SQL, plans queries, and manages stages and tasks. Workers run scans, joins, and aggregations. `Coordinator ≈ Spark driver` and `Worker ≈ Spark executor` are useful role comparisons. They do not mean the execution models are identical. [Trino concepts](https://trino.io/docs/current/overview/concepts.html)
+<!-- SOURCE CORE START -->
 
-A connector adapts Trino to an external system. Examples include Iceberg, PostgreSQL, and Hive connectors. Table names use `catalog.schema.table`.
+## 10.1 Architecture
+
+Trino:
+
+> **A distributed SQL query engine for fast queries on external data stores.**
+
+Trino itself is not the primary storage system.
+
+### Coordinator
+
+- Analyze SQL.
+- Build query plans.
+- Manage stages and tasks.
+
+### Worker
+
+- Scan data.
+- Join data.
+- Run aggregations.
+
+Role comparison:
+
+```text
+Trino Coordinator ≈ Spark Driver
+Trino Worker ≈ Spark Executor
+```
+
+---
+
+## 10.2 Connector Model
+
+A connector is an adapter between Trino and an external system.
+
+Examples:
+
+- Iceberg Connector
+- PostgreSQL Connector
+- Hive Connector
+
+Trino table names use:
+
+```text
+catalog.schema.table
+```
+
+Examples:
 
 ```text
 iceberg.analytics.fact_llm_call
 postgres.public.users
 ```
 
-A Trino catalog selects a configured connector and data source. An Iceberg catalog locates and manages table metadata. These are different meanings. A federated query can join systems in one SQL statement, but it does not guarantee good performance. Consider remote scans, data movement, and source load.
+A Trino catalog and an Iceberg catalog have different meanings.
 
-## Breaking a query into work
+Trino Catalog:
 
-Conceptually, SQL becomes a query plan distributed across stages and tasks. Scans are divided into splits. `SQL → Query plan → Stage → Task → Split` is a learning model, not a complete execution model.
+> Identify which connector and data source to use.
 
-| Element | Role |
-| --- | --- |
-| Stage | A large execution step |
-| Task | Part of a stage running on a worker |
-| Split | A small unit of scan work |
-| Exchange | Data redistribution between workers |
+A federated query can join different systems in one SQL statement. It does not guarantee good performance.
 
-An exchange serves a similar purpose to a Spark shuffle. Joins and GROUP BY operations can require substantial redistribution. [Execution concepts](https://trino.io/docs/current/overview/concepts.html)
+---
 
-## Pushdown and pruning
+## 10.3 Query Execution
 
-Pushdown lets the data source do supported work to reduce scans and data movement.
+Conceptual structure:
 
-- Predicate pushdown sends `WHERE` conditions toward the source.
-- Projection pushdown reads only the required columns.
-- Aggregation pushdown runs operations such as COUNT or SUM at the source when supported.
+```text
+SQL
+ ↓
+Query Plan
+ ↓
+Stage
+ ↓
+Task
+ ↓
+Split
+```
 
-Support depends on the connector and query shape. A SQL filter does not guarantee pushdown. Check EXPLAIN and actual data read. Iceberg partition, file, row group, and column pruning also avoid unnecessary reads. They are not all the same operation as pushing aggregation to a remote database. [Trino pushdown](https://trino.io/docs/current/optimizer/pushdown.html)
+### Stage
 
-## Joins and memory
+A large execution step.
 
-A broadcast join copies the small table to participating workers. `Huge fact + tiny dimension` is a common candidate, but the small side must fit each worker's memory. A partitioned join redistributes data by join key. It can suit large-table joins but adds exchange costs. Data skew sends too much work for some keys to a few workers. Those workers can use more memory and finish later.
+### Task
 
-Joins, aggregations, and sorts keep intermediate data in memory. Distinguish worker memory from query memory. Spill writes intermediate data to disk to reduce memory pressure. Disk I/O can slow the query, and spill does not solve every out-of-memory failure. Current Trino documentation calls spill legacy functionality. It suggests considering fault-tolerant execution with an appropriate task retry policy and exchange manager. Check whether this fits the workload, connectors, and settings. [Trino spill](https://trino.io/docs/current/admin/spill.html)
+Part of a stage running on a specific worker.
 
-## Trino and Spark roles
+### Split
 
-| Common Trino work | Common Spark work |
-| --- | --- |
-| Interactive SQL and query serving | Large-scale processing and transformation |
-| BI, ad-hoc queries, concurrent SQL users | ETL, backfills, large joins, ML datasets, batch transforms |
+A small unit of scan work.
 
-These are common roles, not absolute feature boundaries or performance guarantees. They can work together: Spark creates data, and Trino queries it.
+### Exchange
 
-## Reading Iceberg data
+Data redistribution between workers.
+
+It is a similar concept to Spark shuffle.
+
+Joins and GROUP BY operations can require many exchanges.
+
+---
+
+## 10.4 Pushdown
+
+Purpose:
+
+> **Perform supported work near the data to reduce scans and data movement.**
+
+### Predicate Pushdown
+
+Send `WHERE` conditions to the source.
+
+### Projection Pushdown
+
+Read only the required columns.
+
+### Aggregation Pushdown
+
+Run operations such as COUNT and SUM at the source when possible.
+
+Iceberg partition, file, row group, and column pruning serve a similar purpose.
+
+---
+
+## 10.5 Join Strategies
+
+### Broadcast Join
+
+Copy a small table to all workers.
+
+```text
+Huge Fact
++
+Tiny Dimension
+```
+
+### Partitioned Join
+
+Redistribute large tables by join key.
+
+This adds exchange costs.
+
+### Data Skew
+
+Some keys may concentrate work on a particular worker.
+
+---
+
+## 10.6 Memory
+
+Trino keeps intermediate data for joins, aggregations, and sorts in memory.
+
+Key concepts:
+
+- Worker Memory
+- Query Memory
+- Spill
+
+Spill:
+
+```text
+Memory pressure
+ ↓
+Use disk
+```
+
+Spill can help avoid query failure, but it slows the query.
+
+---
+
+## 10.7 Trino vs Spark
+
+Common roles:
+
+```text
+Trino
+→ Interactive SQL / Query Serving
+
+Spark
+→ Large-scale Processing / Transformation
+```
+
+Trino:
+
+- BI
+- Ad-hoc queries
+- SQL from many concurrent users
+
+Spark:
+
+- ETL
+- Backfills
+- Large joins
+- ML datasets
+- Batch transforms
+
+Using both:
+
+```text
+Spark
+→ Create data
+
+Trino
+→ Query the created data
+```
+
+---
+
+## 10.8 Trino + Iceberg
+
+Structure:
+
+```text
+S3
+ ↓
+Parquet
+ +
+Iceberg Metadata
+ ↓
+Trino
+ ↓
+BI / Analyst
+```
+
+Trino uses Iceberg metadata to find needed files. It uses Parquet's columnar structure to read the required columns.
+
+Roles:
+
+```text
+S3
+→ Actual files
+
+Parquet
+→ File format
+
+Iceberg
+→ Table metadata / Snapshot
+
+Trino
+→ SQL queries
+```
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Appendix: existing application notes
+
+The main text follows the supplied chapter’s headings, examples, and order. These existing explanations and caveats are separate from the source text.
+
+### Architecture and execution model
+
+The Coordinator/Worker and Spark Driver/Executor comparison explains roles. It does not mean their execution models are identical. `SQL → Query Plan → Stage → Task → Split` is also a learning model, not a complete list of execution elements. [Trino concepts](https://trino.io/docs/current/overview/concepts.html)
+
+A Trino catalog selects a configured connector and data source. An Iceberg catalog locates and manages table metadata. Assess remote scans, data movement, and source load for federated query performance.
+
+### Check pushdown and joins
+
+Pushdown support depends on the connector and query shape. A SQL filter does not guarantee pushdown. Check EXPLAIN and actual data read.
+
+Iceberg pruning and aggregation pushdown to a remote database both aim to reduce reading and movement. They are not the same operation. [Trino pushdown](https://trino.io/docs/current/optimizer/pushdown.html)
+
+Interpret the source’s “all workers” as workers participating in the join. Check that the small broadcast table fits each worker's memory. Skew can concentrate work and memory use on a few workers and make them finish later.
+
+### Spill and role boundaries
+
+Spill can reduce memory pressure, but it does not solve every out-of-memory failure. Disk I/O can slow the query.
+
+The Trino documentation checked on 2026-09-24 called spill legacy functionality. It suggested considering fault-tolerant execution with an appropriate task retry policy and exchange manager. Check applicability against the workload, connectors, and settings. This edit did not recheck official documentation or run performance experiments. [Trino spill](https://trino.io/docs/current/admin/spill.html)
+
+The Trino/Spark comparison describes common roles. It does not define absolute feature boundaries or guarantee performance.
+
+Iceberg pruning also depends on layout, metadata, filters, and connector behavior. [Trino Iceberg connector](https://trino.io/docs/current/connector/iceberg.html)
+
+### Existing conceptual diagram
+
+This preserves the existing Mermaid diagram separately from the source’s text diagram.
 
 ```mermaid
 flowchart LR
@@ -78,8 +305,6 @@ flowchart LR
   P --> T
   T --> B[BI and analysts]
 ```
-
-S3 stores the objects or files. Parquet is the file format. Iceberg manages table metadata and snapshots. Trino executes SQL. Trino uses Iceberg metadata to find needed files and Parquet's columnar structure to read needed columns. Actual pruning depends on layout, metadata, filters, and connector behavior. [Trino Iceberg connector](https://trino.io/docs/current/connector/iceberg.html)
 
 ## LLM in Practice: investigate a slow federated query
 

@@ -1,8 +1,8 @@
 ---
 id: data-platform-cdc-debezium
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-06-01
   - DPE-06-02
@@ -15,15 +15,25 @@ knowledge_ids:
   - DPE-06-09
 ---
 
-# CDC and Debezium
+# Chapter 6 — CDC / Debezium
 
 This page records conceptual study. The flows and recovery steps are examples, not records of production work or incident recovery. Product behavior was checked against official documentation on 2026-09-24. Check connector and database versions and settings in the actual environment.
 
-## Why capture changes?
+The numbered body follows the supplied source’s headings, paragraphs, lists, examples, and order. Conditions on its simplified explanations and previously added guidance appear under **Additional checks before applying these ideas**.
 
-CDC means Change Data Capture. It sends database INSERT, UPDATE, and DELETE changes to other systems. Log-based CDC reads the transaction log. PostgreSQL uses WAL (Write-Ahead Log) and logical decoding.
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
 
-This simple polling example uses `last_time` as a stored processing time. It is pseudo-SQL.
+<!-- SOURCE CORE START -->
+
+## 6.1 CDC Fundamentals
+
+CDC = Change Data Capture.
+
+Purpose:
+
+> **Continuously send database INSERT / UPDATE / DELETE changes to other systems.**
+
+Polling approach:
 
 ```sql
 SELECT *
@@ -31,7 +41,351 @@ FROM orders
 WHERE updated_at > last_time
 ```
 
-Polling adds repeated query load. It makes deletes and change ordering hard to track. Its interval also adds delay. A deleted row cannot appear in this query. Log-based CDC uses change records, but it needs log retention and a stored read position.
+Problems:
+
+- Database query load
+- Difficulty detecting DELETE operations
+- Difficulty managing change order
+- Limited real-time delivery
+
+CDC reads the database transaction log.
+
+PostgreSQL:
+
+```text
+WAL
+Write-Ahead Log
+```
+
+Structure:
+
+```text
+PostgreSQL
+ ↓
+WAL
+ ↓
+Debezium
+ ↓
+Kafka
+```
+
+---
+
+## 6.2 Debezium Architecture
+
+### Debezium Connector
+
+A CDC reader for each database type.
+
+Example:
+- PostgreSQL
+- MySQL
+- SQL Server
+
+### Kafka Connect
+
+A platform for running and managing connectors.
+
+### Offset
+
+Records how far the database log has been read.
+
+### Snapshot
+
+Initially copies data that existed before CDC started.
+
+---
+
+## 6.3 Initial Snapshot
+
+Data already exists when CDC starts for the first time.
+
+```text
+Existing Table
+ ↓
+Initial Snapshot
+ ↓
+WAL Streaming CDC
+```
+
+Changes can happen during a snapshot. Manage the WAL position to continue reading changes after the snapshot.
+
+Goal:
+
+```text
+Existing data
++
+Changes during the snapshot
++
+Later changes
+```
+
+Avoid missing any of these.
+
+A full snapshot is not repeated on every connector restart.
+
+If an offset exists, reading resumes from it.
+
+---
+
+## 6.4 CDC Event Structure
+
+Typical information:
+
+- before
+- after
+- operation type
+- source metadata
+- transaction metadata
+
+### INSERT
+
+```text
+before = null
+after = new row
+```
+
+### UPDATE
+
+```text
+before = old row
+after  = new row
+```
+
+### DELETE
+
+```text
+before = old row
+after = null
+```
+
+Operation examples:
+
+- c: create
+- u: update
+- d: delete
+- r: snapshot read
+
+Source Metadata:
+
+- database
+- schema
+- table
+- WAL position
+- timestamp
+
+Transaction Metadata:
+
+- transaction id
+- order information
+
+---
+
+## 6.5 Ordering
+
+Key point:
+
+> **In CDC, the change order for the same entity/key matters more than global ordering.**
+
+Kafka preserves order within a partition but does not guarantee global order across partitions.
+
+Sending the same primary key to the same partition helps preserve order for that entity.
+
+```text
+order 100:
+CREATED
+→ PAID
+→ SHIPPED
+```
+
+Changes to several tables in one database transaction can become separate Kafka events in different partitions.
+
+---
+
+## 6.6 Deletes
+
+### DELETE Event
+
+Represents an actual database deletion.
+
+### Tombstone
+
+A `key + null value` record that represents a deleted key for Kafka log compaction.
+
+A DELETE event and a tombstone serve different purposes.
+
+### Physical Delete
+
+Physically delete the row downstream too.
+
+### Logical Delete
+
+```text
+deleted = true
+```
+
+Keep a state like this.
+
+### History vs Current State
+
+```text
+Bronze History
+→ Preserve all changes, including delete events
+
+Silver Current State
+→ Keep only rows that currently exist
+```
+
+---
+
+## 6.7 Schema Changes
+
+The source database schema can change.
+
+Example:
+
+- Adding a column
+- Removing a column
+- Rename
+- Changing a type
+- Changing nullability
+
+A relatively safer change:
+
+```text
+Add a nullable column
+```
+
+Riskier changes:
+
+```text
+Change a type
+Remove a column
+rename
+```
+
+In CDC, a schema change can affect:
+
+```text
+Source
+→ Kafka
+→ Flink/Spark
+→ Iceberg
+→ dbt
+→ BI
+```
+
+the whole path shown above.
+
+Therefore:
+
+```text
+Detect
+→ Check compatibility
+→ Update downstream systems
+```
+
+these steps matter.
+
+---
+
+## 6.8 CDC → Iceberg
+
+Representative structure:
+
+```text
+PostgreSQL
+ ↓
+Debezium
+ ↓
+Kafka
+ ↓
+Flink / Spark
+ ↓
+Iceberg
+```
+
+### History Table
+
+Store every change event.
+
+```text
+order 100 CREATED
+order 100 PAID
+order 100 SHIPPED
+```
+
+### Current-State Table
+
+Keep only the latest state.
+
+```text
+order 100 SHIPPED
+```
+
+### MERGE / Upsert
+
+```text
+new row
+→ INSERT
+
+existing row
+→ UPDATE
+```
+
+### Late Change
+
+Consider sequences or source positions to prevent an old change from overwriting a newer state.
+
+### Idempotency
+
+The result must remain correct if replay sends the same CDC event again.
+
+---
+
+## 6.9 CDC Failure Recovery
+
+Normal recovery:
+
+```text
+Connector Failure
+ ↓
+Restart
+ ↓
+Stored Offset
+ ↓
+WAL Replay
+```
+
+Replay can create duplicates.
+
+Downstream processing must therefore be idempotent.
+
+A new snapshot may be needed if the offset is lost or the required WAL has already been deleted.
+
+Key point:
+
+```text
+Offset
+→ Processing position
+
+Replay
+→ Process again
+
+Idempotency
+→ Safety when processing duplicates
+
+Snapshot Recovery
+→ Reinitialize when recovery is unavailable
+```
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Additional checks before applying these ideas
+
+### Existing flow diagram
 
 ```mermaid
 flowchart LR
@@ -43,49 +397,34 @@ flowchart LR
   C --> S[Iceberg current state]
 ```
 
-## Connectors, offsets, and initial snapshots
+### Scope of sections 6.1–6.4
 
-A Debezium connector reads changes for a database such as PostgreSQL, MySQL, or SQL Server. Kafka Connect runs and manages connectors. An offset records the database log position already read. An initial snapshot copies data that existed before CDC started.
+CDC has several approaches. The source’s transaction-log explanation describes log-based CDC. PostgreSQL uses WAL and logical decoding. Log retention and a stored read position are required.
 
-The goal is to connect `existing data + changes during the snapshot + later changes`. The snapshot is tied to a log position so the connector can continue reading changes. With a completed initial snapshot and a valid offset, a restart can usually resume streaming. A restart does not always skip the snapshot. A failure during a snapshot or a different snapshot mode can cause another snapshot. [Debezium PostgreSQL connector](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
+In the polling SQL, `last_time` is a pseudo-variable for the stored processing time. A deleted row cannot appear in this query. The polling interval also adds delay.
 
-## Reading events
+A snapshot read (`r`) carries the row read. Check the actual event format for fields such as `before`.
 
-| Change | before | after | op |
-| --- | --- | --- | --- |
-| INSERT | null | New row | `c` |
-| UPDATE | Available previous values | New row | `u` |
-| DELETE | Available previous values | null | `d` |
-| Snapshot read | Check the event format | Read row | `r` |
+### Snapshot and previous-row conditions
 
-Typical fields include `before`, `after`, operation type, source metadata, and transaction metadata. Source metadata can include database, schema, table, WAL position, and timestamp. Transaction metadata can provide a transaction ID and ordering information. Check its support and configuration.
+With a completed initial snapshot and a valid offset, a restart can usually resume streaming. A failure during a snapshot or a different snapshot mode can cause another snapshot. [Debezium PostgreSQL connector](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
 
-The source's `before = old row` is a conceptual example. For PostgreSQL UPDATE and DELETE, available previous values depend on `REPLICA IDENTITY` and decoding conditions. Do not assume that every event contains a complete old row. [Replica identity](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-replica-identity)
+The event label `before = old row` is a conceptual example. For PostgreSQL UPDATE and DELETE, available previous values depend on `REPLICA IDENTITY` and decoding conditions. Do not assume every event contains a complete old row. Check support and configuration for transaction metadata too. [Replica identity](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-replica-identity)
 
-## Key ordering and deletes
+### Schema and current-state writes
 
-Changes for the same entity or key need the correct order. Order 100 should move through `CREATED → PAID → SHIPPED`. Kafka preserves order within a partition, not a global order across partitions. Sending the same primary key to the same partition helps. One database transaction can change several tables. Downstream, it can become several events in different partitions.
+Consumers may reject even a new nullable column. PostgreSQL logical decoding does not directly emit DDL change events. Include schema comparison and deployment controls. [PostgreSQL connector limits](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
 
-A DELETE event describes a database delete. A tombstone is a `key + null value` record for Kafka log compaction. They serve different purposes. Also separate downstream policies:
+Separate delete handling from the INSERT and UPDATE behavior of MERGE/upsert. A logical-delete model also needs a rule for filtering deleted rows. Define the scope of source sequence/position comparisons used for late changes. Positions from different sources are not one global order.
 
-- Physical delete removes the downstream row.
-- Logical delete keeps a state such as `deleted = true`.
-- Bronze history stores all changes, including delete events.
-- Silver current state keeps rows that currently exist. A logical-delete model also needs a rule for filtering deleted rows.
+### Checks before and after recovery
 
-## Schema changes and Iceberg
+A snapshot can restore current state, but it cannot recover every intermediate change from a lost log.
 
-Adding, removing, or renaming columns, changing types, and changing nullability can affect `Source → Kafka → Flink/Spark → Iceberg → dbt → BI`. Adding a nullable column is often easier to support, but consumers may still reject it. Type changes, removals, and renames need special care. Detect the change, check compatibility, and update downstream systems.
+- Before recovery: check the offset, replication slot, required WAL, and snapshot mode.
+- After recovery: check event order, duplicates, deletes, and source/current-state agreement for sample keys.
 
-PostgreSQL logical decoding does not directly emit DDL change events. Do not assume that CDC reports every DDL operation. Include schema comparison and deployment controls. [PostgreSQL connector limits](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
-
-A history table keeps CREATED, PAID, and SHIPPED events for order 100. A current-state table keeps its latest SHIPPED state. MERGE or upsert inserts new keys and updates existing keys. Deletes need a separate rule. Compare source sequences or positions so a late old change cannot overwrite a newer state. Define the scope of that comparison. Positions from different sources are not one global order. Processing an event again during replay must leave the same result.
-
-## Failure recovery and checks
-
-The normal recovery model is `Connector failure → restart → stored offset → WAL replay`. Replay can create duplicates, so downstream writes must be idempotent. An offset is a processing position. Replay means processing again. Idempotency makes repeated processing safe.
-
-A lost offset or missing WAL may require a new snapshot. A snapshot can restore current state, but it cannot recover every intermediate change from a lost log. Before recovery, check the offset, replication slot, required WAL, and snapshot mode. Then check event order, duplicates, deletes, and source/current-state agreement for sample keys. [Failure behavior](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-when-things-go-wrong)
+[Failure behavior](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-when-things-go-wrong)
 
 ## LLM in Practice: a state moves backward after replay
 

@@ -1,8 +1,8 @@
 ---
 id: data-platform-spark
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-04-01
   - DPE-04-02
@@ -20,9 +20,15 @@ knowledge_ids:
   - DPE-04-14
 ---
 
-# Apache Spark
+# Chapter 4 — Spark
 
 문서 유형: Learn. 제공된 학습 자료의 개념과 설계 예시를 정리했다. `studied`는 개념 학습을 뜻하며, 직접 구현하거나 운영 검증했다는 뜻이 아니다. SQL과 수치는 설명용 예시이며 실행하지 않았다.
+
+원문 본문의 번호·순서·형식을 보존했다. 적용 시 필요한 수정·조건은 [원문 보완 설명](#source-notes)에 원문 절 번호별로 구분했다.
+
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+<!-- SOURCE CORE START -->
 
 ## 4.1 Spark Architecture
 
@@ -61,6 +67,8 @@ Spark Resource를 할당하는 시스템.
 
 Spark on Kubernetes는 Kubernetes가 Driver/Executor Pod의 실행 Resource를 관리하는 형태로 이해할 수 있다.
 
+---
+
 ## 4.2 Execution Model
 
 Spark 실행 단위:
@@ -94,6 +102,8 @@ Spark가 병렬 처리하는 논리적인 데이터 단위.
 ### DAG
 
 Transformation 의존 관계를 그래프로 표현한다.
+
+---
 
 ## 4.3 Lazy Evaluation
 
@@ -145,6 +155,8 @@ Spark SQL/DataFrame에서는 Catalyst Optimizer가 Query Plan을 최적화한다
 
 `explain()`을 통해 계획을 확인할 수 있다.
 
+---
+
 ## 4.4 Narrow vs Wide Dependencies
 
 ### Narrow Dependency
@@ -172,7 +184,9 @@ join
 repartition
 ```
 
-이런 재분배에는 Shuffle이 발생한다. 다만 join의 물리 계획에 따라 broadcast 등으로 shuffle 범위가 달라질 수 있다.
+이때 Shuffle이 발생한다.
+
+---
 
 ## 4.5 Shuffle
 
@@ -197,6 +211,8 @@ Worker C ─┘
 핵심:
 
 > **대규모 Join / GroupBy가 비싼 이유는 데이터가 Worker 사이를 이동하기 때문이다.**
+
+---
 
 ## 4.6 Join Strategies
 
@@ -258,6 +274,8 @@ Merge
 
 Join Key 중복이 많으면 결과 row 수가 예상보다 크게 늘어날 수 있다.
 
+---
+
 ## 4.7 Partition Management
 
 ### repartition
@@ -296,6 +314,8 @@ Partition 수는:
 
 와 연결된다.
 
+---
+
 ## 4.8 Cache / Persist
 
 Spark는 중간 결과를 Memory/Disk에 유지할 수 있다.
@@ -328,6 +348,8 @@ Cache
 
 장시간 또는 Job 간 재사용해야 하는 결과라면 Cache보다 Iceberg Intermediate Table 같은 durable storage가 더 적합할 수 있다.
 
+---
+
 ## 4.9 Data Skew
 
 Data Skew는 데이터가 특정 Partition에 몰리는 현상이다.
@@ -357,7 +379,7 @@ Join이나 GroupBy에서 특정 key가 병목.
 
 Hot Key에 추가 salt를 붙여 여러 key로 분산한 뒤 나중에 합친다.
 
-단, **원래 key ordering이 중요한 Streaming/Event 처리에는 그대로 적용하기 어렵다.**
+단, **원래 key ordering이 중요한 Streaming/Event 처리에는 그대로 적용하기 어렵다.**  
 Spark Batch의 Join/Aggregation skew 해결과 Kafka Ordering 문제는 구분해야 한다.
 
 ### Pre-Aggregation
@@ -371,6 +393,8 @@ Spark Batch의 Join/Aggregation skew 해결과 Kafka Ordering 문제는 구분�
 ### AQE
 
 Adaptive Query Execution이 runtime statistics를 이용해 일부 skew 최적화를 할 수 있다.
+
+---
 
 ## 4.10 Spark Performance Engineering
 
@@ -408,6 +432,8 @@ Skew 등이 원인이 될 수 있다.
 ### Spark UI
 
 어느 Stage/Task가 병목인지 진단하는 데 중요하다.
+
+---
 
 ## 4.11 Spark + Iceberg
 
@@ -463,6 +489,8 @@ Spark Task가 File을 만들고 Iceberg Commit을 통해 새 Snapshot을 Table�
 
 Streaming Write, MERGE, 작은 File 등이 쌓이면 Compaction 등 Maintenance가 필요해진다.
 
+---
+
 ## 4.12 Structured Streaming
 
 Spark Structured Streaming은 Streaming 데이터를 Table처럼 다루는 모델을 제공한다.
@@ -501,7 +529,7 @@ Streaming Aggregation / Deduplication 등에 필요한 상태 유지.
 
 ### Watermark
 
-Event-time 진행을 나타내며 지원되는 연산에서 late event 처리와 state 정리에 쓰는 기준.
+얼마나 늦은 Event까지 기다릴지 판단하는 기준.
 
 ### Window
 
@@ -535,6 +563,8 @@ Aggregation 결과를 어떤 방식으로 출력할지 결정.
 
 실시간 처리는 Streaming, 과거 대규모 재처리는 Batch Spark가 자연스럽다.
 
+---
+
 ## 4.13 Spark의 역할
 
 질문:
@@ -566,6 +596,8 @@ Spark
 → Compute
 ```
 
+---
+
 ## 4.14 Spark를 써도 dbt가 필요한가?
 
 역할이 다르다.
@@ -596,15 +628,39 @@ Gold / Mart
 
 반대로 단순 SQL Transformation이면 Spark 없이 dbt + Trino/Warehouse만으로 처리할 수도 있다.
 
-## 적용 시 보완할 점
+---
+
+<!-- SOURCE CORE END -->
+
+## 원문 적용 시 보완 {#source-notes}
+
+### 4.4~4.6·4.9 Join 계획과 skew
 
 논리적 join이라고 양쪽 입력이 반드시 shuffle되지는 않는다. Broadcast나 기존 partition 배치가 물리 계획을 바꿀 수 있다. `explain()`과 Spark UI에서 실제 계획, shuffle bytes, task별 시간·spill·GC·입력 크기를 확인한다. AQE는 runtime statistics로 지원되는 계획만 바꾸며 모든 skew를 해결하지 않는다. Join 결과 폭증은 key 중복과 grain부터 확인한다. Semi join은 존재하는 행, anti join은 일치하지 않는 행을 선택한다. [Spark 성능 가이드](https://spark.apache.org/docs/latest/sql-performance-tuning.html)
 
+### 4.7~4.10·4.14 실행과 역할 경계
+
 Speculation은 느린 task를 다시 실행할 뿐 원래 skew를 없애지 않는다. Cache와 durable table은 보존 수명이 다르다. `repartition`은 보통 shuffle을 만들며, partition을 지나치게 줄이면 병렬성도 줄어든다. Spark→dbt 경로는 예시이지 반드시 지켜야 하는 계층 경계가 아니다.
+
+### 4.11 Iceberg 파일 크기
 
 Iceberg 목표 파일 크기는 보장되는 출력 크기가 아니다. 하나의 파일은 task와 Iceberg partition 경계를 넘지 못하며, 압축된 파일 크기와 Spark 메모리 내 크기도 다르다. [Iceberg Spark 쓰기](https://iceberg.apache.org/docs/latest/spark-writes/)
 
+### 4.12 Watermark와 출력 보장
+
 Watermark는 단순한 대기 타이머가 아니라 event-time 진행 및 state 정리 기준이다. Output mode는 append/update/complete 등 연산·sink 조합에 제약이 있다. `foreachBatch`의 기본 write 보장은 at-least-once다. `batchId` 등을 활용한 멱등 sink와 재시도 검증 없이 end-to-end exactly-once를 주장하지 않는다. [Spark Structured Streaming](https://spark.apache.org/docs/latest/streaming/apis-on-dataframes-and-datasets.html)
+
+### 4.3~4.7 계획·join·partition의 추가 구분
+
+계획을 읽었다고 성능이 빠름을 입증한 것은 아니다. 물리 계획과 실제 shuffle량을 먼저 확인한다. Sort-merge join은 network와 sort 비용을, shuffle hash join은 partition별 memory 압박을 고려한다. Shuffle hash join은 입력을 분할한 뒤 hash table을 만들고 조회한다. Join 전략을 바꾸어도 잘못 가정한 key 유일성은 해결되지 않는다.
+
+Semi/anti join은 상대 table의 column이 필요 없고 존재 여부만 확인할 때 의도를 명확히 표현할 수 있다. Target partition size와 target file size는 관련이 있지만 같은 설정은 아니다. Task를 줄이면 overhead와 병렬성이 함께 줄어들 수 있다.
+
+### 4.10~4.12 처리·읽기·상태의 추가 구분
+
+Spark UI에서 task 지표를 비교하고 여러 설정을 동시에 바꾸기 전에 병목을 진단한다. Iceberg 읽기에서는 filter뿐 아니라 필요한 column 선택도 읽기량을 줄인다. File split 계획과 layout 모두 parallelism에 영향을 준다. Compaction은 쓰기 workload와 함께 계획한다.
+
+Structured Streaming은 증가하는 table 모델로 이해할 수 있다. Late event는 더 새로운 event-time 데이터보다 늦게 도착한 경우를 포함한다. Deduplication이 반복 논리 event를 제거하는 범위는 설정에 달려 있다.
 
 ## 연결해서 읽기
 

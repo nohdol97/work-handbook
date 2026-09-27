@@ -48,3 +48,15 @@
 ## 원문 포맷 정규화
 
 Git 공백 검사를 위해 원문 6개 행의 Markdown hard-break용 끝 공백 2개씩을 제거했다. `source.md` 머리말의 `whitespace_restoration`은 원문 기준 행 번호와 제거 문자열을 담는다. 경계 뒤 본문에서 해당 공백을 복원하면 업로드 88,486 bytes 및 기록한 SHA-256과 정확히 일치한다. 의미 있는 본문은 제거하지 않았다.
+
+## 2026-09-27 최신 통합본과 원문 형태 복원
+
+현재 작성 기준은 `complete-source-2026-09-27.md`에 보존한 `data_platform_engineering_complete_source_ch01_21.md`다. 원본 152,353 bytes와 SHA-256 `41cd92ea7b155a5bf7186e1a3fc70d936cc80a5eeaa8aa9dd3c8f42d5790d56f`를 기록하고 hard break 공백을 포함해 본문 전체를 그대로 보존한다. 기존 source 두 건을 대체 삭제하지 않는다.
+
+- Chapter 1~15는 기존 DPE-01~DPE-15 항목에 대응한다. Chapter 2·4의 hard break 공백과 15장 뒤 구분선 추가 외 본문은 기존 자료와 같다.
+- Chapter 16~21과 Final Mental Model·Final Engineering Principles·Study Session Status·Reference Notes는 후속 batch의 DPE2 항목과 대응한다. Chapter 20 도입의 hard break 공백을 복원했다.
+- Appendix A는 이전 원문의 보충 설명 DPE-17 항목이며 architecture에 연결한다. 원문의 17.1~17.5 번호를 Databricks 본장의 번호로 오해하지 않도록 Appendix A를 구분한다.
+- 통합본 서두의 학습 목표·완료 범위는 기존 curriculum의 DPE-00/DPE2-00·DPE2-23 항목과 같은 내용이다. 새 기술 지식을 만들거나 같은 지식을 신규 ID로 중복 계산하지 않았다. 기존 266개 데이터 플랫폼 ID와 38개 인프라 ID를 유지한다.
+- 공개 학습 본문의 원문 구간은 `reviews/source-preservation.json`에 등록한다. 번호·단락을 합친 기존 정규화는 철회하고 원래 언어는 literal, 반대 언어는 동일 구조로 번역한다. 기존 올바른 보완은 별도 구역으로 이동한다.
+
+개인정보 검토는 기존 공개 가능한 본문과의 전구간 diff 및 새 서두·목차·Appendix 대응 대조로 수행한다. 실제 비밀값이나 개인·회사 식별정보를 발견하지 않았다. 전체 읽기는 장별 담당과 통합 담당이 분담하며 최신 파일의 모든 장·서두·말미를 대조한다. 지식 ID 100% 연결은 원문 형태 보존이나 가독성을 증명하지 않으므로 별도 검사와 전문 검토를 수행한다.

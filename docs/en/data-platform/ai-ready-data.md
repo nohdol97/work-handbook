@@ -1,8 +1,8 @@
 ---
 id: data-platform-ai-ready-data
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-15-01
   - DPE-15-02
@@ -16,81 +16,253 @@ knowledge_ids:
   - DPE-15-09
 ---
 
-# AI-ready data
+# Chapter 15 — AI-Ready Data
 
 This page organizes the concepts from source Chapter 15. `studied` means conceptual study, not a deployed or tested system. Version names and numbers below are examples.
 
-## 15.1 What makes data AI-ready
+The source body keeps its numbering, order, and form. [Source qualifications](#source-notes) separate applicable corrections and conditions by source section number.
 
-AI-ready data is not a file format. It has the quality, freshness, versions, metadata, and governance needed for repeated, trusted AI use.
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
 
-| Property | Meaning |
-|---|---|
-| Trustworthy | Data quality is checked. |
-| Fresh | Data is recent enough for its use. |
-| Versioned | Dataset, prompt, model, and agent versions are recorded. |
-| Discoverable | Catalogs and metadata help people find it. |
-| Governed | Access, masking, retention, and audit policies apply. |
+<!-- SOURCE CORE START -->
 
-Existing data platform capabilities provide this foundation.
+## 15.1 What Makes Data AI-Ready
 
-## 15.2 AI telemetry model
+AI-ready data is not a specific file format.
 
-A typical flow is `User prompt → Agent → LLM call → Tool call → LLM call → Response → Feedback`.
+> **Data with the quality, freshness, versions, metadata, and governance that let AI use it repeatedly and reliably**
 
-Record the following fields when policy permits:
+Key properties:
 
-- Prompt and response for evaluation and improvement.
-- Model ID/version and agent ID/version.
-- Tool name, input, output, latency, and status.
-- Total, LLM, and tool latency.
-- Input tokens, output tokens, and total cost.
-- Thumbs up/down, human labels, and judge scores.
-- Trace, execution, and session IDs to connect related events.
+### Trustworthy
 
-Telemetry supports evaluation datasets, failure analysis, model and prompt comparisons, regression tests, and cost optimization. It is a reusable data asset.
+Data Quality.
 
-## 15.2A Langfuse as the telemetry and evaluation layer
+### Fresh
 
-Study question: can Langfuse handle AI telemetry? The concepts map as follows, but actual coverage depends on instrumentation and integrations.
+Recent enough.
 
-| Application concept | Langfuse concept |
-|---|---|
-| Agent execution | Trace |
-| LLM or tool call | Observation |
-| Related conversations | Session |
-| Prompt and response | Input and output |
-| Tokens and cost | Usage and cost |
-| Latency | Timing |
-| User, human, or judge evaluation | Score |
-| Evaluation data | Dataset |
-| Comparing changes | Experiment |
+### Versioned
 
-Langfuse covers AI telemetry, observability, and evaluation. An Iceberg-based data platform supports durable data assets, combined analytics, and governance. Langfuse does not replace the entire data platform.
+Dataset/prompt/model/agent version management.
 
-This is a learning design, not a tested integration:
+### Discoverable
+
+Discoverable through catalogs and metadata.
+
+### Governed
+
+Access/Masking/Retention/Audit.
+
+Existing data-platform capabilities are the foundation for AI-ready data.
+
+---
+
+## 15.2 AI Telemetry Model
+
+Telemetry for analyzing AI service execution.
+
+Overall flow:
+
+```text
+User Prompt
+ ↓
+Agent
+ ↓
+LLM Call
+ ↓
+Tool Call
+ ↓
+LLM Call
+ ↓
+Response
+ ↓
+Feedback
+```
+
+Main data to collect:
+
+### Prompt / Response
+
+The basis for evaluation and improvement.
+
+### Model
+
+Model ID/Version.
+
+### Agent
+
+Agent ID/Version.
+
+### Tool Call
+
+Tool name, input/output, latency, status.
+
+### Latency
+
+- total
+- llm
+- tool
+
+### Token / Cost
+
+- input tokens
+- output tokens
+- total cost
+
+### Feedback
+
+- thumbs up/down
+- human label
+- judge score
+
+### Trace / Execution / Session ID
+
+Connect all events into one execution flow.
+
+AI telemetry is more than logs. It supports:
+
+- Evaluation Dataset
+- Failure Analysis
+- Model Comparison
+- Prompt Comparison
+- Regression Test
+- Cost Optimization
+
+It is a data asset for these uses.
+
+---
+
+## 15.2A Langfuse as AI Telemetry / Evaluation Layer
+
+Question during the study session:
+
+> We could use Langfuse.
+
+Yes.
+
+Langfuse can handle much of AI telemetry.
+
+Concept mapping:
+
+```text
+Agent execution
+→ Trace
+
+LLM Call / Tool Call
+→ Observation
+
+Related conversations
+→ Session
+
+Prompt / Response
+→ Input / Output
+
+Token / Cost
+→ Usage / Cost
+
+Latency
+→ Timing
+
+User / Human / Judge evaluation
+→ Score
+
+Evaluation Data
+→ Dataset
+
+Change comparison
+→ Experiment
+```
+
+Role separation:
+
+```text
+Langfuse
+→ AI Telemetry
+→ AI Observability
+→ Evaluation
+
+Iceberg / Data Platform
+→ Durable data assets
+→ Combined analytics
+→ Governance
+```
+
+Suggested conceptual design:
 
 ```text
 Application / Agent
-  → Langfuse
-  → Trace / Observation / Score
-      ├→ Langfuse UI
-      └→ Data Platform / Iceberg
-           → Spark / dbt
-           → BI / Long-term Analysis
+   ↓
+Langfuse
+   ↓
+Trace / Observation / Score
+   ├─→ Langfuse UI
+   └─→ Data Platform / Iceberg
+          ↓
+       Spark / dbt
+          ↓
+       BI / Long-term Analysis
 ```
 
-## 15.3 Dataset versioning
+Langfuse does not replace the entire data platform.
 
-An evaluation dataset changes over time. For example, `eval_v1` has 1,000 cases, while `eval_v2` has 1,500 cases, extra hard cases, and corrected answers. Scores from different dataset versions may not be comparable.
+---
 
-Record `dataset_version`, `model_version`, `prompt_version`, `agent_version`, `evaluator_version`, and `score` together.
+## 15.3 Dataset Versioning
 
-An Iceberg snapshot describes a consistent set of files referenced by table metadata. A dataset version describes a logical dataset for AI or business use. These are not the same identifier or boundary.
+Evaluation datasets change over time.
+
+Example:
+
+```text
+eval_v1
+→ 1,000 cases
+
+eval_v2
+→ 1,500 cases
+→ Add hard cases
+→ Correct answers
+```
+
+Comparing model scores across different dataset versions may not be fair.
+
+Record together:
+
+- dataset_version
+- model_version
+- prompt_version
+- agent_version
+- evaluator_version
+- score
+
+An Iceberg snapshot and a dataset version are not the same.
+
+```text
+Iceberg Snapshot
+→ Version of physical table state
+
+Dataset Version
+→ Logical dataset version for AI/business use
+```
+
+---
 
 ## 15.4 Reproducibility
 
-Reproducibility means rebuilding the conditions of a past AI experiment. Preserve the dataset, model, prompt, agent, and evaluator versions, plus runtime configuration. Example:
+Reproducibility:
+
+> **The ability to reconstruct the conditions of a past AI experiment**
+
+Required:
+
+- Dataset Version
+- Model Version
+- Prompt Version
+- Agent Version
+- Evaluator Version
+- Runtime Config
+
+Example:
 
 ```text
 dataset_v5
@@ -101,57 +273,277 @@ judge_v2
 temperature=0
 ```
 
-Lineage asks where the data came from. Reproducibility asks whether the experiment conditions can be restored. An LLM can be stochastic; restoring conditions does not promise identical sentences.
+Difference from lineage:
 
-## 15.5 Building evaluation datasets
+```text
+Lineage
+→ Where was it produced?
 
-An evaluation dataset repeatedly tests a model, prompt, or agent. Useful sources include production traces, user feedback, actual failures, edge cases, and hard cases. Include normal, hard, failure, edge, safety, and tool-use cases. Success cases alone are not enough.
+Reproducibility
+→ Can we reconstruct the same experiment conditions?
+```
 
-A regression loop is `Production failure → Fix → Add regression case → Evaluate later versions`.
+LLMs can be stochastic. Reproducibility does not mean always generating the same sentence; the key is **reconstructing the conditions precisely**.
 
-A case need not have one exact expected answer. It may define expected behavior or a rubric: call the correct tool, avoid unauthorized disclosure, or include a required citation.
+---
 
-## 15.6 Embedding data
+## 15.5 Evaluation Dataset Construction
 
-A RAG pipeline often follows `Source document → Chunk → Embedding model → Vector → Vector DB / Search`. Vectors alone are not enough.
+Evaluation Dataset:
 
-| Entity | Fields to retain |
-|---|---|
-| Document | `document_id`, `document_version`, `source`, `owner` |
-| Chunk | `chunk_id`, `chunk_text`, `chunk_index`, `chunk_version`, `chunking_strategy` |
-| Embedding | `embedding_model`, `embedding_model_version`, `embedding_vector` |
+> **A test dataset for repeatedly evaluating model/prompt/agent quality**
 
-A model change can change the vector space. A chunking change can change retrieval results. Track both.
+Good sources:
 
-## 15.7 Retrieval metadata
+- Production Trace
+- User Feedback
+- Actual failures
+- Edge Case
+- Hard Case
 
-Record `document_id`, `chunk_id`, `source`, `retrieval_score`, `document_version`, and `access_level` with retrieved results.
+Do not include only success cases.
 
-For enterprise RAG, exclude unauthorized documents during retrieval, before content reaches the model: `User permission → Metadata filter → Authorized chunks only`.
+Example categories:
 
-Retrieval traces help separate two failures. If the correct document was not retrieved, investigate retrieval. If it was retrieved but the answer is wrong, investigate generation.
+- Normal
+- Hard
+- Failure
+- Edge Case
+- Safety
+- Tool Usage
+
+### Regression Dataset
+
+After fixing a real production bug/failure, add the case to the dataset.
+
+```text
+Production Failure
+ ↓
+Fix
+ ↓
+Add a regression case
+ ↓
+Evaluate again in all later versions
+```
+
+An expected answer is not always required.
+
+Expected behavior or a rubric can also be used.
+
+Example:
+
+```text
+Must call the correct tool
+Must not disclose unauthorized information
+Must include a required citation
+```
+
+---
+
+## 15.6 Embedding Data
+
+RAG Pipeline:
+
+```text
+Source Document
+ ↓
+Chunk
+ ↓
+Embedding Model
+ ↓
+Vector
+ ↓
+Vector DB / Search
+```
+
+Storing vectors alone is not enough.
+
+Manage together:
+
+### Document
+
+- document_id
+- document_version
+- source
+- owner
+
+### Chunk
+
+- chunk_id
+- chunk_text
+- chunk_index
+- chunk_version
+- chunking_strategy
+
+### Embedding
+
+- embedding_model
+- embedding_model_version
+- embedding_vector
+
+Changing the embedding model can change the vector space, so version management matters.
+
+Changing the chunking strategy also changes retrieval results.
+
+---
+
+## 15.7 Retrieval Metadata
+
+Store with RAG retrieval results:
+
+- document_id
+- chunk_id
+- source
+- retrieval_score
+- document_version
+- access_level
+
+### Access Metadata
+
+For enterprise RAG, **exclude unauthorized documents during retrieval instead of hiding them after retrieval**.
+
+```text
+User Permission
+ ↓
+Metadata Filter
+ ↓
+Authorized Chunks only
+```
+
+With retrieval traces:
+
+```text
+Correct document was not retrieved
+→ Retrieval Problem
+
+Correct document was retrieved, but the answer is wrong
+→ Generation Problem
+```
+
+These failures can be distinguished.
+
+---
 
 ## 15.8 Provenance
 
-Provenance tracks sources and how data or AI output was produced. Its scope can include `Original document → Chunk → Embedding → Retrieval → Model → Response`.
+Provenance:
 
-Lineage describes data movement and transformation. Provenance records origin and production context more broadly. Reproducibility restores those conditions. Together with governance, they help trace affected outputs when a source must be deleted or cannot be used.
+> **Information that broadly tracks the sources and production process of data/AI results**
 
-## 15.9 Feature and label freshness
+Beyond lineage, it can cover:
 
-A feature is model input, such as recent logins, purchases, or user state. Stale features can reduce prediction quality.
+```text
+Original Document
+ ↓
+Chunk
+ ↓
+Embedding
+ ↓
+Retrieval
+ ↓
+Model
+ ↓
+Response
+```
 
-A label is the outcome to predict. For example, features describe the last 30 days of use, while the label states whether the user leaves within the next 7 days. Some labels arrive late: `Purchase → Wait 30 days → Return outcome confirmed → Label created`.
+This wider scope can be included.
 
-Using an unconfirmed label can distort training and evaluation. For LLMs and agents, current context and tool state play a feature-like role; human feedback and judge scores play a label-like role.
+Relationships:
 
-## Verified scope and qualifications
+```text
+Lineage
+→ Data movement/transformation
+
+Provenance
+→ Origin and production process
+
+Reproducibility
+→ Reconstruct those conditions
+```
+
+Connecting this to governance helps trace affected derived data when a source is banned or deleted.
+
+---
+
+## 15.9 Feature / Label Freshness
+
+### Feature
+
+Model input data.
+
+Example:
+
+- Recent login count
+- Recent purchases
+- User state
+
+Stale features can reduce prediction quality.
+
+### Label
+
+The outcome that the model should predict.
+
+Example:
+
+```text
+Feature:
+Usage over the last 30 days
+
+Label:
+Whether the user leaves within the next 7 days
+```
+
+A label can be delayed until the actual outcome is known.
+
+Example:
+
+```text
+Purchase
+ ↓
+Wait 30 days
+ ↓
+Confirm whether it was returned
+ ↓
+Create label
+```
+
+Using unconfirmed labels can distort training/evaluation.
+
+A similar distinction applies to LLMs/agents:
+
+```text
+Feature-like
+→ Current context / Tool state
+
+Label-like
+→ Human Feedback / Judge Score
+```
+
+---
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Source qualifications {#source-notes}
+
+### 15.2A Langfuse data model
 
 A trace groups a request or operation. An observation is a step such as an LLM call, tool call, or retrieval. A session groups traces. Do not infer physical storage from this conceptual diagram. [Langfuse data model](https://langfuse.com/docs/observability/data-model).
 
+### 15.3–15.4 Dataset version scope
+
 Changes to Langfuse dataset items create timestamp-based versions; schema changes are outside that versioning scope. Preserve the schema and evaluation settings as well as the input version. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
 
+### 15.2 and 15.7 Collection and access control
+
 Access metadata alone does not enforce access. Derive permissions from a trusted identity and check every search request. Prompts, responses, and tool inputs/outputs can also contain sensitive data, so define collection, masking, and retention rules. Hiding a result only in the UI after sending it to an LLM does not prevent disclosure. [Azure AI Search security filters](https://learn.microsoft.com/en-us/azure/search/search-security-trimming-for-azure-search).
+
+### 15.2A Collection scope and 15.3 Snapshot meaning
+
+Actual Langfuse coverage depends on instrumentation and integrations. The source diagram is a learning design, not a tested integration.
+
+Read the “physical table state version” in 15.3 as a consistent set of files referenced by table metadata. An Iceberg snapshot and an AI/business dataset version are not the same identifier or boundary.
 
 ## LLM in Practice: compare evaluation conditions
 

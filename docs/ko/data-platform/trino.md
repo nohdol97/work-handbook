@@ -1,8 +1,8 @@
 ---
 id: data-platform-trino
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-10-01
   - DPE-10-02
@@ -14,62 +14,289 @@ knowledge_ids:
   - DPE-10-08
 ---
 
-# Trino의 분산 SQL 실행
+# Chapter 10 — Trino
 
 이 문서는 Trino를 개념적으로 학습한 기록이다. Query 성능이나 실제 운영 결과를 검증했다는 뜻이 아니다. 공식 문서는 2026-09-24에 확인했다.
 
-## Architecture와 connector
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
 
-Trino는 외부 저장소의 데이터를 SQL로 조회하는 분산 query engine이다. Trino 자체가 주 데이터 저장소인 것은 아니다. Coordinator는 SQL 분석, query plan, stage/task 관리를 담당한다. Worker는 scan, join, aggregation을 실행한다. `Coordinator ≈ Spark driver`, `Worker ≈ Spark executor`는 역할 이해를 위한 비유이며 실행 모델이 같다는 뜻은 아니다. [Trino concepts](https://trino.io/docs/current/overview/concepts.html)
+<!-- SOURCE CORE START -->
 
-Connector는 Trino와 외부 시스템 사이의 adapter다. Iceberg, PostgreSQL, Hive connector 등이 있다. Table 이름은 `catalog.schema.table` 형태다.
+## 10.1 Architecture
+
+Trino:
+
+> **외부 데이터 저장소를 빠르게 SQL로 조회하는 분산 SQL Query Engine**
+
+Trino 자체가 주 Storage는 아니다.
+
+### Coordinator
+
+- SQL 분석
+- Query Plan
+- Stage/Task 관리
+
+### Worker
+
+- 실제 Scan
+- Join
+- Aggregation
+
+개념 비교:
+
+```text
+Trino Coordinator ≈ Spark Driver
+Trino Worker ≈ Spark Executor
+```
+
+---
+
+## 10.2 Connector Model
+
+Connector는 Trino와 외부 시스템 사이 Adapter.
+
+예:
+
+- Iceberg Connector
+- PostgreSQL Connector
+- Hive Connector
+
+Trino Catalog 이름 구조:
+
+```text
+catalog.schema.table
+```
+
+예:
 
 ```text
 iceberg.analytics.fact_llm_call
 postgres.public.users
 ```
 
-Trino catalog는 어떤 connector/data source 설정을 사용할지 구분한다. Iceberg catalog는 table metadata를 찾고 관리하는 계층이므로 같은 의미가 아니다. 서로 다른 시스템을 한 SQL에서 join하는 federated query도 가능하지만 성능이 자동으로 좋아지는 것은 아니다. 원격 scan, 데이터 이동, source 부하를 함께 고려한다.
+Trino Catalog와 Iceberg Catalog는 의미가 다르다.
 
-## Query가 작업으로 나뉘는 방식
+Trino Catalog:
 
-개념적으로 SQL을 query plan으로 만들고 stage와 task로 분산한다. Scan은 split 단위로 나눈다. `SQL → Query plan → Stage → Task → Split`은 이해를 돕는 단순화이며 모든 실행 요소를 표현한 것은 아니다.
+> 어떤 Connector/Data Source를 사용할지 구분.
 
-| 요소 | 역할 |
-| --- | --- |
-| Stage | 큰 실행 단계 |
-| Task | worker에서 실행하는 stage의 일부 |
-| Split | scan 작업의 작은 단위 |
-| Exchange | worker 사이의 데이터 재분배 |
+Federated Query로 서로 다른 시스템을 한 SQL에서 Join할 수도 있지만 성능을 무조건 보장하는 것은 아니다.
 
-Exchange는 Spark shuffle과 비슷한 목적을 가진다. Join과 GROUP BY에서 재분배가 많이 발생할 수 있다. [실행 요소](https://trino.io/docs/current/overview/concepts.html)
+---
 
-## Pushdown과 pruning
+## 10.3 Query Execution
 
-Pushdown은 가능한 연산을 데이터가 있는 쪽에 맡겨 이동량과 scan을 줄인다.
+구조:
 
-- Predicate pushdown: `WHERE` 조건을 source 쪽으로 전달한다.
-- Projection pushdown: 필요한 column만 읽도록 한다.
-- Aggregation pushdown: 지원되는 경우 COUNT/SUM 같은 집계를 source에서 수행한다.
+```text
+SQL
+ ↓
+Query Plan
+ ↓
+Stage
+ ↓
+Task
+ ↓
+Split
+```
 
-지원 범위는 connector와 query 형태에 따라 다르다. SQL에 filter를 썼다고 pushdown이 반드시 일어나는 것은 아니다. EXPLAIN과 실제 읽은 데이터량으로 확인한다. Iceberg의 partition/file/row group/column pruning도 불필요한 읽기를 줄이지만 모든 pruning을 원격 DB의 aggregation pushdown과 동일하게 취급하지 않는다. [Trino pushdown](https://trino.io/docs/current/optimizer/pushdown.html)
+### Stage
 
-## Join과 memory
+큰 실행 단계.
 
-Broadcast join은 작은 table을 관련 worker들에 복제한다. `Huge fact + tiny dimension`이 대표 후보지만 작은 쪽이 각 worker의 memory에 맞는지 확인해야 한다. Partitioned join은 join key로 데이터를 재분배한다. 큰 table끼리 join할 때 후보가 되며 exchange 비용이 발생한다. 특정 key가 한쪽으로 몰리는 data skew는 일부 worker의 부하와 memory 사용을 키운다.
+### Task
 
-Join, aggregation, sort는 중간 데이터를 memory에 유지한다. Worker memory와 query memory 범위를 나누어 이해한다. Spill은 memory 압박을 줄이려고 중간 데이터를 disk로 내보내는 방식이다. Disk I/O 때문에 느려질 수 있고 모든 OOM을 해결하지도 않는다. 현재 Trino 문서는 spill을 legacy 기능으로 설명하고 적절한 task retry policy와 exchange manager를 사용하는 fault-tolerant execution 검토를 안내한다. 적용 가능 여부는 workload·connector·설정으로 확인해야 한다. [Trino spill](https://trino.io/docs/current/admin/spill.html)
+특정 Worker에서 실행되는 Stage 일부.
 
-## Trino와 Spark의 역할
+### Split
 
-| Trino가 자주 맡는 일 | Spark가 자주 맡는 일 |
-| --- | --- |
-| Interactive SQL, query serving | 대규모 processing, transformation |
-| BI, ad-hoc query, 여러 사용자의 동시 SQL | ETL, backfill, large join, ML dataset, batch transform |
+Scan의 작은 작업 단위.
 
-이는 절대적인 기능 경계나 성능 보장이 아니다. 둘을 함께 쓰면 Spark가 데이터를 만들고 Trino가 그 데이터를 조회하는 구조가 가능하다.
+### Exchange
 
-## Iceberg 데이터 조회
+Worker 간 Data Redistribution.
+
+Spark Shuffle과 비슷한 개념.
+
+Join / GroupBy에서 Exchange가 많이 발생할 수 있다.
+
+---
+
+## 10.4 Pushdown
+
+목적:
+
+> **가능한 연산을 데이터가 있는 쪽에서 먼저 수행해 이동/Scan을 줄인다.**
+
+### Predicate Pushdown
+
+`WHERE` 조건을 Source로 내려보냄.
+
+### Projection Pushdown
+
+필요한 Column만.
+
+### Aggregation Pushdown
+
+가능하면 COUNT/SUM 등을 Source에서 수행.
+
+Iceberg에서는 Partition/File/Row Group/Column Pruning이 비슷한 목적을 수행한다.
+
+---
+
+## 10.5 Join Strategies
+
+### Broadcast Join
+
+작은 Table을 모든 Worker에 복사.
+
+```text
+Huge Fact
++
+Tiny Dimension
+```
+
+### Partitioned Join
+
+큰 Table끼리 Join Key 기준 재분배.
+
+Exchange 비용 발생.
+
+### Data Skew
+
+특정 key가 특정 Worker에 몰릴 수 있다.
+
+---
+
+## 10.6 Memory
+
+Trino는 Join/Aggregation/Sort의 중간 데이터를 Memory에 유지한다.
+
+주요 개념:
+
+- Worker Memory
+- Query Memory
+- Spill
+
+Spill:
+
+```text
+Memory 부족
+ ↓
+Disk 사용
+```
+
+Query 실패를 피할 수 있지만 느려진다.
+
+---
+
+## 10.7 Trino vs Spark
+
+핵심:
+
+```text
+Trino
+→ Interactive SQL / Query Serving
+
+Spark
+→ Large-scale Processing / Transformation
+```
+
+Trino:
+
+- BI
+- Ad-hoc Query
+- 다수 사용자 동시 SQL
+
+Spark:
+
+- ETL
+- Backfill
+- Large Join
+- ML Dataset
+- Batch Transform
+
+함께 사용:
+
+```text
+Spark
+→ Data 생성
+
+Trino
+→ 생성된 Data 조회
+```
+
+---
+
+## 10.8 Trino + Iceberg
+
+구조:
+
+```text
+S3
+ ↓
+Parquet
+ +
+Iceberg Metadata
+ ↓
+Trino
+ ↓
+BI / Analyst
+```
+
+Trino는 Iceberg Metadata를 이용해 필요한 File을 찾고 Parquet Columnar 특성을 이용해 필요한 Column만 읽는다.
+
+역할:
+
+```text
+S3
+→ 실제 File
+
+Parquet
+→ File Format
+
+Iceberg
+→ Table Metadata / Snapshot
+
+Trino
+→ SQL Query
+```
+
+---
+
+<!-- SOURCE CORE END -->
+
+## 부록: 기존 보완 설명
+
+위 본문은 제공된 Markdown의 9~11장 중 이 페이지에 해당하는 장을 원문 형식 그대로 보존했다. 아래는 원문과 구분한 기존 설명·주의사항이다.
+
+### Architecture와 실행 모델
+
+Coordinator/Worker와 Spark Driver/Executor의 비교는 역할 비유다. 실행 모델이 같다는 뜻은 아니다. `SQL → Query Plan → Stage → Task → Split`도 학습용 단순화이며 모든 실행 요소를 표현하지 않는다. [Trino concepts](https://trino.io/docs/current/overview/concepts.html)
+
+Trino Catalog는 설정된 connector와 data source를 구분한다. Iceberg Catalog는 table metadata를 찾고 관리한다. Federated query의 성능은 원격 scan, 데이터 이동, source 부하를 함께 고려한다.
+
+### Pushdown과 join 검증
+
+Pushdown 지원은 connector와 query 형태에 달려 있다. SQL에 filter가 있어도 반드시 적용되는 것은 아니다. EXPLAIN과 실제 읽은 데이터량으로 확인한다.
+
+Iceberg pruning과 원격 DB의 aggregation pushdown은 읽기와 이동량을 줄이려는 목적을 공유하지만 같은 연산은 아니다. [Trino pushdown](https://trino.io/docs/current/optimizer/pushdown.html)
+
+원문의 “모든 Worker”는 join에 참여하는 worker를 기준으로 이해한다. Broadcast할 작은 table이 각 worker의 memory에 맞는지 확인한다. Skew가 생기면 일부 worker에 부하와 memory 사용이 집중되어 늦게 끝날 수 있다.
+
+### Spill과 역할 분담의 조건
+
+Spill은 memory 압박을 줄이는 데 도움이 될 수 있지만 모든 OOM을 해결하지는 않는다. Disk I/O 때문에 query가 느려질 수 있다.
+
+2026-09-24에 확인한 Trino 문서는 spill을 legacy 기능으로 설명하고, 적절한 task retry policy와 exchange manager를 쓰는 fault-tolerant execution 검토를 안내했다. 실제 적용은 workload·connector·설정으로 확인한다. 이번 편집에서 공식 문서를 새로 확인하거나 성능 실험을 수행한 것은 아니다. [Trino spill](https://trino.io/docs/current/admin/spill.html)
+
+Trino/Spark 비교는 자주 맡는 역할을 설명한다. 절대적인 기능 경계나 성능 보장이 아니다.
+
+Iceberg pruning 효과도 layout, metadata, filter, connector 구현에 따라 달라진다. [Trino Iceberg connector](https://trino.io/docs/current/connector/iceberg.html)
+
+### 기존 개념도
+
+원문의 text 그림과 별도로 기존 Mermaid 그림을 보존한다.
 
 ```mermaid
 flowchart LR
@@ -78,8 +305,6 @@ flowchart LR
   P --> T
   T --> B[BI and analysts]
 ```
-
-S3는 실제 object/file을 저장하고 Parquet은 file format이다. Iceberg는 table metadata와 snapshot을 관리하고 Trino는 SQL을 실행한다. Trino는 Iceberg metadata로 필요한 file을 찾고 Parquet의 columnar 구조로 필요한 column을 읽는다. 실제 pruning 효과는 layout, metadata, filter, connector 구현에 달려 있다. [Trino Iceberg connector](https://trino.io/docs/current/connector/iceberg.html)
 
 ## LLM 활용: 느린 federated query 조사
 

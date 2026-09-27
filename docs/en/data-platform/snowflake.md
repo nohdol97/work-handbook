@@ -1,8 +1,8 @@
 ---
 id: data-platform-snowflake
 status: studied
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE2-18-01
   - DPE2-18-02
@@ -19,11 +19,331 @@ knowledge_ids:
   - DPE2-18-13
 ---
 
-# Snowflake: a condensed model and design boundaries
+# Chapter 18 — Snowflake Deep Dive (Condensed)
 
 Page type: Learn. Chapter 18 was intentionally summarized once and then skipped in the source study. `studied` refers to these condensed concepts. It does not mean detailed implementation, production experience, or completed deep-dive exercises. Examples were not run. Product behavior was checked against official documentation on 2026-09-26. It depends on edition, cloud, region, table type, and feature status.
 
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+<!-- SOURCE CORE START -->
+
+> The user explicitly requested that Snowflake be summarized once and then skipped.
+
+Snowflake can be summarized as:
+
+> **A managed cloud data platform built around separated storage and compute, historically centered on SQL/Data Warehouse workloads, now expanded into data engineering, Iceberg, governance, and AI.**
+
+---
+
 ## 18.1 Architecture
+
+High-level layers:
+
+```text
+Cloud Services
+     ↓
+Virtual Warehouses
+     ↓
+Storage
+```
+
+### Storage
+
+Snowflake-managed or Iceberg-related storage.
+
+### Virtual Warehouse
+
+Independent compute cluster for queries/DML.
+
+Different warehouses provide workload isolation.
+
+### Cloud Services
+
+Handles:
+
+- metadata,
+- authentication,
+- query optimization,
+- access control,
+- coordination.
+
+---
+
+## 18.2 Micro-partitions
+
+Snowflake automatically organizes table data into **micro-partitions**.
+
+```text
+Table
+├─ Micro-partition 1
+├─ Micro-partition 2
+├─ Micro-partition 3
+└─ ...
+```
+
+Snowflake tracks metadata such as value ranges.
+
+This helps pruning.
+
+---
+
+## 18.3 Pruning
+
+Query:
+
+```sql
+WHERE event_date = '2026-09-26'
+```
+
+Snowflake can avoid reading micro-partitions that cannot match.
+
+Conceptually similar goal to:
+
+```text
+Iceberg File Pruning
+Parquet Row Group Pruning
+```
+
+---
+
+## 18.4 Clustering
+
+When data layout becomes poor for frequent filters, clustering can improve pruning efficiency.
+
+Large tables may use clustering keys.
+
+The goal is not to manually partition everything, but to improve physical distribution for query patterns.
+
+---
+
+## 18.5 Streams
+
+Streams track row-level changes to tables.
+
+```text
+Table
+ ↓
+Stream
+ ↓
+Change Data
+```
+
+Useful for incremental processing.
+
+---
+
+## 18.6 Tasks
+
+Tasks schedule or trigger SQL work.
+
+Common combination:
+
+```text
+Stream
+ ↓
+Task
+ ↓
+MERGE / SQL Transform
+```
+
+---
+
+## 18.7 Dynamic Tables
+
+Dynamic Table:
+
+> **Declare the query result and desired freshness; Snowflake manages refresh.**
+
+Example:
+
+```text
+Raw
+ ↓
+Dynamic Table
+ ↓
+Silver
+ ↓
+Dynamic Table
+ ↓
+Gold
+```
+
+Use a target lag:
+
+```text
+TARGET_LAG = 10 minutes
+```
+
+This is conceptually similar to declarative data pipelines.
+
+---
+
+## 18.8 Snowpipe / Snowpipe Streaming
+
+Snowpipe:
+
+```text
+Object Storage File
+ ↓
+Snowpipe
+ ↓
+Snowflake
+```
+
+Snowpipe Streaming allows lower-latency continuous ingestion without relying only on staged files.
+
+---
+
+## 18.9 Iceberg Tables
+
+Snowflake supports Apache Iceberg tables and multi-engine interoperability.
+
+```text
+Snowflake
+ ↓
+Iceberg Table
+ ↓
+Object Storage
+```
+
+Snowflake/Horizon can participate in Iceberg catalog workflows.
+
+External engines such as Spark/Trino can participate in open Iceberg workflows.
+
+---
+
+## 18.10 Governance — Horizon Catalog
+
+Conceptual counterpart to Unity Catalog:
+
+```text
+Databricks
+→ Unity Catalog
+
+Snowflake
+→ Horizon Catalog
+```
+
+Horizon provides:
+
+- discovery,
+- metadata,
+- lineage,
+- classification,
+- masking,
+- row access,
+- governance,
+- Iceberg visibility,
+- semantic/business context.
+
+---
+
+## 18.11 Cortex / AI
+
+Snowflake increasingly integrates AI capabilities:
+
+```text
+Cortex AI
+Search
+Analyst
+Agents
+AI interfaces
+```
+
+The overall product direction is similar to the rest of the industry:
+
+> bring AI closer to governed enterprise data.
+
+---
+
+## 18.12 Cost Model
+
+Compute unit:
+
+```text
+Virtual Warehouse
+```
+
+Billing is credit-based.
+
+Cost dimensions:
+
+```text
+Warehouse Compute
+Serverless Compute
+Cloud Services
+Storage
+```
+
+Optimization:
+
+```text
+Auto Suspend
+Right-size Warehouse
+Reduce Scan
+Efficient Queries
+Use incremental refresh where possible
+```
+
+---
+
+## 18.13 Snowflake Mental Model
+
+Remember:
+
+```text
+Storage
+→ Snowflake-managed / Iceberg
+
+Compute
+→ Virtual Warehouse
+
+Layout
+→ Micro-partitions
+
+Performance
+→ Pruning + Clustering
+
+Pipeline
+→ Dynamic Tables
+→ Streams + Tasks
+
+Ingestion
+→ Snowpipe
+
+Governance
+→ Horizon Catalog
+
+AI
+→ Cortex / Search / Agents
+
+Billing
+→ Credits
+```
+
+Historical trajectory:
+
+```text
+Databricks
+→ Spark / Data Engineering / AI
+→ expanded into SQL Warehouse
+
+Snowflake
+→ Cloud Data Warehouse / SQL
+→ expanded into Data Engineering / Iceberg / AI
+```
+
+Today there is significant functional overlap.
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Operational review and official documentation notes
+
+The following notes are separate from the source. They retain the support conditions and cautions reviewed on 2026-09-26. This edit did not test new versions or recheck official documentation.
+
+### Architecture
 
 Snowflake is a managed cloud data platform with separate storage and compute. It grew from SQL/Data Warehouse workloads into data engineering, Iceberg, governance, and AI.
 
@@ -38,57 +358,57 @@ flowchart TD
 
 A Virtual Warehouse is an independent compute cluster for queries and DML. Separate warehouses can isolate workloads. Cloud Services handles metadata, authentication, query optimization, access control, and coordination. Distinguish Snowflake-managed storage from Iceberg configurations. [Official architecture](https://docs.snowflake.com/en/user-guide/intro-key-concepts).
 
-## 18.2 Micro-partitions
+### Micro-partitions
 
 Snowflake automatically places native table data in micro-partitions: `Table → Micro-partition 1, 2, 3 …`. Metadata such as value ranges supports pruning. Do not apply this native layout model directly to external Iceberg files.
 
-## 18.3 Pruning
+### Pruning
 
 The illustrative filter `WHERE event_date = '2026-09-26'` can skip micro-partitions that cannot match. [Iceberg file pruning](lakehouse-iceberg.md) and Parquet row group pruning share the goal of avoiding unnecessary reads. Their metadata and execution differ. Check actual scans in the query profile.
 
-## 18.4 Clustering
+### Clustering
 
 Clustering can help pruning when physical layout does not suit frequent filters. Large tables can be candidates for clustering keys. This does not mean manually partitioning every table. The goal is a useful value distribution for query patterns. Include maintenance cost in the decision. [Micro-partitions and clustering](https://docs.snowflake.com/en/user-guide/tables-clustering-micropartitions).
 
-## 18.5 Streams
+### Streams
 
 A Stream exposes source row changes for incremental processing. It is not a separate event log like Kafka. A Stream stores a source object offset rather than a copy of data. It uses table history to calculate changes. A plain SELECT does not advance that offset. Committing a DML transaction that consumes changes does. Monitor for streams that become stale beyond the retention window. [Streams](https://docs.snowflake.com/en/user-guide/streams-intro).
 
-## 18.6 Tasks
+### Tasks
 
 A Task schedules or triggers SQL work. A common flow is `Table → Stream → Task → MERGE / SQL transform`. The Stream describes changes. The Task controls execution. SQL defines the result. [Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
 
-## 18.7 Dynamic Tables
+### Dynamic Tables
 
 A Dynamic Table declares a result query and desired freshness. Snowflake manages refresh. A chain such as `Raw → Dynamic Table(Silver) → Dynamic Table(Gold)` describes dataset dependencies.
 
 An illustrative setting is `TARGET_LAG = '10 minutes'`. **It is neither a schedule to run every ten minutes nor a guarantee of at most ten minutes of lag.** It is a freshness target. Actual lag depends on warehouse capacity, data volume, query complexity, and dependency depth. Check actual lag and refresh history. Do not assume every SQL query supports incremental refresh. [Target lag](https://docs.snowflake.com/en/user-guide/dynamic-tables/target-lag).
 
-## 18.8 Snowpipe / Snowpipe Streaming
+### Snowpipe / Snowpipe Streaming
 
 Snowpipe loads staged files: `Object storage file → Snowpipe → Snowflake`. Snowpipe Streaming supports continuous low-latency ingestion without relying only on staged files. Measure ingestion latency, processing latency, and final mart freshness separately. Streaming ingestion does not imply the same complex event-time/state processing as [Flink](flink.md). [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro), [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview).
 
-## 18.9 Iceberg Tables
+### Iceberg Tables
 
 The flow `Snowflake → Iceberg table → Object storage` separates compute, table format, and storage. Distinguish a Snowflake-managed catalog from an external catalog. Assign ownership of metadata commits and maintenance. Check read, write, authentication, and table feature support separately for external engines such as Spark and Trino. [Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg).
 
 The Horizon Iceberg REST endpoint can support multiple engines. This does not promise identical behavior for every Snowflake feature or external engine combination. [External engine access through Horizon](https://docs.snowflake.com/en/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon).
 
-## 18.10 Governance: Horizon Catalog
+### Governance: Horizon Catalog
 
 Databricks Unity Catalog and Snowflake Horizon Catalog both address integrated governance. Horizon covers discovery, metadata, lineage, classification, masking, row access, governance, Iceberg visibility, and semantic/business context. Similar feature names do not imply equal policies, privileges, or external engine behavior. [Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon).
 
-## 18.11 Cortex / AI
+### Cortex / AI
 
 Cortex AI, Search, Analyst, Agents, and AI interfaces bring AI closer to governed enterprise data. Distinguish retrieval, structured data analysis, and agent tool use. Check model, region, privilege, and data access requirements in the relevant feature documentation. [Snowflake AI and ML](https://docs.snowflake.com/en/guides-overview-ai-features).
 
-## 18.12 Cost model
+### Cost model
 
 Compute uses credit-based billing. Include Virtual Warehouses, serverless compute, Cloud Services, and storage. A credit is not a fixed CPU count or a universal price for every feature.
 
 Review Auto Suspend, warehouse sizing, scan reduction, efficient queries, and incremental refresh where supported. A smaller warehouse does not always lower total cost. Compare measured usage alongside runtime, queue time, and freshness. [Snowflake costs](https://docs.snowflake.com/en/user-guide/cost-understanding-overall).
 
-## 18.13 Mental model
+### Mental model
 
 | Responsibility | Feature to remember |
 |---|---|

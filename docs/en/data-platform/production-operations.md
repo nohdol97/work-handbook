@@ -1,8 +1,8 @@
 ---
 id: data-platform-production-operations
 status: studied
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE2-20-01
   - DPE2-20-02
@@ -28,11 +28,811 @@ knowledge_ids:
   - DPE2-20-22
 ---
 
-# Production data platform operations
+
+# Chapter 20 — Production Data Platform Engineering
+
+This page preserves Chapter 20 of the supplied complete source in its original order and form. Examples and diagrams describe studied concepts, not completed implementation, production recovery, or tests.
+
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+<!-- SOURCE CORE START -->
+
+This phase combines earlier concepts into **production operations**.
+
+The key shift is:
+
+> Earlier chapters asked "How does this technology work?"  
+> Production engineering asks "What happens at 3 AM when it breaks?"
+
+---
+
+## 20.1 Backfills
+
+Backfill:
+
+> **Recompute historical data for a defined range.**
+
+Use cases:
+
+- pipeline outage,
+- bug fix,
+- new business logic,
+- missing data,
+- schema correction.
+
+Prefer scoped backfills.
+
+```text
+Bad:
+Recompute all 5 years
+
+Better:
+Recompute affected partitions only
+```
+
+Examples:
+
+```text
+2026-09-01 ~ 2026-09-03
+```
+
+or:
+
+```text
+event_date partition
+```
+
+Requirements:
+
+- idempotent tasks,
+- parameterized date ranges,
+- predictable output replacement,
+- resource controls.
+
+---
+
+## 20.2 Reprocessing
+
+Backfill is one form of reprocessing.
+
+### Kafka Replay
+
+```text
+Kafka offset
+ ↓
+Reconsume events
+```
+
+Useful when the Event Log remains the source of truth.
+
+### Bronze Replay
+
+```text
+Bronze Raw History
+ ↓
+new transformation
+ ↓
+rebuild Silver / Gold
+```
+
+This is one reason raw history is valuable.
+
+### Iceberg Snapshot Recovery
+
+If data corruption is recent:
+
+```text
+Current bad snapshot
+ ↓
+previous good snapshot
+```
+
+Time travel/rollback may help recovery.
+
+Important question:
+
+> **What is the authoritative source of truth?**
+
+Possible answers:
+
+```text
+Operational DB
+Kafka
+Bronze
+Iceberg Snapshot
+external source
+```
+
+This must be decided before incidents.
+
+---
+
+## 20.3 Incident Drill — Schema Break
+
+Example:
+
+```text
+Source:
+amount BIGINT
+
+changed to:
+amount STRING
+```
+
+Possible chain:
+
+```text
+Producer
+ ↓
+CDC / Event
+ ↓
+Flink/Spark
+ ↓
+Silver
+ ↓
+dbt
+ ↓
+Dashboard
+```
+
+Response:
+
+```text
+Detect schema change
+ ↓
+Stop/Quarantine incompatible data
+ ↓
+Use Lineage for impact analysis
+ ↓
+Fix producer/consumer
+ ↓
+Backfill affected data
+ ↓
+Validate
+```
+
+Prevention:
+
+- Data Contracts
+- Schema Registry
+- Compatibility checks
+- CI/CD validation
+
+---
+
+## 20.4 Incident Drill — Bad Data
+
+Examples:
+
+```text
+latency_ms = -100
+```
+
+or:
+
+```text
+90% of user_id is NULL
+```
+
+Response:
+
+```text
+Quality Alert
+ ↓
+Contain
+ ↓
+Quarantine / stop publish
+ ↓
+Root Cause
+ ↓
+Fix
+ ↓
+Reprocess
+ ↓
+Verify
+```
+
+Do not allow a technically successful pipeline to silently publish bad business data.
+
+---
+
+## 20.5 Incident Drill — Data Skew
+
+Symptoms:
+
+```text
+Most Spark tasks finish quickly
+One task runs forever
+```
+
+or:
+
+```text
+one Flink key becomes hot
+```
+
+Investigate:
+
+- key distribution,
+- null/default values,
+- join cardinality,
+- hot customers/teams.
+
+Possible responses:
+
+```text
+salting
+pre-aggregation
+heavy-key special handling
+partition strategy change
+AQE
+```
+
+For streaming, preserve ordering requirements when considering re-keying/salting.
+
+---
+
+## 20.6 Incident Drill — Small File Explosion
+
+Symptoms:
+
+```text
+millions of tiny Parquet files
+```
+
+Consequences:
+
+- metadata overhead,
+- slow query planning,
+- high object storage request count,
+- poor task efficiency.
+
+Causes:
+
+- excessive streaming commits,
+- too much partitioning,
+- too many small writes.
+
+Response:
+
+```text
+Compaction
+ ↓
+adjust target file size
+ ↓
+adjust write frequency
+ ↓
+reconsider partition strategy
+```
+
+---
+
+## 20.7 Incident Drill — Stale Table
+
+Example:
+
+```text
+Current time: 10:00
+Gold latest data: 08:40
+```
+
+Investigate layer by layer:
+
+```text
+Source Freshness?
+Kafka?
+Bronze?
+Silver?
+Gold?
+Dashboard?
+```
+
+This is why freshness should be measured at multiple points.
+
+---
+
+## 20.8 Incident Drill — Corrupt Transformation
+
+Example:
+
+```text
+WHERE event_type = 'clik'
+```
+
+Job succeeds.
+
+Result:
+
+```text
+0 rows
+```
+
+Pipeline health:
+
+```text
+GREEN
+```
+
+Data health:
+
+```text
+RED
+```
+
+Response:
+
+```text
+Volume / Quality anomaly
+ ↓
+Find changed transformation
+ ↓
+Fix code
+ ↓
+Backfill affected interval
+```
+
+Important lesson:
+
+> **Green Pipeline ≠ Healthy Data**
+
+---
+
+## 20.9 Incident Drill — CDC Failure
+
+Possible failures:
+
+```text
+Connector stopped
+Offset lost
+Required WAL expired
+Duplicate replay
+Schema changed
+```
+
+Normal recovery:
+
+```text
+Restart
+ ↓
+Stored Offset
+ ↓
+Replay
+ ↓
+Idempotent downstream
+```
+
+Severe recovery:
+
+```text
+Offset unavailable
+or WAL unavailable
+ ↓
+Snapshot / Re-bootstrap
+```
+
+---
+
+## 20.10 Capacity Planning
+
+Capacity planning means estimating whether the platform can handle expected volume and concurrency.
+
+Key inputs:
+
+```text
+events / second
+GB / TB per day
+retention days
+peak multiplier
+number of partitions
+file count
+Spark concurrency
+query concurrency
+streaming state size
+```
+
+Example:
+
+```text
+10k events/sec
+× average event size
+× 86,400 sec/day
+→ daily ingestion volume
+```
+
+Do not plan only around averages.
+
+Also consider:
+
+```text
+peak traffic
+backfill traffic
+incident replay
+month-end reports
+concurrent dashboards
+```
+
+---
+
+## 20.11 Kafka Capacity Questions
+
+Useful questions:
+
+```text
+How many events/sec?
+How many partitions?
+What retention?
+How many consumers?
+How much replay traffic?
+```
+
+Too few partitions:
+
+```text
+consumer parallelism limited
+```
+
+Too many partitions:
+
+```text
+operational overhead increases
+```
+
+---
+
+## 20.12 Lakehouse Capacity Questions
+
+Track:
+
+```text
+TB/day
+file count/day
+average file size
+partition count
+snapshot count
+delete file growth
+```
+
+Data size alone is not enough.
+
+```text
+1 TB in 8 files
+≠
+1 TB in 1,000,000 files
+```
+
+Operational characteristics are very different.
+
+---
+
+## 20.13 Spark Capacity Questions
+
+Consider:
+
+```text
+concurrent jobs
+shuffle volume
+executor memory
+task count
+CPU
+backfill overlap
+```
+
+A pipeline that works daily may fail when a 90-day backfill starts at the same time.
+
+Backfill needs its own capacity policy.
+
+---
+
+## 20.14 Query Capacity Questions
+
+For Trino / SQL Warehouse / Snowflake:
+
+```text
+concurrent users
+dashboard refresh rate
+query scan size
+join complexity
+memory
+peak BI windows
+```
+
+Interactive workloads and batch workloads should not necessarily share the same compute pool.
+
+Workload isolation is useful.
+
+---
+
+## 20.15 Cost Engineering
+
+Major cost drivers:
+
+```text
+Compute
+Storage
+Network
+Object Storage Requests
+Serving Stores
+Compaction
+Streaming always-on compute
+AI inference
+```
+
+### Compute optimization
+
+Reduce:
+
+```text
+unnecessary scan
+shuffle
+recomputation
+idle compute
+oversized clusters
+```
+
+### Storage optimization
+
+Manage:
+
+```text
+Retention
+Snapshot expiration
+Orphan files
+Duplicate datasets
+Raw data lifespan
+```
+
+### Serving cost
+
+Do not send every workload to the expensive analytical engine.
+
+Example:
+
+```text
+Heavy analytics
+→ Lakehouse
+
+Low-latency operational read
+→ Serving Store / Cache
+```
+
+### FinOps dimensions
+
+Tag by:
+
+```text
+team
+project
+environment
+pipeline
+product
+```
+
+so cost ownership is clear.
+
+---
+
+## 20.16 DR / Recovery
+
+DR = Disaster Recovery.
+
+Important recovery scenarios:
+
+```text
+Catalog loss
+Object storage problem
+Checkpoint loss
+CDC state loss
+Region outage
+Bad deployment
+Credential/policy corruption
+```
+
+---
+
+## 20.17 Catalog Recovery
+
+A Lakehouse table is more than files.
+
+If table metadata/catalog is lost:
+
+```text
+Parquet files may still exist
+but
+table may not be immediately usable
+```
+
+Therefore catalog metadata is production infrastructure.
+
+Protect it using:
+
+- managed service durability,
+- backup/export where available,
+- infrastructure-as-code for configuration,
+- recovery procedures.
+
+---
+
+## 20.18 Table Recovery
+
+Possible tools:
+
+```text
+Iceberg snapshot
+time travel
+rollback
+Bronze replay
+source replay
+```
+
+The fastest recovery depends on the failure type.
+
+---
+
+## 20.19 Checkpoint Loss
+
+Streaming systems depend on checkpoint/state.
+
+If Spark/Flink checkpoint is lost:
+
+```text
+Where should processing resume?
+```
+
+Possibilities:
+
+- replay from Kafka,
+- recover from Savepoint,
+- rebuild state,
+- restart from known timestamp.
+
+This can cause:
+
+- duplicate processing,
+- long recovery time,
+- downstream load spike.
+
+Plan it before an outage.
+
+---
+
+## 20.20 Source-of-Truth Decisions
+
+For every critical dataset, document:
+
+```text
+Source of Truth
+Recovery Source
+Maximum Replay Window
+Retention
+Owner
+SLO
+```
+
+Example:
+
+```text
+fact_llm_call
+
+Source of Truth:
+Kafka raw events for 7 days
++
+Iceberg Bronze after ingestion
+
+Recovery:
+Replay Kafka if <7 days
+Otherwise rebuild from Bronze
+```
+
+This turns recovery from improvisation into procedure.
+
+---
+
+## 20.21 Data Platform SLOs
+
+Core SLO categories:
+
+### Freshness
+
+```text
+Gold table < 15 min behind source
+```
+
+### Correctness
+
+```text
+duplicate rate < 0.01%
+required field completeness > 99.9%
+```
+
+### Availability
+
+```text
+Query layer available 99.9%
+```
+
+### Recovery Time
+
+RTO:
+
+> How quickly must the platform recover?
+
+Example:
+
+```text
+critical dataset RTO < 1 hour
+```
+
+### Recovery Point
+
+RPO:
+
+> How much data loss is acceptable?
+
+Example:
+
+```text
+RPO < 5 minutes
+```
+
+### Query Latency
+
+```text
+p95 dashboard query < 5 seconds
+```
+
+Different datasets need different SLOs.
+
+Tier them.
+
+```text
+Tier 1
+→ executive/business-critical
+→ strict SLO
+
+Tier 2
+→ standard analytics
+
+Tier 3
+→ experimental
+```
+
+---
+
+## 20.22 Production Runbook Mental Model
+
+For each critical pipeline know:
+
+```text
+Owner
+Source
+Destination
+SLO
+Alert
+Failure Modes
+Replay Procedure
+Backfill Procedure
+Rollback Procedure
+Cost Owner
+Downstream Impact
+```
+
+A mature platform is not defined only by architecture diagrams.
+
+It is also defined by:
+
+> **whether operators know exactly what to do when the architecture fails.**
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Appendix: existing study notes and application conditions
+
+The following preserves the prior explanations, caveats, links, Mermaid diagrams, and practical prompts. They are separate from the source body. No existing correct content was deleted or inserted into the middle of the source. Official-document review dates retain their prior values.
 
 This page records conceptual study and hypothetical incident drills. It does not claim that production recovery, drills, or performance tests were performed. It moves from how a technology works to **what to check and how to recover when it fails at 3 AM**. Product recovery behavior was checked against official documentation on 2026-09-26. Check the actual versions and settings again before use.
 
-## Decide before an incident
+### Decide before an incident
 
 For each critical dataset, define its owner, source of truth, recovery source, retention, maximum replay window, and SLO. Observe job success and data health separately. A fast recovery must not spread duplicates, gaps, or incorrect results.
 
@@ -54,7 +854,7 @@ flowchart TD
 
 This flow structures a recovery plan. Stopping publication, changing offsets, rolling back a snapshot, and publishing again require the system's approvals, controls for concurrent writes, and recovery prerequisites.
 
-## Backfills and reprocessing
+### Backfills and reprocessing
 
 A **backfill** recomputes historical data for a defined range. Use it after pipeline outages, bug fixes, new business logic, missing data, or schema corrections. Define the affected scope first. Instead of recomputing all five years, target `2026-09-01 ~ 2026-09-03` or affected `event_date` partitions.
 
@@ -71,7 +871,7 @@ Backfill is one form of **reprocessing**. Choose a recovery path based on the av
 
 Decide whether the authoritative source is the operational DB, Kafka, Bronze, an Iceberg snapshot, or an external source before an incident. Returning to an earlier snapshot and replaying valid changes made after it are separate tasks. See [Iceberg](lakehouse-iceberg.md) and [orchestration](orchestration.md).
 
-## Incident drill: schema break
+### Incident drill: schema break
 
 The hypothetical change is `amount BIGINT → amount STRING`. Its impact may follow `Producer → CDC/Event → Flink/Spark → Silver → dbt → Dashboard`.
 
@@ -84,39 +884,39 @@ The hypothetical change is `amount BIGINT → amount STRING`. Its impact may fol
 
 Use Data Contracts, a Schema Registry, compatibility checks, and CI/CD validation for prevention. Do not assume that automatic type conversion preserves business meaning. See [CDC](cdc-debezium.md) and [lineage](lineage-metadata.md).
 
-## Incident drill: bad data
+### Incident drill: bad data
 
 Suppose `latency_ms = -100`, or 90% of `user_id` values are NULL. Respond with **quality alert → contain → quarantine/stop publication → find cause → fix → reprocess → verify**. A technically successful pipeline must not silently publish bad business data. [Quality rules](data-quality.md) must also check business validity.
 
-## Incident drill: data skew
+### Incident drill: data skew
 
 Most Spark tasks may finish quickly while one runs for a very long time. A Flink key may become hot. Check key distribution, NULL/default value concentration, join cardinality, and traffic concentrated on particular customers or teams.
 
 Possible responses are salting, pre-aggregation, special handling for heavy keys, a different partition strategy, and Spark AQE. Match each candidate to the measured bottleneck first. In streaming, preserve required ordering per key when considering re-keying or salting. See [Spark](spark.md) and [Flink](flink.md).
 
-## Incident drill: small file explosion
+### Incident drill: small file explosion
 
 Millions of tiny Parquet files add metadata overhead, slow query planning, increase object storage requests, and reduce task efficiency. Check excessive streaming commits, too many partitions, and many small writes.
 
 Connect causes to responses: **consider compaction → adjust target file size → adjust write frequency → reconsider partition strategy**. Compaction also uses compute and I/O. Plan it with write and query traffic. [Iceberg maintenance](https://iceberg.apache.org/docs/latest/maintenance/) explains why small files may need rewriting.
 
-## Incident drill: stale table
+### Incident drill: stale table
 
 If it is 10:00 but Gold's latest data is from 08:40, do not rely on one layer's success signal. Check freshness along `Source → Kafka → Bronze → Silver → Gold → Dashboard`. Separate a late source from delays in transport, transformation, publication, or dashboard refresh. Measure freshness at several points. See [data observability](data-observability.md).
 
-## Incident drill: corrupt transformation
+### Incident drill: corrupt transformation
 
 Suppose a transformation uses `WHERE event_type = 'clik'` instead of the intended `click`. The job may succeed with zero output rows. **Pipeline GREEN / Data RED** can happen at the same time.
 
 Detect the volume or quality anomaly, find the changed transformation, fix the code, and backfill the affected interval. Checking successful tasks alone misses this failure. Data quality and system health are separate signals.
 
-## Incident drill: CDC failure
+### Incident drill: CDC failure
 
 Separate a stopped connector, a lost offset, expired required WAL, duplicate replay, and a schema change. If the stored offset and required log are valid, the normal recovery path is **restart → stored offset → replay → idempotent downstream processing**. An unavailable offset or WAL may require a snapshot/re-bootstrap plan.
 
 Snapshot selection and restart behavior depend on connector version, snapshot mode, and replication slot state. A restart cannot restore a lost log. Before re-bootstrap, define reconciliation, deduplication, and gap checks against existing downstream data. Compare the [official Debezium PostgreSQL documentation](https://debezium.io/documentation/reference/stable/connectors/postgresql.html) with the actual configuration.
 
-## Capacity planning
+### Capacity planning
 
 Capacity planning estimates whether the platform can handle expected volume and concurrency. Inputs include events/s, GB or TB/day, retention days, peak multiplier, partition count, file count, Spark concurrency, query concurrency, and streaming state size.
 
@@ -138,7 +938,7 @@ This estimates ingestion volume. It does not guarantee final storage or network 
 
 Backfill needs its own capacity policy. Define concurrency, resource limits, and normal workload priority. Workload isolation can protect interactive queries from resource competition with batch jobs.
 
-## Cost engineering
+### Cost engineering
 
 Major costs include compute, storage, network, object storage requests, serving stores, compaction, always-on streaming compute, and AI inference. Check the full system so that saving at one layer does not create a larger cost elsewhere.
 
@@ -149,25 +949,25 @@ Major costs include compute, storage, network, object storage requests, serving 
 
 Deletion changes both cost and recovery ability. Expiring a snapshot removes that time-travel option. If orphan cleanup uses a retention interval shorter than an active write, it can delete files before they are committed. Different path representations can also cause incorrect deletion. Before deletion, check required recovery windows, referenced snapshots, write duration, actual paths, and candidate files. Use an approved procedure. These are constraints for a cleanup plan, not instructions to execute deletion. [Iceberg maintenance safety](https://iceberg.apache.org/docs/latest/maintenance/)
 
-## DR: what must be recovered?
+### DR: what must be recovered?
 
 DR means Disaster Recovery. Scenarios include catalog loss, object storage problems, checkpoint loss, CDC state loss, a region outage, a bad deployment, and credential/policy corruption. Keep credentials out of public runbooks and LLM inputs. This page does not give a procedure to change actual credentials.
 
-### Catalog recovery
+#### Catalog recovery
 
 A lakehouse table is more than files. Parquet files may remain while lost metadata/catalog makes the table unusable for now. Protect catalog metadata as production infrastructure. Prepare managed service durability, supported backup/export, infrastructure-as-code for configuration, and recovery procedures. Check what each provider and catalog supports.
 
-### Table recovery
+#### Table recovery
 
 Candidates include Iceberg snapshots, time travel, rollback, Bronze replay, and source replay. The fastest correct path depends on the failure type. Check whether the snapshot remains, whether required files are accessible, and how valid later changes will be applied again.
 
-### Checkpoint loss
+#### Checkpoint loss
 
 After losing Spark/Flink checkpoint or state, first decide **where processing should resume**. Candidates include Kafka replay, recovery from a compatible Flink savepoint, rebuilding state, and restarting from a known timestamp. Resuming input at a timestamp alone does not restore earlier aggregate or join state.
 
 Plan for duplicate processing, long recovery, and a downstream load spike. Flink checkpoints mainly support failure recovery. Savepoints support planned stop, change, and restore operations managed by operators. Do not confuse their lifecycles or restore conditions, or apply Flink savepoints directly to Spark. Check actual state and code compatibility. [Flink checkpoints and savepoints](https://nightlies.apache.org/flink/flink-docs-stable/docs/ops/state/checkpoints_vs_savepoints/)
 
-## Dataset source-of-truth and recovery contract
+### Dataset source-of-truth and recovery contract
 
 Document these fields for every critical dataset.
 
@@ -182,7 +982,7 @@ Document these fields for every critical dataset.
 
 Seven days is a hypothetical policy, not a product default. Check actual log retention/compaction, gaps, and completed ingestion. Disappearance from Kafka does not prove presence in Bronze. This contract turns recovery from improvisation into a checkable procedure.
 
-## SLOs, RTO, and RPO
+### SLOs, RTO, and RPO
 
 The numbers below are examples for discussing requirements. They are not measured achievements or universal recommendations.
 
@@ -199,7 +999,7 @@ RTO asks **how quickly recovery must finish**. RPO asks **how much historical da
 
 Use different targets for different datasets. Tier 1 covers executive/business-critical data with strict SLOs. Tier 2 covers standard analytics. Tier 3 covers experiments. Match recovery investment and cost to importance.
 
-## Runbook fields and completion checks
+### Runbook fields and completion checks
 
 For each critical pipeline, record Owner, Source, Destination, SLO, Alert, Failure Modes, Replay Procedure, Backfill Procedure, Rollback Procedure, Cost Owner, and Downstream Impact.
 

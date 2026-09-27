@@ -1,8 +1,8 @@
 ---
 id: data-platform-orchestration
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-07-01
   - DPE-07-02
@@ -14,13 +14,272 @@ knowledge_ids:
   - DPE-07-08
 ---
 
-# 데이터 오케스트레이션
+# Chapter 7 — Orchestration
 
 이 문서는 Airflow를 중심으로 한 개념 학습이다. 실제 DAG를 배포·운영했다는 뜻이 아니다. 공식 문서는 2026-09-24에 확인했다.
 
-## DAG의 역할
+본문은 제공된 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 설명에 필요한 조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에서 구분한다.
 
-Orchestrator는 여러 작업의 순서, 시간, 실패, 재실행을 관리한다. DAG는 전체 workflow, task는 실행 단위, dependency는 작업 간 선행 조건, schedule은 실행 시점이나 주기를 뜻한다.
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+<!-- SOURCE CORE START -->
+## 7.1 DAG Fundamentals
+
+Airflow는:
+
+> **여러 데이터 작업의 순서, 시간, 실패, 재실행을 관리하는 Orchestrator**
+
+이다.
+
+### DAG
+
+전체 Workflow.
+
+### Task
+
+개별 실행 단위.
+
+### Dependency
+
+Task 실행 순서.
+
+### Schedule
+
+DAG 실행 시점.
+
+예:
+
+```text
+Extract
+ ↓
+Spark Transform
+ ↓
+dbt
+ ↓
+Quality Check
+ ↓
+Publish
+```
+
+Airflow는 데이터를 직접 대규모로 처리하기보다 다른 시스템을 지휘한다.
+
+---
+
+## 7.2 Operators / Tasks
+
+Operator:
+
+> Task를 어떤 방식으로 실행할지 정의.
+
+예:
+
+- Python Operator
+- SQL Operator
+- Bash Operator
+- Spark Job
+- dbt command
+
+Airflow 역할:
+
+```text
+Airflow
+→ Orchestrate
+
+Spark
+→ Compute
+
+dbt
+→ Transformation
+
+Trino
+→ Query
+```
+
+---
+
+## 7.3 Retries
+
+Task Failure는 두 종류로 생각할 수 있다.
+
+### Transient Failure
+
+- Network timeout
+- DB connection
+- 일시적 cluster issue
+
+Retry가 효과적.
+
+### Permanent Failure
+
+- SQL syntax error
+- 잘못된 Schema
+- Code bug
+
+Retry해도 해결되지 않음.
+
+### Idempotency
+
+Retry-safe Task는 여러 번 실행해도 최종 결과가 같아야 한다.
+
+나쁜 예:
+
+```text
+무조건 append
+```
+
+좋은 예:
+
+```text
+Partition overwrite
+MERGE
+replace
+```
+
+---
+
+## 7.4 Backfills
+
+Backfill:
+
+> **과거 데이터를 다시 계산하는 작업**
+
+사용 상황:
+
+- Pipeline 장애
+- Logic bug 수정
+- 데이터 누락
+- 새 컬럼 추가
+- Business Logic 변경
+
+### Full Backfill
+
+전체 기간 재처리.
+
+### Partial / Partition Backfill
+
+필요한 날짜/Partition만 재처리.
+
+Backfill도 Idempotency가 중요하다.
+
+---
+
+## 7.5 Sensors / Event Dependencies
+
+Sensor:
+
+> **특정 조건이 만족될 때까지 기다리는 Task**
+
+예:
+
+- S3 File 도착
+- Upstream DAG 완료
+- 데이터 준비 완료
+
+Schedule과 Dependency는 다르다.
+
+```text
+02:00 실행 시도
++
+실제 데이터 준비 확인
+```
+
+Polling 방식도 있고 Event-driven 방식도 있다.
+
+---
+
+## 7.6 Parameterization
+
+같은 DAG를 다양한 조건으로 재사용.
+
+예:
+
+```text
+process_date
+start_date
+end_date
+environment
+data_interval
+```
+
+좋은 Pipeline:
+
+```text
+"오늘 데이터 처리"
+```
+
+보다:
+
+```text
+"2026-09-24 데이터를 처리"
+```
+
+처럼 명시적인 Data Interval을 받는 것이 재실행/Backfill에 유리하다.
+
+---
+
+## 7.7 Failure Handling
+
+Task별 상태를 관리하므로 DAG 전체를 처음부터 다시 돌릴 필요가 없다.
+
+```text
+Extract ✅
+Spark ✅
+dbt ❌
+Quality -
+Publish -
+```
+
+dbt 문제 수정 후 해당 Task부터 재실행 가능.
+
+일반적으로 Upstream 실패 시 Downstream 실행을 막는다.
+
+Alert에는:
+
+- DAG
+- Task
+- 실패 시각
+- Retry 수
+- Error
+
+등의 Context가 있어야 한다.
+
+---
+
+## 7.8 Orchestrator Anti-Patterns
+
+피해야 할 것:
+
+1. Airflow Worker 안에서 대규모 Compute 직접 수행
+2. XCom으로 대용량 Data 전달
+3. DAG 간 과도하게 복잡한 의존성
+4. Airflow를 Streaming Engine처럼 사용
+
+좋은 역할 분리:
+
+```text
+Airflow
+→ Orchestration
+
+Spark
+→ Batch Compute
+
+Flink
+→ Streaming
+
+dbt
+→ SQL Transformation
+
+Iceberg
+→ Storage/Table
+```
+
+---
+
+<!-- SOURCE CORE END -->
+
+## 적용 시 보완할 점
+
+### 기존 흐름도
 
 ```mermaid
 flowchart LR
@@ -30,48 +289,31 @@ flowchart LR
   Q --> P[Publish]
 ```
 
-Airflow는 대규모 데이터를 직접 처리하기보다 계산 시스템을 지휘한다. Operator는 task 실행 방식을 정의한다. Python·SQL·Bash 작업, Spark job 제출, dbt command 실행 등이 예다. Airflow는 orchestration, Spark는 batch compute, Flink는 streaming, dbt는 SQL transformation 정의, Trino는 query, Iceberg는 table 계층을 맡는 역할 분리가 가능하다. 이 구분은 설계 예시이며 고정된 제품 조합은 아니다.
+### 원문 7.1·7.3·7.7의 설명 범위
 
-## Retry와 멱등성
+Dependency는 task 간 선행 조건을 뜻하며, schedule은 실행 시점이나 주기를 정한다. 일시적 실패도 retry로 반드시 해결되는 것은 아니다. 무조건 append하면 retry 때 중복 행이 생길 수 있다.
 
-일시 실패에는 network timeout, DB 연결 오류, 잠깐의 cluster 문제가 있다. Retry가 도움이 될 수 있다. SQL syntax error, 잘못된 schema, code bug 같은 영구 실패는 원인을 고치기 전까지 retry로 해결되지 않는다.
+Task 상태가 있다고 모든 경우에 실패 지점부터 복구할 수 있는 것은 아니다. 기존 upstream 결과와 구간이 유효한지 먼저 확인한다.
 
-Retry-safe task는 여러 번 실행해도 같은 최종 결과를 내야 한다. 무조건 append하면 중복이 생기기 쉽다. 특정 partition overwrite, MERGE, replace는 대안이지만 입력 구간과 key, transaction 경계를 올바르게 설계해야 멱등적이다. 명령 이름 자체가 안전성을 보장하지 않는다. 공식 지침도 retry 중 중복을 피하고 특정 partition을 읽고 쓰도록 권한다. [Airflow best practices](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+### Retry와 구간 재현성
 
-## Backfill과 명시적 구간
+Partition overwrite, MERGE, replace라는 명령 이름 자체가 멱등성을 보장하지 않는다. 입력 구간, key, transaction 경계를 올바르게 설계해야 한다. 공식 지침도 retry 중 중복을 피하고 특정 partition을 읽고 쓰도록 권한다. [Airflow best practices](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
 
-Backfill은 과거 데이터를 다시 계산하는 일이다. Pipeline 장애, logic bug 수정, 누락 데이터, 새 column, business logic 변경 때문에 필요할 수 있다. Full backfill은 전체 기간, partial/partition backfill은 필요한 날짜나 partition만 처리한다. 둘 다 멱등성이 필요하다.
+구간 경계와 timezone도 명확히 한다. 실행 시각의 `now()`나 최신 데이터에 의존하면 같은 과거 작업을 다시 돌려도 다른 결과가 나올 수 있다. [특정 partition과 data interval 사용](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
 
-같은 DAG는 `process_date`, `start_date`, `end_date`, `environment`, `data_interval` 같은 parameter로 재사용할 수 있다. “오늘 데이터”보다 “2026-09-24 데이터”처럼 대상 구간을 명시하면 재실행과 backfill이 쉽다. 구간 경계와 timezone도 명확히 한다. 실행 시각의 `now()`나 최신 데이터에 의존하면 같은 과거 작업을 다시 돌려도 다른 결과가 나올 수 있다. [특정 partition과 data interval 사용](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+### 준비 상태와 실패 전파
 
-## Schedule과 준비 상태
+사용 가능한 sensor·event 기능은 Airflow와 provider 버전에 따라 확인한다. 실패한 task부터 재실행하기 전에 기존 upstream 결과가 유효한지, 동일 구간인지 확인한다.
 
-Sensor는 특정 조건이 충족될 때까지 기다리는 task다. S3 file 도착, upstream DAG 완료, 데이터 준비 상태를 기다릴 수 있다. “02:00 실행 시도”와 “입력이 실제 준비됨”은 다르다. Schedule을 정했다고 데이터 dependency가 해결된 것은 아니다. 조건 확인에는 polling 방식과 event 기반 방식이 있다. 사용 가능한 sensor·event 기능은 Airflow와 provider 버전에 따라 확인한다.
+일반적인 `all_success` dependency는 upstream 성공을 기다린다. `all_done` 같은 다른 trigger rule은 실패·skip 뒤에도 실행될 수 있다. Publish gate의 실제 trigger rule을 확인한다. [Airflow trigger rules](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html#trigger-rules)
 
-## 실패 지점부터 복구
+실패 알림에는 실행 식별자와 데이터 구간도 함께 넣으면 조사에 도움이 된다.
 
-다음 상태에서는 전체 DAG를 처음부터 다시 돌릴 필요가 없을 수 있다.
+### 계산·데이터 전달의 책임
 
-```text
-Extract: success
-Spark: success
-dbt: failed
-Quality: not run
-Publish: not run
-```
+Airflow worker 안에서 대규모 compute를 수행하면 orchestration 자원이 계산 부하에 묶인다. XCom에는 작은 상태·경로를 전달하고 실제 대용량 데이터는 외부 공유 저장소에 둔다. [작업 간 통신](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
 
-dbt 문제를 고친 뒤 실패 task부터 재실행한다. 다만 기존 upstream 결과가 유효한지, 동일 구간인지 먼저 확인한다. 일반적인 `all_success` dependency는 upstream 성공을 기다린다. `all_done` 같은 다른 trigger rule은 실패·skip 뒤에도 실행될 수 있으므로 “upstream 실패 시 downstream이 항상 막힌다”는 설명은 부정확하다. Publish gate의 실제 trigger rule을 확인한다. [Airflow trigger rules](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html#trigger-rules)
-
-실패 알림에는 DAG, task, 실패 시각, retry 수, error를 넣는다. 해당 실행과 데이터 구간을 함께 식별하면 조사에 도움이 된다.
-
-## 피해야 할 설계
-
-- Airflow worker 안에서 대규모 compute를 수행하면 orchestration 자원이 계산 부하에 묶인다.
-- XCom으로 대용량 데이터를 넘기지 않는다. 작은 상태·경로를 전달하고 실제 데이터는 외부 저장소에 둔다.
-- DAG 간 의존성을 과도하게 얽으면 장애 전파와 재실행 범위를 이해하기 어렵다.
-- Airflow를 streaming engine처럼 사용하지 않는다. 지속적 event 처리는 적합한 engine에 맡긴다.
-
-XCom은 작은 메시지에 쓰고 큰 데이터는 공유 저장소에 두는 방식이 공식 권고와 일치한다. [작업 간 통신](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+DAG 간 의존성이 과도하면 장애 전파와 재실행 범위를 이해하기 어렵다. 지속적 event 처리는 적합한 streaming engine에 맡긴다. 본문의 제품 역할 구분은 설계 예시이며 고정된 제품 조합은 아니다.
 
 ## LLM 활용: backfill 계획 검토
 

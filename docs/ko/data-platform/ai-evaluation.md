@@ -1,8 +1,8 @@
 ---
 id: data-platform-ai-evaluation
 status: studied
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE2-16-02
   - DPE2-16-03
@@ -17,33 +17,1170 @@ knowledge_ids:
   - DPE2-16-12
 ---
 
-# AI 평가 데이터 플랫폼
+# Chapter 16 — AI Evaluation Data Platform
 
 이 페이지는 16.2–16.12의 개념 학습 기록이다. 아래 데이터·점수·비용·버전·게이트는 설명용 가상 예시이며 실제 운영 측정값이나 구현 결과가 아니다. [온라인 평가](online-evaluation.md)는 실제 실행을 관찰하고, offline 평가는 고정 사례로 변경을 비교한다. 실패를 회귀 사례로 전환하고 실행에 버전 묶음을 연결하는 것이 두 흐름의 접점이다.
 
-## 16.2 Offline 평가 데이터셋
+제공된 원문의 번호·하위 제목·문단·목록·예시 순서를 보존했다. 영문은 원문 그대로이며 한국어는 같은 구조의 번역이다. 기술 용어·필드·설명용 코드 값은 원문 표기를 유지한다. 기존 추가 설명은 뒤의 보완 절에 구분했다.
 
-같은 평가 데이터셋을 서로 다른 prompt·model·agent 버전에 실행하면 조건을 맞춰 비교할 수 있다. 다른 기간의 운영 traffic끼리 비교하는 것보다 입력 차이의 영향을 줄인다. 예를 들어 `Dataset v5 → Agent v10 / Agent v11 → Scores`를 비교한다.
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
 
-| Dataset v5 사례 | 확인할 범위 |
+<!-- SOURCE CORE START -->
+## 16.2 Offline Evaluation Datasets
+
+Offline Evaluation의 의미:
+
+> **고정된 평가 데이터셋을 서로 다른 Prompt / Model / Agent 버전에 실행하여 같은 조건에서 비교하는 것.**
+
+예:
+
+```text
+Evaluation Dataset v5
+
+Case 1
+→ normal request
+
+Case 2
+→ tool usage request
+
+Case 3
+→ permission violation attempt
+
+Case 4
+→ difficult RAG request
+
+Case 5
+→ known production regression
+```
+
+이어서:
+
+```text
+Dataset v5
+  ↓
+Agent v10
+  ↓
+Scores
+```
+
+그리고:
+
+```text
+Dataset v5
+  ↓
+Agent v11
+  ↓
+Scores
+```
+
+데이터셋이 고정되어 있으므로 서로 다른 운영 traffic 기간을 비교하는 것보다 훨씬 공정하게 비교할 수 있다.
+
+### 데이터셋에 포함할 수 있는 필드
+
+```text
+input
+expected_output
+expected_behavior
+expected_tool
+rubric
+category
+difficulty
+metadata
+```
+
+Agent 평가에서는 정확한 정답 하나만으로 충분하지 않은 경우가 많다.
+
+예:
+
+```text
+Input:
+"Show last week's AI cost by team."
+
+Expected behavior:
+- call analytics tool
+- use authorized dataset
+- aggregate by team
+- do not expose user-level PII
+```
+
+### 범주별 평가
+
+유용한 범주:
+
+```text
+General
+Tool Usage
+RAG
+Security
+Complex Reasoning
+Edge Cases
+Regression
+```
+
+다음 값만 보는 대신:
+
+```text
+Overall Score = 88%
+```
+
+아래도 함께 살핀다:
+
+```text
+General       = 95%
+Tool Usage    = 91%
+RAG           = 84%
+Security      = 100%
+Regression    = 70%
+```
+
+이렇게 하면 regression을 진단하기 쉽다.
+
+### Online과 offline의 순환
+
+```text
+Production
+   ↓
+Online Evaluation
+   ↓
+Failure discovered
+   ↓
+Add to Offline Dataset
+   ↓
+Evaluate new version
+   ↓
+Deploy
+   ↓
+Production
+```
+
+중요한 패턴:
+
+> **운영 실패 → Offline 회귀 사례**
+
+---
+
+## 16.3 Human Feedback
+
+Human Feedback의 의미:
+
+> **사람이 AI 응답을 직접 평가하여 품질 데이터를 만드는 것.**
+
+### 간단한 feedback
+
+```text
+👍
+👎
+```
+
+다음에 유용하다:
+
+- 품질이 낮은 trace 찾기
+- 실패 데이터셋 구성
+- 사람 검토의 우선순위 결정
+
+### 평점
+
+```text
+accuracy    = 4/5
+helpfulness = 5/5
+relevance   = 3/5
+```
+
+### 전문가 label 작성
+
+전문 분야나 중요한 판단이 필요한 분야에서는 전문가가 다음을 검토할 수 있다:
+
+```text
+technical correctness
+tool selection
+policy compliance
+citation quality
+domain-specific accuracy
+```
+
+### 평가 기준표(Rubric)
+
+“이 답변이 좋은가?”라고만 묻지 말고 rubric을 정의한다:
+
+```text
+Accuracy       0~2
+Relevance      0~2
+Groundedness   0~2
+Tool Selection 0~2
+Format         0~2
+```
+
+이렇게 하면 일관성이 높아진다.
+
+### 사람의 feedback도 완벽하지 않다
+
+평가자마다 판단이 다를 수 있다:
+
+```text
+Reviewer A → 5
+Reviewer B → 3
+```
+
+여기서 **inter-rater agreement(평가자 간 일치도)** 개념이 등장한다.
+
+핵심:
+
+> 사람의 label은 유용하지만 잡음이 있는 데이터이기도 하므로 그에 맞게 관리해야 한다.
+
+### 운영 feedback 순환
+
+```text
+Production Trace
+   ↓
+Thumbs Down
+   ↓
+Human Review
+   ↓
+Failure Label
+   ↓
+Regression Dataset
+```
+
+가능한 label:
+
+```text
+wrong_tool_selection
+hallucination
+retrieval_failure
+permission_violation
+bad_format
+```
+
+---
+
+## 16.4 Model-as-Judge Outputs
+
+Model-as-Judge의 의미:
+
+> **다른 LLM을 AI 응답의 평가자로 사용하는 것.**
+
+흐름:
+
+```text
+Input
++
+Response
++
+Optional Context
+     ↓
+Judge LLM
+     ↓
+Score + Reason
+```
+
+가능한 차원:
+
+```text
+Accuracy
+Relevance
+Helpfulness
+Groundedness
+Tool Usage
+Format Compliance
+Safety
+```
+
+RAG의 경우:
+
+```text
+Question
++
+Retrieved Context
++
+Response
+     ↓
+Judge
+```
+
+Judge는 답변이 제공된 문서에 근거하는지 평가할 수 있다.
+
+### Judge metadata 저장
+
+다음 값만 저장하지 않는다:
+
+```text
+score = 0.72
+```
+
+다음도 함께 저장한다:
+
+```text
+judge_model
+judge_model_version
+judge_prompt_version
+score
+reason
+timestamp
+```
+
+Judge 자체도 바뀔 수 있다.
+
+예:
+
+```text
+Judge v1 → 0.85
+Judge v2 → 0.72
+```
+
+Agent는 전혀 바뀌지 않았을 수도 있다.
+
+### Judge 보정
+
+표본에서 사람의 판단과 judge 출력을 비교한다:
+
+```text
+Human Score
+vs
+Judge Score
+```
+
+지속적으로 불일치하면 judge 모델이나 prompt를 조정해야 할 수 있다.
+
+### 사람 + Judge
+
+실무 패턴:
+
+```text
+100,000 traces
+→ Model-as-Judge
+
+Important 1,000 traces
+→ Human Review
+```
+
+Model-as-Judge는 대규모 평가를 가능하게 한다.
+
+사람 검토는 더 높은 신뢰도로 평가를 보정하는 역할을 한다.
+
+---
+
+## 16.5 Prompt Versions
+
+Prompt Versioning의 의미:
+
+> **Prompt를 버전이 있는 AI 자산으로 다루고 그 버전을 trace 및 평가 결과와 연결하는 것.**
+
+예:
+
+```text
+Prompt v1
+→ "Answer the user."
+
+Prompt v2
+→ "Answer the user.
+   Do not guess when evidence is missing.
+   Use tools when required."
+```
+
+평가:
+
+```text
+Prompt v1 → score 0.78
+Prompt v2 → score 0.89
+```
+
+유용한 metadata:
+
+```text
+prompt_id
+prompt_version
+prompt_text
+created_at
+created_by
+change_description
+```
+
+예:
+
+```text
+prompt_id      = agent_system_prompt
+prompt_version = 12
+change         = "Clarified tool usage rules"
+```
+
+### Prompt 버전을 trace와 연결해야 한다
+
+```text
+Trace
+ ├─ Agent v5
+ ├─ Model A
+ ├─ Prompt v12
+ └─ Score 0.91
+```
+
+그런 다음 비교한다:
+
+```text
+Prompt v11 vs Prompt v12
+```
+
+비교 기준:
+
+- 품질
+- Tool 성공
+- 비용
+- Latency
+
+### A/B 테스트
+
+```text
+50% → Prompt v10
+50% → Prompt v11
+```
+
+예:
+
+```text
+Prompt v10
+success = 87%
+cost    = $0.12
+
+Prompt v11
+success = 91%
+cost    = $0.17
+```
+
+품질이 가장 높은 prompt가 운영상 최선의 선택은 아닐 수 있다.
+
+### Prompt 자산은 system prompt 하나보다 넓다
+
+필요하면 각각 버전 관리한다:
+
+```text
+system_prompt
+tool_instruction
+retrieval_prompt
+judge_prompt
+summarization_prompt
+```
+
+---
+
+## 16.6 Model Versions
+
+Model Versioning의 의미:
+
+> **AI 결과를 생성한 정확한 모델 버전을 기록하는 것.**
+
+모델 이름만으로는 충분하지 않을 수 있다.
+
+```text
+model = model-X
+```
+
+하지만:
+
+```text
+model-X in June
+≠
+model-X in September
+```
+
+제공자가 serving snapshot을 갱신했다면 위처럼 달라질 수 있다.
+
+유용한 metadata:
+
+```text
+provider
+model_name
+model_version
+deployment_id
+endpoint
+```
+
+### 평가 축
+
+다음을 고정한다:
+
+```text
+Dataset v5
+Prompt v12
+Agent v7
+```
+
+그리고 비교한다:
+
+```text
+Model A
+quality = 0.88
+latency = 1.2s
+cost    = $0.04
+
+Model B
+quality = 0.91
+latency = 2.0s
+cost    = $0.02
+```
+
+### 자체 호스팅 모델
+
+vLLM이나 내부 모델을 사용할 때도 버전 관리는 중요하다.
+
+가능한 차원:
+
+```text
+checkpoint
+quantization
+tokenizer_version
+serving_config
+```
+
+### Fine-tuning 모델
+
+추적할 항목:
+
+```text
+base_model
+training_dataset_version
+training_config
+checkpoint_version
+```
+
+예:
+
+```text
+Base Model   → M1
+Training Set → train_v4
+Fine-tune    → ft_v7
+```
+
+---
+
+## 16.7 Agent Versions
+
+Agent Versioning의 의미:
+
+> **Prompt만이 아니라 agent의 전체 행동·설정을 버전 관리하는 것.**
+
+Agent에는 다음이 포함될 수 있다:
+
+```text
+Agent
+├─ System Prompt
+├─ Model
+├─ Tool Set
+├─ Tool Routing Logic
+├─ Retrieval
+├─ Memory
+└─ Workflow
+```
+
+어느 항목이든 바뀌면 행동이 달라질 수 있다.
+
+예:
+
+```text
+Agent v10
+→ tools A, B
+
+Agent v11
+→ tools A, B, C
+→ new routing rule
+```
+
+Prompt가 같아도 행동은 바뀔 수 있다.
+
+가능한 metadata:
+
+```text
+agent_version
+prompt_version
+model_version
+tool_set_version
+workflow_version
+retrieval_config_version
+memory_config_version
+```
+
+Agent Version은 **bundle version(버전 묶음)**으로 볼 수 있다.
+
+예:
+
+```text
+agent_version = v12
+prompt        = v8
+model         = model-A-v3
+toolset       = v4
+workflow      = v6
+retrieval     = v2
+```
+
+### Agent 버전 평가
+
+```text
+Dataset v7
+
+Agent v10
+quality = 0.84
+cost    = $0.08
+latency = 4.2s
+
+Agent v11
+quality = 0.91
+cost    = $0.11
+latency = 5.0s
+```
+
+Agent 평가에 포함할 수 있는 항목:
+
+```text
+quality
+cost
+latency
+tool success
+tool error rate
+retrieval quality
+```
+
+---
+
+## 16.8 Experiment Tracking
+
+Experiment Tracking의 의미:
+
+> **AI 실험의 설정과 결과 지표를 함께 기록하는 것.**
+
+예:
+
+```text
+Experiment A
+
+Dataset  = eval_v5
+Prompt   = prompt_v12
+Model    = model_A
+Agent    = agent_v7
+
+Quality  = 0.88
+Latency  = 3.2s
+Cost     = $0.05
+```
+
+유용한 실험 필드:
+
+```text
+experiment_id
+dataset_version
+prompt_version
+model_version
+agent_version
+evaluator_version
+runtime_config
+```
+
+결과에 포함할 수 있는 항목:
+
+```text
+accuracy
+groundedness
+tool_success_rate
+latency
+cost
+```
+
+### 가능하면 한 변수를 변경한다
+
+Prompt를 비교하려면:
+
+```text
+Dataset fixed
+Model fixed
+Agent logic fixed
+
+Prompt v10
+vs
+Prompt v11
+```
+
+모든 것이 동시에 바뀌면:
+
+```text
+Prompt changed
+Model changed
+Agent changed
+Dataset changed
+```
+
+결과를 해석하기 어렵다.
+
+### Offline과 Online 실험
+
+Offline:
+
+```text
+Fixed Evaluation Dataset
+→ Agent A vs B
+```
+
+Online:
+
+```text
+Production Traffic
+→ A/B Split
+```
+
+Offline은 배포 전 테스트에 더 안전하다.
+
+Online은 실제 환경의 근거를 제공한다.
+
+---
+
+## 16.9 Regression Datasets
+
+Regression Dataset:
+
+> **이후 릴리스에서도 계속 정상 동작해야 하는 과거 실패 사례의 모음.**
+
+운영 실패 예:
+
+```text
+Request:
+"Show last week's AI cost by team."
+
+Failure:
+wrong tool selected
+```
+
+수정 후:
+
+```text
+Failure Trace
+ ↓
+Regression Case
+```
+
+이후 릴리스:
+
+```text
+Agent v10
+Agent v11
+Agent v12
+   ↓
+Regression Dataset
+```
+
+가능한 범주:
+
+```text
+tool_selection_regression
+rag_regression
+security_regression
+format_regression
+```
+
+### 릴리스 게이트
+
+예:
+
+```text
+Critical Security Regression
+→ 100% pass required
+
+General Regression
+→ >= 98%
+```
+
+데이터셋도 발전한다:
+
+```text
+regression_v1
+regression_v2
+regression_v3
+```
+
+중요한 패턴:
+
+> **운영 실패 → 회귀 사례 → 릴리스 테스트**
+
+---
+
+## 16.10 Cost / Quality / Latency Analysis
+
+AI 최적화에서는 세 가지 주요 차원을 함께 봐야 한다:
+
+```text
+Quality
+Cost
+Latency
+```
+
+예:
+
+```text
+Model A
+Quality = 92
+Latency = 5s
+Cost    = $0.10
+
+Model B
+Quality = 90
+Latency = 1.5s
+Cost    = $0.02
+```
+
+제품 요구사항 없이 보편적인 최선의 선택을 정할 수는 없다.
+
+### 품질 지표
+
+예:
+
+```text
+accuracy
+groundedness
+success_rate
+tool_success_rate
+user_satisfaction
+judge_score
+regression_pass_rate
+```
+
+### 비용 지표
+
+예:
+
+```text
+input_tokens
+output_tokens
+model_cost
+tool_cost
+total_cost
+cost_per_execution
+cost_per_success
+cost_per_team
+```
+
+`cost_per_success`는 단순 요청 비용보다 유용할 수 있다.
+
+### Latency
+
+가능한 구성요소:
+
+```text
+TTFT
+LLM latency
+Tool latency
+Retrieval latency
+Total latency
+```
+
+Agent 예:
+
+```text
+LLM  2s
+Tool 5s
+LLM  2s
+---------
+Total 9s
+```
+
+평균만 보지 말고 percentile도 사용한다:
+
+```text
+p50
+p95
+p99
+```
+
+### Trade-off
+
+일반적인 패턴:
+
+```text
+Larger model
+→ Quality ↑
+→ Cost ↑
+→ Latency ↑
+```
+
+```text
+More tool calls
+→ Potential Quality ↑
+→ Cost ↑
+→ Latency ↑
+```
+
+```text
+Smaller context
+→ Cost ↓
+→ Latency ↓
+→ Quality may ↓
+```
+
+목표:
+
+> **품질을 유지하거나 개선하면서 가능한 범위에서 비용과 latency를 줄이는 것.**
+
+---
+
+## 16.11 Langfuse + Iceberg Integration
+
+핵심 개념:
+
+> **Langfuse는 AI 실행·평가 계층을 운영하고, Iceberg는 AI 데이터를 장기 분석 자산으로 저장한다.**
+
+역할 분리:
+
+```text
+Langfuse
+→ Traces
+→ LLM calls
+→ Tool calls
+→ Prompt/Response
+→ Scores
+→ Feedback
+→ Experiments
+→ Evaluation Datasets
+```
+
+```text
+Iceberg
+→ long-term history
+→ large-scale analytics
+→ cross-domain joins
+→ governance
+→ BI
+→ historical version analysis
+```
+
+아키텍처:
+
+```text
+Application / Agent
+        ↓
+     Langfuse
+        ↓
+Trace / Observation / Score
+        ↓
+ Export / API
+        ↓
+Object Storage
+        ↓
+     Iceberg
+        ↓
+Spark / dbt / Trino
+        ↓
+BI / Cost / Evaluation Analytics
+```
+
+### Iceberg 모델링 예
+
+Fact:
+
+```text
+fact_agent_execution
+fact_llm_call
+fact_tool_call
+fact_evaluation
+```
+
+Dimension:
+
+```text
+dim_agent
+dim_model
+dim_prompt
+dim_team
+```
+
+### Bronze / Silver / Gold
+
+```text
+Langfuse Export
+     ↓
+Bronze
+→ raw traces / observations / scores
+
+     ↓
+
+Silver
+→ normalized calls
+→ version linkage
+→ cost normalization
+→ error categorization
+
+     ↓
+
+Gold
+→ team AI cost
+→ agent success rate
+→ prompt quality
+→ model p95 latency
+→ cost per successful execution
+```
+
+### 모든 것을 Langfuse에만 두지 않는 이유
+
+기업 분석에서는 다음이 필요할 수 있다:
+
+```text
+Langfuse Trace
++
+HR Organization Data
++
+Finance Cost
++
+Product Usage
++
+Business KPI
+```
+
+이런 분석은 데이터 플랫폼에서 수행하는 것이 더 자연스럽다.
+
+### Source of truth 분리
+
+```text
+Git
+→ Agent Code / Workflow / Config
+
+Langfuse
+→ AI Trace / Prompt / Evaluation Operations
+
+Iceberg
+→ Long-term Analytical History
+```
+
+---
+
+## 16.12 Where Are All These Versions Usually Managed?
+
+학습 중 추가 질문으로 나온 내용이다.
+
+답변:
+
+> **버전은 보통 하나의 시스템에서 모두 관리하지 않는다. 자산 유형에 따라 관리하고 실험·릴리스 식별자로 연결한다.**
+
+일반적인 매핑:
+
+| 자산 | 일반적인 관리 시스템 |
 |---|---|
-| Case 1 | 일반 요청 |
-| Case 2 | tool 사용 요청 |
-| Case 3 | 권한 위반 시도 |
-| Case 4 | 어려운 RAG 요청 |
-| Case 5 | 알려진 운영 회귀 |
+| Prompt 버전 | Langfuse / MLflow / Git |
+| Model 버전 | MLflow Model Registry / provider model snapshot |
+| Agent 버전 | Git release / application release |
+| Tool / Workflow 버전 | Git / config registry |
+| 평가 데이터셋 버전 | Langfuse / MLflow / Lakehouse |
+| Judge 버전 | Langfuse / MLflow + Git |
+| Embedding 모델 | Model Registry / config |
+| Retrieval 설정 | Git / config registry |
+| 전체 실험 | Langfuse / MLflow |
 
-항목에는 `input`, `expected_output`, `expected_behavior`, `expected_tool`, `rubric`, `category`, `difficulty`, `metadata`를 담을 수 있다. Agent는 정답 문자열 하나보다 행동 조건이 중요할 수 있다. “지난주 팀별 AI 비용을 보여 줘”의 기대 행동은 analytics tool 호출, 허용된 데이터셋 사용, 팀별 집계, 사용자 수준 PII 비노출이다.
+정리된 구조:
 
-범주는 General, Tool Usage, RAG, Security, Complex Reasoning, Edge Cases, Regression으로 나눌 수 있다. 전체 점수 `88%`만 보면 취약 범주를 놓친다.
+```text
+Git
+├─ Agent Code
+├─ Tool Logic
+├─ Workflow
+├─ Retrieval Config
+└─ Deployment Config
 
-| 범주 | 설명용 결과 |
-|---|---|
-| General | 95% |
-| Tool Usage | 91% |
-| RAG | 84% |
-| Security | 100% |
-| Regression | 70% |
+Langfuse / MLflow
+├─ Prompt Versions
+├─ Traces
+├─ Scores
+├─ Feedback
+├─ Evaluation Datasets
+└─ Experiments
+
+Model Registry
+└─ Self-hosted / fine-tuned models
+
+Iceberg
+├─ Long-term telemetry history
+├─ Long-term evaluation history
+└─ Enterprise analytics
+```
+
+통합 실험 기록 예:
+
+```text
+experiment_id       = EXP-1042
+
+agent_release       = 1.7.3
+git_commit          = abc123
+
+prompt_version      = 12
+model_version       = model-A-2026-09
+dataset_version     = eval-v8
+evaluator_version   = judge-v4
+
+retrieval_version   = v3
+toolset_version     = v5
+
+quality_score       = 0.92
+latency_p95         = 3.4s
+cost_per_execution  = $0.08
+```
+
+이 기록은 평가를 재현하고 설명할 수 있게 한다.
+
+---
+
+<!-- SOURCE CORE END -->
+
+## 적용 시 보완할 점
+
+아래는 기존 문서에서 제공한 추가 설명과 조건이다. 본문 원문의 표현과 구분하여 읽는다. 공식 문서 확인일은 기존 2026-09-26을 유지하며 새 실행 검증을 뜻하지 않는다.
+
+### 16.2 Offline 평가 데이터셋 — 보완
+
+핵심은 **운영 실패 → offline regression case**다. 고정 입력은 공정한 비교를 돕지만 evaluator·데이터 권한·검색 상태까지 자동으로 고정하지는 않는다. 이는 재현성을 위한 추가 설계 주의사항이다.
+
+### 16.4 Model-as-Judge — 보완
+
+표본의 Human Score와 Judge Score를 비교하여 보정한다. 지속적인 불일치가 있으면 judge 모델이나 prompt를 검토한다. 설명용 규모 예시는 `100,000 traces → Model-as-Judge`, `중요한 1,000 traces → Human Review`다. Judge는 규모를 확보하고, 사람 검토는 보정의 신뢰도를 높이는 역할이다. 사람도 오류가 있으므로 완전한 정답 보장은 아니다.
+
+### 16.5 Prompt 버전 — 보완
+
+유용한 필드는 `prompt_id`, `prompt_version`, `prompt_text`, `created_at`, `created_by`, `change_description`이다. 예를 들어 `prompt_id=agent_system_prompt`, `prompt_version=12`, 변경 내용 “tool 사용 규칙 명확화”를 기록한다. 실제 작성자 정보는 내부 권한과 개인정보 기준에 따라 관리하며 공개 예시에는 넣지 않는다.
+
+### 16.6 Model 버전 — 보완
+
+결과를 생성한 정확한 모델 버전을 기록한다. `model=model-X`만으로는 부족할 수 있다. 제공자가 serving snapshot을 바꾼 경우 같은 이름의 6월과 9월 모델이 다를 수 있다. `provider`, `model_name`, `model_version`, `deployment_id`, `endpoint`를 기록하되 내부 endpoint와 credential은 공개 문서에 넣지 않는다.
+
+### 16.8 Experiment tracking — 보완
+
+가능하면 한 변수를 바꾼다. Prompt v10과 v11을 비교할 때 dataset·model·agent logic을 고정한다. Prompt·model·agent·dataset을 동시에 바꾸면 결과 차이를 해석하기 어렵다. Offline 실험은 고정 평가 데이터로 Agent A/B를 비교하여 배포 전 위험을 줄인다. Online 실험은 실제 traffic의 A/B 분할로 현실 조건의 근거를 얻는다. Online 결과는 traffic 구성과 실험 조건도 함께 검토한다.
+
+### 16.9 Regression 데이터셋 — 보완
+
+범주는 `tool_selection_regression`, `rag_regression`, `security_regression`, `format_regression` 등이 있다. 설명용 release gate는 Critical Security Regression `100%` 통과, General Regression `>=98%`다. 이 값은 보편적 안전 기준이 아니며 실제 위험과 요구사항에 맞춰 정한다. 데이터셋도 `regression_v1 → v2 → v3`으로 버전 관리한다.
+
+**Production Failure → Regression Case → Release Test**가 반복 구조다. 통과율에는 실패와 미평가를 구분하는 분모 정의가 필요하다.
+
+### 16.10 Cost / Quality / Latency — 보완
+
+`cost_per_success`는 요청당 원가보다 유용할 수 있다. 예를 들어 순차 실행 `LLM 2s + Tool 5s + LLM 2s = Total 9s`는 tool이 큰 지연 원인임을 보여 준다. 평균뿐 아니라 percentile을 본다.
+
+큰 모델은 품질·비용·지연이 함께 증가할 수 있다. Tool 호출을 늘리면 품질을 개선할 가능성이 있지만 비용과 latency도 늘 수 있다. Context를 줄이면 비용·latency가 감소할 수 있지만 품질도 떨어질 수 있다. 이들은 경향과 가설이며 항상 성립하는 법칙이 아니다. 목표는 품질을 유지·개선하면서 가능한 비용과 latency를 줄이는 것이다.
+
+### 16.11 Langfuse + Iceberg — 보완
+
+역할 분리는 제안 아키텍처이며 배포 사실이나 자동 연동 보장이 아니다. Langfuse는 traces, LLM/tool calls, prompt/response, scores, feedback, experiments, evaluation datasets의 운영에 쓴다. Iceberg는 장기 이력, 대규모 분석, 도메인 간 join, governance, BI, 과거 버전 분석을 위한 테이블 계층이다.
+
+Object storage의 export 파일이 자동으로 Iceberg 테이블이 되는 것은 아니다. 수집·변환·commit 경로가 필요하다. Langfuse는 blob storage export와 public API를 제공한다. 지원 형식·필드·버전·호스팅 옵션은 도입 시 확인한다. [Export 문서](https://langfuse.com/docs/api-and-data-platform/features/export-to-blob-storage), [Public API](https://langfuse.com/docs/api-and-data-platform/features/public-api).
+
+Langfuse만으로 충분하지 않은 경우는 trace에 HR 조직 데이터, 재무 비용, 제품 사용량, business KPI를 결합해야 할 때다. 이런 통합 분석은 데이터 플랫폼의 역할이다. 실제 민감 데이터 결합은 목적과 접근 범위에 맞게 제한한다.
+
+Source of truth의 설명용 분리는 Git의 agent code/workflow/config, Langfuse의 AI trace/prompt/evaluation 운영, Iceberg의 장기 분석 이력이다. [Iceberg](lakehouse-iceberg.md), [분석 모델링](analytical-modeling.md), [AI-ready 데이터](ai-ready-data.md)와 연결된다.
+
+### 16.12 모든 버전은 어디에서 관리하는가? — 보완
+
+한 시스템에 몰아넣기보다 자산별 관리 시스템을 정하고 experiment/release ID로 연결한다. 다음은 일반적인 선택지이며 제품마다 동일한 버전 의미나 기능을 보장하지 않는다.
+
+통합 기록 예시에서 commit과 모델명 등은 설명용 가상 값이다.
+
+이 연결은 재현·설명에 필요한 근거다. ID만으로 동일 실행이 자동 보장되지는 않으므로 실제 artifact·입력·runtime과 외부 상태도 보존해야 한다.
+
+공식 문서 확인일은 2026-09-26이며 설치·실행 검증은 하지 않았다. Langfuse dataset item 변경은 timestamp 기반 버전을 만들지만 dataset schema 변경은 같은 버전 관리에 포함되지 않는다. 평가에 사용한 item 버전과 schema 정의를 구분하여 기록한다. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
+
+MLflow prompt version은 변경 불가능한 버전이며 alias는 가리키는 버전이 바뀔 수 있다. Model Registry도 alias로 모델 버전을 참조할 수 있다. 따라서 재현 기록에는 움직이는 alias만 남기지 말고 실제 사용한 버전을 저장한다. [Prompt Registry](https://mlflow.org/docs/latest/genai/prompt-registry/), [Model Registry workflow](https://mlflow.org/docs/latest/ml/model-registry/workflow/).
+
+
+### 보완 흐름도
 
 ```mermaid
 flowchart LR
@@ -55,125 +1192,6 @@ flowchart LR
     R --> P
 ```
 
-핵심은 **운영 실패 → offline regression case**다. 고정 입력은 공정한 비교를 돕지만 evaluator·데이터 권한·검색 상태까지 자동으로 고정하지는 않는다. 이는 재현성을 위한 추가 설계 주의사항이다.
-
-## 16.3 Human feedback
-
-사람이 응답을 직접 평가하여 품질 데이터를 만든다. 👍/👎는 낮은 품질 trace 탐색, 실패 데이터셋 구성, 사람 검토 우선순위에 유용하다. 세부 rating 예시는 accuracy `4/5`, helpfulness `5/5`, relevance `3/5`다.
-
-전문가는 기술적 정확성, tool 선택, 정책 준수, citation 품질, 도메인 정확성을 검토할 수 있다. 전문·고위험 분야에서는 해당 지식이 있는 검토자가 필요하다. “좋은 답인가?”보다 rubric을 명시하면 기준을 맞추기 쉽다.
-
-| Rubric 차원 | 설명용 척도 |
-|---|---|
-| Accuracy | 0–2 |
-| Relevance | 0–2 |
-| Groundedness | 0–2 |
-| Tool Selection | 0–2 |
-| Format | 0–2 |
-
-사람도 완벽한 정답은 아니다. 같은 응답을 Reviewer A는 `5`, B는 `3`으로 평가할 수 있다. **Inter-rater agreement**는 평가자 간 일치도를 뜻한다. 사람 label도 잡음이 있는 데이터로 관리한다.
-
-운영 흐름은 `Production Trace → Thumbs Down → Human Review → Failure Label → Regression Dataset`이다. 실패 label 예시는 `wrong_tool_selection`, `hallucination`, `retrieval_failure`, `permission_violation`, `bad_format`이다.
-
-## 16.4 Model-as-Judge
-
-다른 LLM을 평가자로 사용한다. `Input + Response + Optional Context → Judge LLM → Score + Reason`으로 기록한다. Accuracy, Relevance, Helpfulness, Groundedness, Tool Usage, Format Compliance, Safety를 평가 차원으로 삼을 수 있다. RAG는 `Question + Retrieved Context + Response`를 주어 제공 문서에 응답이 근거하는지 평가한다.
-
-점수 `0.72`만 남기지 말고 `judge_model`, `judge_model_version`, `judge_prompt_version`, `score`, `reason`, `timestamp`를 함께 저장한다. Agent가 같아도 judge v1의 `0.85`와 judge v2의 `0.72`는 다를 수 있다. 점수 하락을 곧바로 agent 퇴행으로 판단하지 않는다.
-
-표본의 Human Score와 Judge Score를 비교하여 보정한다. 지속적인 불일치가 있으면 judge 모델이나 prompt를 검토한다. 설명용 규모 예시는 `100,000 traces → Model-as-Judge`, `중요한 1,000 traces → Human Review`다. Judge는 규모를 확보하고, 사람 검토는 보정의 신뢰도를 높이는 역할이다. 사람도 오류가 있으므로 완전한 정답 보장은 아니다.
-
-## 16.5 Prompt 버전
-
-Prompt를 버전 있는 자산으로 관리하고 trace·평가와 연결한다.
-
-| 예시 버전 | 지시 | 설명용 평가 |
-|---|---|---|
-| v1 | 사용자에게 답하세요. | 0.78 |
-| v2 | 사용자에게 답하세요. 근거가 없으면 추측하지 마세요. 필요하면 tool을 사용하세요. | 0.89 |
-
-유용한 필드는 `prompt_id`, `prompt_version`, `prompt_text`, `created_at`, `created_by`, `change_description`이다. 예를 들어 `prompt_id=agent_system_prompt`, `prompt_version=12`, 변경 내용 “tool 사용 규칙 명확화”를 기록한다. 실제 작성자 정보는 내부 권한과 개인정보 기준에 따라 관리하며 공개 예시에는 넣지 않는다.
-
-`Trace → Agent v5 / Model A / Prompt v12 / Score 0.91`처럼 연결하면 v11과 v12의 품질, tool 성공, 비용, latency를 비교할 수 있다. A/B traffic을 `50% → Prompt v10`, `50% → Prompt v11`로 나누는 설명용 예시는 다음과 같다.
-
-| Prompt | 성공률 | 비용 |
-|---|---|---|
-| v10 | 87% | $0.12 |
-| v11 | 91% | $0.17 |
-
-품질이 가장 높은 prompt가 운영상 최선이라는 뜻은 아니다. 필요하면 `system_prompt`, `tool_instruction`, `retrieval_prompt`, `judge_prompt`, `summarization_prompt`를 따로 버전 관리한다.
-
-## 16.6 Model 버전
-
-결과를 생성한 정확한 모델 버전을 기록한다. `model=model-X`만으로는 부족할 수 있다. 제공자가 serving snapshot을 바꾼 경우 같은 이름의 6월과 9월 모델이 다를 수 있다. `provider`, `model_name`, `model_version`, `deployment_id`, `endpoint`를 기록하되 내부 endpoint와 credential은 공개 문서에 넣지 않는다.
-
-`Dataset v5`, `Prompt v12`, `Agent v7`을 고정한 비교 예시다.
-
-| Model | 품질 | Latency | 비용 |
-|---|---|---|---|
-| A | 0.88 | 1.2s | $0.04 |
-| B | 0.91 | 2.0s | $0.02 |
-
-vLLM 등으로 자체 호스팅할 때도 `checkpoint`, `quantization`, `tokenizer_version`, `serving_config`가 재현 조건이다. Fine-tuned 모델은 `base_model`, `training_dataset_version`, `training_config`, `checkpoint_version`을 연결한다. 예시는 `Base Model M1 → Training Set train_v4 → Fine-tune ft_v7`이다.
-
-## 16.7 Agent 버전
-
-Agent는 system prompt, model, tool set, tool routing logic, retrieval, memory, workflow를 포함한다. Prompt가 같아도 v10의 tools A·B가 v11에서 A·B·C와 새 routing rule로 바뀌면 행동이 달라진다.
-
-기록할 필드는 `agent_version`, `prompt_version`, `model_version`, `tool_set_version`, `workflow_version`, `retrieval_config_version`, `memory_config_version`이다. Agent version은 전체 **bundle version**으로 볼 수 있다.
-
-```text
-agent_version = v12
-prompt        = v8
-model         = model-A-v3
-toolset       = v4
-workflow      = v6
-retrieval     = v2
-```
-
-Dataset v7을 고정한 예시:
-
-| Agent | 품질 | 비용 | Latency |
-|---|---|---|---|
-| v10 | 0.84 | $0.08 | 4.2s |
-| v11 | 0.91 | $0.11 | 5.0s |
-
-품질·비용·latency 외에 tool 성공률, tool 오류율, retrieval 품질도 평가한다.
-
-## 16.8 Experiment tracking
-
-실험 설정과 결과를 함께 기록한다. 예를 들어 Experiment A는 Dataset `eval_v5`, Prompt `prompt_v12`, Model `model_A`, Agent `agent_v7`이며 품질 `0.88`, latency `3.2s`, 비용 `$0.05`다.
-
-실험 필드는 `experiment_id`, `dataset_version`, `prompt_version`, `model_version`, `agent_version`, `evaluator_version`, `runtime_config`다. 결과에는 accuracy, groundedness, tool_success_rate, latency, cost를 포함한다.
-
-가능하면 한 변수를 바꾼다. Prompt v10과 v11을 비교할 때 dataset·model·agent logic을 고정한다. Prompt·model·agent·dataset을 동시에 바꾸면 결과 차이를 해석하기 어렵다. Offline 실험은 고정 평가 데이터로 Agent A/B를 비교하여 배포 전 위험을 줄인다. Online 실험은 실제 traffic의 A/B 분할로 현실 조건의 근거를 얻는다. Online 결과는 traffic 구성과 실험 조건도 함께 검토한다.
-
-## 16.9 Regression 데이터셋
-
-과거에 실패했던 사례가 이후 릴리스에서도 계속 통과해야 한다. “지난주 팀별 AI 비용” 요청에서 잘못된 tool을 선택한 trace를 수정 후 regression case로 만든다. Agent v10·v11·v12를 같은 회귀 데이터에 실행한다.
-
-범주는 `tool_selection_regression`, `rag_regression`, `security_regression`, `format_regression` 등이 있다. 설명용 release gate는 Critical Security Regression `100%` 통과, General Regression `>=98%`다. 이 값은 보편적 안전 기준이 아니며 실제 위험과 요구사항에 맞춰 정한다. 데이터셋도 `regression_v1 → v2 → v3`으로 버전 관리한다.
-
-**Production Failure → Regression Case → Release Test**가 반복 구조다. 통과율에는 실패와 미평가를 구분하는 분모 정의가 필요하다.
-
-## 16.10 Cost / Quality / Latency
-
-세 축을 함께 본다. Model A는 품질 `92`, latency `5s`, 비용 `$0.10`이고 Model B는 품질 `90`, latency `1.5s`, 비용 `$0.02`일 수 있다. 제품 요구사항 없이 보편적인 승자를 정할 수 없다.
-
-| 축 | 지표 예시 |
-|---|---|
-| Quality | accuracy, groundedness, success_rate, tool_success_rate, user_satisfaction, judge_score, regression_pass_rate |
-| Cost | input_tokens, output_tokens, model_cost, tool_cost, total_cost, cost_per_execution, cost_per_success, cost_per_team |
-| Latency | TTFT, LLM latency, tool latency, retrieval latency, total latency; p50, p95, p99 |
-
-`cost_per_success`는 요청당 원가보다 유용할 수 있다. 예를 들어 순차 실행 `LLM 2s + Tool 5s + LLM 2s = Total 9s`는 tool이 큰 지연 원인임을 보여 준다. 평균뿐 아니라 percentile을 본다.
-
-큰 모델은 품질·비용·지연이 함께 증가할 수 있다. Tool 호출을 늘리면 품질을 개선할 가능성이 있지만 비용과 latency도 늘 수 있다. Context를 줄이면 비용·latency가 감소할 수 있지만 품질도 떨어질 수 있다. 이들은 경향과 가설이며 항상 성립하는 법칙이 아니다. 목표는 품질을 유지·개선하면서 가능한 비용과 latency를 줄이는 것이다.
-
-## 16.11 Langfuse + Iceberg
-
-역할 분리는 제안 아키텍처이며 배포 사실이나 자동 연동 보장이 아니다. Langfuse는 traces, LLM/tool calls, prompt/response, scores, feedback, experiments, evaluation datasets의 운영에 쓴다. Iceberg는 장기 이력, 대규모 분석, 도메인 간 join, governance, BI, 과거 버전 분석을 위한 테이블 계층이다.
-
 ```mermaid
 flowchart TD
     A[Application or Agent] --> L[Langfuse]
@@ -184,74 +1202,6 @@ flowchart TD
     I --> C[Spark / dbt / Trino]
     C --> B[BI / Cost / Evaluation analytics]
 ```
-
-Object storage의 export 파일이 자동으로 Iceberg 테이블이 되는 것은 아니다. 수집·변환·commit 경로가 필요하다. Langfuse는 blob storage export와 public API를 제공한다. 지원 형식·필드·버전·호스팅 옵션은 도입 시 확인한다. [Export 문서](https://langfuse.com/docs/api-and-data-platform/features/export-to-blob-storage), [Public API](https://langfuse.com/docs/api-and-data-platform/features/public-api).
-
-설명용 사실 테이블은 `fact_agent_execution`, `fact_llm_call`, `fact_tool_call`, `fact_evaluation`이다. 차원은 `dim_agent`, `dim_model`, `dim_prompt`, `dim_team`이다.
-
-| 계층 | 데이터와 변환 |
-|---|---|
-| Bronze | raw traces / observations / scores |
-| Silver | call 정규화, version 연결, 비용 정규화, 오류 분류 |
-| Gold | 팀 AI 비용, agent 성공률, prompt 품질, model p95 latency, 성공 실행당 비용 |
-
-Langfuse만으로 충분하지 않은 경우는 trace에 HR 조직 데이터, 재무 비용, 제품 사용량, business KPI를 결합해야 할 때다. 이런 통합 분석은 데이터 플랫폼의 역할이다. 실제 민감 데이터 결합은 목적과 접근 범위에 맞게 제한한다.
-
-Source of truth의 설명용 분리는 Git의 agent code/workflow/config, Langfuse의 AI trace/prompt/evaluation 운영, Iceberg의 장기 분석 이력이다. [Iceberg](lakehouse-iceberg.md), [분석 모델링](analytical-modeling.md), [AI-ready 데이터](ai-ready-data.md)와 연결된다.
-
-## 16.12 모든 버전은 어디에서 관리하는가?
-
-한 시스템에 몰아넣기보다 자산별 관리 시스템을 정하고 experiment/release ID로 연결한다. 다음은 일반적인 선택지이며 제품마다 동일한 버전 의미나 기능을 보장하지 않는다.
-
-| 자산 | 관리 선택지 |
-|---|---|
-| Prompt version | Langfuse / MLflow / Git |
-| Model version | MLflow Model Registry / provider model snapshot |
-| Agent version | Git release / application release |
-| Tool / workflow version | Git / config registry |
-| Evaluation dataset version | Langfuse / MLflow / lakehouse |
-| Judge version | Langfuse / MLflow + Git |
-| Embedding model | Model registry / config |
-| Retrieval config | Git / config registry |
-| Full experiment | Langfuse / MLflow |
-
-구조 예시는 다음과 같다.
-
-```text
-Git
-  Agent code / Tool logic / Workflow / Retrieval config / Deployment config
-Langfuse or MLflow
-  Prompt versions / Traces / Scores / Feedback / Evaluation datasets / Experiments
-Model registry
-  Self-hosted models / Fine-tuned models
-Iceberg
-  Long-term telemetry history / Evaluation history / Enterprise analytics
-```
-
-통합 기록 예시에서 commit과 모델명 등은 설명용 가상 값이다.
-
-```text
-experiment_id       = EXP-1042
-agent_release       = 1.7.3
-git_commit          = abc123
-prompt_version      = 12
-model_version       = model-A-2026-09
-dataset_version     = eval-v8
-evaluator_version   = judge-v4
-retrieval_version   = v3
-toolset_version     = v5
-quality_score       = 0.92
-latency_p95         = 3.4s
-cost_per_execution  = $0.08
-```
-
-이 연결은 재현·설명에 필요한 근거다. ID만으로 동일 실행이 자동 보장되지는 않으므로 실제 artifact·입력·runtime과 외부 상태도 보존해야 한다.
-
-### 제품별 버전 주의사항
-
-공식 문서 확인일은 2026-09-26이며 설치·실행 검증은 하지 않았다. Langfuse dataset item 변경은 timestamp 기반 버전을 만들지만 dataset schema 변경은 같은 버전 관리에 포함되지 않는다. 평가에 사용한 item 버전과 schema 정의를 구분하여 기록한다. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
-
-MLflow prompt version은 변경 불가능한 버전이며 alias는 가리키는 버전이 바뀔 수 있다. Model Registry도 alias로 모델 버전을 참조할 수 있다. 따라서 재현 기록에는 움직이는 alias만 남기지 말고 실제 사용한 버전을 저장한다. [Prompt Registry](https://mlflow.org/docs/latest/genai/prompt-registry/), [Model Registry workflow](https://mlflow.org/docs/latest/ml/model-registry/workflow/).
 
 ## LLM in Practice: 릴리스 평가 설계 검토
 

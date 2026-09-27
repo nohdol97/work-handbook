@@ -1,8 +1,8 @@
 ---
 id: data-platform-ai-ready-data
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-15-01
   - DPE-15-02
@@ -16,9 +16,15 @@ knowledge_ids:
   - DPE-15-09
 ---
 
-# AI가 활용할 수 있는 데이터
+# Chapter 15 — AI-Ready Data
 
 원문의 Chapter 15를 개념별로 정리했다. `studied`는 개념 학습을 뜻하며 실제 구축·운영 또는 실행 검증을 뜻하지 않는다. 예시의 버전과 숫자는 설명용이다.
+
+원문 본문의 번호·순서·형식을 보존했다. 적용 시 필요한 수정·조건은 [원문 보완 설명](#source-notes)에 원문 절 번호별로 구분했다.
+
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+<!-- SOURCE CORE START -->
 
 ## 15.1 What Makes Data AI-Ready
 
@@ -129,7 +135,11 @@ AI Telemetry는 단순 로그가 아니라:
 
 ## 15.2A Langfuse as AI Telemetry / Evaluation Layer
 
-학습 질문: “Langfuse가 AI telemetry를 담당할 수 있는가?” 역할은 아래처럼 대응하지만 실제 수집 범위는 계측과 연동에 달려 있다.
+세션 중 질문:
+
+> Langfuse를 쓰면 되겠다.
+
+맞다.
 
 Langfuse는 AI Telemetry 영역을 상당 부분 담당할 수 있다.
 
@@ -178,7 +188,7 @@ Iceberg / Data Platform
 → Governance
 ```
 
-학습용 개념 구조(검증된 연동 구현이 아님):
+권장 개념 구조:
 
 ```text
 Application / Agent
@@ -229,7 +239,7 @@ Iceberg Snapshot과 Dataset Version은 동일하지 않다.
 
 ```text
 Iceberg Snapshot
-→ 테이블 메타데이터가 가리키는 파일 집합의 일관된 상태
+→ 물리적 Table 상태 버전
 
 Dataset Version
 → AI/업무 관점의 논리적 Dataset 버전
@@ -511,13 +521,29 @@ Label-like
 
 ---
 
-## 확인한 범위와 보완
+---
+
+<!-- SOURCE CORE END -->
+
+## 원문 적용 시 보완 {#source-notes}
+
+### 15.2A Langfuse 데이터 모델
 
 Trace는 요청·작업의 논리적 묶음, observation은 LLM·tool·retrieval 같은 개별 단계, session은 여러 trace를 묶는 단위다. 실제 저장 구현을 이 개념 그림에서 추론하지 않는다. [Langfuse data model](https://langfuse.com/docs/observability/data-model).
 
+### 15.3~15.4 Dataset version 범위
+
 Langfuse dataset item 변경에는 시각 기반 버전이 생기지만 dataset schema 변경은 같은 버전 관리 범위가 아니다. 실험을 재구성하려면 입력 버전 외에 schema와 평가 설정도 보존한다. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
 
+### 15.2·15.7 수집과 권한 통제
+
 권한 metadata를 넣는 것만으로 접근 통제가 생기지는 않는다. 신뢰할 수 있는 사용자 identity에서 권한을 계산하고 검색 요청마다 검사해야 한다. 프롬프트·응답·tool input/output에도 민감 정보가 들어갈 수 있으므로 수집 범위·마스킹·보존 기간을 정한다. 검색 결과를 LLM에 넘긴 뒤 UI에서만 숨기는 방식은 유출 방지 경계가 아니다. [Azure AI Search security filters](https://learn.microsoft.com/en-us/azure/search/search-security-trimming-for-azure-search).
+
+### 15.2A 수집 범위와 15.3 snapshot 설명
+
+Langfuse의 실제 수집 범위는 계측과 연동에 달려 있다. 원문 그림은 학습용 개념 구조이며 검증된 연동 구현이 아니다.
+
+15.3의 “물리적 Table 상태 버전”은 table metadata가 참조하는 파일 집합의 일관된 상태로 구체화해 이해한다. Iceberg snapshot과 AI/업무 dataset version은 같은 식별자나 같은 경계가 아니다.
 
 ## LLM in Practice: 평가 조건 비교
 

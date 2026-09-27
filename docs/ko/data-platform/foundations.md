@@ -1,8 +1,8 @@
 ---
 id: data-platform-foundations
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-01-01
   - DPE-01-02
@@ -13,9 +13,15 @@ knowledge_ids:
   - DPE-01-07
 ---
 
-# 데이터 엔지니어링 기초
+# Chapter 1 — Data Engineering Foundations
 
 문서 유형: Learn. 제공된 학습 자료의 개념과 설계 예시를 정리했다. `studied`는 개념 학습을 뜻하며, 직접 구현하거나 운영 검증했다는 뜻이 아니다. SQL과 수치는 설명용 예시이며 실행하지 않았다.
+
+본문은 제공된 최신 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 표현에 필요한 정정·조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에 구분했다.
+
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+<!-- SOURCE CORE START -->
 
 ## 1.1 OLTP vs OLAP
 
@@ -120,6 +126,8 @@ Lakehouse / Warehouse
 
 > **OLTP는 서비스의 현재 상태를 빠르게 처리하고, OLAP는 대량 이력을 분석한다.**
 
+---
+
 ## 1.2 Row-Oriented vs Column-Oriented Storage
 
 ### Row-Oriented
@@ -212,6 +220,8 @@ FROM fact_llm_call
 
 > **Parquet을 columnar file format이라고 하는 이유는 데이터를 column 중심으로 저장해 분석 시 필요한 column만 효율적으로 읽을 수 있기 때문이다.**
 
+---
+
 ## 1.3 Parquet
 
 Parquet은 대표적인 **Columnar File Format**이다.
@@ -264,7 +274,7 @@ Column Chunk
 Page
 ```
 
-이 문서는 binary format의 상세 구현보다 **데이터 계층과 통계를 이용해 불필요한 scan을 줄이는 원리**에 집중한다.
+이 세션에서는 내부 binary format까지 깊게 들어갈 필요는 없고, **Parquet이 데이터를 계층적인 단위로 나누고 통계 정보를 이용해 불필요한 Scan을 줄인다** 정도가 핵심이다.
 
 ---
 
@@ -332,7 +342,17 @@ WHERE event_date = '2026-09-24'
 
 필요한 column만 읽는다.
 
-Parquet의 중요한 장점은 통계로 제외 가능한 row group을 건너뛰고 필요한 column만 읽을 수 있다는 점이다. 일치하는 row만 정확히 골라 읽는다는 뜻은 아니다.
+Parquet의 중요한 장점은:
+
+```text
+필요한 row 범위만
++
+필요한 column만
+```
+
+읽을 수 있다는 점이다.
+
+---
 
 ## 1.4 Object Storage
 
@@ -403,6 +423,8 @@ Compute와 Storage가 분리되어 있으므로 네트워크를 통해 파일을
 
 등이 중요해진다.
 
+---
+
 ## 1.5 File Layout Engineering
 
 Lakehouse에서는 파일 하나의 크기도 성능에 영향을 준다.
@@ -471,6 +493,8 @@ Streaming → Lakehouse 구조에서는 특히 중요하다.
 데이터 일부를 수정하기 위해 큰 파일 전체를 다시 쓰게 되면 실제 변경량보다 훨씬 많은 write가 발생할 수 있다.
 
 이런 비용도 File Layout과 Table Format 설계에서 고려해야 한다.
+
+---
 
 ## 1.6 Partitioning Fundamentals
 
@@ -565,6 +589,8 @@ date=2026-09-24
 └─ file3.parquet
 ```
 
+---
+
 ## 1.7 Bucketing / Sorting / Indexing
 
 ### Bucketing
@@ -615,6 +641,10 @@ Lakehouse는 대량 Scan workload가 중심이므로:
 
 같은 방식으로 읽는 범위를 줄이는 경우가 많다.
 
+---
+
+<!-- SOURCE CORE END -->
+
 ## 적용 시 보완할 점
 
 위 설명은 저장 구조를 이해하기 위한 기본 모델이다. PostgreSQL에서 분석계를 분리하는 기준을 row 수 하나로 정하지 않는다. 실제 쿼리, 트랜잭션 영향, 비용과 응답 시간으로 판단한다. Object Storage 비용에도 요청·전송 비용이 포함되며 공급자와 workload에 따라 달라진다.
@@ -622,6 +652,12 @@ Lakehouse는 대량 Scan workload가 중심이므로:
 Parquet의 column chunk는 row group 내부에 있다. 통계나 page index의 존재와 이를 사용하는 reader에 따라 pruning 효과가 달라진다. Predicate pushdown은 필터를 하위 처리 계층으로 전달하는 것이고, pruning은 일치할 수 없는 저장 단위를 건너뛰는 것이다. row index처럼 임의의 row만 바로 찾는 기능으로 이해하지 않는다. Encoding과 compression도 서로 다른 단계다. [Apache Parquet 파일 형식](https://parquet.apache.org/docs/file-format/)
 
 큰 Parquet 파일도 여러 scan split으로 나뉠 수 있으므로 파일 하나와 task 하나를 항상 같다고 보면 안 된다. 목표 파일 크기는 병렬성·재작성 비용·요청 비용을 함께 보고 정한다. Bucket 예시는 개념 표기이며 실제 인수 순서와 SQL 문법은 엔진마다 확인한다. Iceberg transform의 개념 표기는 `bucket(32, user_id)`다.
+
+### 1.3·1.6 보완: 통계와 cardinality
+
+원문 1.3의 “필요한 row 범위만”은 통계로 제외 가능한 row group 등을 건너뛴다는 뜻이다. 일치하는 row만 정확히 골라 읽는 row index 기능으로 이해하지 않는다.
+
+Cardinality는 서로 다른 값의 개수다. 날짜 partition의 day/hour 세분화도 실제 데이터 양과 query pattern에 맞춰 정한다.
 
 ## 연결해서 읽기
 

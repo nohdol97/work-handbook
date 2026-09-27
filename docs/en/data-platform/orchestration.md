@@ -1,8 +1,8 @@
 ---
 id: data-platform-orchestration
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-07-01
   - DPE-07-02
@@ -14,13 +14,273 @@ knowledge_ids:
   - DPE-07-08
 ---
 
-# Data orchestration
+# Chapter 7 — Orchestration
 
 This page records conceptual study of orchestration, with Airflow as the main example. It does not claim that a DAG was deployed or operated. Official documentation was checked on 2026-09-24.
 
-## What a DAG manages
+The numbered body follows the supplied source’s headings, paragraphs, lists, examples, and order. Conditions on its simplified explanations and previously added guidance appear under **Additional checks before applying these ideas**.
 
-An orchestrator manages task order, timing, failures, and reruns. A DAG is the workflow. A task is a unit of work. A dependency sets a condition between tasks. A schedule defines when or how often a workflow runs.
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+<!-- SOURCE CORE START -->
+
+## 7.1 DAG Fundamentals
+
+Airflow is:
+
+> **An orchestrator that manages the order, timing, failures, and reruns of data tasks.**
+
+This is its role.
+
+### DAG
+
+The whole workflow.
+
+### Task
+
+An individual unit of execution.
+
+### Dependency
+
+Task execution order.
+
+### Schedule
+
+When a DAG runs.
+
+Example:
+
+```text
+Extract
+ ↓
+Spark Transform
+ ↓
+dbt
+ ↓
+Quality Check
+ ↓
+Publish
+```
+
+Airflow directs other systems rather than processing large datasets itself.
+
+---
+
+## 7.2 Operators / Tasks
+
+Operator:
+
+> Defines how to execute a task.
+
+Example:
+
+- Python Operator
+- SQL Operator
+- Bash Operator
+- Spark Job
+- dbt command
+
+Airflow's role:
+
+```text
+Airflow
+→ Orchestrate
+
+Spark
+→ Compute
+
+dbt
+→ Transformation
+
+Trino
+→ Query
+```
+
+---
+
+## 7.3 Retries
+
+Task failures can be viewed as two types.
+
+### Transient Failure
+
+- Network timeout
+- DB connection
+- Temporary cluster issue
+
+Retry is effective.
+
+### Permanent Failure
+
+- SQL syntax error
+- Wrong schema
+- Code bug
+
+Retry does not resolve the problem.
+
+### Idempotency
+
+A retry-safe task must produce the same final result when run several times.
+
+Bad example:
+
+```text
+Blind append
+```
+
+Good examples:
+
+```text
+Partition overwrite
+MERGE
+replace
+```
+
+---
+
+## 7.4 Backfills
+
+Backfill:
+
+> **Recalculating past data.**
+
+When to use it:
+
+- Pipeline failure
+- Fixing a logic bug
+- Missing data
+- Adding a new column
+- Business logic changes
+
+### Full Backfill
+
+Reprocess the whole period.
+
+### Partial / Partition Backfill
+
+Reprocess only the required dates or partitions.
+
+Idempotency also matters for backfills.
+
+---
+
+## 7.5 Sensors / Event Dependencies
+
+Sensor:
+
+> **A task that waits until a particular condition is met.**
+
+Example:
+
+- An S3 file arrives
+- An upstream DAG completes
+- Data is ready
+
+A schedule and a dependency are different.
+
+```text
+Try to run at 02:00
++
+Check that the actual data is ready
+```
+
+Both polling and event-driven approaches exist.
+
+---
+
+## 7.6 Parameterization
+
+Reuse the same DAG under different conditions.
+
+Example:
+
+```text
+process_date
+start_date
+end_date
+environment
+data_interval
+```
+
+A good pipeline:
+
+```text
+"Process today's data"
+```
+
+Rather than this:
+
+```text
+"Process data for 2026-09-24"
+```
+
+Receiving an explicit data interval like this helps reruns and backfills.
+
+---
+
+## 7.7 Failure Handling
+
+Because each task has its own state, the whole DAG does not need to restart from the beginning.
+
+```text
+Extract ✅
+Spark ✅
+dbt ❌
+Quality -
+Publish -
+```
+
+After fixing the dbt problem, rerun from that task.
+
+An upstream failure normally blocks downstream execution.
+
+An alert needs:
+
+- DAG
+- Task
+- Failure time
+- Retry count
+- Error
+
+context such as these items.
+
+---
+
+## 7.8 Orchestrator Anti-Patterns
+
+Things to avoid:
+
+1. Run large compute jobs directly inside an Airflow worker
+2. Pass large datasets through XCom
+3. Overly complex dependencies between DAGs
+4. Use Airflow as a streaming engine
+
+A useful division of responsibility:
+
+```text
+Airflow
+→ Orchestration
+
+Spark
+→ Batch Compute
+
+Flink
+→ Streaming
+
+dbt
+→ SQL Transformation
+
+Iceberg
+→ Storage/Table
+```
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Additional checks before applying these ideas
+
+### Existing flow diagram
 
 ```mermaid
 flowchart LR
@@ -30,48 +290,31 @@ flowchart LR
   Q --> P[Publish]
 ```
 
-Airflow usually directs compute systems instead of processing large datasets itself. An operator defines how to run a task. Examples include Python, SQL, Bash, Spark job submission, and a dbt command. One possible split is Airflow for orchestration, Spark for batch compute, Flink for streaming, dbt for SQL transformation definitions, Trino for queries, and Iceberg for tables. This is a design example, not a required product stack.
+### Scope of sections 7.1, 7.3, and 7.7
 
-## Retries and idempotency
+A dependency is a condition between tasks. A schedule defines when or how often they run. A retry does not always resolve a transient failure. Blind append can add duplicate rows during a retry.
 
-Transient failures include network timeouts, database connection errors, and temporary cluster issues. A retry may help. Permanent failures include SQL syntax errors, wrong schemas, and code bugs. Repeating them will not fix the cause.
+Task state alone does not guarantee that recovery can start from the failed task in every case. Check that prior upstream results and intervals remain valid.
 
-A retry-safe task produces the same final result when run more than once. Blind append can create duplicates. Overwriting a specific partition, MERGE, and replace are alternatives. They still need correct input intervals, keys, and transaction boundaries. The command name alone does not make a task safe. Official guidance also recommends avoiding duplicates on retries and reading and writing specific partitions. [Airflow best practices](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+### Retries and repeatable intervals
 
-## Backfills and explicit intervals
+Partition overwrite, MERGE, and replace do not guarantee idempotency by name alone. Design the input intervals, keys, and transaction boundaries correctly. Official guidance recommends avoiding duplicates on retries and reading and writing specific partitions. [Airflow best practices](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
 
-A backfill recalculates past data. Reasons include a pipeline failure, a fixed logic bug, missing data, a new column, or a business logic change. A full backfill processes the whole period. A partial or partition backfill processes only the needed dates or partitions. Both need idempotency.
+Define interval boundaries and the timezone. Using `now()` or the latest data can change the result of a rerun for the same past interval. [Specific partitions and data intervals](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
 
-Parameters such as `process_date`, `start_date`, `end_date`, `environment`, and `data_interval` help reuse a DAG. “Process 2026-09-24” is easier to rerun than “process today.” Define interval boundaries and the timezone too. Using `now()` or the latest data can change the result of a rerun for the same past interval. [Specific partitions and data intervals](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+### Readiness and failure propagation
 
-## Schedule versus readiness
+Check sensor and event support for the Airflow and provider versions in use. Before rerunning a failed task, check that prior upstream results are valid and belong to the same interval.
 
-A sensor waits for a condition. It may wait for an S3 file, an upstream DAG, or data readiness. “Try at 02:00” and “the input is ready” are different conditions. A schedule does not resolve data dependencies. Conditions can be checked by polling or through events. Check sensor and event support for the Airflow and provider versions in use.
+The usual `all_success` rule waits for successful upstream tasks. Other rules, such as `all_done`, may run after failures or skips. Check the publish gate's actual trigger rule. [Airflow trigger rules](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html#trigger-rules)
 
-## Resume from a failure
+Including the run identifier and data interval in an alert also helps investigation.
 
-This state may not require restarting the whole DAG:
+### Compute and data transfer responsibilities
 
-```text
-Extract: success
-Spark: success
-dbt: failed
-Quality: not run
-Publish: not run
-```
+Large compute jobs inside an Airflow worker tie up orchestration resources. Pass small states or paths through XCom and keep large datasets in external shared storage. [Communication between tasks](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
 
-Fix dbt, then rerun the failed task. First check that prior upstream results are valid and belong to the same interval. The usual `all_success` rule waits for successful upstream tasks. Other rules, such as `all_done`, may run after failures or skips. It is wrong to say that upstream failure always blocks downstream execution. Check the publish gate's actual trigger rule. [Airflow trigger rules](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html#trigger-rules)
-
-An alert should include the DAG, task, failure time, retry count, and error. Identifying the run and data interval also helps investigation.
-
-## Designs to avoid
-
-- Large compute jobs inside an Airflow worker tie up orchestration resources.
-- Do not pass large datasets through XCom. Pass small states or paths, and keep data in external storage.
-- Too many dependencies between DAGs make failure impact and rerun scope hard to understand.
-- Do not use Airflow as a streaming engine. Use a suitable engine for continuous event processing.
-
-Using XCom for small messages and shared storage for large data follows official guidance. [Communication between tasks](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+Too many dependencies between DAGs make failure impact and rerun scope hard to understand. Use a suitable streaming engine for continuous event processing. The product roles above are a design example, not a required product stack.
 
 ## LLM in Practice: review a backfill plan
 

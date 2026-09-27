@@ -1,8 +1,8 @@
 ---
 id: data-platform-cdc-debezium
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-06-01
   - DPE-06-02
@@ -15,15 +15,24 @@ knowledge_ids:
   - DPE-06-09
 ---
 
-# CDC와 Debezium
+# Chapter 6 — CDC / Debezium
 
 이 문서는 개념 학습 기록이다. 아래 경로와 복구 절차는 설명용이며 실제 운영·장애 복구를 수행한 기록이 아니다. 제품 동작은 2026-09-24에 공식 문서와 대조했다. 실행 환경에서는 connector와 DB 버전 및 설정을 다시 확인한다.
 
-## 변경을 전달하는 이유
+본문은 제공된 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 설명에 필요한 조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에서 구분한다.
 
-CDC(Change Data Capture)는 DB의 INSERT, UPDATE, DELETE를 다른 시스템으로 전달한다. 로그 기반 CDC는 transaction log를 읽는다. PostgreSQL에서는 WAL(Write-Ahead Log)과 logical decoding을 사용한다.
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
 
-Polling의 간단한 사고 실험은 다음과 같다. `last_time`은 저장한 처리 시점을 뜻하는 의사 SQL 변수다.
+<!-- SOURCE CORE START -->
+## 6.1 CDC Fundamentals
+
+CDC = Change Data Capture.
+
+목적:
+
+> **DB의 INSERT / UPDATE / DELETE 변경을 지속적으로 다른 시스템에 전달**
+
+Polling 방식:
 
 ```sql
 SELECT *
@@ -31,7 +40,351 @@ FROM orders
 WHERE updated_at > last_time
 ```
 
-이 방식은 반복 쿼리 부하, 삭제 감지, 변경 순서 관리, polling 간격에 따른 지연 문제가 있다. 특히 삭제된 행은 위 쿼리로 찾을 수 없다. 로그 기반 CDC는 변경 기록을 이용하지만 로그 보존과 소비 위치 관리가 필요하다.
+문제:
+
+- DB Query 부하
+- DELETE 감지 어려움
+- 변경 순서 관리 어려움
+- 실시간성 제한
+
+CDC는 DB Transaction Log를 읽는다.
+
+PostgreSQL:
+
+```text
+WAL
+Write-Ahead Log
+```
+
+구조:
+
+```text
+PostgreSQL
+ ↓
+WAL
+ ↓
+Debezium
+ ↓
+Kafka
+```
+
+---
+
+## 6.2 Debezium Architecture
+
+### Debezium Connector
+
+DB별 CDC Reader.
+
+예:
+- PostgreSQL
+- MySQL
+- SQL Server
+
+### Kafka Connect
+
+Connector 실행/관리 Platform.
+
+### Offset
+
+DB Log를 어디까지 읽었는지 기억.
+
+### Snapshot
+
+CDC 시작 전에 이미 존재하던 데이터를 초기 복제.
+
+---
+
+## 6.3 Initial Snapshot
+
+처음 CDC를 시작하면 기존 데이터가 이미 존재한다.
+
+```text
+Existing Table
+ ↓
+Initial Snapshot
+ ↓
+WAL Streaming CDC
+```
+
+Snapshot 동안에도 변경이 발생할 수 있으므로 WAL 위치를 관리해 Snapshot 이후 변경을 이어서 읽는다.
+
+목표:
+
+```text
+기존 데이터
++
+Snapshot 중 변경
++
+이후 변경
+```
+
+을 모두 놓치지 않는 것.
+
+Connector Restart 때마다 전체 Snapshot을 다시 하는 것은 아니다.
+
+Offset이 있으면 이어서 읽는다.
+
+---
+
+## 6.4 CDC Event Structure
+
+대표 정보:
+
+- before
+- after
+- operation type
+- source metadata
+- transaction metadata
+
+### INSERT
+
+```text
+before = null
+after = new row
+```
+
+### UPDATE
+
+```text
+before = old row
+after  = new row
+```
+
+### DELETE
+
+```text
+before = old row
+after = null
+```
+
+Operation 예:
+
+- c: create
+- u: update
+- d: delete
+- r: snapshot read
+
+Source Metadata:
+
+- database
+- schema
+- table
+- WAL position
+- timestamp
+
+Transaction Metadata:
+
+- transaction id
+- order information
+
+---
+
+## 6.5 Ordering
+
+핵심:
+
+> **CDC에서는 global ordering보다 같은 entity/key의 변경 순서가 중요하다.**
+
+Kafka는 Partition 내부 Ordering은 유지하지만 Partition 간 global order는 보장하지 않는다.
+
+같은 Primary Key를 같은 Partition으로 보내면 같은 entity의 순서를 유지하기 쉽다.
+
+```text
+order 100:
+CREATED
+→ PAID
+→ SHIPPED
+```
+
+DB Transaction 하나에서 여러 Table 변경이 발생하더라도 Kafka에서는 여러 Event가 되어 서로 다른 Partition으로 갈 수 있다.
+
+---
+
+## 6.6 Deletes
+
+### DELETE Event
+
+실제 DB 삭제를 표현.
+
+### Tombstone
+
+Kafka Log Compaction에서 특정 key가 삭제되었음을 표현하는 `key + null value` record.
+
+DELETE Event와 Tombstone은 목적이 다르다.
+
+### Physical Delete
+
+Downstream에서도 실제 삭제.
+
+### Logical Delete
+
+```text
+deleted = true
+```
+
+같이 상태로 보존.
+
+### History vs Current State
+
+```text
+Bronze History
+→ 삭제 Event 포함 모든 변경 보존
+
+Silver Current State
+→ 현재 존재하는 row만 유지
+```
+
+---
+
+## 6.7 Schema Changes
+
+Source DB Schema는 바뀔 수 있다.
+
+예:
+
+- Column 추가
+- Column 삭제
+- Rename
+- Type 변경
+- Nullable 변경
+
+상대적으로 안전한 변경:
+
+```text
+nullable column 추가
+```
+
+위험한 변경:
+
+```text
+type 변경
+column 삭제
+rename
+```
+
+CDC에서는 Schema Change가:
+
+```text
+Source
+→ Kafka
+→ Flink/Spark
+→ Iceberg
+→ dbt
+→ BI
+```
+
+전체에 영향을 줄 수 있다.
+
+따라서:
+
+```text
+감지
+→ Compatibility 확인
+→ downstream 반영
+```
+
+이 중요하다.
+
+---
+
+## 6.8 CDC → Iceberg
+
+대표 구조:
+
+```text
+PostgreSQL
+ ↓
+Debezium
+ ↓
+Kafka
+ ↓
+Flink / Spark
+ ↓
+Iceberg
+```
+
+### History Table
+
+모든 변경 Event를 저장.
+
+```text
+order 100 CREATED
+order 100 PAID
+order 100 SHIPPED
+```
+
+### Current-State Table
+
+최신 상태만 유지.
+
+```text
+order 100 SHIPPED
+```
+
+### MERGE / Upsert
+
+```text
+new row
+→ INSERT
+
+existing row
+→ UPDATE
+```
+
+### Late Change
+
+오래된 변경이 최신 상태를 덮어쓰지 않도록 sequence/source position 등을 고려해야 한다.
+
+### Idempotency
+
+Replay로 같은 CDC Event가 다시 와도 결과가 깨지지 않아야 한다.
+
+---
+
+## 6.9 CDC Failure Recovery
+
+정상적인 복구:
+
+```text
+Connector Failure
+ ↓
+Restart
+ ↓
+Stored Offset
+ ↓
+WAL Replay
+```
+
+Replay 때문에 Duplicate가 발생할 수 있다.
+
+따라서 Downstream은 Idempotent해야 한다.
+
+Offset을 잃거나 필요한 WAL이 이미 삭제됐다면 새 Snapshot이 필요할 수 있다.
+
+핵심:
+
+```text
+Offset
+→ 처리 위치
+
+Replay
+→ 다시 처리
+
+Idempotency
+→ 중복 안전성
+
+Snapshot Recovery
+→ 복구 불가능 시 재초기화
+```
+
+---
+
+<!-- SOURCE CORE END -->
+
+## 적용 시 보완할 점
+
+### 기존 흐름도
 
 ```mermaid
 flowchart LR
@@ -43,49 +396,34 @@ flowchart LR
   C --> S[Iceberg current state]
 ```
 
-## Connector, offset, 초기 snapshot
+### 원문 6.1~6.4의 설명 범위
 
-Debezium connector는 PostgreSQL, MySQL, SQL Server 같은 DB별 CDC reader다. Kafka Connect는 connector를 실행·관리하는 플랫폼이다. Offset은 읽은 DB 로그 위치를 기록한다. 초기 snapshot은 CDC를 시작하기 전에 존재하던 데이터를 복제한다.
+CDC에는 여러 접근이 있으며, 원문의 transaction log 설명은 로그 기반 CDC에 해당한다. PostgreSQL에서는 WAL과 logical decoding을 사용한다. 로그 보존과 소비 위치 관리가 필요하다.
 
-목표는 `기존 데이터 + snapshot 중 변경 + 이후 변경`을 연결하는 것이다. Snapshot과 로그 위치를 연결해 snapshot 이후 변경을 이어 읽는다. 정상적으로 완료한 초기 snapshot과 유효한 offset이 있으면 보통 재시작 때 이어 읽는다. 다만 재시작이 항상 snapshot을 생략하는 것은 아니다. Snapshot 도중 실패했거나 설정된 snapshot mode가 다르면 다시 snapshot할 수 있다. [Debezium PostgreSQL connector](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
+Polling SQL의 `last_time`은 저장한 처리 시점을 뜻하는 의사 변수다. 삭제된 행은 이 쿼리로 찾을 수 없다. Polling 간격에 따른 지연도 생긴다.
 
-## 이벤트를 읽는 방법
+Snapshot read(`r`)는 읽은 행을 전달한다. `before` 등 세부 필드는 실제 이벤트 형식을 확인한다.
 
-| 변경 | before | after | op |
-| --- | --- | --- | --- |
-| INSERT | null | 새 행 | `c` |
-| UPDATE | 이전 값이 제공되는 범위 | 새 행 | `u` |
-| DELETE | 이전 값이 제공되는 범위 | null | `d` |
-| Snapshot read | 해당 이벤트 형식 확인 | 읽은 행 | `r` |
+### Snapshot과 이전 행의 조건
 
-대표 필드는 `before`, `after`, operation type, source metadata, transaction metadata다. Source metadata에는 database, schema, table, WAL position, timestamp가 들어갈 수 있다. Transaction metadata는 transaction ID와 순서 정보를 제공할 수 있으며 지원·설정을 확인해야 한다.
+정상적으로 완료한 초기 snapshot과 유효한 offset이 있으면 보통 재시작 때 이어 읽는다. Snapshot 도중 실패했거나 snapshot mode가 다르면 다시 snapshot할 수 있다. [Debezium PostgreSQL connector](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
 
-원문의 `before = old row`는 개념 설명이다. PostgreSQL UPDATE/DELETE의 이전 값 범위는 `REPLICA IDENTITY`와 decoding 조건에 따라 달라진다. 항상 완전한 이전 행을 얻는다고 가정하면 안 된다. [Replica identity 설명](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-replica-identity)
+이벤트의 `before = old row`는 개념 설명이다. PostgreSQL UPDATE/DELETE의 이전 값 범위는 `REPLICA IDENTITY`와 decoding 조건에 따라 달라진다. 항상 완전한 이전 행을 얻는다고 가정하면 안 된다. Transaction metadata의 지원·설정도 확인한다. [Replica identity 설명](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-replica-identity)
 
-## 같은 key의 순서와 삭제
+### Schema와 현재 상태 적용
 
-CDC에서 특히 중요한 것은 같은 entity/key의 변경 순서다. 예를 들어 주문 100은 `CREATED → PAID → SHIPPED` 순서로 적용해야 한다. Kafka는 partition 안의 순서를 보존하지만 여러 partition의 global order를 제공하지 않는다. 동일 primary key가 같은 partition으로 가도록 하는 설계가 도움을 준다. DB transaction 하나가 여러 table을 바꾸더라도 downstream에서는 서로 다른 partition의 여러 event가 될 수 있다.
+Nullable column 추가도 소비자가 자동 수용한다는 보장은 없다. PostgreSQL logical decoding은 DDL change event를 직접 전달하지 않는다. Schema 비교와 배포 절차를 함께 설계한다. [PostgreSQL connector 제약](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
 
-DELETE event는 DB 삭제 사실을 담는다. Tombstone은 Kafka log compaction을 위한 `key + null value` record다. 둘을 같은 업무 이벤트로 취급하지 않는다. Downstream 정책도 구분한다.
+MERGE/upsert의 INSERT·UPDATE와 삭제 처리는 구분한다. 논리 삭제 모델이면 소비 쿼리의 제외 규칙도 정한다. Late change를 판별할 source sequence/position의 비교 범위를 명시한다. 서로 다른 source의 position을 하나의 전역 순서로 간주하지 않는다.
 
-- Physical delete: downstream 행을 실제로 지운다.
-- Logical delete: `deleted = true` 같은 상태를 남긴다.
-- Bronze history: 삭제 이벤트를 포함한 모든 변경을 저장한다.
-- Silver current state: 현재 존재하는 행만 유지한다. 논리 삭제 모델이면 소비 쿼리의 제외 규칙도 정한다.
+### 복구 전후 확인
 
-## Schema 변화와 Iceberg 반영
+Snapshot으로 현재 상태를 복구할 수 있어도 사라진 로그의 중간 변경 이력까지 복원되는 것은 아니다.
 
-Column 추가·삭제·rename·type·nullable 변경은 `Source → Kafka → Flink/Spark → Iceberg → dbt → BI` 전체에 영향을 줄 수 있다. Nullable column 추가는 상대적으로 호환되기 쉽지만 소비자가 자동 수용한다는 보장은 없다. Type 변경, 삭제, rename은 특히 주의한다. 변경을 감지하고, compatibility를 확인하고, downstream에 반영한다.
+- 복구 전: offset, replication slot, 필요한 WAL의 가용성, snapshot mode를 확인한다.
+- 복구 후: 샘플 key의 순서, 중복, 삭제 반영, source/current-state 일치를 검증한다.
 
-PostgreSQL logical decoding은 DDL change event를 직접 전달하지 않는다. 따라서 CDC가 모든 DDL을 자동 통지한다고 가정하지 말고 schema 비교와 배포 절차를 함께 설계한다. [PostgreSQL connector 제약](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
-
-History table은 주문 100의 CREATED, PAID, SHIPPED 이벤트를 모두 남긴다. Current-state table은 최신 SHIPPED 상태를 남긴다. MERGE/upsert는 새 key를 INSERT하고 기존 key를 UPDATE한다. 삭제 처리는 별도 규칙이 필요하다. 오래된 변경이 늦게 도착하면 source sequence/position을 비교해 최신 상태를 덮어쓰지 않게 한다. 비교 기준의 범위를 명시해야 하며, 서로 다른 source의 position을 하나의 전역 순서로 간주하지 않는다. Replay로 같은 이벤트를 재처리해도 결과가 같아야 한다.
-
-## 장애 복구와 검증
-
-정상 복구의 개념 흐름은 `Connector failure → restart → stored offset → WAL replay`다. Replay는 중복을 만들 수 있으므로 downstream idempotency가 필요하다. Offset은 처리 위치, replay는 재처리, idempotency는 중복 안전성을 뜻한다.
-
-Offset을 잃거나 필요한 WAL이 이미 사라졌다면 재초기화 snapshot이 필요할 수 있다. Snapshot으로 현재 상태를 복구할 수 있어도 사라진 로그의 중간 변경 이력까지 복원되는 것은 아니다. 복구 전 offset, replication slot, 필요한 WAL의 가용성, snapshot mode를 확인한다. 이후 샘플 key의 순서, 중복, 삭제 반영, source/current-state 일치를 검증한다. [장애 대응 동작](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-when-things-go-wrong)
+[장애 대응 동작](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-when-things-go-wrong)
 
 ## LLM 활용: 재처리 후 상태 역전 조사
 

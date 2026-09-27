@@ -1,55 +1,187 @@
 ---
 id: data-platform-online-evaluation
 status: studied
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-16-01
   - DPE2-16-01
 ---
 
-# Online AI evaluation events
+# Chapter 16 — AI Evaluation Data Platform
 
 The first source studied only section 16.1 of Phase 16. The added source extends that material. This page records the concepts in 16.1; it does not claim a production implementation. Continue with sections 16.2–16.12 in [AI evaluation data platform](ai-evaluation.md).
 
-## 16.1 Online evaluation events
 
-Online evaluation attaches evaluation data to real AI executions in production:
+The core below preserves section 16.1 of the latest complete source. The earlier Langfuse explanation and evaluation conditions remain in the separate supplement.
+
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+<!-- SOURCE CORE START -->
+
+## 16.1 Online Evaluation Events
+
+Online Evaluation means:
+
+> **Evaluating AI executions that actually happened in production and attaching evaluation data to those traces.**
+
+Basic flow:
 
 ```text
-User request → Agent → LLM / Tool → Response → Evaluation
+User Request
+   ↓
+Agent
+   ↓
+LLM / Tool
+   ↓
+Response
+   ↓
+Evaluation
 ```
 
-Events may contain thumbs up/down, a rating, user feedback, an LLM judge score, a rule-based score, or an error type. A value such as `score = 0.4` is not enough by itself. Connect it to the execution with `trace_id`, `execution_id`, `model_version`, `prompt_version`, `agent_version`, `score`, and `feedback`.
+Possible evaluation events:
+
+```text
+thumbs_up / thumbs_down
+rating
+user_feedback
+llm_judge_score
+rule_based_score
+error_type
+```
+
+A score alone is not enough.
+
+Bad:
+
+```text
+score = 0.4
+```
+
+Better:
+
+```text
+trace_id
+execution_id
+agent_version
+prompt_version
+model_version
+score
+feedback
+```
+
+This allows the platform to answer:
+
+```text
+Why was this response bad?
+Which prompt was used?
+Which model generated it?
+Which tools were called?
+Which agent release produced it?
+```
 
 ### User feedback
 
-A thumbs-up or thumbs-down response is a simple form of production evaluation: `Response → Feedback`.
+The simplest online evaluation is:
+
+```text
+Response
+  ↓
+👍 / 👎
+```
+
+More detailed forms may include:
+
+```text
+rating = 1~5
+reason = inaccurate
+comment = "wrong tool was selected"
+```
 
 ### Automatic evaluation
 
-A judge or rule check can evaluate the response. Example questions are: is the SQL executable, is a citation present, does the output contain prohibited information, and does it follow the required format?
+Production responses can also be evaluated automatically.
 
-### Langfuse connection
+```text
+Response
+ ↓
+LLM Judge
+ ↓
+Score
+```
 
-The conceptual trace groups the prompt, LLM calls, tool calls, response, and scores or feedback. It supports finding low-score traces, studying thumbs-down cases, comparing agent versions, and moving production failures into evaluation datasets.
+or:
 
-The goal is to observe quality in real user conditions. Offline tests may miss new questions, tool outages, long context, actual permissions, and changes in production data.
+```text
+Response
+ ↓
+Rule Check
+ ↓
+Pass / Fail
+```
 
-## 16.1 Additional examples and diagnostic questions
+Checks may include:
 
-The source added on 2026-09-26 keeps the same principle: link online evaluation to real production executions. Beyond thumbs up/down, user feedback can contain `rating=1~5`, `reason=inaccurate`, and `comment="wrong tool was selected"`. These are teaching examples.
+- Is generated SQL executable?
+- Is a required citation present?
+- Does the output contain prohibited information?
+- Does the response follow the expected schema?
+- Did the agent call the correct or authorized tool?
 
-Keeping the trace, execution, agent, prompt, and model versions with scores and feedback supports these questions:
+Core idea:
 
-- Why was this response poor?
-- Which prompt and model produced it?
-- Which tools were called?
-- Which agent release produced it?
+> **Online Evaluation tells us how the AI behaves under real production conditions.**
 
-Alongside SQL execution, citation, prohibited-information, and format checks, automatic evaluation can ask whether the agent called the **correct and authorized tool**. Expected schema compliance and tool authorization are separate checks. A score starts an investigation; it does not prove the cause. Add production-only edge cases to [fixed offline evaluation and regression datasets](ai-evaluation.md) and check them again in later releases.
+Offline tests can miss:
 
-## Limits of evaluation data
+- new user behavior,
+- changing data,
+- tool failures,
+- long context,
+- permissions,
+- production-only edge cases.
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Supplement: 16.1 Langfuse links and evaluation conditions
+
+### Langfuse connection from the earlier source
+
+Concept:
+
+```text
+Langfuse Trace
+ ├─ Prompt
+ ├─ LLM Call
+ ├─ Tool Call
+ ├─ Response
+ └─ Score / Feedback
+```
+
+Uses:
+
+- Find traces with low scores.
+- Investigate thumbs-down cases.
+- Compare specific agent versions.
+- Add production failures to evaluation datasets.
+
+The goal of online evaluation:
+
+> **Continuously observe quality under real user conditions.**
+
+Offline tests may miss:
+
+- new user questions,
+- tool failures,
+- long context,
+- actual permissions,
+- changes in production data.
+
+---
+
+**Tool evaluation conditions:** Expected schema compliance and tool authorization are separate checks. Check both whether the selected tool is appropriate and whether its use is authorized. A score does not prove the root cause.
 
 Online evaluation scores live traffic; offline evaluation compares changes on fixed inputs. Human feedback, rules, and LLM judges provide different signals. A score is not absolute truth. [Langfuse evaluation concepts](https://langfuse.com/docs/evaluation/core-concepts).
 

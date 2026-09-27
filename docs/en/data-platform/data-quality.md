@@ -1,8 +1,8 @@
 ---
 id: data-platform-data-quality
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-11-01
   - DPE-11-02
@@ -13,39 +13,288 @@ knowledge_ids:
   - DPE-11-07
 ---
 
-# Data quality engineering
+# Chapter 11 — Data Quality Engineering
 
 This Learn page covers studied concepts and hypothetical operations. It does not claim hands-on implementation or incident response. Data quality asks, “Can we trust and use this data?” A service can respond while its data is wrong. That is still a data incident.
 
-## Seven quality dimensions
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
 
-One healthy metric does not prove that every dimension is healthy. These questions use a hypothetical `fact_llm_call` table.
+<!-- SOURCE CORE START -->
 
-| Dimension | Question | AI call example |
-| --- | --- | --- |
-| Completeness | Are required values present? | Is `model_id` NULL? |
-| Uniqueness | Are values that must be unique free of duplicates? | Is `llm_call_id` duplicated? |
-| Validity | Do values follow the format and allowed range? | Is latency negative? |
-| Consistency | Do related data agree? | Does `model_id` exist in `dim_model`? |
-| Freshness | Did data arrive within the required time? | Is the latest event within five minutes? |
-| Accuracy | Do values match the real world? | Does recorded cost agree with billing? |
-| Volume | Is the row count within the expected range? | Did call volume rise or fall sharply? |
+## 11.1 Quality Dimensions
 
-Five minutes is a learning example, not a default target for every dataset. A valid format does not prove that a billed amount is correct.
+### Completeness
 
-## Validation layers
+Are required values present?
 
-| Layer | Main checks | Purpose |
-| --- | --- | --- |
-| Ingestion | Schema, format, required fields, parsing | Can we read the input, and does it follow the expected shape? |
-| Silver | Deduplication, relationships, business rules, valid values | Is the cleaned data logically sound? |
-| Gold | KPIs, freshness, aggregate consistency, expected volume | Can we trust the final business result? |
+### Uniqueness
 
-Early checks focus on format. Middle checks focus on data logic. Final checks focus on business results. Passing an earlier layer does not remove the need for later checks.
+Are values that must be unique free of duplicates?
 
-## Quarantine invalid records
+### Validity
 
-Quarantine stores invalid data on a separate path so that teams can diagnose and reprocess it. It avoids silently dropping records.
+Do values follow the allowed format and range?
+
+### Consistency
+
+Do related data agree?
+
+### Freshness
+
+Did data arrive on time?
+
+### Accuracy
+
+Do values match the real world?
+
+### Volume
+
+Is the amount of data within the expected range?
+
+AI example:
+
+```text
+fact_llm_call
+
+Completeness
+→ model_id NULL?
+
+Uniqueness
+→ Duplicate llm_call_id?
+
+Validity
+→ Negative latency?
+
+Consistency
+→ model_id exists in dim_model?
+
+Freshness
+→ Latest event within 5 minutes?
+
+Accuracy
+→ Cost agrees with billing?
+
+Volume
+→ Sharp rise or fall in call volume?
+```
+
+---
+
+## 11.2 Validation Layers
+
+### Ingestion Validation
+
+- Schema
+- Format
+- Required fields
+- Parsing
+
+### Silver Validation
+
+- Deduplication
+- Relationships
+- Business rules
+- Valid values
+
+### Gold Validation
+
+- KPIs
+- Freshness
+- Aggregate consistency
+- Expected volume
+
+Focus by layer:
+
+```text
+Early
+→ Format
+
+Middle
+→ Data logic
+
+Final
+→ Business results
+```
+
+---
+
+## 11.3 Quarantine Patterns
+
+Keep invalid data separately instead of dropping it.
+
+```text
+Incoming
+ ↓
+Validation
+ ↙      ↘
+Valid   Invalid
+ ↓        ↓
+Silver   Quarantine
+```
+
+In quarantine:
+
+- Raw payload
+- Error type
+- Error message
+- Received time
+
+Store these details, among others.
+
+Reprocess the data after fixing the cause.
+
+Do not let quarantine only grow. Monitor its volume and error reasons.
+
+---
+
+## 11.4 dbt Tests
+
+Basic dbt tests for data quality:
+
+- not_null
+- unique
+- relationships
+- accepted_values
+
+Strength:
+- Static validation at the model/table level.
+
+Areas that may need more checks:
+- Volume anomalies
+- Distribution drift
+- Freshness anomalies
+
+---
+
+## 11.5 Soda / Great Expectations / Deequ
+
+Common role:
+
+> **Tools that check data quality rules automatically.**
+
+### Soda
+
+Rule- and check-based validation.
+
+### Great Expectations
+
+Validation based on expectations.
+
+### Deequ
+
+Large-scale data quality checks suited to Spark environments.
+
+These tools overlap. The study goal was to understand the category, not implement each tool.
+
+---
+
+## 11.6 Data Quality SLOs
+
+SLI:
+
+> An actual measurement.
+
+SLO:
+
+> A target level.
+
+Examples:
+
+```text
+Freshness < 5 min
+Completeness > 99.9%
+Duplicate Rate < 0.01%
+```
+
+SLOs should differ by dataset.
+
+A live dashboard and a monthly report need different freshness targets.
+
+---
+
+## 11.7 Incident Handling
+
+Flow:
+
+```text
+Detect
+ ↓
+Contain
+ ↓
+Fix
+ ↓
+Reprocess
+ ↓
+Verify
+```
+
+### Detect
+
+Find an SLO violation.
+
+### Contain
+
+Stop incorrect data from spreading downstream.
+
+### Fix
+
+Correct the root cause.
+
+### Reprocess
+
+Backfill or replay the affected data.
+
+### Verify
+
+Run quality checks before resuming use.
+
+Remember:
+
+> **Incorrect data is a data incident even when the service is available.**
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Appendix: existing application notes
+
+The main text follows the supplied chapter’s headings, examples, and order. These existing explanations and caveats are separate from the source text.
+
+### Quality dimensions and validation layers
+
+One healthy metric does not prove that every dimension is healthy. A valid format does not prove that a billed amount is accurate. Five-minute freshness is an example, not a default target for every dataset.
+
+Passing an earlier validation layer does not remove the need for later checks.
+
+### Quarantine storage and access
+
+Raw payloads and error messages may contain sensitive information. Define storage scope and access with the [governance policy](governance.md). This page contains no real payloads.
+
+### Scope of dbt and quality tools
+
+The source’s “static validation” means fixed rules. A dbt data test runs SQL against actual data; it is not just static code analysis. Custom SQL tests can express business rules. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
+
+The limits of the four basic tests do not mean dbt cannot check freshness. Source freshness is a separate feature. Statistical anomaly detection also needs historical measurements and a baseline. [dbt source freshness](https://docs.getdbt.com/docs/deploy/source-freshness)
+
+Check these boundaries when applying each tool:
+
+- Soda: support for the rule and connected data source.
+- Great Expectations: execution environment and data connections.
+- Deequ: compatibility with Spark and library versions.
+
+Product descriptions retain the scope checked against official documentation on 2026-09-24. This edit did not recheck them, test implementations, or rank the tools. [SodaCL v3](https://docs.soda.io/soda-documentation/soda-v3/sodacl-reference/metrics-and-checks), [GX Core](https://docs.greatexpectations.io/docs/core/define_expectations/), [Deequ](https://github.com/awslabs/deequ)
+
+### SLOs and recovery checks
+
+The SLO values in the main text are learning examples, not measured results or approved production targets.
+
+For operational SLOs, define the clock, measurement window, denominator, and dataset scope.
+
+Do not close recovery just because a job succeeded. Check the reprocessing scope, duplicate risk, and downstream results. [Data observability](data-observability.md) helps measure ongoing health. [Lineage](lineage-metadata.md) helps find affected paths.
+
+### Existing conceptual diagram
+
+This preserves the existing Mermaid diagram separately from the source’s text diagram.
 
 ```mermaid
 flowchart TD
@@ -56,46 +305,6 @@ flowchart TD
     Repair --> Reprocess
     Reprocess --> Validation
 ```
-
-A quarantine record can hold the raw payload, error type, error message, and received time. After fixing the cause, send it through validation again. Monitor quarantine volume and trends by error reason. A queue that only grows is not a recovery process.
-
-In an operational design, classify raw payloads and error messages as data that may contain sensitive information. Define storage scope and access with the [governance policy](governance.md). This page contains no real payloads.
-
-## dbt checks and quality tools
-
-`not_null`, `unique`, `relationships`, and `accepted_values` check declared conditions on model and table values. The source calls this “static validation.” Here that means fixed rules. A dbt data test runs SQL against actual data; it is not just static code analysis. Custom SQL tests can express business rules. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
-
-The four built-in checks alone do not cover every volume anomaly, distribution drift, or freshness anomaly. This does not mean dbt cannot check freshness. Source freshness is a separate feature. Statistical anomaly detection also needs historical measurements and a baseline. [dbt source freshness](https://docs.getdbt.com/docs/deploy/source-freshness)
-
-| Tool | Studied role | Boundary to check |
-| --- | --- | --- |
-| Soda | Automated checks based on rules | Rule and data-source support |
-| Great Expectations | Expectations that describe and validate conditions | Execution environment and data connections |
-| Deequ | Large-scale data quality checks built on Spark | Compatibility with the Spark and library versions |
-
-These tools overlap. This page explains their category. It does not claim to have tested their implementations or ranked them. Product descriptions were checked against official docs on 2026-09-24. [SodaCL v3](https://docs.soda.io/soda-documentation/soda-v3/sodacl-reference/metrics-and-checks), [GX Core](https://docs.greatexpectations.io/docs/core/define_expectations/), [Deequ](https://github.com/awslabs/deequ)
-
-## Quality SLIs and SLOs
-
-An SLI is a measurement. An SLO is its target. These are hypothetical targets:
-
-```text
-Freshness < 5 min
-Completeness > 99.9%
-Duplicate Rate < 0.01%
-```
-
-Requirements vary by dataset. A live dashboard and a monthly report need different freshness targets. For operational use, define the clock, measurement window, denominator, and dataset scope. These numbers are not measured results or approved production targets.
-
-## Handle a data incident
-
-1. **Detect:** Find an SLO violation.
-2. **Contain:** Stop incorrect data from spreading downstream.
-3. **Fix:** Correct the root cause.
-4. **Reprocess:** Backfill or replay the affected scope.
-5. **Verify:** Run quality checks again before resuming use.
-
-An available service can still serve incorrect data. Do not close recovery just because a job succeeded. Check the reprocessing scope, duplicate risk, and downstream results. [Data observability](data-observability.md) helps measure ongoing health. [Lineage](lineage-metadata.md) helps find affected paths.
 
 ## LLM in Practice: review quality incident checks
 

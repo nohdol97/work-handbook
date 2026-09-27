@@ -1,8 +1,8 @@
 ---
 id: data-platform-architecture
 status: studied
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-17-01
   - DPE-17-02
@@ -49,11 +49,1529 @@ knowledge_ids:
   - DPE2-22-08
 ---
 
-# Data platform architecture and roles
+
+# Chapter 21 — Final End-to-End Data Platform Architecture
+
+This page preserves Chapter 21 of the supplied complete source in its original order and form. Examples and diagrams describe studied concepts, not completed implementation, production recovery, or tests.
+
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+<!-- SOURCE CORE START -->
+
+This is the final integration of the entire curriculum.
+
+---
+
+## 21.1 Core Architecture
+
+```text
+                    Applications
+                         │
+              ┌──────────┴──────────┐
+              │                     │
+         Event Data             Operational Data
+              │                     │
+            Kafka              PostgreSQL
+              │                     │
+              │                  Debezium
+              │                     │
+              └──────────┬──────────┘
+                         │
+                  Stream Processing
+                   Flink / Spark
+                         │
+                         ▼
+                  Bronze Iceberg
+                         │
+                         ▼
+                       Spark
+                         │
+                         ▼
+                  Silver Iceberg
+                         │
+                    dbt / Spark
+                         │
+                         ▼
+                     Gold / Mart
+                         │
+               ┌─────────┼──────────┐
+               │         │          │
+             Trino       BI      AI Evaluation
+```
+
+---
+
+## 21.2 Why Kafka Exists
+
+Kafka is not the analytical database.
+
+Role:
+
+```text
+Durable Event Transport
++
+Replayable Event Log
++
+Decoupling Producers/Consumers
+```
+
+Use when:
+
+- multiple consumers need events,
+- replay is valuable,
+- asynchronous processing is required,
+- event-driven architecture matters.
+
+Do not add Kafka only because "data platforms use Kafka."
+
+At low scale:
+
+```text
+Application
+ ↓
+Database / Direct Batch Export
+```
+
+may be enough.
+
+---
+
+## 21.3 Why Flink Exists
+
+Role:
+
+```text
+Stateful Real-Time Stream Processing
+```
+
+Use when:
+
+- low latency matters,
+- Event Time is important,
+- Watermarks are needed,
+- large stateful streaming exists,
+- complex windows/sessions are required.
+
+If latency requirements are relaxed:
+
+```text
+Kafka
+ ↓
+Spark Structured Streaming
+ ↓
+Iceberg
+```
+
+may be simpler.
+
+---
+
+## 21.4 Why Bronze Exists
+
+Bronze preserves data near its source form.
+
+Purpose:
+
+```text
+Replay
+Audit
+Debug
+Reprocessing
+New transformation
+Historical source
+```
+
+Without durable raw history, transformation bugs can be harder to recover from.
+
+---
+
+## 21.5 Why Iceberg Exists
+
+Object Storage alone provides files.
+
+Iceberg adds the table abstraction:
+
+```text
+Schema
+Snapshot
+Metadata
+Partition evolution
+Atomic commits
+Time travel
+Update/Delete/Merge support
+```
+
+It allows multiple engines to work with a shared analytical table.
+
+---
+
+## 21.6 Why Spark Exists
+
+Spark is the heavy data processing engine.
+
+Use for:
+
+```text
+large ETL
+large joins
+aggregation
+backfill
+compaction
+ML datasets
+Silver/Gold transformations
+```
+
+It is compute, not storage.
+
+---
+
+## 21.7 Why dbt Exists
+
+dbt manages SQL transformation logic.
+
+Use for:
+
+```text
+staging
+intermediate
+marts
+tests
+documentation
+lineage
+metric-oriented modeling
+```
+
+Spark and dbt are complementary.
+
+```text
+Spark
+→ heavy processing
+
+dbt
+→ SQL transformation management
+```
+
+---
+
+## 21.8 Why Gold / Mart Exists
+
+Gold is where data becomes business-consumption ready.
+
+Examples:
+
+```text
+fact_agent_execution
+fact_llm_call
+dim_model
+dim_team
+mart_daily_ai_usage
+```
+
+BI users should not need to understand raw event internals.
+
+---
+
+## 21.9 Why Trino / SQL Warehouse Exists
+
+Analytics users need interactive SQL.
+
+```text
+Iceberg Gold
+ ↓
+Trino
+ ↓
+Dashboard / Analyst
+```
+
+In managed platforms:
+
+```text
+Databricks SQL Warehouse
+Snowflake Virtual Warehouse
+```
+
+can fill this role.
+
+---
+
+## 21.10 Why Airflow / Lakeflow Exists
+
+Data processing is more than individual jobs.
+
+Need:
+
+```text
+schedule
+dependencies
+retries
+backfills
+failure handling
+parameters
+alerts
+```
+
+Use:
+
+```text
+Airflow
+→ cross-platform
+
+Lakeflow Jobs
+→ Databricks-centric
+```
+
+---
+
+## 21.11 Why Data Quality Exists
+
+Question:
+
+> **Can we trust the data?**
+
+Checks include:
+
+```text
+Completeness
+Uniqueness
+Validity
+Consistency
+Freshness
+Accuracy
+Volume
+```
+
+Use quarantine for invalid data rather than silently dropping it.
+
+---
+
+## 21.12 Why Data Observability Exists
+
+Question:
+
+> **Is the data healthy right now, and where is it becoming unhealthy?**
+
+Observe:
+
+```text
+Freshness
+Volume
+Schema
+Distribution
+Pipeline Health
+Data Health
+```
+
+Important:
+
+```text
+Pipeline Healthy
+≠
+Data Healthy
+```
+
+---
+
+## 21.13 Why Metadata / Catalog Exists
+
+As data grows, users ask:
+
+```text
+What tables exist?
+What does this column mean?
+Who owns it?
+Is it fresh?
+Is it trustworthy?
+```
+
+Catalog unifies discovery and context.
+
+---
+
+## 21.14 Why Lineage Exists
+
+Lineage answers:
+
+```text
+Where did this data come from?
+Where does it go?
+What breaks if I change it?
+```
+
+Useful for:
+
+- root cause,
+- impact analysis,
+- governance,
+- debugging,
+- sensitive data tracking.
+
+---
+
+## 21.15 Why Governance Exists
+
+Governance answers:
+
+```text
+Who owns it?
+Who can access it?
+Is it sensitive?
+Should it be masked?
+How long should it be retained?
+Who accessed it?
+```
+
+Capabilities:
+
+```text
+Ownership
+Classification
+Retention
+Deletion
+Masking
+Row/Column Access
+Audit
+Data Contracts
+```
+
+---
+
+## 21.16 Why AI-Ready Data Exists
+
+AI-ready data combines:
+
+```text
+Trust
+Freshness
+Versioning
+Discovery
+Governance
+Provenance
+```
+
+AI should not consume unmanaged enterprise data blindly.
+
+---
+
+## 21.17 AI Evaluation Architecture
+
+```text
+Production Agent
+      ↓
+Trace / Telemetry
+      ↓
+Langfuse / MLflow
+      ↓
+Scores / Feedback / Judge
+      ↓
+Evaluation Dataset
+      ↓
+Experiments
+      ↓
+Regression Dataset
+```
+
+Long-term:
+
+```text
+Telemetry / Evaluation
+      ↓
+Iceberg
+      ↓
+Spark / dbt
+      ↓
+Enterprise AI Analytics
+```
+
+---
+
+## 21.18 Version Chain for Reproducibility
+
+A production/evaluation result should ideally be linkable to:
+
+```text
+Agent Version
+Prompt Version
+Model Version
+Tool Version
+Retrieval Config
+Embedding Version
+Dataset Version
+Evaluator Version
+Git Commit
+```
+
+Concept:
+
+```text
+result
+ ↓
+experiment_id / trace_id
+ ↓
+all relevant versions
+```
+
+This is the basis of reproducibility.
+
+---
+
+## 21.19 Failure Behavior
+
+A good architecture explanation must include failures.
+
+### Kafka Failure
+
+Events remain durable according to configured replication/retention.
+
+Consumers can resume/replay.
+
+### Flink Failure
+
+Restore:
+
+```text
+Checkpoint / Savepoint
++
+Source Offset
+```
+
+### Spark Failure
+
+Retry failed tasks/jobs.
+
+Jobs must be idempotent.
+
+### Iceberg Write Failure
+
+Uncommitted files may become orphan files.
+
+Atomic metadata commit protects table consistency.
+
+### Airflow Failure
+
+Resume from failed tasks rather than rebuilding everything.
+
+### CDC Failure
+
+Restart from offsets; snapshot/re-bootstrap when required.
+
+### Data Quality Failure
+
+Contain and quarantine before publishing downstream.
+
+---
+
+## 21.20 Consistency Model
+
+Different parts of the platform have different guarantees.
+
+Examples:
+
+```text
+Kafka
+→ partition ordering
+→ at-least-once / transactional features depending on usage
+
+Flink
+→ checkpointed state
+→ end-to-end exactly-once depends on source + state + sink
+
+Iceberg
+→ snapshot-based consistent table reads
+→ atomic commits
+
+dbt / Batch
+→ correctness depends heavily on idempotent transformations
+```
+
+Never say:
+
+> "The entire platform is exactly-once"
+
+without defining the boundary.
+
+---
+
+## 21.21 Backfill Strategy
+
+Preferred hierarchy:
+
+```text
+1. Rebuild only affected partition/range
+2. Use Bronze history
+3. Kafka replay when within retention
+4. Source re-extraction if necessary
+```
+
+Backfill requirements:
+
+```text
+parameterized time range
+idempotency
+resource limits
+quality verification
+lineage awareness
+```
+
+---
+
+## 21.22 Scaling Model
+
+### Kafka
+
+Scale with:
+
+```text
+partitions
+brokers
+consumer parallelism
+```
+
+### Flink
+
+Scale:
+
+```text
+operator parallelism
+task managers
+state backend/resources
+```
+
+### Spark
+
+Scale:
+
+```text
+executors
+tasks
+partitions
+cluster/serverless compute
+```
+
+### Iceberg
+
+Scale through:
+
+```text
+object storage
+metadata
+file layout
+partitioning
+compaction
+```
+
+### Trino / SQL
+
+Scale:
+
+```text
+workers / warehouse size
+concurrency
+query optimization
+```
+
+Scaling one component does not automatically remove bottlenecks in another.
+
+---
+
+## 21.23 Cost Model
+
+Cost appears at different layers:
+
+```text
+Kafka
+→ brokers/storage/network
+
+Flink
+→ always-on stream compute/state
+
+Spark
+→ batch compute
+
+Iceberg
+→ object storage + maintenance
+
+Trino
+→ query compute
+
+BI
+→ concurrency
+
+AI
+→ tokens/inference/search
+```
+
+Platform cost optimization is architecture-wide.
+
+Examples:
+
+```text
+Reduce unnecessary raw retention
+Reduce scans
+Improve file layout
+Use incremental transforms
+Avoid duplicate materialization
+Right-size compute
+```
+
+---
+
+## 21.24 What to Remove at Smaller Scale
+
+This was one of the original curriculum goals:
+
+> **Explain what should be removed when scale is smaller.**
+
+### Very small system
+
+Possible:
+
+```text
+Application
+ ↓
+PostgreSQL
+ ↓
+dbt / SQL
+ ↓
+BI
+```
+
+No Kafka.
+
+No Flink.
+
+No Iceberg.
+
+No Trino.
+
+No separate metadata platform.
+
+### Small analytics platform
+
+```text
+PostgreSQL / Files
+ ↓
+Object Storage
+ ↓
+Spark or managed SQL
+ ↓
+Warehouse / Lakehouse
+ ↓
+BI
+```
+
+Still possibly no Kafka/Flink.
+
+### Medium event-driven platform
+
+```text
+Application
+ ↓
+Kafka
+ ↓
+Spark Structured Streaming
+ ↓
+Iceberg
+ ↓
+Spark/dbt
+ ↓
+Trino
+```
+
+Flink may still be unnecessary.
+
+### Large real-time platform
+
+```text
+Kafka
+ ↓
+Flink
+ ↓
+Iceberg
+ ↓
+Spark
+ ↓
+Trino
+```
+
+Add:
+
+```text
+Catalog
+Observability
+Quality
+Governance
+```
+
+when organizational/data complexity justifies them.
+
+### Principle
+
+> **Do not deploy technology because it exists in a reference architecture. Add it when its problem actually exists.**
+
+---
+
+## 21.25 What Changes if Databricks Is Adopted
+
+Self-managed:
+
+```text
+Spark
+Trino
+Airflow
+Catalog
+Lineage
+MLflow
+Vector DB
+```
+
+may partially collapse into:
+
+```text
+Databricks Runtime
+SQL Warehouse
+Lakeflow
+Unity Catalog
+MLflow
+AI Search
+```
+
+Possible remaining components:
+
+```text
+Kafka
+Flink
+External dbt
+Cross-platform Airflow
+Special-purpose stores
+```
+
+Architecture becomes simpler operationally.
+
+Trade-off:
+
+```text
+less platform engineering
++
+faster integration
+
+vs
+
+more vendor dependency
++
+platform cost
+```
+
+---
+
+## 21.26 What Changes if Snowflake Is Adopted
+
+Possible consolidation:
+
+```text
+Warehouse
+SQL compute
+Transformation
+Dynamic Tables
+Governance
+Iceberg access
+AI services
+```
+
+may move into Snowflake.
+
+Possible remaining components:
+
+```text
+Kafka
+Flink
+external Spark
+Airflow
+special-purpose operational systems
+```
+
+Snowflake is especially natural when the organization is SQL/analytics-centered.
+
+---
+
+## 21.27 Open Lakehouse Final Architecture
+
+A fully open-oriented implementation could be:
+
+```text
+Applications
+    ↓
+Kafka
+    ↓
+Flink
+    ↓
+Iceberg on S3
+    ↓
+Spark
+    ↓
+dbt
+    ↓
+Trino
+    ↓
+BI
+```
+
+Surrounding components:
+
+```text
+Airflow
+→ orchestration
+
+OpenLineage
+→ lineage event standard
+
+DataHub / OpenMetadata
+→ catalog
+
+Soda / Great Expectations
+→ quality
+
+Prometheus / Grafana
+→ system observability
+
+Data observability layer
+→ freshness / volume / drift
+
+MLflow / Langfuse
+→ AI lifecycle
+```
+
+Strength:
+
+```text
+flexibility
+portability
+control
+```
+
+Weakness:
+
+```text
+integration burden
+operations
+upgrades
+security integration
+on-call complexity
+```
+
+---
+
+## 21.28 Managed Platform Final Architecture
+
+Databricks-centered example:
+
+```text
+Sources
+ ↓
+Kafka / Lakeflow Connect
+ ↓
+Lakeflow Pipelines / Spark Streaming
+ ↓
+Delta / Iceberg
+ ↓
+Databricks Runtime / dbt
+ ↓
+Gold
+ ↓
+SQL Warehouse
+ ↓
+BI
+
+Unity Catalog
+→ governance + lineage
+
+Lakeflow Jobs
+→ orchestration
+
+MLflow
+→ ML/AI lifecycle
+
+AI Search
+→ retrieval
+
+Model Serving
+→ inference
+```
+
+Snowflake-centered example:
+
+```text
+Sources
+ ↓
+Snowpipe / Streaming / External ingestion
+ ↓
+Snowflake / Iceberg
+ ↓
+Dynamic Tables / SQL Transform
+ ↓
+Data Marts
+ ↓
+Virtual Warehouses
+ ↓
+BI
+
+Horizon
+→ governance
+
+Cortex / Search / Agents
+→ AI
+```
+
+---
+
+## 21.29 Final Architecture Decision Checklist
+
+Before adding any component ask:
+
+### Kafka
+
+```text
+Do we need replayable event transport?
+Do multiple consumers need the same event?
+```
+
+### Flink
+
+```text
+Do we really need stateful low-latency streaming?
+```
+
+### Iceberg
+
+```text
+Do we need open object-storage analytical tables,
+snapshots, multi-engine access, and large history?
+```
+
+### Spark
+
+```text
+Do we have large-scale transformation/backfill workloads?
+```
+
+### dbt
+
+```text
+Do we need SQL transformation governance and reusable models?
+```
+
+### Trino
+
+```text
+Do we need interactive SQL over open lakehouse data?
+```
+
+### Airflow
+
+```text
+Do workflows span multiple systems and need orchestration?
+```
+
+### Catalog / Lineage
+
+```text
+Has the organization reached a point where users cannot
+reliably find, understand, or assess impact on data?
+```
+
+### Data Quality / Observability
+
+```text
+Would wrong or stale data create meaningful business damage?
+```
+
+### Managed Platform
+
+```text
+Is reducing operations/integration work worth the vendor cost/dependency?
+```
+
+---
+
+<!-- SOURCE CORE END -->
+
+<!-- SOURCE FINAL START -->
+
+# Final Mental Model
+
+The entire study session can be compressed into this model:
+
+```text
+Sources
+│
+├─ Operational DB
+│     ↓
+│   CDC
+│
+└─ Events
+      ↓
+    Kafka
+      ↓
+Streaming Processing
+      ↓
+Raw / Bronze
+      ↓
+Lakehouse Table
+      ↓
+Batch Transformation
+      ↓
+Silver
+      ↓
+Modeling / dbt
+      ↓
+Gold / Marts
+      ↓
+SQL Serving
+      ↓
+BI / Analytics / AI
+```
+
+Cross-cutting planes:
+
+```text
+Orchestration
+→ when and in what order
+
+Quality
+→ can we trust the data
+
+Observability
+→ is the data healthy now
+
+Metadata / Catalog
+→ what data exists
+
+Lineage
+→ where did it come from and where does it go
+
+Governance
+→ who can use it and how
+
+AI Evaluation
+→ how good are model/agent outputs
+
+Versioning
+→ what exact system produced this result
+
+Cost
+→ what resources are consumed
+
+Recovery
+→ how do we restore correct state after failure
+```
+
+Technology role map:
+
+```text
+PostgreSQL
+→ operational state
+
+Kafka
+→ event log / transport
+
+Debezium
+→ database changes → event stream
+
+Flink
+→ stateful real-time processing
+
+Spark
+→ large-scale distributed processing
+
+Parquet
+→ columnar analytical file format
+
+Iceberg
+→ open lakehouse table format
+
+dbt
+→ SQL transformation management
+
+Trino
+→ interactive distributed SQL
+
+Airflow / Lakeflow Jobs
+→ orchestration
+
+Data Quality tools
+→ validation
+
+Data Observability
+→ freshness / volume / drift
+
+OpenLineage
+→ lineage event standard
+
+Catalog
+→ discovery / metadata
+
+Governance
+→ access / classification / audit
+
+Langfuse / MLflow
+→ AI telemetry / evaluation / experiments
+
+Databricks / Snowflake
+→ managed platforms that consolidate many of the above roles
+```
+
+---
+
+# Final Engineering Principles
+
+## Principle 1 — Start from the problem, not the tool
+
+Bad:
+
+```text
+"We should use Kafka because modern platforms use Kafka."
+```
+
+Better:
+
+```text
+"We need replayable events consumed independently by five systems."
+→ Kafka may be justified.
+```
+
+---
+
+## Principle 2 — Keep roles clear
+
+Avoid confusing:
+
+```text
+Storage
+Table Format
+Compute
+Transformation
+Query Engine
+Orchestrator
+Catalog
+```
+
+Example:
+
+```text
+S3
+→ storage
+
+Parquet
+→ file format
+
+Iceberg
+→ table format
+
+Spark
+→ compute
+
+dbt
+→ transformation management
+
+Trino
+→ query engine
+
+Airflow
+→ orchestration
+```
+
+---
+
+## Principle 3 — Design for reprocessing
+
+Production pipelines will eventually need:
+
+```text
+retry
+replay
+backfill
+rollback
+```
+
+Therefore:
+
+- keep raw history when justified,
+- make tasks idempotent,
+- parameterize time ranges,
+- version transformations,
+- define source of truth.
+
+---
+
+## Principle 4 — Data correctness is separate from system health
+
+```text
+Job Success
+≠
+Correct Data
+```
+
+Observe both.
+
+---
+
+## Principle 5 — Version AI systems as systems
+
+An AI output is produced by more than a model.
+
+Version:
+
+```text
+Data
+Prompt
+Model
+Agent
+Tools
+Retrieval
+Evaluator
+Code
+```
+
+---
+
+## Principle 6 — Managed platforms trade control for integration
+
+Open:
+
+```text
+more control
+more portability
+more platform work
+```
+
+Managed:
+
+```text
+less integration work
+faster delivery
+more vendor dependency
+```
+
+Neither is universally correct.
+
+---
+
+## Principle 7 — Remove components when they are not earning their operational cost
+
+A mature platform is not one with the most technologies.
+
+A mature platform is one where:
+
+> **Every component exists because a real requirement justifies its complexity.**
+
+---
+
+<!-- SOURCE FINAL END -->
+
+## Appendix A — Supplementary Clarifications
+
+<!-- SOURCE APPENDIX START -->
+
+## 17.1 Overall Technology Role Map
+
+The roles connected throughout this study session are as follows.
+
+```text
+Applications
+   ↓
+Kafka
+   ↓
+Flink / Spark Streaming
+   ↓
+Iceberg Bronze
+   ↓
+Spark / dbt
+   ↓
+Silver / Gold
+   ↓
+Trino
+   ↓
+BI / Analyst / AI Evaluation
+```
+
+PostgreSQL Operational Data:
+
+```text
+PostgreSQL
+   ↓
+Debezium
+   ↓
+Kafka
+```
+
+Supporting systems:
+
+```text
+Airflow
+→ Orchestration
+
+Data Quality
+→ Trust
+
+Data Observability
+→ Freshness / Volume / Drift
+
+OpenLineage
+→ Lineage Standard
+
+Catalog
+→ Discovery / Metadata
+
+Governance
+→ Access / Classification / Audit
+
+Langfuse
+→ AI Telemetry / Evaluation
+```
+
+---
+
+## 17.2 Storage / Table / Compute / Query / Transformation Boundaries
+
+```text
+S3
+→ Object Storage
+
+Parquet
+→ Columnar File Format
+
+Iceberg
+→ Table Format / Metadata / Snapshot
+
+Spark
+→ Large-scale Compute
+
+Flink
+→ Stateful Streaming Compute
+
+Trino
+→ Distributed SQL Query Engine
+
+dbt
+→ SQL Transformation Management
+
+Airflow
+→ Orchestration
+```
+
+These role boundaries are key to understanding the whole data platform.
+
+---
+
+## 17.3 Data Quality vs Data Observability
+
+### Data Quality
+
+Question:
+
+> Does the data satisfy the rules we defined?
+
+Examples:
+
+- not null
+- unique
+- accepted values
+- accuracy
+
+### Data Observability
+
+Question:
+
+> How is data health changing during operations, and where did problems appear?
+
+Examples:
+
+- freshness
+- volume
+- schema
+- distribution
+- anomaly
+- alert
+
+Observability can continuously monitor quality rules.
+
+---
+
+## 17.4 Metadata / Catalog / Semantic Layer Differences
+
+### Metadata
+
+Information that describes data.
+
+### Catalog
+
+A system for searching and exploring metadata.
+
+### Business Metadata
+
+The business meaning of data.
+
+### Semantic Layer
+
+Define metric/dimension meanings and calculations in a form that queries can reuse.
+
+### Lineage
+
+Relationships that describe how data is created and transformed.
+
+### Governance
+
+Policies that define who should use data and how.
+
+---
+
+## 17.5 AI Observability vs General Data Platform
+
+AI observability/evaluation tools such as Langfuse handle the following well.
+
+- Trace
+- LLM Call
+- Tool Call
+- Prompt
+- Response
+- Token
+- Cost
+- Latency
+- Score
+- Dataset
+- Experiment
+
+But they do not fully replace long-term:
+
+- Enterprise Analytics
+- Lakehouse Storage
+- Cross-domain Join
+- Data Governance
+- Long-term History
+- Unified Catalog
+
+They do not replace all of these.
+
+Suggested role separation:
+
+```text
+Langfuse
+→ AI execution-level telemetry/evaluation
+
+Data Platform
+→ durable analytical data asset
+```
+
+---
+
+<!-- SOURCE APPENDIX END -->
+
+## Appendix: existing study notes and application conditions
+
+The following preserves the prior explanations, caveats, links, Mermaid diagrams, and practical prompts. They are separate from the source body. No existing correct content was deleted or inserted into the middle of the source. Official-document review dates retain their prior values.
 
 This page merges the source's supplementary explanations and final mental model. The architecture explains relationships. It is not a completed system or a required design for every organization. Linked topic pages provide evidence and qualifications for product behavior.
 
-## Data paths
+### Data paths
 
 In this example, application events go to Kafka. PostgreSQL changes reach Kafka through Debezium. Flink or Spark Streaming writes Bronze data. Spark and dbt transformations build Silver and Gold, which Trino queries. dbt SQL runs on a connected execution engine.
 
@@ -75,7 +1593,7 @@ flowchart TD
 
 The source's simpler diagram emphasizes Spark from Bronze to Silver and dbt from Silver to Gold/Data Mart. This diagram shows tool combinations within the same learning architecture. Connections require compatible connectors, catalogs, and execution engines. No end-to-end integration was tested for this material.
 
-## Component boundaries
+### Component boundaries
 
 | Component | Main role | Details |
 |---|---|---|
@@ -97,7 +1615,7 @@ The source's simpler diagram emphasizes Spark from Bronze to Silver and dbt from
 
 Storage, file format, table format, compute, query, transformation management, and orchestration have different roles. S3 holds objects; Parquet describes files; Iceberg manages table state; Spark/Flink process data; Trino runs SQL queries; dbt manages SQL models; Airflow manages task dependencies and execution order.
 
-## Cross-cutting capabilities
+### Cross-cutting capabilities
 
 | Capability | Question |
 |---|---|
@@ -110,21 +1628,21 @@ Storage, file format, table format, compute, query, transformation management, a
 | Langfuse | What happened inside AI execution, and how good was it? |
 | AI-ready data | Can AI reuse data under controlled conditions and restore experiment conditions? |
 
-## Quality and observability
+### Quality and observability
 
 [Data quality](data-quality.md) checks rules such as not null, unique, accepted values, and accuracy. [Data observability](data-observability.md) studies changes and anomalies through freshness, volume, schema, distribution, anomaly detection, and alerts. Observability can monitor quality rules continuously. A successful pipeline does not prove correct data.
 
-## Metadata, catalogs, and semantic layers
+### Metadata, catalogs, and semantic layers
 
 Metadata describes data. A catalog makes metadata searchable. Business metadata explains business meaning. A semantic layer defines reusable metric and dimension meanings and calculations for queries. Lineage describes creation and transformation relationships. Governance covers use policies and their enforcement. See [lineage and metadata](lineage-metadata.md), [analytical modeling](analytical-modeling.md), and [governance](governance.md).
 
-## AI observability and the general data platform
+### AI observability and the general data platform
 
 Tools such as Langfuse handle traces, LLM/tool calls, prompts/responses, tokens/cost/latency, scores, datasets, and experiments. Do not assume they replace enterprise analytics, lakehouse storage, cross-domain joins, governance, long-term history, or a unified catalog. In this learning design, Langfuse handles execution-level telemetry and evaluation; the data platform holds durable analytical assets. This is not a final product adoption decision.
 
 [AI-ready data](ai-ready-data.md) · [Online evaluation](online-evaluation.md) · [Study scope and next steps](curriculum.md)
 
-## Why each component exists
+### Why each component exists
 
 Chapter 21 adds role and selection criteria to the existing architecture. These are design review examples, not an adoption ADR or a running system.
 
@@ -140,7 +1658,7 @@ Chapter 21 adds role and selection criteria to the existing architecture. These 
 | Trino / SQL warehouse | Interactive SQL, such as Iceberg Gold → Trino → dashboard/analyst. | Databricks SQL Warehouse or Snowflake Virtual Warehouse can fill this role in a managed platform. |
 | Airflow / Lakeflow Jobs | Connects schedules, dependencies, retries, backfills, failure handling, parameters, and alerts. | Consider Airflow for cross-platform work and Lakeflow Jobs for Databricks-centered work. |
 
-## Questions about quality, context, and policy
+### Questions about quality, context, and policy
 
 Quality checks completeness, uniqueness, validity, consistency, freshness, accuracy, and volume. Quarantine invalid data with reasons and a reprocessing path instead of silently dropping it. Observability covers freshness, volume, schema, distribution, pipeline health, and data health. **Healthy execution and correct data are different.**
 
@@ -148,7 +1666,7 @@ A catalog helps answer which tables exist, what columns mean, who owns them, and
 
 Governance covers ownership, access, sensitivity, masking, retention and deletion, and access history. Its controls include ownership, classification, retention, deletion, masking, row/column access, audit, and data contracts. AI-ready data combines trust, freshness, versioning, discovery, governance, and provenance. It does not mean giving AI uncontrolled access to enterprise data.
 
-## AI evaluation and long-term analytics
+### AI evaluation and long-term analytics
 
 ```mermaid
 flowchart TD
@@ -179,7 +1697,7 @@ Evaluator version → Git commit
 
 The arrows show the order of a dependency list, not a required linear execution chain. Preserve the combination of data, prompt, model, agent, tools, retrieval, evaluator, and code. These links support reconstruction of conditions. They do not guarantee identical output when external data changes or models are nondeterministic.
 
-## Failure behavior and consistency boundaries
+### Failure behavior and consistency boundaries
 
 | Failure | Recovery decision and boundary |
 |---|---|
@@ -200,13 +1718,13 @@ The arrows show the order of a dependency list, not a required linear execution 
 
 Define input, state, output, side effects, and failure boundaries before saying the whole platform is exactly-once. Use [operations and recovery](production-operations.md) and official engine documentation to check recovery positions and duplicate handling.
 
-## Backfill and recovery design
+### Backfill and recovery design
 
 An example priority is **rebuild the affected partition/range → use Bronze history → replay Kafka within retention → re-extract the source if needed**. This is not a mandatory command sequence. Choose according to available source data and the failure type.
 
 Parameterize time ranges and design idempotency, resource limits, quality checks, and lineage impact analysis together. Expect retries, replay, backfills, and rollbacks. Keep justified raw history, transformation versions, and a defined source of truth. Actual procedures also need an owner, SLO, data contract, recovery input, and publication criteria.
 
-## Scaling units and cost
+### Scaling units and cost
 
 | Component | Scaling units | Main costs |
 |---|---|---|
@@ -219,7 +1737,7 @@ Parameterize time ranges and design idempotency, resource limits, quality checks
 
 Scaling one component does not remove another component's bottleneck. Before reducing unnecessary raw retention, check replay, audit, and retention requirements. Compare reduced scans, better file layout, incremental transforms, fewer duplicate materializations, and right-sized compute across the architecture. The total cost in [platform comparison](platform-comparison.md) also includes integration, upgrades, and on-call work.
 
-## What to remove at smaller scale
+### What to remove at smaller scale
 
 | Example scale and need | Possible architecture | Omission candidates |
 |---|---|---|
@@ -230,7 +1748,7 @@ Scaling one component does not remove another component's bottleneck. Before red
 
 Removing a separate tool does not remove necessary quality, access-policy, or recovery responsibilities. Start with a real problem, not the presence of a component in a reference architecture.
 
-## Open Lakehouse and managed options
+### Open Lakehouse and managed options
 
 An open-oriented example is **Applications → Kafka → Flink → Iceberg on S3 → Spark → dbt → Trino → BI**. The dbt step executes SQL through a compatible engine.
 
@@ -280,7 +1798,7 @@ This can combine warehouse, SQL compute, transformation, Dynamic Tables, governa
 
 Check cloud, region, edition, runtime, table mode, and connector conditions. [Databricks](databricks.md) and [Snowflake](snowflake.md) document capabilities, limits, and official sources. Managed diagrams also describe untested integration candidates.
 
-## Adoption questions and engineering principles
+### Adoption questions and engineering principles
 
 | Candidate | Question to answer |
 |---|---|

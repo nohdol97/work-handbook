@@ -18,25 +18,16 @@ knowledge_ids:
   - PIS-01-12
 ---
 
-# Linux, 네트워크와 컨테이너
+# Chapter 1. Linux, Networking, Containers
 
 문서 유형: Learn / Reference. 제공된 Chapter 1의 개념 학습을 정리했다. `studied`는 Linux·Docker·Kubernetes를 실제 구축하거나 장애 실험했다는 뜻이 아니다. 명령, Dockerfile, YAML, IP, PID와 수치는 설명용이며 실행하지 않았다. `<PID>`와 `<pod>`는 실제 대상에 맞춰 바꿀 자리표시자다. 종료 명령은 대상과 권한을 확인한 격리 실습에서만 사용한다.
 
-## 전체 관계
 
-```mermaid
-flowchart TD
-    K[Kubernetes resource and lifecycle settings] --> R[Container runtime]
-    I[Image and filesystem] --> R
-    R --> P[Linux application process]
-    N[Namespaces: process view and network] --> P
-    C[cgroups: CPU and memory control] --> P
-    P --> F[Files and sockets via file descriptors]
-    P --> S[Signals and exit status]
-    S --> O[Observe logs, limits and restart policy]
-```
+아래 원문 본문은 제공된 1장의 문장·번호·목록·예시를 그대로 보존했다. 단순화되거나 조건이 빠진 설명은 본문 뒤 **원문 보완과 적용 조건**을 함께 읽는다. 특히 1.1의 PID·재시작, 1.2/1.7의 request·OOM, 1.3의 표준 FD, 1.4/1.6/1.10의 네트워크 격리·노출, 1.5의 PID 1 신호, 1.8/1.9의 backoff, 1.11의 저장소 수명은 해당 절 번호의 보완을 먼저 확인한다.
 
-실무에서는 애플리케이션 프로세스, 자원 제어, 네트워크, 저장소를 함께 본다. 소스의 기본 모형을 아래에 보존하되, **원문 보완**은 과도한 일반화를 바로잡는다.
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+<!-- SOURCE CORE START -->
 
 ## 1.1 Linux Process
 
@@ -52,7 +43,7 @@ python app.py
 
 ### PID
 
-각 Process에는 해당 PID namespace에서 고유한 번호인 **PID(Process ID)** 가 있다.
+각 Process에는 고유한 번호인 **PID(Process ID)** 가 있다.
 
 ```bash
 ps aux
@@ -180,7 +171,7 @@ Pod
      └── vLLM Process
 ```
 
-프로세스 종료 → Exit Code → Container Runtime 감지 → 재시작 정책에 따른 Kubernetes 재시작 흐름으로 연결된다.
+프로세스 종료 → Exit Code → Container Runtime 감지 → Kubernetes 재시작 흐름으로 연결된다.
 
 ### 핵심 정리
 
@@ -218,11 +209,9 @@ LLM inference 일부 연산
 ### CPU-bound vs I/O-bound
 
 **CPU-bound**:
-
 - 계산이 병목
 
 **I/O-bound**:
-
 - DB 응답
 - API 응답
 - 파일 읽기
@@ -279,7 +268,7 @@ resources:
     memory: "4Gi"
 ```
 
-- `request` = 스케줄러가 배치 판단에 사용하는 자원 요청량. 메모리를 즉시 사전 할당하거나 실제 사용을 제한하는 값은 아니다.
+- `request` = 최소한 확보하고 싶은 자원
 - `limit` = 최대 사용 가능량
 
 Memory limit 초과 시 흔히:
@@ -293,11 +282,11 @@ OOMKilled
 ```text
 Application memory 증가
         ↓
-Container memory limit에 도달하고 메모리 회수 불가
+Container memory limit 초과
         ↓
-Process 종료 가능
+Process 종료
         ↓
-Container 상태에서 OOMKilled 확인 가능
+Pod에서 OOMKilled 확인
 ```
 
 ### CPU Limit
@@ -327,8 +316,8 @@ I/O-bound = DB, Network, Disk 등이 병목
 
 Memory가 부족하면 OOM이 발생할 수 있다.
 
-Kubernetes memory limit에서 메모리 회수 불가
-→ OOMKilled 가능
+Kubernetes memory limit 초과
+→ OOMKilled
 
 Kubernetes CPU limit 초과
 → CPU throttling
@@ -342,13 +331,15 @@ Linux에서는 프로세스가 파일이나 네트워크 연결을 사용할 때
 
 ### stdin / stdout / stderr
 
-일반적인 프로세스는 관례적으로 다음 표준 FD를 사용한다. 닫거나 다른 대상으로 바꿀 수도 있다:
+모든 프로세스는 기본적으로:
 
 ```text
 0 = stdin
 1 = stdout
 2 = stderr
 ```
+
+를 가진다.
 
 예:
 
@@ -504,7 +495,6 @@ IP + Port + Protocol
 ### TCP vs UDP
 
 **TCP**
-
 - 연결 기반
 - 신뢰성 있음
 - 순서 보장
@@ -513,9 +503,8 @@ IP + Port + Protocol
 HTTP, DB 연결 등에 많이 사용.
 
 **UDP**
-
 - 연결 없이 바로 전송
-- 연결 설정이 단순함. 항상 더 빠르다는 보장은 없음
+- 빠름
 - 전송/순서 보장 없음
 
 DNS 등에서 많이 사용.
@@ -535,13 +524,11 @@ Client      Server
 ### 127.0.0.1 vs 0.0.0.0
 
 **127.0.0.1**
-
 - localhost
-- 현재 network namespace의 loopback에서 접근 가능
+- 현재 장비 자기 자신에서만 접근 가능
 
 **0.0.0.0**
-
-- 모든 로컬 IPv4 Network Interface에서 요청을 받겠다는 의미
+- 모든 Network Interface에서 요청을 받겠다는 의미
 
 Container에서 App이 127.0.0.1에만 bind하면 Container 밖에서 접근이 안 될 수 있다.
 
@@ -634,7 +621,7 @@ Port = 프로세스
 Socket = 통신 endpoint
 
 TCP = 연결 + 신뢰성
-UDP = 비연결 방식, 전송과 순서 미보장
+UDP = 빠르고 단순
 
 127.0.0.1 = 자기 자신만
 0.0.0.0 = 모든 interface
@@ -826,7 +813,7 @@ Port
 
 를 가질 수 있다.
 
-그래서 별도 network namespace를 쓰는 같은 Host 안의 여러 Container가 같은 Port 번호를 각각 사용할 수 있다.
+그래서 같은 Host 안의 여러 Container가 같은 Port 번호를 각각 사용할 수 있다.
 
 ### Mount Namespace
 
@@ -919,9 +906,9 @@ Memory limit = 2GB
 초과 시:
 
 ```text
-Memory limit에 도달하고 메모리 회수 불가
+Memory limit 초과
 ↓
-OOM 가능
+OOM
 ↓
 Process 종료 가능
 ```
@@ -1083,7 +1070,7 @@ Pod
    └─ Application Process
 ```
 
-CrashLoopBackOff는 반복 종료 후 정책에 따라 재시작을 시도하면서 대기 시간을 늘리는 상태다. 원인 자체가 아니라 재시작 backoff 표시다.
+CrashLoopBackOff는 결국 애플리케이션 프로세스가 계속 종료되고 Container가 재시작되는 상황이다.
 
 ### 핵심 정리
 
@@ -1249,7 +1236,7 @@ Container 생성
 Process 실행
 ```
 
-Image Pull 실패 후 재시도 대기 상태:
+Image Pull 실패 시:
 
 ```text
 ImagePullBackOff
@@ -1358,7 +1345,7 @@ Container IP:80
 
 ### Container 간 통신
 
-같은 Network에 있는 Container끼리는 네트워크 정책이 허용하면 통신할 수 있다.
+같은 Network에 있는 Container끼리는 통신할 수 있다.
 
 Docker Compose에서는 이름으로 접근하는 경우도 많다.
 
@@ -1660,23 +1647,25 @@ Container
 
 ---
 
+<!-- SOURCE CORE END -->
+
 ## 원문 보완과 적용 조건
 
 공식 문서 확인일: 2026-09-27. 아래는 개념의 적용 범위를 바로잡는 보완이며, 실행 검증이나 특정 설치 버전의 보장은 아니다. 커널·runtime·네트워크 모드·Kubernetes 설정을 실제 환경에서 확인한다.
 
-### 자원 요청, limit와 종료 원인
+### 1.2 / 1.7 / 1.12 자원 요청, limit와 종료 원인
 
 원문의 “request = 최소한 확보하고 싶은 자원”은 배치용 요청량으로 이해한다. scheduler가 request를 바탕으로 배치하며 RAM을 미리 할당하지는 않는다. CPU limit는 보통 throttling, memory limit는 반응적 OOM 집행이다. `free -h`의 호스트 여유만으로 컨테이너 메모리 부족을 배제하지 않는다. [Kubernetes 자원 관리](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
 
 cgroup v2의 `memory.max`에 도달해 회수할 수 없으면 해당 cgroup에서 OOM 처리가 일어날 수 있다. “한 번 초과하면 항상 즉시 전체 Pod가 죽는다”는 뜻이 아니다. 예시 `2GB`와 YAML `2Gi`는 서로 다른 단위다. [Linux cgroup v2](https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html)
 
-### PID 1과 graceful shutdown
+### 1.1 / 1.5 / 1.8 PID 1과 graceful shutdown
 
 PID는 namespace별 식별자다. PID namespace의 init은 특별한 signal 규칙을 가지며 고아 자식의 종료 결과를 회수하는 역할도 한다. handler 등록과 자식에게 signal 전달 여부를 구분한다. “PID 1이면 모든 SIGTERM을 무시한다”는 일반화는 틀리다. [Linux PID namespaces](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html)
 
 Pod 종료 모형의 SIGTERM은 보통의 stop signal이다. `preStop` hook도 유예 시간 안에서 실행되며 이미지의 `STOPSIGNAL` 또는 지원되는 설정이 signal을 바꿀 수 있다. 시간 안에 끝나지 않으면 강제 종료된다. CrashLoopBackOff는 반복 재시작의 대기 상태이며 원인은 exit code·이전 로그·이벤트로 확인한다. [Kubernetes Pod lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
 
-### 네트워크의 주소·격리·노출 범위
+### 1.4 / 1.6 / 1.8 / 1.10 네트워크의 주소·격리·노출 범위
 
 “IP=장비, port=프로그램”은 입문 모형이다. 정확히는 IP는 주소/interface, port는 transport endpoint 식별에 쓰이며 protocol과 namespace도 고려한다. TCP/UDP의 HTTP·DNS 예시는 흔한 용도이지 모든 transport를 제한하는 규칙이 아니다. UDP가 항상 더 빠른 것도 아니다. `127.0.0.1`은 현재 network namespace의 loopback이고 `0.0.0.0` bind는 모든 로컬 IPv4 interface에서 수신한다는 뜻이다.
 
@@ -1688,7 +1677,7 @@ docker run -p 127.0.0.1:8080:80 nginx
 
 별도 network namespace일 때 같은 port 사용이 가능하다. 같은 Pod의 컨테이너는 일반적으로 network namespace를 공유한다. bridge/veth/NAT는 대표 모형이며 host networking 등 모든 모드가 그 경로를 따르지는 않는다. Linux 컨테이너의 kernel 공유는 Linux host 기준이다. VM 위에서 Docker를 쓰는 경우 실제 Linux host와 사용자 OS를 구분한다. containerd→runc도 대표 구현 경로다. [Docker 실행 모드](https://docs.docker.com/engine/containers/run/), [Kubernetes Pods](https://kubernetes.io/docs/concepts/workloads/pods/)
 
-### 이미지·캐시·저장소·명령의 경계
+### 1.3 / 1.9 / 1.11 / 1.12 이미지·캐시·저장소·명령의 경계
 
 `python:3.12`는 원문의 예시 tag이며 테스트한 버전이 아니다. 축약된 `sha256:abc123...`는 실행 가능한 digest가 아니다. `COPY . .`가 바뀌면 이후 `RUN pip install` 캐시가 무효화될 수 있다. 변경 빈도가 낮은 의존성 입력을 먼저 복사하는 구조를 검토한다. [Docker build cache](https://docs.docker.com/build/cache/invalidation/)
 
@@ -1699,6 +1688,34 @@ writable layer의 삭제는 같은 Docker 컨테이너의 단순 stop/start와 �
 bind mount의 기본 쓰기 권한은 host 파일에도 영향을 준다. 읽기만 필요한 경로는 read-only 사용을 검토한다. [Docker bind mounts](https://docs.docker.com/engine/storage/bind-mounts/)
 
 `ulimit -n`은 현재 shell의 한도이며 다른 서비스 프로세스의 실제 한도와 다를 수 있다. `1024`는 예시이지 고정 기본값이 아니다. `/proc`, `lsof`, `ss`의 세부 정보는 권한과 namespace에 따라 달라진다. `kill`은 관찰 명령이 아니라 상태를 바꾼다. exit code 하나만으로 OOM이나 signal 원인을 확정하지 않는다.
+
+### 1.1 / 1.3 / 1.8~1.11 본문에서 옮긴 추가 조건
+
+- **1.1:** 프로세스 종료 뒤 재시작 여부는 Kubernetes의 restart policy에 달려 있다. 종료가 모든 경우에 재시작을 뜻하지는 않는다.
+- **1.2:** request는 배치용 요청량이며 실제 사용량의 상한이 아니다. RAM을 즉시 사전 할당하는 값도 아니다.
+- **1.3:** FD는 프로세스별 번호다. `0/1/2`는 관례적인 표준 FD이며 닫거나 다른 대상으로 돌릴 수 있다. 모든 프로세스가 항상 열린 표준 FD 세 개를 가진다는 뜻은 아니다.
+- **1.4 / 1.10:** listen 주소, port 게시, 방화벽 정책은 별개의 조건이다. 같은 network에서도 정책이 통신을 허용해야 한다. veth pair는 network namespace를 연결하는 가상 연결로 이해한다.
+- **1.8:** 컨테이너가 보통 VM보다 가볍다는 설명은 workload와 구현에 따른 실제 성능 차이를 보장하지 않는다. `containerd → runc`는 대표 경로이며 모든 Kubernetes 구성이 반드시 이를 사용한다는 뜻은 아니다.
+- **1.8:** CrashLoopBackOff는 반복 종료 뒤 정책에 따른 재시작을 시도하며 대기 시간이 늘어나는 상태다. 원인 자체가 아니라 재시작 backoff 표시다.
+- **1.9:** ImagePullBackOff는 image pull 실패 후 재시도를 기다리는 상태다. Tag만으로 image content가 고정되지는 않으며 digest가 content를 식별한다.
+- **1.10:** 같은 Pod의 컨테이너는 보통 network namespace를 공유하므로 각 컨테이너가 반드시 별도 Pod IP를 갖는 것은 아니다.
+- **1.11:** 컨테이너 수명에 묶인 저장소 설명은 writable layer를 중심으로 읽는다. 분리한 volume의 수명과 백업 여부는 별개다.
+
+### 1.1~1.12 전체 관계를 보는 보조 그림
+
+실무에서는 애플리케이션 프로세스, 자원 제어, 네트워크, 저장소를 함께 본다. 아래 그림은 원문 text 흐름도와 별도로 이 관계를 시각화한 보완이다.
+
+```mermaid
+flowchart TD
+    K[Kubernetes resource and lifecycle settings] --> R[Container runtime]
+    I[Image and filesystem] --> R
+    R --> P[Linux application process]
+    N[Namespaces: process view and network] --> P
+    C[cgroups: CPU and memory control] --> P
+    P --> F[Files and sockets via file descriptors]
+    P --> S[Signals and exit status]
+    S --> O[Observe logs, limits and restart policy]
+```
 
 ## LLM in Practice
 

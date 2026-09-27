@@ -1,8 +1,8 @@
 ---
 id: data-platform-curriculum
 status: overview
-last_updated: 2026-09-26
-last_reviewed: 2026-09-26
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-00-01
   - DPE-18-01
@@ -27,6 +27,8 @@ knowledge_ids:
 원문은 Chapter 1~4를 이전에 완료한 학습 범위에 맞춰 **복원한 노트**, Chapter 5 이후를 실제 이어서 학습한 흐름이라고 명시한다. 원래 대화나 복원 이전 자료는 제공되지 않아 복원의 정확성을 별도로 확인하지 못했다. 아래 “완료”는 제공 자료의 학습 상태다.
 
 첫 자료의 Chapter 17은 보충 설명, Chapter 18은 당시 진행 현황이다. 2026-09-26 추가 자료의 Chapter 16~21은 아래 Phase 번호에 대응하며 **Phase 1~21의 개념 학습 완료**를 명시한다. 첫 자료의 미학습 표시는 당시 이력으로 보존하고 현재 상태는 이번 자료로 갱신했다.
+
+현재 본문 기준은 2026-09-27에 제공된 `data_platform_engineering_complete_source_ch01_21.md` 통합본이다. 이전 두 자료는 출처 이력으로 보존한다. 번호·제목·문단·목록·코드의 원형을 유지하며 보완 설명과 정정은 각 페이지 뒤에서 구분한다. 통합본의 Appendix A는 이전 자료의 보충 설명이며 Databricks 본장의 17번 절과 구분한다.
 
 ## 완료: Phase 1~15
 

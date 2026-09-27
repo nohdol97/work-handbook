@@ -1,8 +1,8 @@
 ---
 id: data-platform-event-architecture
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-02-01
   - DPE-02-02
@@ -12,78 +12,361 @@ knowledge_ids:
   - DPE-02-06
 ---
 
-# Event data architecture
+# Chapter 2 — Event Data Architecture
 
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run. Kafka broker, ISR, and replica operations are outside this page. The focus is event meaning for data engineering.
 
-## 2.1 Event modeling
+The body translates the latest supplied source without merging its headings, paragraphs, lists, or examples. Corrections, conditions on simplified statements, and previous additions appear separately under **Qualifications for real use**.
 
-An event records a fact that happened: a user clicked a button, an order was created, an agent ran, an LLM was called, or a tool failed. Prefer immutable events when practical. Add a new event to express a new fact instead of changing the historical event.
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
 
-| Field | Purpose |
-| --- | --- |
-| `event_id` | Unique identity for deduplication and tracing |
-| Event time | When the real action happened |
-| Ingestion time | When the data platform received it |
-| Producer timestamp | When the producer recorded creation |
-| `trace_id`, `session_id`, `execution_id` | Connect events across a trace, session, or execution |
+<!-- SOURCE CORE START -->
 
-Event time and ingestion time differ. An event may happen at `10:00:01` and arrive at `10:00:05`.
+> Infrastructure details such as Kafka broker operations, ISR, and replica operations belong to a separate Platform session.  
+> This chapter focuses on event semantics from a data engineering perspective.
 
-## 2.2 Event contracts
+## 2.1 Event Modeling
 
-An event contract agrees on meaning between producer and consumer. It can include required or optional fields, data type, unit, semantic definition, owner, version, and compatibility rules.
+An event is data that describes a fact that happened in the past.
+
+Example:
+
+```text
+user clicked button
+order created
+agent executed
+llm called
+tool failed
+```
+
+Design good events to be immutable where possible.
+
+Add a new event instead of editing a historical event.
+
+---
+
+### Main fields
+
+#### Event ID
+
+A unique identifier for the event.
+
+```text
+event_id
+```
+
+It matters for deduplication and tracing.
+
+#### Event Time
+
+The time when the action actually happened.
+
+#### Ingestion Time
+
+The time when the data platform received the event.
+
+These times can differ.
+
+```text
+event_time     = 10:00:01
+ingestion_time = 10:00:05
+```
+
+#### Producer Timestamp
+
+The creation time recorded by the producer.
+
+#### Trace / Session Identifier
+
+Connect several events to one execution or user session.
+
+Example:
+
+```text
+trace_id
+session_id
+execution_id
+```
+
+---
+
+## 2.2 Event Contracts
+
+An event contract is an agreement between producer and consumer about the meaning of an event.
+
+Example:
 
 ```text
 field: latency_ms
 type: integer
 unit: millisecond
 required: true
-owner: AI Platform Team (illustrative)
+owner: AI Platform Team
 ```
 
-The same schema does not guarantee the same meaning. `latency = 5` could mean five milliseconds or five seconds. The contract must remove that ambiguity.
+A contract can include:
 
-## 2.3 Schema evolution
+- Required / Optional
+- Data Type
+- Unit
+- Semantic Definition
+- Ownership
+- Version
+- Compatibility Rule
 
-Schemas change over time. Version 1 might contain `event_id`, `user_id`, and `event_time`. Version 2 adds `device_type`.
+Key point:
 
-| Format | Main trade-off |
-| --- | --- |
-| JSON | Easy to read and flexible; validation may be weak without an explicit schema, and payloads may be larger |
-| Avro | Schema-based serialization, often used with Kafka and a schema registry |
-| Protobuf | Explicit schema and compact binary representation |
+> **The same schema does not guarantee the same meaning.**
 
-A schema registry stores versions and checks configured compatibility rules. It helps catch breaking structural changes before registration.
+For example, `latency=5` could mean:
 
-**Backward compatibility** asks whether a new consumer can read old data. **Forward compatibility** asks whether an old consumer can read new data. A breaking change can include a required-field removal, an incompatible type change, or a semantic change. The actual result depends on the format, reader and writer schemas, and compatibility mode. A unit change can break meaning even if schema validation passes.
+- 5ms
+- 5 seconds
 
-## 2.4 Delivery semantics
+The contract must define which unit applies.
 
-| Semantics | Meaning | Main concern |
-| --- | --- | --- |
-| At-most-once | Zero or one delivery | Data may be lost |
-| At-least-once | One or more deliveries within the supported recovery assumptions | Duplicate processing may occur |
-| Exactly-once | One committed effect within a defined boundary | The boundary and participating systems matter |
+---
 
-Always ask: exactly once from where to where? Kafka transactions, stream-processor state, and an external sink have different boundaries.
+## 2.3 Schema Evolution
 
-At-least-once delivery plus idempotency and deduplication can make a final result reflect one effect. **Idempotency** means processing event A again does not change the final result further. **Deduplication** identifies repeated events, often by `event_id`, and keeps one logical event. These mechanisms need a defined identity and retention policy.
+Event schemas change over time.
+
+Example:
+
+```text
+v1:
+event_id
+user_id
+event_time
+
+v2:
+event_id
+user_id
+event_time
+device_type
+```
+
+---
+
+### JSON vs Avro vs Protobuf
+
+#### JSON
+
+Advantages:
+- Easy for people to read
+- Flexible
+
+Disadvantages:
+- Schema enforcement can be weak
+- Relatively large data size
+
+#### Avro
+
+Often used for schema-based serialization.
+
+Common in Kafka environments with a schema registry.
+
+#### Protobuf
+
+Provides an explicit schema and a compact binary format.
+
+---
+
+### Schema Registry
+
+Manages event schemas centrally.
+
+Role:
+
+```text
+Manage schema versions
+Check compatibility
+Prevent breaking changes
+```
+
+---
+
+### Backward Compatibility
+
+Can a new consumer read old data?
+
+### Forward Compatibility
+
+Can an old consumer process new data?
+
+### Breaking Change
+
+A change that can break an existing consumer.
+
+Example:
+
+- Removing a required field
+- An incompatible type change
+- A semantic change
+
+---
+
+## 2.4 Delivery Semantics
+
+### At-Most-Once
+
+Deliver at most once.
+
+Fewer duplicates, but loss is possible.
+
+```text
+Zero or one time
+```
+
+### At-Least-Once
+
+Deliver at least once.
+
+Helps prevent loss, but duplicates are possible.
+
+```text
+One or more times
+```
+
+### Exactly-Once
+
+An important question:
+
+> **From where to where is exactly-once guaranteed?**
+
+The scope can differ across Kafka internals, stream-processor state, and the sink.
+
+In data engineering, a common design uses:
+
+```text
+At-Least-Once
++
+Idempotency
++
+Deduplication
+```
+
+this combination so the final result reflects one effect.
+
+---
+
+### Idempotency
+
+Running the same operation several times must leave the same final result.
+
+```text
+Process event A
+Process event A again
+
+Same final result
+```
+
+### Deduplication
+
+Keep one event when the same event arrives several times.
+
+Example:
+
+```text
+event_id
+```
+
+This can be used to find duplicates.
+
+---
 
 ## 2.5 Replay
 
-An event log such as Kafka lets a consumer reread retained events. Offset replay may start at offset 100 and read 101, 102, and later records. This can rebuild a search index, create a new lakehouse table, fill a missing range, or apply new logic to old events.
+An important benefit of an event log such as Kafka is the ability to reread past events.
+
+### Offset Replay
+
+Start reading again from a particular offset.
 
 ```text
-Kafka → replay → New Search Index
-Kafka → replay → New Lakehouse Table
+offset 100
+→ 101
+→ 102
+...
 ```
 
-Replay can repeat effects. Use idempotency, deduplication, and deterministic processing where required. Check that the necessary log history still exists and that the new reader can handle historical schemas.
+### Downstream Rebuild
 
-## 2.6 Serving and lakehouse paths
+Example:
 
-One logical event can be materialized for several uses:
+```text
+Kafka
+  ↓ replay
+New Search Index
+```
+
+Or:
+
+```text
+Kafka
+  ↓
+New Lakehouse Table
+```
+
+These can be rebuilt in this way.
+
+### Backfill from Kafka
+
+Reprocess past events to fill missing data or apply new logic.
+
+### Replay Safety
+
+Because replay can produce duplicate events:
+
+- Idempotency
+- Deduplication
+- Deterministic processing
+
+these are important.
+
+---
+
+## 2.6 Event → Serving + Lakehouse Dual Path
+
+One logical event can be materialized for several purposes.
+
+```text
+Application
+   ↓
+Kafka
+   ├─→ Search Store
+   ├─→ Operational Serving Store
+   └─→ Lakehouse / Iceberg
+```
+
+For example, one user click event can support:
+
+- A real-time dashboard
+- Search or recommendations
+- Long-term analytics
+- AI Evaluation
+
+these uses at the same time.
+
+Key point:
+
+> **An event stream is a delivery path. One event can be materialized into several stored forms for different purposes.**
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Qualifications for real use
+
+The owner in the example is fictional. Distinguish plain JSON from validation through JSON Schema. A registry cannot catch every semantic change, such as a unit change. Allowed changes depend on the format, field defaults, and compatibility mode. For full historical replay, check whether compatibility covers only the previous schema or all prior schemas through a transitive mode. [Confluent schema compatibility](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)
+
+At-least-once guarantees rely on the system's retention and recovery assumptions. Deduplication needs an identity rule and a state-retention period. A longer replay needs separate verification. Kafka replay is limited to retained history. Check historical schema support and each serving or lakehouse path's lag, recovery, and result consistency.
+
+### Section 2.4: the boundary of delivery guarantees
+
+The source's at-most-once phrase “fewer duplicates” is simplified. Within the guarantee's boundary, delivery happens at most once, so it does not duplicate delivery, but loss is possible. Exactly-once means one committed effect within a defined boundary. Distinguish Kafka transactions, processor state, and an external sink.
+
+### Existing supplementary flow diagram
 
 ```mermaid
 flowchart TD
@@ -92,14 +375,6 @@ flowchart TD
     K --> O[Operational Serving Store]
     K --> L[Lakehouse / Iceberg]
 ```
-
-A user click can support a live dashboard, search or recommendations, long-term analytics, and AI evaluation. The stream is the delivery path. Each destination stores a representation suited to its purpose. Independent paths need their own lag, recovery, and consistency checks.
-
-## Qualifications for real use
-
-The owner in the example is fictional. Distinguish plain JSON from validation through JSON Schema. A registry cannot catch every semantic change, such as a unit change. Allowed changes depend on the format, field defaults, and compatibility mode. For full historical replay, check whether compatibility covers only the previous schema or all prior schemas through a transitive mode. [Confluent schema compatibility](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)
-
-At-least-once guarantees rely on the system's retention and recovery assumptions. Deduplication needs an identity rule and a state-retention period. A longer replay needs separate verification. Kafka replay is limited to retained history. Check historical schema support and each serving or lakehouse path's lag, recovery, and result consistency.
 
 ## Related reading
 

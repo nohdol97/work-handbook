@@ -1,8 +1,8 @@
 ---
 id: data-platform-spark
 status: studied
-last_updated: 2026-09-24
-last_reviewed: 2026-09-24
+last_updated: 2026-09-27
+last_reviewed: 2026-09-27
 knowledge_ids:
   - DPE-04-01
   - DPE-04-02
@@ -20,49 +20,177 @@ knowledge_ids:
   - DPE-04-14
 ---
 
-# Apache Spark
+# Chapter 4 — Spark
 
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run.
 
-## 4.1 Architecture
+The source body keeps its numbering, order, and form. [Source qualifications](#source-notes) separate applicable corrections and conditions by source section number.
 
-A Spark application has a driver and executors. The **driver** manages the application, plans jobs, schedules tasks, and coordinates executors. **Executors** run tasks, process data, and hold cached data.
+**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
 
-A cluster manager allocates resources. Examples include Kubernetes, YARN, and Spark Standalone. With Spark on Kubernetes, Kubernetes manages resources for driver and executor pods.
+<!-- SOURCE CORE START -->
 
-```text
-Application → Driver → Executors
-```
+## 4.1 Spark Architecture
 
-## 4.2 Execution model
+Basic parts of a Spark application:
 
 ```text
-Application → Job → Stage → Task
+Application
+   ↓
+Driver
+   ↓
+Executors
 ```
 
-An **action** triggers work organized into jobs. **Stages** separate work at boundaries such as shuffles. A **task** processes a Spark partition within a stage. A **Spark partition** is a logical unit of parallel data processing. The **DAG** represents dependencies between transformations.
+### Driver
 
-## 4.3 Lazy evaluation
+- Manage the whole application
+- Job planning
+- Task scheduling
+- Executor coordination
 
-Transformations such as filter, map, and join define a new dataset. Calling them does not immediately compute the full result. Actions such as `count`, `collect`, or a write trigger execution.
+### Executor
 
-For Spark SQL and DataFrames, query planning can be understood as:
+- Execute actual tasks
+- Process data
+- Keep cached data
+
+### Cluster Manager
+
+A system that allocates Spark resources.
+
+Example:
+
+- Kubernetes
+- YARN
+- Standalone
+
+With Spark on Kubernetes, Kubernetes manages execution resources for driver/executor pods.
+
+---
+
+## 4.2 Execution Model
+
+Spark execution units:
 
 ```text
-User Code → Logical Plan → Optimized Logical Plan → Physical Plan → Execution
+Application
+  ↓
+Job
+  ↓
+Stage
+  ↓
+Task
 ```
 
-Catalyst optimizes query plans. Use `explain()` to inspect a plan. Plan inspection is part of understanding the work, not proof that the work will be fast.
+### Job
 
-## 4.4 Narrow and wide dependencies
+A large unit of work created when an action runs.
 
-A **narrow dependency** lets each output partition depend on a small set of input partitions. Map and filter are common examples. They may run without major movement between workers.
+### Stage
 
-A **wide dependency** needs redistribution across partitions. GroupBy, repartition, and many joins can introduce a shuffle. A logical join is not proof that both inputs will shuffle: broadcast and compatible existing partitioning can change the physical plan.
+An execution phase divided by boundaries such as shuffles.
+
+### Task
+
+An execution unit that processes one Spark partition.
+
+### Spark Partition
+
+A logical unit of data that Spark processes in parallel.
+
+### DAG
+
+Represent transformation dependencies as a graph.
+
+---
+
+## 4.3 Lazy Evaluation
+
+Spark transformations do not run as soon as they are called.
+
+Example:
+
+```text
+filter
+map
+join
+```
+
+Defining these operations does not start the actual computation until an action is called.
+
+### Transformation
+
+Define a new dataset.
+
+### Action
+
+Trigger actual execution.
+
+Example:
+
+- count
+- collect
+- write
+
+---
+
+### Query Planning
+
+Conceptually:
+
+```text
+User Code
+  ↓
+Logical Plan
+  ↓
+Optimized Logical Plan
+  ↓
+Physical Plan
+  ↓
+Execution
+```
+
+For Spark SQL/DataFrames, the Catalyst Optimizer optimizes the query plan.
+
+Use `explain()` to inspect the plan.
+
+---
+
+## 4.4 Narrow vs Wide Dependencies
+
+### Narrow Dependency
+
+Each output partition depends on only a few input partitions.
+
+Example:
+
+```text
+map
+filter
+```
+
+Data may not need to move much between workers.
+
+### Wide Dependency
+
+Data must be redistributed across partitions.
+
+Example:
+
+```text
+groupBy
+join
+repartition
+```
+
+This causes a shuffle.
+
+---
 
 ## 4.5 Shuffle
 
-Shuffle redistributes records between workers. Its cost can include network I/O, shuffle writes and reads, sorting, serialization, disk spill, and new stage boundaries.
+Shuffle is a very important concept for Spark performance.
 
 ```text
 Worker A ─┐
@@ -70,119 +198,469 @@ Worker B ─┼→ Network Redistribution
 Worker C ─┘
 ```
 
-Large joins and aggregations are often expensive because data must move. Look at the physical plan and observed shuffle volume before treating this as the bottleneck.
+Possible costs:
 
-## 4.6 Join strategies
+- Network I/O
+- Shuffle Write
+- Shuffle Read
+- Sort
+- Serialization
+- Disk Spill
+- Stage Boundary
 
-| Strategy | Typical use and behavior | Risk |
-| --- | --- | --- |
-| Broadcast hash join | Send a small dimension to executors processing a large fact table | The broadcast side may be too large for memory |
-| Sort-merge join | Partition large inputs by join key, sort, then merge | Network and sort cost |
-| Shuffled hash join | Partition inputs, then build and probe a hash table | Per-partition memory pressure |
+Key point:
 
-Fact-plus-dimension is a common analytical pattern. A large-to-large join may move much more data. A **semi join** checks existence; an **anti join** selects nonmatches. They can express the intent more clearly when columns from the other side are not needed.
+> **Large joins and GROUP BY operations are expensive because data moves between workers.**
 
-Check **join cardinality**. Duplicate join keys on both sides can multiply result rows and cause a join explosion. A strategy change does not fix incorrect assumptions about key uniqueness.
+---
 
-## 4.7 Partition management
+## 4.6 Join Strategies
 
-`repartition` redistributes data and normally introduces a shuffle. Use it to increase parallelism, redistribute by key, or influence output layout. `coalesce` usually reduces partition count and can avoid a full shuffle.
+### Broadcast Hash Join
 
-Keyed repartitioning sends matching key values to the same partition. Partition count affects task count, memory pressure, and possible output-file count. Target partition size and target file size are related, but are not interchangeable settings. Fewer tasks can reduce overhead while also reducing parallelism.
-
-## 4.8 Cache and persist
-
-Cache or persist can keep an intermediate result in memory or on disk. This can avoid repeating an expensive transformation used by several later queries:
+Large fact + small dimension.
 
 ```text
-Expensive Transform → Cache → Query A / Query B
+Large Fact
++
+Small Dimension
 ```
 
-Call `unpersist` when the result is no longer needed. Caching may be a poor choice for data used only once, a very large dataset, or a memory-constrained job.
+Broadcast the small table to all executors.
 
-For reuse across jobs or long periods, a durable intermediate Iceberg table may be more suitable than executor cache. Cache and durable storage solve different lifecycle problems.
+Benefit:
+- Reduce shuffling of the large table
 
-## 4.9 Data skew
+Caution:
+- An overly large broadcast input can cause memory problems
 
-Skew means a partition gets much more data or work than others. If `team_id = A` holds 80% of rows and all other teams hold 20%, one task may dominate completion time.
+---
 
-A **hot key** can slow a join or aggregation. `NULL`, `UNKNOWN`, and `0` can become hot default keys. Possible responses include:
+### Sort-Merge Join
 
-- **Salting:** split a hot key into several temporary keys, process them, then combine correctly.
-- **Pre-aggregation:** aggregate locally before moving data.
-- **Heavy-key path:** process known hot keys separately.
-- **Adaptive Query Execution (AQE):** use runtime statistics for supported plan changes and skew optimizations.
+A common strategy for joining two large tables.
 
-Salting a batch aggregation is not a general solution for ordered event processing. Splitting one ordered key can change ordering guarantees. Distinguish Spark batch skew from Kafka key-ordering design.
-
-## 4.10 Performance engineering
-
-Possible bottlenecks include CPU, executor memory, heap pressure, garbage collection, disk spill, network, shuffle, S3 scans, small files, and slow tasks.
-
-**Executor sizing** chooses cores and memory for the workload. **Spill** writes intermediate data to disk when it does not fit in memory. A **straggler** is a task that finishes much later than peers; skew is one possible cause. **Speculative execution** can run another attempt of a slow task and use the first successful result. It does not remove the underlying skew.
-
-Use the Spark UI to locate the expensive stage and compare task metrics. Diagnose before changing several settings at once.
-
-## 4.11 Spark and Iceberg
+Conceptually:
 
 ```text
-Iceberg → Spark → Transform → Iceberg
+Shuffle both sides by join key
+↓
+Sort
+↓
+Merge
 ```
 
-Iceberg metadata helps Spark plan which files to scan. Filters and column selection can reduce files, row groups, and columns read. One Iceberg file is not necessarily one Spark task. Split planning and file layout both affect parallelism.
+---
 
-Writes need suitable distribution, target file sizes, and query-aware sort order. MERGE can build a CDC current-state table. Write skew can overload one partition or key. Tasks produce files; an Iceberg commit makes a new snapshot visible.
+### Shuffle Hash Join
 
-Streaming writes, MERGE operations, and small files can accumulate **maintenance debt**. Plan compaction and related maintenance with the write workload.
+Partition both inputs, then perform a hash join.
+
+---
+
+### Fact + Dimension
+
+A common analytical join pattern.
+
+### Large-Large Join
+
+When both sides are large, shuffle costs can be very high.
+
+### Semi / Anti Join
+
+Used for existence checks or exclusion conditions.
+
+### Join Cardinality / Join Explosion
+
+Many duplicate join keys can produce far more result rows than expected.
+
+---
+
+## 4.7 Partition Management
+
+### repartition
+
+Redistribute partitions.
+
+A shuffle may occur.
+
+Uses:
+- Increase parallelism
+- Redistribute by a specific key
+- Adjust output file count
+
+### coalesce
+
+Mainly used to reduce partition count.
+
+A full shuffle is not always required.
+
+---
+
+### Keyed Repartitioning
+
+Send the same key values to the same partition.
+
+### Task Parallelism
+
+Spark partition count is directly related to task parallelism.
+
+### Target Partition Size / Output File Count
+
+Partition count relates to:
+- Task count
+- File count
+- Memory pressure
+
+These are connected.
+
+---
+
+## 4.8 Cache / Persist
+
+Spark can keep intermediate results in memory or on disk.
+
+### Why use it?
+
+Recomputing the same data many times can be expensive.
+
+```text
+Expensive Transform
+  ↓
+Cache
+  ├─ Query A
+  └─ Query B
+```
+
+### unpersist
+
+Release cached data when it is no longer needed.
+
+### Cache is not always helpful
+
+- Data used only once
+- A very large dataset
+- An environment with limited memory
+
+Caching can be a disadvantage in these cases.
+
+### Durable Iceberg Intermediate Table
+
+For results reused over a long period or across jobs, durable storage such as an intermediate Iceberg table may fit better than cache.
+
+---
+
+## 4.9 Data Skew
+
+Data skew means data concentrates in particular partitions.
+
+Example:
+
+```text
+team_id = A → 80%
+Others → 20%
+```
+
+One task may then take much longer than the others.
+
+### Hot Key
+
+Data concentrates on a particular key.
+
+### Skewed Join / Aggregation
+
+One key becomes a bottleneck in a join or GROUP BY.
+
+### Null / Default Key Skew
+
+Data can concentrate on default values such as `NULL`, `UNKNOWN`, or `0`.
+
+### Salting
+
+Add a salt to a hot key, spread it across several keys, then combine the results later.
+
+However, **this is difficult to apply directly to streaming/event processing where the original key order matters.**  
+Distinguish Spark batch join/aggregation skew from Kafka ordering problems.
+
+### Pre-Aggregation
+
+Aggregate partially before the shuffle to reduce data movement.
+
+### Heavy-Key Special Path
+
+Process a specific hot key on a separate path.
+
+### AQE
+
+Adaptive Query Execution can use runtime statistics for some skew optimizations.
+
+---
+
+## 4.10 Spark Performance Engineering
+
+Common bottlenecks:
+
+- CPU
+- Executor Memory
+- Heap Pressure
+- GC
+- Disk Spill
+- Network
+- Shuffle
+- S3 Scan
+- Small Files
+- Straggler
+
+### Executor Sizing
+
+Adjust executor memory/cores to the workload.
+
+### Spill
+
+Write intermediate data that does not fit in memory to disk.
+
+### Straggler
+
+One task finishes much later than the others.
+
+Skew can be one cause.
+
+### Speculative Execution
+
+Run another copy of an unusually slow task on a different executor and use the first result to finish.
+
+### Spark UI
+
+Important for finding which stage/task is the bottleneck.
+
+---
+
+## 4.11 Spark + Iceberg
+
+Spark is one of the main compute engines for batch processing of Iceberg data.
+
+```text
+Iceberg
+  ↓
+Spark
+  ↓
+Transform
+  ↓
+Iceberg
+```
+
+### Iceberg Scan Planning
+
+Use Iceberg metadata to decide which files to read.
+
+### Predicate Pushdown / Pruning
+
+Avoid reading unnecessary files/row groups.
+
+### Spark Tasks vs Iceberg Files
+
+One file does not always map to one task, but file layout affects task parallelism and scan efficiency.
+
+### Write Distribution
+
+Distribute data appropriately when producing files.
+
+### Target File Size
+
+Avoid creating files that are too small.
+
+### Sort Order
+
+Optimize layout for query patterns.
+
+### MERGE
+
+Can be used to build CDC current-state tables.
+
+### Write Skew
+
+Writes may concentrate on a particular partition/key.
+
+### Commit Behavior
+
+Spark tasks create files, and an Iceberg commit publishes a new snapshot to the table.
+
+### Maintenance Debt
+
+Streaming writes, MERGE operations, and small files can build up and require maintenance such as compaction.
+
+---
 
 ## 4.12 Structured Streaming
 
-Structured Streaming treats an input stream as a growing table. Micro-batch execution is a useful starting model:
+Spark Structured Streaming provides a model for treating streaming data as a table.
+
+It can mainly be understood as a **micro-batch** model.
 
 ```text
-Kafka → Micro-batch → Spark → Sink
+Kafka
+ ↓
+Micro Batch
+ ↓
+Spark
+ ↓
+Sink
 ```
 
-| Concept | Role |
-| --- | --- |
-| Kafka source | Reads topic records |
-| Checkpoint | Stores offsets and recovery information |
-| State | Remembers data for aggregation, deduplication, and other stateful work |
-| Event time | Time of the real event |
-| Late event | Arrives after newer event-time data |
-| Watermark | Tracks event-time progress for supported state and late-data handling |
-| Window | Groups data into time ranges |
-| Deduplication | Suppresses repeated logical events within its configured scope |
-| Output mode | Controls how results are emitted |
-| `foreachBatch` | Applies batch logic to each micro-batch |
+### Kafka Source
 
-Frequent streaming writes to Iceberg can lower ingestion delay while producing small files. Compaction may be necessary. Streaming suits ongoing data; batch Spark often suits large historical backfills.
+Use a Kafka topic as a streaming source.
 
-## 4.13 Spark's role
+### Checkpoint
 
-Spark is a distributed data-processing engine. It supports large ETL, joins, aggregations, backfills, lakehouse transformations, ML dataset creation, batch jobs, and Structured Streaming.
+Store processing state, offsets, and other recovery information.
 
-Spark is compute. S3 supplies storage, and Iceberg supplies table management. Using Spark does not make Spark the durable storage layer.
+### State
 
-## 4.14 Do you still need dbt?
+Keep state needed for streaming aggregation/deduplication.
 
-Spark and dbt have different roles. Spark executes distributed computation. dbt manages SQL transformation projects. They can be used together:
+### Event Time
+
+The time when an event actually happened.
+
+### Late Events
+
+An event that arrives late.
+
+### Watermark
+
+A basis for deciding how late an event can be before the system stops waiting for it.
+
+### Window
+
+Aggregate data over time ranges.
+
+### Deduplication
+
+Remove duplicate events.
+
+### Output Modes
+
+Decide how to emit aggregation results.
+
+### foreachBatch
+
+Process each micro-batch with batch logic.
+
+### Streaming → Iceberg
+
+Ingest into Iceberg in near real time.
+
+Caution:
 
 ```text
-Raw → Spark → Silver → dbt → Gold / Mart
+Frequent writes
+→ Small files
+→ Compaction needed
 ```
 
-This is an example, not a mandatory layer boundary. Simple SQL transformations may instead use dbt with Trino or a warehouse, without Spark. Choose based on the required computation and transformation-management needs.
+### Streaming vs Batch Backfill
 
-## Qualifications for real use
+Streaming fits ongoing processing; batch Spark fits large historical reprocessing.
+
+---
+
+## 4.13 Spark's Role
+
+Question:
+
+> What is Spark's role?
+
+Key point:
+
+> **Spark is a large-scale distributed data-processing engine.**
+
+Main uses:
+
+- Large-scale ETL
+- Join
+- Aggregation
+- Backfill
+- Lakehouse Transform
+- ML dataset creation
+- Batch Processing
+- Structured Streaming
+
+Spark is not storage.
+
+```text
+Iceberg / S3
+→ Storage/Table
+
+Spark
+→ Compute
+```
+
+---
+
+## 4.14 Do You Need dbt When Using Spark?
+
+Their roles differ.
+
+```text
+Spark
+→ Large-scale data-processing engine
+
+dbt
+→ SQL transformation management layer
+```
+
+They can be used together.
+
+Example:
+
+```text
+Raw
+ ↓
+Spark
+ ↓
+Silver
+ ↓
+dbt
+ ↓
+Gold / Mart
+```
+
+For simple SQL transformations, dbt with Trino or a warehouse may work without Spark.
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Source qualifications {#source-notes}
+
+### 4.4–4.6 and 4.9 Join plans and skew
 
 A logical join does not always shuffle both inputs. Broadcast or existing partition layout can change the physical plan. Use `explain()` and the Spark UI to inspect shuffle bytes, task time, spill, GC, and input size. AQE supports specific runtime plan changes; it does not fix all skew. For join explosion, check key duplication and grain first. [Spark performance guide](https://spark.apache.org/docs/latest/sql-performance-tuning.html)
 
+### 4.7–4.10 and 4.14 Execution and role boundaries
+
 Speculation repeats a slow task but does not remove skew. Cache and durable tables have different lifetimes. Repartition normally shuffles, and too much partition reduction lowers parallelism. The Spark-to-dbt path is an example, not a required architecture.
+
+### 4.11 Iceberg file size
 
 An Iceberg target file size is not a promised output size. A file cannot exceed its writing task or cross an Iceberg partition boundary. Compressed file size differs from Spark's in-memory size. [Iceberg Spark writes](https://iceberg.apache.org/docs/latest/spark-writes/)
 
+### 4.12 Watermarks and output guarantees
+
 A watermark tracks event-time progress and supports state cleanup; it is not just a waiting timer. Append, update, and complete output modes have operator and sink constraints. `foreachBatch` writes are at-least-once by default. Use an idempotent sink design, such as deduplication by `batchId`, and test retries before claiming end-to-end exactly-once. [Spark Structured Streaming](https://spark.apache.org/docs/latest/streaming/apis-on-dataframes-and-datasets.html)
+
+### 4.3–4.7 Additional plan, join, and partition distinctions
+
+Reading a plan does not prove good performance. Check the physical plan and measured shuffle volume first. Sort-merge joins have network and sort costs. Shuffled hash joins partition the inputs, then build and probe a hash table. They can create memory pressure per partition. Changing join strategy does not fix a wrong assumption about key uniqueness.
+
+A semi join selects matching rows; an anti join selects nonmatches. They express existence checks clearly when columns from the other table are not needed. Target partition size and target file size are related but are not the same setting. Fewer tasks can reduce both overhead and parallelism.
+
+### 4.10–4.12 Additional processing, reading, and state distinctions
+
+Compare task metrics in the Spark UI and diagnose the bottleneck before changing several settings at once. For Iceberg reads, column selection as well as filters can reduce data read. File split planning and layout both affect parallelism. Plan compaction with the write workload.
+
+Structured Streaming can be understood as a growing-table model. A late event can arrive after newer event-time data. Deduplication suppresses repeated logical events within its configured scope.
 
 ## Related reading
 
