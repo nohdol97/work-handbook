@@ -1,0 +1,11 @@
+/* Keep reading text white in dark mode without changing syntax colors or borders. */
+[data-md-color-scheme="slate"] {
+  --md-default-fg-color: #ffffff;
+  --md-default-fg-color--light: #ffffff;
+  --md-code-fg-color: #ffffff;
+}
+
+/* Match Material's palette selector specificity so links remain distinct. */
+[data-md-color-scheme="slate"][data-md-color-primary] {
+  --md-typeset-a-color: #9ecbff;
+}

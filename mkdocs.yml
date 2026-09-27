@@ -152,6 +152,7 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
 extra_css:
   - assets/stylesheets/prompts.css
+  - assets/stylesheets/theme.css
 validation:
   nav:
     omitted_files: warn
