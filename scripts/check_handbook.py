@@ -283,10 +283,30 @@ def _reviews(root, pages, errors):
         errors.append(f'{relative}: review references unknown page')
 
 
+def _total_pair_claims(root, actual, errors):
+    patterns = (r'(?<!\w)한영[ \t]+([0-9]+)[ \t]*쌍',
+                r'\b([0-9]+)[ \t]+Korean/English[ \t]+pairs[ \t]+in[ \t]+total\b')
+    for relative in ('README.md', 'docs/ko/index.md', 'docs/en/index.md'):
+        path = root / relative
+        if not path.is_file():
+            continue
+        try:
+            prose = _prose(path.read_text(encoding='utf-8'))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f'{relative}: cannot read total page count: {exc}')
+            continue
+        for pattern in patterns:
+            for match in re.finditer(pattern, prose):
+                declared = int(match.group(1))
+                if declared != actual:
+                    errors.append(f'{relative}: total bilingual page pairs claim {declared} differs from actual {actual}')
+
+
 def audit(root):
     root = Path(root).resolve()
     errors = []
     paths = {lang: {p.relative_to(root / 'docs' / lang).as_posix(): p for p in (root / 'docs' / lang).rglob('*.md')} for lang in ['ko', 'en']}
+    _total_pair_claims(root, len(paths['ko'].keys() & paths['en'].keys()), errors)
     if not paths['ko'] and not paths['en']:
         errors.append('No handbook pages found')
     for relative in paths['ko'].keys() ^ paths['en'].keys():

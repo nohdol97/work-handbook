@@ -93,3 +93,5 @@ npm ci --ignore-scripts --cache _workspace/npm-cache
 ```
 
 이 명령은 고정된 `package-lock.json`을 사용하며 현재 `node_modules`를 다시 구성한다. 기존 사용자 캐시의 소유권이나 시스템 권한을 바꾸지 않아도 된다. 설치 후 `npm run check:mermaid`로 구문 검사 도구를 확인한다.
+
+전체 페이지 수를 README나 양언어 홈에 `한영 N쌍` 또는 `N Korean/English pairs in total`로 표기하면 실제 Markdown 쌍 수와 자동 대조한다. 페이지 추가·통합 뒤 수치가 낡으면 `check_handbook.py`가 실패한다. 일반 장수·분야별 개수·프롬프트 수나 임의 표현은 이 검사 대상이 아니다.

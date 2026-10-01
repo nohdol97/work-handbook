@@ -16,7 +16,7 @@
 | 스펙 | 상태 | 범위 |
 |---|---|---|
 | [001](specs/001-harness-contract.md) | active | 생성된 하네스의 기본 동작과 완료 기준 |
-| [002](specs/002-handbook-validation.md) | active | 한영·출처·원문 복원·검토 증거 검증 |
+| [002](specs/002-handbook-validation.md) | active | 한영·출처·원문 복원·검토 증거·전체 페이지 수 검증 |
 | [003](specs/003-vault-mirror.md) | active | 충돌 보호 Markdown vault 사본 |
 | [004](specs/004-build-and-delivery.md) | active | 사이트 빌드·검증·전달, 모바일·데스크톱 대주제 접기, 시스템·라이트·다크 모드와 흰색 글자 대비 |
 | [005](specs/005-practical-prompts.md) | active | 프롬프트 줄바꿈·언어 전환·실무 예시 100개 |

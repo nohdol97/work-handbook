@@ -69,6 +69,74 @@ class ValidFixtureTests(unittest.TestCase):
     def test_valid_minimal_handbook(self):
         self.assertEqual(checker.audit(self.root), [])
 
+    def total_pair_claims(self, count):
+        return [('README.md', f'전체 한영 {count}쌍이다.'),
+                ('docs/ko/index.md', f'합쳐 한영 {count}쌍이다.'),
+                ('docs/en/index.md', f'{count} Korean/English pairs in total.')]
+
+    def append_claim(self, relative, claim):
+        path = self.root / relative
+        previous = path.read_text() if path.exists() else ''
+        self.write(relative, previous + '\n' + claim + '\n')
+
+    def test_total_pair_claims_match_all_three_surfaces(self):
+        for relative, claim in self.total_pair_claims(1):
+            self.append_claim(relative, claim)
+        self.reviews()
+        self.assertEqual(checker.audit(self.root), [])
+
+    def test_total_pair_claims_detect_added_pair(self):
+        for relative, claim in self.total_pair_claims(1):
+            self.append_claim(relative, claim)
+        self.write_pair('nested/other.md', 'other-page')
+        self.write('mkdocs.yml', 'nav:\n  - Home: index.md\n  - Other: nested/other.md\n')
+        self.reviews()
+        errors = checker.audit(self.root)
+        self.assertEqual(len(errors), 3, errors)
+        for relative, _ in self.total_pair_claims(1):
+            with self.subTest(surface=relative):
+                self.assertIn(f'{relative}: total bilingual page pairs claim 1 differs from actual 2', errors)
+
+    def test_total_pair_claims_detect_removed_pair(self):
+        self.write_pair('other.md', 'other-page')
+        self.write('mkdocs.yml', 'nav:\n  - Home: index.md\n  - Other: other.md\n')
+        for relative, claim in self.total_pair_claims(2):
+            self.append_claim(relative, claim)
+        self.reviews()
+        self.assertEqual(checker.audit(self.root), [])
+        for lang in ['ko', 'en']:
+            (self.root / 'docs' / lang / 'other.md').unlink()
+        self.write('mkdocs.yml', 'nav:\n  - Home: index.md\n')
+        self.reviews()
+        errors = checker.audit(self.root)
+        self.assertEqual(len(errors), 3, errors)
+        for relative, _ in self.total_pair_claims(2):
+            with self.subTest(surface=relative):
+                self.assertIn(f'{relative}: total bilingual page pairs claim 2 differs from actual 1', errors)
+
+    def test_total_pair_claims_ignore_unrelated_numbers_and_code_examples(self):
+        text = ('2026-10-01; Chapter 1–21; 데이터 플랫폼 22쌍, 인프라 10쌍, 프롬프트 18쌍.\n'
+                '22 topic pairs, ten infrastructure pairs, 18 prompt pairs, 132 prompts.\n'
+                '```text\n한영 99쌍\n99 Korean/English pairs in total\n```\n')
+        for relative, _ in self.total_pair_claims(1):
+            self.append_claim(relative, text)
+        self.reviews()
+        self.assertEqual(checker.audit(self.root), [])
+
+    def test_total_pair_claims_skip_absent_surfaces(self):
+        for lang in ['ko', 'en']:
+            (self.root / 'docs' / lang / 'index.md').rename(self.root / 'docs' / lang / 'guide.md')
+        self.write('mkdocs.yml', 'nav:\n  - Guide: guide.md\n')
+        self.reviews()
+        self.assertEqual(checker.audit(self.root), [])
+
+    def test_total_pair_claims_count_only_matching_paths(self):
+        self.append_claim('README.md', '한영 1쌍')
+        self.write('docs/en/other.md', (self.root / 'docs/en/index.md').read_text())
+        errors = checker.audit(self.root)
+        self.assertTrue(any('missing language counterpart' in error for error in errors), errors)
+        self.assertFalse(any('total bilingual page pairs' in error for error in errors), errors)
+
     def test_additional_source_upload_integrity_is_checked(self):
         self.source()
         self.write('sources/study/complete-source.md', '원본 bytes: 1; SHA-256: ' + '0' * 64 + '\n<!-- ORIGINAL SOURCE START -->\nchanged\n')
