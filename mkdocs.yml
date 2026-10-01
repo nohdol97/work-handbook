@@ -57,6 +57,8 @@ plugins:
             Linux·컨테이너: Linux and containers
             Kubernetes 핵심: Kubernetes core
             Kubernetes 운영: Kubernetes operations
+            Kafka 운영: Kafka operations
+            GPU 인프라·스케줄링: GPU infrastructure and scheduling
             실무 프롬프트: Practical prompts
             프롬프트 모음: Prompt library
             저장·분석 기초: Storage and analytics
@@ -114,6 +116,12 @@ nav:
       - Linux·컨테이너: platform-infrastructure/linux-containers.md
       - Kubernetes 핵심: platform-infrastructure/kubernetes-core.md
       - Kubernetes 운영: platform-infrastructure/kubernetes-operations.md
+      - Redis: platform-infrastructure/redis.md
+      - PostgreSQL: platform-infrastructure/postgresql.md
+      - Kafka 운영: platform-infrastructure/kafka.md
+      - vLLM: platform-infrastructure/vllm.md
+      - LiteLLM: platform-infrastructure/litellm.md
+      - GPU 인프라·스케줄링: platform-infrastructure/gpu-infrastructure.md
   - 실무 프롬프트:
       - 프롬프트 모음: prompts/index.md
       - 저장·분석 기초: prompts/foundations.md

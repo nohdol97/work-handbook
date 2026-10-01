@@ -1,8 +1,8 @@
 ---
 id: handbook-glossary
 status: overview
-last_updated: 2026-09-27
-last_reviewed: 2026-09-27
+last_updated: 2026-10-01
+last_reviewed: 2026-10-01
 knowledge_ids: []
 ---
 
@@ -102,3 +102,26 @@ knowledge_ids: []
 | Cluster Autoscaler | 스케줄되지 못한 Pod 등의 조건을 바탕으로 node 수를 조절하는 구성 요소. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
 | PodDisruptionBudget (PDB) | Eviction API를 따르는 자발적 중단에서 workload에 필요한 가용 수를 지키도록 중단을 제한하는 예산. 모든 장애를 막는 보장은 아니다. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
 | Cordon / Drain | Node를 새 스케줄링 대상에서 제외 / node 유지보수를 위해 Pod 퇴거 등을 진행하는 작업. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+
+## 데이터 서비스·AI 서빙·GPU
+
+| 용어 | 의미 | 정규 주제 |
+|---|---|---|
+| TTL | 항목이 유효한 시간을 제한하는 만료 기간. Cache나 session의 보존 정책에 쓰인다. | [redis](../platform-infrastructure/redis.md) |
+| RDB / AOF | Redis 데이터를 시점 snapshot / 쓰기 명령 기록으로 보존하는 방식. 복구·손실 범위는 설정에 따라 달라진다. | [redis](../platform-infrastructure/redis.md) |
+| Sentinel / Redis Cluster | Redis 장애 감지·failover 조정 / hash slot으로 데이터를 나누는 cluster 구성. | [redis](../platform-infrastructure/redis.md) |
+| MVCC | 트랜잭션이 볼 데이터 버전을 관리해 동시 접근을 지원하는 방식. | [postgresql](../platform-infrastructure/postgresql.md) |
+| Connection pool | 클라이언트 요청들이 재사용할 데이터베이스 연결 묶음. 사용 가능한 DB 자원을 무한히 늘리지는 않는다. | [postgresql](../platform-infrastructure/postgresql.md) |
+| WAL | 데이터 변경 복구에 쓰는 Write-Ahead Log. Backup·replication·PITR 맥락에서 관리한다. | [postgresql](../platform-infrastructure/postgresql.md) |
+| PITR | 기본 backup과 필요한 로그를 사용해 목표 시점까지 복구하는 Point-in-Time Recovery. | [postgresql](../platform-infrastructure/postgresql.md) |
+| ISR | Kafka leader를 따라잡은 상태로 관리되는 In-Sync Replicas 집합. | [kafka](../platform-infrastructure/kafka.md) |
+| min.insync.replicas | Kafka의 acks=all 쓰기를 성공으로 승인하는 데 필요한 최소 ISR 수. | [kafka](../platform-infrastructure/kafka.md) |
+| Prefill / Decode | 입력 prompt를 처리하는 단계 / 다음 token을 반복 생성하는 단계. | [vllm](../platform-infrastructure/vllm.md) |
+| KV Cache | 이전 token의 attention key/value 상태를 보존해 생성 과정에서 재사용하는 메모리. | [vllm](../platform-infrastructure/vllm.md) |
+| Continuous batching | 진행 중인 요청 집합에 새 요청을 넣고 완료된 요청을 빼며 inference 작업을 묶는 방식. | [vllm](../platform-infrastructure/vllm.md) |
+| Tensor parallelism | 모델의 tensor 연산을 여러 GPU에 나누어 수행하는 병렬화 방식. | [vllm](../platform-infrastructure/vllm.md) |
+| Virtual key | LLM gateway에서 이용자·팀 등에 사용 권한과 한도를 부여하는 접근 key. | [litellm](../platform-infrastructure/litellm.md) |
+| Fallback | 주 경로를 사용할 수 없을 때 다른 모델·provider 등으로 요청을 보내는 대체 경로. | [litellm](../platform-infrastructure/litellm.md) |
+| MIG | 지원되는 NVIDIA GPU를 별도 자원 할당을 가진 GPU instance로 나누는 Multi-Instance GPU 기능. | [gpu-infrastructure](../platform-infrastructure/gpu-infrastructure.md) |
+| GPU time-slicing | 여러 workload가 GPU 실행 시간을 나눠 쓰는 공유 방식. 메모리 격리 보장과는 구분한다. | [gpu-infrastructure](../platform-infrastructure/gpu-infrastructure.md) |
+| TTIT / ITL | 생성 과정에서 이어지는 token 사이의 시간 간격. 첫 token까지의 시간인 TTFT와 구분한다. | [vllm](../platform-infrastructure/vllm.md) |

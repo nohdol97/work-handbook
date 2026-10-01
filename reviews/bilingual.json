@@ -1,24 +1,24 @@
 {
   "pages": {
     "glossary/index.md": {
-      "ko_sha256": "a0a9e1f1a3e8c49ebd560160913362f74d52f172667407e0504532155b0a066a",
-      "en_sha256": "047985a30aef4826a4ce708a0faeca9e387199f51e3542cc524ae46b80f16805",
+      "ko_sha256": "29c8bffb81bc660f6097b03e2d326cce7a5971bb96efca178d8e866007607b02",
+      "en_sha256": "82505163e2acf24037a17d9c6c0cb6b093f07a3df56b45aa31b2f99d584f5322",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/review_ch16 independent review",
-      "reviewed": "2026-09-27",
-      "notes": "기존59개용어정의를보존하고runtime/cluster16개용어를양언어추가. infra_core가전체대조했고지적한PDB의가용수를제한한다는오역을필요한가용수를지키도록중단을제한으로교정해EN과재대조. 실제비밀값·개인식별정보를발견하지않았다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
+      "reviewer": "Codex root integration + independent Codex /root/dark_mode",
+      "reviewed": "2026-10-01",
+      "notes": "공통4쌍 전체읽기·양언어 범위·홈/진도/132예시/18용어·53페이지 실제수 대조. 1~9장 Basic과10~15장 not-started 구분. 개인정보 검토 통과. minISR 성공승인 표현을 반영한 최종파일 확인."
     },
     "index.md": {
-      "ko_sha256": "224f33f42f045d75dd4a60cef41f8b391f472373f7ff202e3eb57953a0dcfc91",
-      "en_sha256": "c68b165f7e7e3d3b02bd6c6d407e175415856ecaf29196a566305cdc5a7f5ce3",
+      "ko_sha256": "5214efbcf281998b2fa2de9fc2b019d52df5ec7e2b2c7fd3fa66cb5e8c4c6a38",
+      "en_sha256": "dd97fd8af3cd90c06ce327acb867e18afe36c2bdbaf7311582b9969f74e4f740",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root full changed-content review",
-      "reviewed": "2026-09-27",
-      "notes": "양언어 기존 범위·링크·제약을 보존하며 최신통합본과인프라두기준자료, 원문그대로/동일구조번역/보완분리 안내를 대조했다. 48쌍126prompt수치와실제경험미주장유지. Curriculum의과거원문복원한계·과거상태를 보존하고Appendix A의17번표기와Databricks구분설명확인. 실제민감정보없음."
+      "reviewer": "Codex root integration + independent Codex /root/dark_mode",
+      "reviewed": "2026-10-01",
+      "notes": "공통4쌍 전체읽기·양언어 범위·홈/진도/132예시/18용어·53페이지 실제수 대조. 1~9장 Basic과10~15장 not-started 구분. 개인정보 검토 통과. minISR 성공승인 표현을 반영한 최종파일 확인."
     },
     "methodologies/knowledge-workflow.md": {
       "ko_sha256": "89573a872e5ef93c553e1f37044b3c266ea8c2b8b3ed3cce03055480ef77f615",
@@ -361,14 +361,14 @@
       "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
     },
     "prompts/index.md": {
-      "ko_sha256": "2efd5ed97b5034436dea0c6ec98a88537fbe83800601751aaaa90e90b7c704df",
-      "en_sha256": "156ec0e6cb3b84725583687c5b8a79ed34e87a992424ba1765874a1bb0007b54",
+      "ko_sha256": "235ea808a4dcbb681a8e7ff08d635ecfded93dc361289415f2fdd137c16be05c",
+      "en_sha256": "b7118ab0fd67b5c37b7f93a358aad9ec3dda8524c2dfb65580f25cbed72a5065",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review; independent review: infra_ops / infra_core",
-      "reviewed": "2026-09-27",
-      "notes": "모음100개를보존하고정규문서26개총126개와새인프라3개예시링크를양쪽대조. infra_core 독립검토PASS. 실제비밀값·개인식별정보를발견하지않았다."
+      "reviewer": "Codex root integration + independent Codex /root/dark_mode",
+      "reviewed": "2026-10-01",
+      "notes": "공통4쌍 전체읽기·양언어 범위·홈/진도/132예시/18용어·53페이지 실제수 대조. 1~9장 Basic과10~15장 not-started 구분. 개인정보 검토 통과. minISR 성공승인 표현을 반영한 최종파일 확인."
     },
     "prompts/knowledge-workflow.md": {
       "ko_sha256": "956f10f22a2b3c54f85c471ae5aa2eb96989f9dbe749087cb382f2164a3202ba",
@@ -461,14 +461,74 @@
       "notes": "원문 장 전체와 기존 한영 전문을 읽고 최종 한영 본문의 의미를 절별 대조했다. 한글 core 원문 완전 일치. 영어는 원문 모든 설명·인용·목록·text diagram 라벨을 번역하고 H2/H3/H4 계층·단락·예시 순서 보존. 원문 오류/조건 생략은 core에서 조용히 수정하지 않고 서두에서 번호별 보완을 안내했다. 기존 공식 조건, Mermaid, 실무 프롬프트 전부 보존. 실제 명령/클러스터 작업을 실행하지 않았고 날짜/버전 검증 범위를 넓혀 주장하지 않는다. 가상 주소·설정과 placeholder만 있으며 실제 개인정보·secret 값 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
     },
     "platform-infrastructure/index.md": {
-      "ko_sha256": "19cb7b51ef368211a9128a8703cae89dcedaec0955bba0ed603a1f6cd2fc3fda",
-      "en_sha256": "3ee6b3c9b627f06b8f96fe226f582f8a5b1d42b0963707ba9b8962cce7d0eb25",
+      "ko_sha256": "4d17f4c7e7595e558c365d423598e51f8137f536523a23cc8a5d72a2a0cb2804",
+      "en_sha256": "a54db96b4b7e08382e42fbf5b517f11f02a4b735bebeeac5848b56f3a62d3e33",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review; independent review: infra_ops / infra_core",
-      "reviewed": "2026-09-27",
-      "notes": "원문 범위와 완료 상태 2개ID·Basic1~3/미학습4~15목차·다른데이터과정과의구분·명령미실행·관련링크를양쪽전체대조. infra_ops 독립검토PASS. 실제비밀값·개인식별정보를발견하지않았다."
+      "reviewer": "Codex root integration + independent Codex /root/dark_mode",
+      "reviewed": "2026-10-01",
+      "notes": "공통4쌍 전체읽기·양언어 범위·홈/진도/132예시/18용어·53페이지 실제수 대조. 1~9장 Basic과10~15장 not-started 구분. 개인정보 검토 통과. minISR 성공승인 표현을 반영한 최종파일 확인."
+    },
+    "platform-infrastructure/redis.md": {
+      "ko_sha256": "b119e81f51bf34089f6bf70c5ccfde59af40d9e13afcbfb1637ec1b930ef9f7d",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/review_ch16 author + independent Codex /root/serving_gpu",
+      "reviewed": "2026-10-01",
+      "notes": "4~5장 원문·KO/EN 전문 직접읽기. 연결수·TTL·cache·복제·PITR·SQL예시와 적용조건 대응, KO 원문동일성·EN 구조/의미 확인. 샘플명은 설명용이며 실제credential없음. 공식근거 보완은 본문밖. 실행·성능·복구시험 미실시.",
+      "en_sha256": "566b2c4b7974775fee67971299e9f67d9069ef78681a955e1d2a228b4095d0d0"
+    },
+    "platform-infrastructure/postgresql.md": {
+      "ko_sha256": "9130150a39e9faf4bf8e73f2e93768c73ae760fbfaeefd3ad74ca0719e454ba1",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/review_ch16 author + independent Codex /root/serving_gpu",
+      "reviewed": "2026-10-01",
+      "notes": "4~5장 원문·KO/EN 전문 직접읽기. 연결수·TTL·cache·복제·PITR·SQL예시와 적용조건 대응, KO 원문동일성·EN 구조/의미 확인. 샘플명은 설명용이며 실제credential없음. 공식근거 보완은 본문밖. 실행·성능·복구시험 미실시.",
+      "en_sha256": "930724996c8c9d5decbd176a719b4ea9188c7bfc94fd47474f518cc128a1a047"
+    },
+    "platform-infrastructure/kafka.md": {
+      "ko_sha256": "e37196535e326296014ff4f4e2ccbb2c1243ee6947570ee7bb4c731bc63950af",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/dark_mode author + independent Codex /root/review_ch16",
+      "reviewed": "2026-10-01",
+      "notes": "6/8장 원문·KO/EN 전문 직접읽기 및 공식근거 재확인. Kafka RF/ISR/acks·ELR와 LiteLLM routing/sharedstate/provider경로/cache조건 대응. 영어2표현 교정 재확인, prompt양언어내용일치. 개인정보없음. 실제운영·성능시험 미실시.",
+      "en_sha256": "aefbe2de978c092fd686b1116478cec1302418ece51fdb93149ffda3f950ed49"
+    },
+    "platform-infrastructure/litellm.md": {
+      "ko_sha256": "cd812313218c105748f6a7b884e9a34a1eed0f777a79a906588823c56b77e10a",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/dark_mode author + independent Codex /root/review_ch16",
+      "reviewed": "2026-10-01",
+      "notes": "6/8장 원문·KO/EN 전문 직접읽기 및 공식근거 재확인. Kafka RF/ISR/acks·ELR와 LiteLLM routing/sharedstate/provider경로/cache조건 대응. 영어2표현 교정 재확인, prompt양언어내용일치. 개인정보없음. 실제운영·성능시험 미실시.",
+      "en_sha256": "43222400b8f9375620ebc7acfea9f98b2492bf4b2c54aa36aee12c68775e1509"
+    },
+    "platform-infrastructure/vllm.md": {
+      "ko_sha256": "39dbba8cbad589f6cd1de8ff514c6c92263f29eadaedefe07a4d14bf3aaa414b",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/serving_gpu author + independent Codex /root/dark_mode",
+      "reviewed": "2026-10-01",
+      "notes": "7/9장 원문·KO/EN 전문 직접읽기. 원문/번역 구조·숫자 multiset 및KV수치 재계산, 공식config/HGX/vLLM근거 대조. GLM parameter/FP4/1M단위·GPU utilization·node실패여유 정정을 원문밖에 구분. 실제GPU/모델실행·성능/복구실험 미실시. 개인정보없음.",
+      "en_sha256": "1691c03bc699d81bffdad6603aab8e79f4dd9447aa927a3104b908c1b2a236a2"
+    },
+    "platform-infrastructure/gpu-infrastructure.md": {
+      "ko_sha256": "78909bf6e2f26ac6e55e6b7108b723676d0744dc318a1be8cc411f328e2083fb",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/serving_gpu author + independent Codex /root/dark_mode",
+      "reviewed": "2026-10-01",
+      "notes": "7/9장 원문·KO/EN 전문 직접읽기. 원문/번역 구조·숫자 multiset 및KV수치 재계산, 공식config/HGX/vLLM근거 대조. GLM parameter/FP4/1M단위·GPU utilization·node실패여유 정정을 원문밖에 구분. 실제GPU/모델실행·성능/복구실험 미실시. 개인정보없음.",
+      "en_sha256": "ea3ae5886cc7f50614fd993373739d0e95df7f7f6e5293a9542dae2ae8e8a270"
     }
   }
 }

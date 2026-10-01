@@ -184,6 +184,75 @@
       "start": "# Chapter 3. Kubernetes Production Operations",
       "end": "# 현재까지 학습 완료 상태",
       "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/redis.md",
+      "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
+      "start": "# Chapter 4. Redis for Platform Systems",
+      "end": "# Chapter 5. PostgreSQL for Platform Systems",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/postgresql.md",
+      "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
+      "start": "# Chapter 5. PostgreSQL for Platform Systems",
+      "end": "# Chapter 6. Kafka for Platform Systems",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/kafka.md",
+      "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
+      "start": "# Chapter 6. Kafka for Platform Systems",
+      "end": "# Chapter 7. vLLM",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/vllm.md",
+      "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
+      "start": "# Chapter 7. vLLM",
+      "end": "# Chapter 8. LiteLLM",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/litellm.md",
+      "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
+      "start": "# Chapter 8. LiteLLM",
+      "end": "# Chapter 9. GPU Infrastructure & Scheduling",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/gpu-infrastructure.md",
+      "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
+      "start": "# Chapter 9. GPU Infrastructure & Scheduling",
+      "end": "# Chapter 4 ~ 9 전체 연결",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/index.md",
+      "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
+      "start": "# Platform / Infrastructure / AI Serving — Basic Study Notes",
+      "end": "# Chapter 4. Redis for Platform Systems",
+      "verbatim_language": "ko",
+      "marker": "SOURCE INTRO",
+      "include_start": true
+    },
+    {
+      "page": "platform-infrastructure/index.md",
+      "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
+      "start": "# Chapter 4 ~ 9 전체 연결",
+      "end": "# 현재 전체 커리큘럼 상태",
+      "verbatim_language": "ko",
+      "marker": "SOURCE CONNECTION",
+      "include_start": true
+    },
+    {
+      "page": "platform-infrastructure/index.md",
+      "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
+      "start": "# 현재 전체 커리큘럼 상태",
+      "end": null,
+      "verbatim_language": "ko",
+      "marker": "SOURCE STATUS",
+      "include_start": true
     }
   ]
 }

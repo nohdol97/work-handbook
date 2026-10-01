@@ -1,8 +1,8 @@
 ---
 id: handbook-glossary
 status: overview
-last_updated: 2026-09-27
-last_reviewed: 2026-09-27
+last_updated: 2026-10-01
+last_reviewed: 2026-10-01
 knowledge_ids: []
 ---
 
@@ -102,3 +102,26 @@ knowledge_ids: []
 | Cluster Autoscaler | A component that adjusts node count using conditions such as unschedulable Pods. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
 | PodDisruptionBudget (PDB) | A budget limiting voluntary disruptions through the Eviction API. It does not prevent every failure. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
 | Cordon / Drain | Mark a node unschedulable / perform Pod eviction and related work for node maintenance. | [kubernetes-operations](../platform-infrastructure/kubernetes-operations.md) |
+
+## Data services, AI serving, and GPUs
+
+| Term | Meaning | Canonical topic |
+|---|---|---|
+| TTL | An expiry duration limiting how long an entry stays valid, often used for cache or session retention. | [redis](../platform-infrastructure/redis.md) |
+| RDB / AOF | Redis persistence through point-in-time snapshots / recorded write commands. Recovery and loss depend on configuration. | [redis](../platform-infrastructure/redis.md) |
+| Sentinel / Redis Cluster | Redis failure detection and failover coordination / a cluster that partitions data with hash slots. | [redis](../platform-infrastructure/redis.md) |
+| MVCC | A method that manages visible row versions to support concurrent transactions. | [postgresql](../platform-infrastructure/postgresql.md) |
+| Connection pool | A set of database connections reused by client requests. It does not create unlimited database capacity. | [postgresql](../platform-infrastructure/postgresql.md) |
+| WAL | Write-Ahead Log used to recover data changes and managed for backup, replication, and PITR. | [postgresql](../platform-infrastructure/postgresql.md) |
+| PITR | Point-in-Time Recovery using a base backup and the required logs to reach a target time. | [postgresql](../platform-infrastructure/postgresql.md) |
+| ISR | The Kafka set of In-Sync Replicas tracked as sufficiently caught up with the leader. | [kafka](../platform-infrastructure/kafka.md) |
+| min.insync.replicas | The minimum ISR size required to acknowledge Kafka writes using acks=all successfully. | [kafka](../platform-infrastructure/kafka.md) |
+| Prefill / Decode | The phase that processes input prompt tokens / the phase that repeatedly generates the next token. | [vllm](../platform-infrastructure/vllm.md) |
+| KV Cache | Memory storing attention key/value state from previous tokens for reuse during generation. | [vllm](../platform-infrastructure/vllm.md) |
+| Continuous batching | Batching inference work by adding new requests and removing completed requests from the active set. | [vllm](../platform-infrastructure/vllm.md) |
+| Tensor parallelism | Parallel execution that divides model tensor computations across multiple GPUs. | [vllm](../platform-infrastructure/vllm.md) |
+| Virtual key | An access key used by an LLM gateway to assign permissions and limits to users or teams. | [litellm](../platform-infrastructure/litellm.md) |
+| Fallback | An alternate path that sends a request to another model or provider when the primary path is unavailable. | [litellm](../platform-infrastructure/litellm.md) |
+| MIG | Multi-Instance GPU, which partitions supported NVIDIA GPUs into instances with assigned resources. | [gpu-infrastructure](../platform-infrastructure/gpu-infrastructure.md) |
+| GPU time-slicing | Sharing GPU execution time across workloads, distinct from guaranteed memory isolation. | [gpu-infrastructure](../platform-infrastructure/gpu-infrastructure.md) |
+| TTIT / ITL | Time between generated tokens, distinct from TTFT, the time to the first token. | [vllm](../platform-infrastructure/vllm.md) |
