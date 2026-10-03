@@ -59,6 +59,8 @@ plugins:
             Kubernetes 운영: Kubernetes operations
             Kafka 운영: Kafka operations
             GPU 인프라·스케줄링: GPU infrastructure and scheduling
+            플랫폼 보안: Platform security
+            CI/CD·GitOps: CI/CD and GitOps
             실무 프롬프트: Practical prompts
             프롬프트 모음: Prompt library
             저장·분석 기초: Storage and analytics
@@ -122,6 +124,8 @@ nav:
       - vLLM: platform-infrastructure/vllm.md
       - LiteLLM: platform-infrastructure/litellm.md
       - GPU 인프라·스케줄링: platform-infrastructure/gpu-infrastructure.md
+      - 플랫폼 보안: platform-infrastructure/platform-security.md
+      - CI/CD·GitOps: platform-infrastructure/cicd-gitops.md
   - 실무 프롬프트:
       - 프롬프트 모음: prompts/index.md
       - 저장·분석 기초: prompts/foundations.md

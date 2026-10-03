@@ -1,8 +1,8 @@
 ---
 id: handbook-glossary
 status: overview
-last_updated: 2026-10-01
-last_reviewed: 2026-10-01
+last_updated: 2026-10-03
+last_reviewed: 2026-10-03
 knowledge_ids: []
 ---
 
@@ -125,3 +125,22 @@ knowledge_ids: []
 | MIG | 지원되는 NVIDIA GPU를 별도 자원 할당을 가진 GPU instance로 나누는 Multi-Instance GPU 기능. | [gpu-infrastructure](../platform-infrastructure/gpu-infrastructure.md) |
 | GPU time-slicing | 여러 workload가 GPU 실행 시간을 나눠 쓰는 공유 방식. 메모리 격리 보장과는 구분한다. | [gpu-infrastructure](../platform-infrastructure/gpu-infrastructure.md) |
 | TTIT / ITL | 생성 과정에서 이어지는 token 사이의 시간 간격. 첫 token까지의 시간인 TTFT와 구분한다. | [vllm](../platform-infrastructure/vllm.md) |
+
+## 플랫폼 보안·배포
+
+| 용어 | 의미 | 정규 주제 |
+|---|---|---|
+| Authentication / Authorization | 신원 확인 / 그 신원에 허용된 동작의 결정. | [platform-security](../platform-infrastructure/platform-security.md) |
+| Least privilege | 업무에 필요한 최소 범위의 권한만 부여하는 원칙. | [platform-security](../platform-infrastructure/platform-security.md) |
+| Role / RoleBinding | Kubernetes namespace 권한 규칙 / 그 권한을 주체에 연결하는 객체. | [platform-security](../platform-infrastructure/platform-security.md) |
+| ServiceAccount | Kubernetes workload가 사용하는 서비스 신원. 권한은 별도로 부여한다. | [platform-security](../platform-infrastructure/platform-security.md) |
+| Secret rotation | 자격증명을 교체하고 소비자가 새 값을 쓰도록 전환하는 과정. | [platform-security](../platform-infrastructure/platform-security.md) |
+| NetworkPolicy | 지원하는 network plugin이 적용하는 Pod 트래픽 허용 규칙. | [platform-security](../platform-infrastructure/platform-security.md) |
+| mTLS | 클라이언트와 서버가 서로 인증서를 확인하는 TLS 방식. 별도 인가 정책도 필요하다. | [platform-security](../platform-infrastructure/platform-security.md) |
+| SBOM | 소프트웨어를 구성하는 구성 요소의 목록. | [platform-security](../platform-infrastructure/platform-security.md) |
+| Image digest | 컨테이너 이미지 내용을 식별하는 hash 값. | [platform-security](../platform-infrastructure/platform-security.md) |
+| Helm chart / Release | Kubernetes 자원 template 패키지 / Helm이 관리하는 설치 인스턴스. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
+| GitOps / Drift | Git에 선언한 상태를 조정하는 운영 방식 / 원하는 상태와 실제 상태의 차이. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
+| Sync / Health | 원하는 선언과의 일치 여부 / 자원 상태에 대한 health 평가. 앱 품질 보장과 구분한다. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
+| Canary | 새 버전에 일부 트래픽을 보내 검증한 뒤 점진적으로 확대하는 배포 방식. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
+| Spare GPU capacity | 기존 서비스 외에 새 모델·KV Cache·병렬화·목표 부하를 수용할 수 있는 여유 자원. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |

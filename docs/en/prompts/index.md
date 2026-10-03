@@ -1,14 +1,14 @@
 ---
 id: prompt-library
 status: overview
-last_updated: 2026-10-01
-last_reviewed: 2026-10-01
+last_updated: 2026-10-03
+last_reviewed: 2026-10-03
 knowledge_ids: []
 ---
 
 # Practical prompt library
 
-These **100 new examples** support design reviews, SQL reviews, incident investigation, data checks, and documentation. Together with 32 examples in concept guides, there are 132 examples with bilingual tabs and multiple lines. Choose a topic, then use its scenario list.
+These **100 new examples** support design reviews, SQL reviews, incident investigation, data checks, and documentation. Together with 34 examples in concept guides, there are 134 examples with bilingual tabs and multiple lines. Choose a topic, then use its scenario list.
 
 ## How to use
 
@@ -56,3 +56,5 @@ Provide symptoms, expected behavior, product and connector versions, actual sett
 [Linux and containers](../platform-infrastructure/linux-containers.md), [Kubernetes core](../platform-infrastructure/kubernetes-core.md), and [Kubernetes operations](../platform-infrastructure/kubernetes-operations.md) each include a bilingual diagnosis or design-review example. These do not execute operational commands or approve changes.
 
 Each of [Redis](../platform-infrastructure/redis.md), [PostgreSQL](../platform-infrastructure/postgresql.md), [Kafka](../platform-infrastructure/kafka.md), [vLLM](../platform-infrastructure/vllm.md), [LiteLLM](../platform-infrastructure/litellm.md), and [GPU infrastructure](../platform-infrastructure/gpu-infrastructure.md) adds one operations or serving review example.
+
+[Platform security](../platform-infrastructure/platform-security.md) and [CI/CD and GitOps](../platform-infrastructure/cicd-gitops.md) add examples for reviewing security boundaries and planning a safe model change, respectively.

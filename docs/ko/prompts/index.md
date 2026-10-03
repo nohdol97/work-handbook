@@ -1,14 +1,14 @@
 ---
 id: prompt-library
 status: overview
-last_updated: 2026-10-01
-last_reviewed: 2026-10-01
+last_updated: 2026-10-03
+last_reviewed: 2026-10-03
 knowledge_ids: []
 ---
 
 # 실무 프롬프트 모음
 
-설계 검토·SQL 리뷰·장애 조사·데이터 검증·문서화에 바로 맞춰 쓸 수 있는 **새 예시 100개**다. 개념 문서의 예시 32개를 합치면 총 132개이며, 모두 한영 탭과 여러 줄 형식으로 읽을 수 있다. 아래에서 주제를 고르면 각 페이지의 상황별 목차로 이동할 수 있다.
+설계 검토·SQL 리뷰·장애 조사·데이터 검증·문서화에 바로 맞춰 쓸 수 있는 **새 예시 100개**다. 개념 문서의 예시 34개를 합치면 총 134개이며, 모두 한영 탭과 여러 줄 형식으로 읽을 수 있다. 아래에서 주제를 고르면 각 페이지의 상황별 목차로 이동할 수 있다.
 
 ## 사용 방법
 
@@ -56,3 +56,5 @@ knowledge_ids: []
 [Linux·컨테이너](../platform-infrastructure/linux-containers.md), [Kubernetes 핵심](../platform-infrastructure/kubernetes-core.md), [Kubernetes 운영](../platform-infrastructure/kubernetes-operations.md)에도 각각 진단·설계 검토용 한영 예시가 있다. 운영 명령 실행이나 변경 승인을 대신하지 않는다.
 
 [Redis](../platform-infrastructure/redis.md)·[PostgreSQL](../platform-infrastructure/postgresql.md)·[Kafka](../platform-infrastructure/kafka.md)·[vLLM](../platform-infrastructure/vllm.md)·[LiteLLM](../platform-infrastructure/litellm.md)·[GPU 인프라](../platform-infrastructure/gpu-infrastructure.md)에 각 1개씩 운영·서빙 검토 예시를 추가했다.
+
+[플랫폼 보안](../platform-infrastructure/platform-security.md)과 [CI/CD·GitOps](../platform-infrastructure/cicd-gitops.md)에는 각각 보안 경계 검토와 안전한 모델 교체 계획 예시를 추가했다.

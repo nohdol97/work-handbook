@@ -253,6 +253,47 @@
       "verbatim_language": "ko",
       "marker": "SOURCE STATUS",
       "include_start": true
+    },
+    {
+      "source": "sources/platform-infrastructure-basic-ch10-11-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "platform-infrastructure/platform-security.md",
+      "start": "# Chapter 10. Platform Security",
+      "end": "# Chapter 11. CI/CD, Helm, Argo CD & GitOps"
+    },
+    {
+      "source": "sources/platform-infrastructure-basic-ch10-11-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "platform-infrastructure/cicd-gitops.md",
+      "start": "# Chapter 11. CI/CD, Helm, Argo CD & GitOps",
+      "end": "# Chapter 10 ~ 11 전체 연결"
+    },
+    {
+      "source": "sources/platform-infrastructure-basic-ch10-11-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "platform-infrastructure/index.md",
+      "start": "# Platform / Infrastructure / AI Serving — Basic Study Notes",
+      "end": "# Chapter 10. Platform Security",
+      "marker": "SOURCE SECURITY INTRO",
+      "include_start": true
+    },
+    {
+      "source": "sources/platform-infrastructure-basic-ch10-11-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "platform-infrastructure/index.md",
+      "start": "# Chapter 10 ~ 11 전체 연결",
+      "end": "# 현재 전체 커리큘럼 상태",
+      "marker": "SOURCE SECURITY CONNECTION",
+      "include_start": true
+    },
+    {
+      "source": "sources/platform-infrastructure-basic-ch10-11-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "platform-infrastructure/index.md",
+      "start": "# 현재 전체 커리큘럼 상태",
+      "end": null,
+      "marker": "SOURCE SECURITY STATUS",
+      "include_start": true
     }
   ]
 }

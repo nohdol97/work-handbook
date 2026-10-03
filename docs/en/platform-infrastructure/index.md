@@ -1,25 +1,28 @@
 ---
 id: platform-infrastructure-overview
 status: overview
-last_updated: 2026-10-01
-last_reviewed: 2026-10-01
+last_updated: 2026-10-03
+last_reviewed: 2026-10-03
 knowledge_ids:
   - PIS-00-01
   - PIS-04-01
   - PIS2-00-01
   - PIS2-00-02
   - PIS2-00-03
+  - PIS3-00-01
+  - PIS3-00-02
+  - PIS3-00-03
 ---
 
 # Platform and infrastructure basics: study scope
 
-This section covers Chapters 1–9 of the supplied **Platform / Infrastructure / AI Serving — Basic Study Notes**. The first source covered Linux, containers, and Kubernetes in Chapters 1–3. The continuation adds Redis, PostgreSQL, Kafka, vLLM, LiteLLM, and GPUs in Chapters 4–9. Security and the final AI platform design in Chapters 10–15 remain future topics.
+This section covers Chapters 1–11 of the supplied **Platform / Infrastructure / AI Serving — Basic Study Notes**. The first source covered Linux, containers, and Kubernetes in Chapters 1–3. The continuation adds Redis, PostgreSQL, Kafka, vLLM, LiteLLM, and GPUs in Chapters 4–9. Chapters 10–11 add platform security and CI/CD, Helm, Argo CD, and GitOps. Chapters 12–15, starting with Terraform, remain future topics.
 
 “Completed” means **Basic conceptual study** for platform engineers. It does not mean Linux/Docker/Kubernetes commands were executed or a production cluster was built and tested. No specific distribution, kernel, cgroup, runtime, Kubernetes, CNI, CSI, or cloud version was supplied. Each topic separates version-sensitive behavior from its official evidence and conditions.
 
-## Scope of the latest source
+## Earlier source scope: Chapters 4–9
 
-The scope, connected architecture, and progress sections below follow the new source. Each technical page separates corrections and conditions by section number in its supplement.
+The scope, connected architecture, and progress for Chapters 4–9 below preserve the earlier source record. Current progress covers Chapters 1–11, with Chapter 12 next. Each technical page separates corrections and conditions by section number in its supplement.
 
 <!-- SOURCE INTRO START -->
 
@@ -45,10 +48,11 @@ flowchart TD
   Workload --> Operations[HA / scaling / reliability / troubleshooting]
   Operations --> Services[Redis / PostgreSQL / Kafka]
   Services --> Serving[vLLM / LiteLLM / GPU]
-  Serving -. Future study .-> Security[Security / GitOps / IaC / platform design]
+  Serving --> Security[Security / CI/CD / GitOps]
+  Security -. Future study .-> Future[IaC / tenant cost / IDP / platform design]
 ```
 
-This is a learning path, not a finished deployment or a required tool combination for every workload. The dotted arrow points to security and later topics that have not been studied.
+This is a learning path, not a finished deployment or a required tool combination for every workload. The dotted arrow points to Terraform and later topics that have not been studied.
 
 | Completed chapter | Canonical topic | Scope |
 |---|---|---|
@@ -61,23 +65,23 @@ This is a learning path, not a finished deployment or a required tool combinatio
 | 7 | [vLLM](vllm.md) | Prefill/decode, GPU/KV Cache memory, batching, performance, parallelism, quantization, serving |
 | 8 | [LiteLLM](litellm.md) | Gateway, routing, load balancing, retries, rate limits, budgets, authentication, caching |
 | 9 | [GPU infrastructure and scheduling](gpu-infrastructure.md) | GPU stack, node pools, sharing, multiple GPUs/nodes, capacity, failure diagnosis |
+| 10 | [Platform security](platform-security.md) | Identity, RBAC, Secrets, NetworkPolicy, TLS/mTLS, containers, supply chain, tenant isolation |
+| 11 | [CI/CD, Helm, Argo CD, and GitOps](cicd-gitops.md) | Builds, environments, declarative deployment, sync/health, canaries, model changes, spare GPU capacity |
 
 Start with component roles and boundaries. Then connect source symptoms to the relevant layer: “Pod Pending → scheduling/resources,” “application unavailable → process/port/DNS/Service,” or “failed shutdown → signals/PID 1/grace period.” A symptom alone does not prove one cause. Check hypotheses against actual state, events, and logs.
 
 ## Future curriculum
 
-These topics are **not-started** because their study content has not been supplied. Chapter 10 Platform Security is next.
+These topics are **not-started** because their study content has not been supplied. Chapter 12 Terraform & Infrastructure as Code is next.
 
 | Chapter | Next topic |
 |---|---|
-| 10 | Platform Security — next |
-| 11 | CI/CD, Helm, Argo CD & GitOps |
-| 12 | Terraform & Infrastructure as Code |
+| 12 | Terraform & Infrastructure as Code — next |
 | 13 | Multi-tenancy, Quotas & Cost Control |
 | 14 | Internal Developer Platform / Self-Service |
 | 15 | End-to-End AI Platform Architecture |
 
-Connect the data-processing view in the [data platform curriculum](../data-platform/curriculum.md) with the service operations and serving view here. Chapters 4–9 were future topics in the first source and are now covered by the new source. Content for Chapters 10–15 is not invented.
+Connect the data-processing view in the [data platform curriculum](../data-platform/curriculum.md) with the service operations and serving view here. Chapters 10–11 were future topics in the earlier sources and are now covered by the new source. Content for Chapters 12–15 is not invented.
 
 ## Using commands and practical examples
 
@@ -141,7 +145,9 @@ Kubernetes
 
 <!-- SOURCE CONNECTION END -->
 
-## Source: overall curriculum status
+## Earlier source: curriculum status after Chapters 4–9
+
+The following is the earlier progress record. See the last section of this page for the latest progress from the Chapters 10–11 source.
 
 <!-- SOURCE STATUS START -->
 
@@ -168,3 +174,117 @@ Kubernetes
 > Continue the next study session with **Chapter 10. Platform Security**.
 
 <!-- SOURCE STATUS END -->
+
+## Latest source: Chapters 10–11 scope, connections, and progress
+
+The latest introduction, connections, and progress follow the full source order. “Completed” means Basic conceptual study.
+
+<!-- SOURCE SECURITY INTRO START -->
+
+# Platform / Infrastructure / AI Serving — Basic Study Notes
+
+> Scope: Chapter 10 ~ Chapter 11  
+> Previous scope: Chapter 1~3, Chapter 4~9  
+> Level: Basic — core concepts every platform engineer should know  
+> Includes: main study material + practical questions and supplementary explanations  
+> Next study starting point: Chapter 12. Terraform & Infrastructure as Code
+
+---
+
+<!-- SOURCE SECURITY INTRO END -->
+
+<!-- SOURCE SECURITY CONNECTION START -->
+
+# How Chapters 10 ~ 11 connect
+
+```text
+Platform Security
+
+Identity
+↓
+RBAC
+↓
+Secrets
+↓
+NetworkPolicy
+↓
+TLS / mTLS
+↓
+Container Hardening
+↓
+Supply Chain Security
+↓
+Tenant Isolation
+```
+
+```text
+CI/CD & GitOps
+
+Developer
+↓
+Git
+↓
+CI
+├─ Test
+├─ Build
+├─ Scan
+└─ Registry Push
+↓
+Deployment Git
+├─ Helm Chart
+└─ Environment Values
+↓
+Argo CD
+↓
+Kubernetes
+```
+
+Connecting to AI serving:
+
+```text
+Git
+↓
+Model / vLLM / Helm Values
+↓
+Argo CD
+↓
+Deploy vLLM replicas
+↓
+Readiness
+↓
+LiteLLM Canary Routing
+↓
+Check metrics / quality
+↓
+Expand traffic or roll back
+```
+
+---
+
+<!-- SOURCE SECURITY CONNECTION END -->
+
+<!-- SOURCE SECURITY STATUS START -->
+
+# Current overall curriculum status
+
+```text
+1. Linux, Networking, Containers ✅
+2. Kubernetes Core ✅
+3. Kubernetes Production Operations ✅
+4. Redis for Platform Systems ✅
+5. PostgreSQL for Platform Systems ✅
+6. Kafka for Platform Systems ✅
+7. vLLM ✅
+8. LiteLLM ✅
+9. GPU Infrastructure & Scheduling ✅
+10. Platform Security ✅
+11. CI/CD, Helm, Argo CD & GitOps ✅
+12. Terraform & Infrastructure as Code ← current/next
+13. Multi-tenancy, Quotas & Cost Control
+14. Internal Developer Platform / Self-Service
+15. End-to-End AI Platform Architecture
+```
+
+> Continue the next study session with **Chapter 12. Terraform & Infrastructure as Code**.
+
+<!-- SOURCE SECURITY STATUS END -->

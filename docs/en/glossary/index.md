@@ -1,8 +1,8 @@
 ---
 id: handbook-glossary
 status: overview
-last_updated: 2026-10-01
-last_reviewed: 2026-10-01
+last_updated: 2026-10-03
+last_reviewed: 2026-10-03
 knowledge_ids: []
 ---
 
@@ -125,3 +125,22 @@ knowledge_ids: []
 | MIG | Multi-Instance GPU, which partitions supported NVIDIA GPUs into instances with assigned resources. | [gpu-infrastructure](../platform-infrastructure/gpu-infrastructure.md) |
 | GPU time-slicing | Sharing GPU execution time across workloads, distinct from guaranteed memory isolation. | [gpu-infrastructure](../platform-infrastructure/gpu-infrastructure.md) |
 | TTIT / ITL | Time between generated tokens, distinct from TTFT, the time to the first token. | [vllm](../platform-infrastructure/vllm.md) |
+
+## Platform security and deployment
+
+| Term | Meaning | Canonical topic |
+|---|---|---|
+| Authentication / Authorization | Verifying identity / deciding which actions that identity may perform. | [platform-security](../platform-infrastructure/platform-security.md) |
+| Least privilege | Granting only the permissions needed for a task. | [platform-security](../platform-infrastructure/platform-security.md) |
+| Role / RoleBinding | Kubernetes namespace permission rules / an object that assigns permissions to subjects. | [platform-security](../platform-infrastructure/platform-security.md) |
+| ServiceAccount | A service identity used by a Kubernetes workload. Permissions are granted separately. | [platform-security](../platform-infrastructure/platform-security.md) |
+| Secret rotation | Replacing credentials and moving consumers to the new values. | [platform-security](../platform-infrastructure/platform-security.md) |
+| NetworkPolicy | Pod traffic allowance rules enforced by a supporting network plugin. | [platform-security](../platform-infrastructure/platform-security.md) |
+| mTLS | TLS where client and server verify each other’s certificates. Authorization policy is still needed. | [platform-security](../platform-infrastructure/platform-security.md) |
+| SBOM | An inventory of the components in software. | [platform-security](../platform-infrastructure/platform-security.md) |
+| Image digest | A hash value identifying container image content. | [platform-security](../platform-infrastructure/platform-security.md) |
+| Helm chart / Release | A package of Kubernetes resource templates / an installed instance managed by Helm. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
+| GitOps / Drift | An operating approach that reconciles state declared in Git / a difference between desired and actual state. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
+| Sync / Health | Agreement with desired declarations / a health assessment of resource state. Neither guarantees application quality. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
+| Canary | A deployment approach that sends some traffic to a new version, checks it, then expands gradually. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
+| Spare GPU capacity | Available resources beyond current serving that can fit a new model, KV Cache, parallel layout, and target load. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |

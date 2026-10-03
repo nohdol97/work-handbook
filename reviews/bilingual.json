@@ -1,24 +1,24 @@
 {
   "pages": {
     "glossary/index.md": {
-      "ko_sha256": "29c8bffb81bc660f6097b03e2d326cce7a5971bb96efca178d8e866007607b02",
-      "en_sha256": "82505163e2acf24037a17d9c6c0cb6b093f07a3df56b45aa31b2f99d584f5322",
+      "ko_sha256": "c2a754482b3d96c2ac1c00661193e0aa704a0eabce777261eef616f5f19247d2",
+      "en_sha256": "f44958445482e64dfd82263a1a91a66e9629f3c8b9c7b2deae9eb7b539268952",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root integration + independent Codex /root/dark_mode",
-      "reviewed": "2026-10-01",
-      "notes": "공통4쌍 전체읽기·양언어 범위·홈/진도/132예시/18용어·53페이지 실제수 대조. 1~9장 Basic과10~15장 not-started 구분. 개인정보 검토 통과. minISR 성공승인 표현을 반영한 최종파일 확인."
+      "reviewer": "Codex /root author + independent Codex /root/review_ch16",
+      "reviewed": "2026-10-03",
+      "notes": "전체완독. 기존및신규14개보안/배포용어의의미와정규링크동등. AuthN/AuthZ, SA권한별도, plugin조건, mTLS인가별도, Helm release, sync/health와품질보장구분, 여유GPU조건정확. 영어이해가능하며수정불필요."
     },
     "index.md": {
-      "ko_sha256": "5214efbcf281998b2fa2de9fc2b019d52df5ec7e2b2c7fd3fa66cb5e8c4c6a38",
-      "en_sha256": "dd97fd8af3cd90c06ce327acb867e18afe36c2bdbaf7311582b9969f74e4f740",
+      "ko_sha256": "3d8faf9348a008fdb0ce73345bd50279934552008f51ed135289af304ab13d41",
+      "en_sha256": "eec02ae40d61f9a0afa3bf6eff7434e43e15021d679c5586f0efb38a2d6fc520",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root integration + independent Codex /root/dark_mode",
-      "reviewed": "2026-10-01",
-      "notes": "공통4쌍 전체읽기·양언어 범위·홈/진도/132예시/18용어·53페이지 실제수 대조. 1~9장 Basic과10~15장 not-started 구분. 개인정보 검토 통과. minISR 성공승인 표현을 반영한 최종파일 확인."
+      "reviewer": "Codex /root author + independent Codex /root/review_ch16",
+      "reviewed": "2026-10-03",
+      "notes": "전체 완독. 한영55쌍의 분야별합22+12+18+3=55 및 Basic 개념 학습/실제 운영 미주장 동등. 10~11장완료와12~15장미학습·다음12장일치.134프롬프트는두신규작성완료후최종확인필요. 작성 완료 후 check_prompts.py가134개 한영 예시·오류0건을 확인했다."
     },
     "methodologies/knowledge-workflow.md": {
       "ko_sha256": "89573a872e5ef93c553e1f37044b3c266ea8c2b8b3ed3cce03055480ef77f615",
@@ -361,14 +361,14 @@
       "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
     },
     "prompts/index.md": {
-      "ko_sha256": "235ea808a4dcbb681a8e7ff08d635ecfded93dc361289415f2fdd137c16be05c",
-      "en_sha256": "b7118ab0fd67b5c37b7f93a358aad9ec3dda8524c2dfb65580f25cbed72a5065",
+      "ko_sha256": "5a52a0863299b9f69d7d30f4fcd649345eb536f6bced7bf262d0bfba53783c4c",
+      "en_sha256": "1d7973ed561dc621323f3bb8d26960c702b6bb5b629598d2715199194a7b73bf",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root integration + independent Codex /root/dark_mode",
-      "reviewed": "2026-10-01",
-      "notes": "공통4쌍 전체읽기·양언어 범위·홈/진도/132예시/18용어·53페이지 실제수 대조. 1~9장 Basic과10~15장 not-started 구분. 개인정보 검토 통과. minISR 성공승인 표현을 반영한 최종파일 확인."
+      "reviewer": "Codex /root author + independent Codex /root/review_ch16",
+      "reviewed": "2026-10-03",
+      "notes": "전체완독. 100개library의표합계16*6+4=100,사용법·비식별입력·관찰가설검증·운영변경권한제약동등. 신규보안경계/모델교체두실습설명동등.134총수는최종작성후재확인필요. 작성 완료 후 check_prompts.py가134개 한영 예시·오류0건을 확인했다."
     },
     "prompts/knowledge-workflow.md": {
       "ko_sha256": "956f10f22a2b3c54f85c471ae5aa2eb96989f9dbe749087cb382f2164a3202ba",
@@ -461,14 +461,14 @@
       "notes": "원문 장 전체와 기존 한영 전문을 읽고 최종 한영 본문의 의미를 절별 대조했다. 한글 core 원문 완전 일치. 영어는 원문 모든 설명·인용·목록·text diagram 라벨을 번역하고 H2/H3/H4 계층·단락·예시 순서 보존. 원문 오류/조건 생략은 core에서 조용히 수정하지 않고 서두에서 번호별 보완을 안내했다. 기존 공식 조건, Mermaid, 실무 프롬프트 전부 보존. 실제 명령/클러스터 작업을 실행하지 않았고 날짜/버전 검증 범위를 넓혀 주장하지 않는다. 가상 주소·설정과 placeholder만 있으며 실제 개인정보·secret 값 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
     },
     "platform-infrastructure/index.md": {
-      "ko_sha256": "4d17f4c7e7595e558c365d423598e51f8137f536523a23cc8a5d72a2a0cb2804",
-      "en_sha256": "a54db96b4b7e08382e42fbf5b517f11f02a4b735bebeeac5848b56f3a62d3e33",
+      "ko_sha256": "f9802b43bd387d8f57cf02f379447db6b2134a0af03220b5caa7eaa0aa952d6c",
+      "en_sha256": "23e4b62dd1c76d3adc1dc3e9b44d0567e9dc681805cf2723658672ac7272dcf6",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root integration + independent Codex /root/dark_mode",
-      "reviewed": "2026-10-01",
-      "notes": "공통4쌍 전체읽기·양언어 범위·홈/진도/132예시/18용어·53페이지 실제수 대조. 1~9장 Basic과10~15장 not-started 구분. 개인정보 검토 통과. minISR 성공승인 표현을 반영한 최종파일 확인."
+      "reviewer": "Codex /root author + independent Codex /root/review_ch16",
+      "reviewed": "2026-10-03",
+      "notes": "전체 완독. 이전4~9장소개/연결/진도3span은HEAD그대로이며historical안내명확. 최신10~11장소개/연결/진도3span은원문KO전부일치,EN동일구조의완전번역.현재11장완료/12장다음과미실행제약동등."
     },
     "platform-infrastructure/redis.md": {
       "ko_sha256": "b119e81f51bf34089f6bf70c5ccfde59af40d9e13afcbfb1637ec1b930ef9f7d",
@@ -529,6 +529,26 @@
       "reviewed": "2026-10-01",
       "notes": "7/9장 원문·KO/EN 전문 직접읽기. 원문/번역 구조·숫자 multiset 및KV수치 재계산, 공식config/HGX/vLLM근거 대조. GLM parameter/FP4/1M단위·GPU utilization·node실패여유 정정을 원문밖에 구분. 실제GPU/모델실행·성능/복구실험 미실시. 개인정보없음.",
       "en_sha256": "ea3ae5886cc7f50614fd993373739d0e95df7f7f6e5293a9542dae2ae8e8a270"
+    },
+    "platform-infrastructure/platform-security.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/dark_mode author + independent Codex /root/serving_gpu",
+      "reviewed": "2026-10-03",
+      "notes": "10장 원문과 한영 전체·보완·프롬프트 독립 읽기. 인증/인가·RBAC·Secret 간접접근/회전·NetworkPolicy·container securityContext·서명/tenant 경계 조건 대응. 부정확 인용문구 교정 재확인. 원문/구조/숫자/프롬프트 동일성 확인. 개인정보 없음, 실제보안정책·회전·침투/복구시험 미실시.",
+      "ko_sha256": "7105e1f98aaeea5ed76b3c1a955449abad66e4daf4a781bb0d623d32c57365fc",
+      "en_sha256": "a220cd2b9b5dccde104055f290e6471fc5a0fa1831ff421e1d5d32d86041a479"
+    },
+    "platform-infrastructure/cicd-gitops.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/serving_gpu author + independent Codex /root/dark_mode",
+      "reviewed": "2026-10-03",
+      "notes": "11.1~11.8 및 GPU보충 원문·한영전체 독립 읽기. Helm3 release와ArgoCD rendering/rollback·sync/health·canary/실패여유·perGPU KV/runtime조건 대응. 원문/구조/숫자/프롬프트 동일성 확인. 개인정보 없음, 실제배포·rollback·부하시험 미실시.",
+      "ko_sha256": "dcef964ea4927c47ba0fc7a9e54ed9889562ec7c5179a6ce9d339b35c4dd0ff0",
+      "en_sha256": "37a2f7d62bd744e69932a7dfe5b235854b5089291f197d04f961272f6b59845b"
     }
   }
 }

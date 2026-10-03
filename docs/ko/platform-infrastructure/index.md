@@ -1,25 +1,28 @@
 ---
 id: platform-infrastructure-overview
 status: overview
-last_updated: 2026-10-01
-last_reviewed: 2026-10-01
+last_updated: 2026-10-03
+last_reviewed: 2026-10-03
 knowledge_ids:
   - PIS-00-01
   - PIS-04-01
   - PIS2-00-01
   - PIS2-00-02
   - PIS2-00-03
+  - PIS3-00-01
+  - PIS3-00-02
+  - PIS3-00-03
 ---
 
 # 플랫폼·인프라 기초와 학습 현황
 
-제공된 **Platform / Infrastructure / AI Serving — Basic Study Notes**의 Chapter 1~9를 정리했다. 첫 자료는 Linux·컨테이너·Kubernetes 1~3장까지였고, 후속 자료로 Redis·PostgreSQL·Kafka·vLLM·LiteLLM·GPU의 4~9장을 추가했다. 보안과 최종 AI 플랫폼 설계 등 10~15장은 후속 목차다.
+제공된 **Platform / Infrastructure / AI Serving — Basic Study Notes**의 Chapter 1~11을 정리했다. 첫 자료는 Linux·컨테이너·Kubernetes 1~3장까지였고, 후속 자료로 Redis·PostgreSQL·Kafka·vLLM·LiteLLM·GPU의 4~9장을 추가했다. 10~11장에는 플랫폼 보안과 CI/CD·Helm·Argo CD·GitOps를 추가했다. Terraform부터 12~15장은 후속 목차다.
 
 이 자료의 “완료”는 플랫폼 엔지니어가 알아야 할 **Basic 핵심 개념 학습**이다. 실제 Linux/Docker/Kubernetes 명령을 실행했거나 운영 클러스터를 구축·시험했다는 의미가 아니다. 구체적인 배포판·kernel·cgroup·runtime·Kubernetes·CNI·CSI·cloud 버전은 제공되지 않았다. 버전에 민감한 동작은 각 문서에서 공식 근거와 조건을 구분한다.
 
-## 최신 자료의 범위
+## 이전 자료의 범위: 4~9장
 
-아래 범위·연결 구조·진도 구역은 새 원문을 그대로 보존했다. 각 기술 문서에서는 본문 뒤 보완 구역에서 해당 절의 정정·적용 조건을 확인한다.
+아래 4~9장 범위·연결 구조·진도는 당시 원문을 보존한 기록이다. 최신 진도는 1~11장 완료이며 다음은 12장이다. 각 기술 문서에서는 본문 뒤 보완 구역에서 해당 절의 정정·적용 조건을 확인한다.
 
 <!-- SOURCE INTRO START -->
 
@@ -45,10 +48,11 @@ flowchart TD
   Workload --> Operations[HA / scaling / reliability / troubleshooting]
   Operations --> Services[Redis / PostgreSQL / Kafka]
   Services --> Serving[vLLM / LiteLLM / GPU]
-  Serving -. Future study .-> Security[Security / GitOps / IaC / platform design]
+  Serving --> Security[Security / CI/CD / GitOps]
+  Security -. Future study .-> Future[IaC / tenant cost / IDP / platform design]
 ```
 
-학습 순서이며 완성된 배포 구조나 모든 작업에 필요한 도구 조합을 뜻하지 않는다. 점선은 아직 학습하지 않은 보안 이후 주제를 가리킨다.
+학습 순서이며 완성된 배포 구조나 모든 작업에 필요한 도구 조합을 뜻하지 않는다. 점선은 아직 학습하지 않은 Terraform 이후 주제를 가리킨다.
 
 | 완료한 장 | 정규 문서 | 범위 |
 |---|---|---|
@@ -61,23 +65,23 @@ flowchart TD
 | 7 | [vLLM](vllm.md) | Prefill/decode·GPU/KV Cache 메모리·batching·성능·병렬화·양자화·서빙 |
 | 8 | [LiteLLM](litellm.md) | Gateway·routing·load balancing·retry·rate limit·budget·auth·cache |
 | 9 | [GPU 인프라·스케줄링](gpu-infrastructure.md) | GPU stack·node pool·sharing·multi-GPU/node·용량·장애 조사 |
+| 10 | [플랫폼 보안](platform-security.md) | Identity·RBAC·Secret·NetworkPolicy·TLS/mTLS·container·공급망·tenant 격리 |
+| 11 | [CI/CD·Helm·Argo CD·GitOps](cicd-gitops.md) | Build·환경·선언형 배포·sync/health·canary·모델 교체·GPU 여유 용량 |
 
 처음에는 각 구성 요소의 역할과 경계를 읽는다. 이후 “Pod Pending → scheduling/resource”, “앱 응답 실패 → process/port/DNS/Service”, “종료 실패 → signal/PID 1/grace period”처럼 원문의 증상을 해당 계층과 연결한다. 원인 하나를 증상만으로 확정하지 않고 실제 상태·event·log로 가설을 검증한다.
 
 ## 후속 커리큘럼
 
-아래는 아직 본문이 제공되지 않은 **not-started** 과정이다. 다음 학습은 Chapter 10 Platform Security다.
+아래는 아직 본문이 제공되지 않은 **not-started** 과정이다. 다음 학습은 Chapter 12 Terraform & Infrastructure as Code다.
 
 | Chapter | 다음 주제 |
 |---|---|
-| 10 | Platform Security — 다음 과정 |
-| 11 | CI/CD, Helm, Argo CD & GitOps |
-| 12 | Terraform & Infrastructure as Code |
+| 12 | Terraform & Infrastructure as Code — 다음 과정 |
 | 13 | Multi-tenancy, Quotas & Cost Control |
 | 14 | Internal Developer Platform / Self-Service |
 | 15 | End-to-End AI Platform Architecture |
 
-[데이터 플랫폼 과정](../data-platform/curriculum.md)의 데이터 처리 관점과 이번 서비스 운영·서빙 관점을 연결해 읽는다. 이전 1~3장 자료가 후속으로 남겼던 4~9장은 이번 자료로 갱신했고, 10~15장의 학습 내용을 만들어 넣지 않는다.
+[데이터 플랫폼 과정](../data-platform/curriculum.md)의 데이터 처리 관점과 이번 서비스 운영·서빙 관점을 연결해 읽는다. 이전 자료가 후속으로 남겼던 10~11장은 이번 자료로 갱신했고, 12~15장의 학습 내용을 만들어 넣지 않는다.
 
 ## 명령과 실무 예시 사용
 
@@ -141,7 +145,9 @@ Kubernetes
 
 <!-- SOURCE CONNECTION END -->
 
-## 원문: 전체 커리큘럼 상태
+## 이전 원문: 4~9장 자료 당시의 커리큘럼 상태
+
+아래는 이전 자료의 진도 기록이다. 최신 10~11장 자료의 진도는 이 페이지 마지막 구역에서 확인한다.
 
 <!-- SOURCE STATUS START -->
 
@@ -168,3 +174,117 @@ Kubernetes
 > 다음 학습은 **Chapter 10. Platform Security**부터 이어진다.
 
 <!-- SOURCE STATUS END -->
+
+## 최신 원문: 10~11장 범위·연결·진도
+
+최신 업로드의 전체 소개와 연결 구조, 진도를 원문 순서로 보존했다. “완료”는 Basic 개념 학습을 뜻한다.
+
+<!-- SOURCE SECURITY INTRO START -->
+
+# Platform / Infrastructure / AI Serving — Basic Study Notes
+
+> 범위: Chapter 10 ~ Chapter 11  
+> 이전 범위: Chapter 1~3, Chapter 4~9  
+> 수준: Basic — 플랫폼 엔지니어가 반드시 알아야 할 핵심 개념 중심  
+> 포함: 본 학습 내용 + 중간 실무 질문/보충 설명  
+> 다음 학습 시작점: Chapter 12. Terraform & Infrastructure as Code
+
+---
+
+<!-- SOURCE SECURITY INTRO END -->
+
+<!-- SOURCE SECURITY CONNECTION START -->
+
+# Chapter 10 ~ 11 전체 연결
+
+```text
+Platform Security
+
+Identity
+↓
+RBAC
+↓
+Secrets
+↓
+NetworkPolicy
+↓
+TLS / mTLS
+↓
+Container Hardening
+↓
+Supply Chain Security
+↓
+Tenant Isolation
+```
+
+```text
+CI/CD & GitOps
+
+Developer
+↓
+Git
+↓
+CI
+├─ Test
+├─ Build
+├─ Scan
+└─ Registry Push
+↓
+Deployment Git
+├─ Helm Chart
+└─ Environment Values
+↓
+Argo CD
+↓
+Kubernetes
+```
+
+AI Serving까지 연결:
+
+```text
+Git
+↓
+Model / vLLM / Helm Values
+↓
+Argo CD
+↓
+vLLM Replica 배포
+↓
+Readiness
+↓
+LiteLLM Canary Routing
+↓
+Metrics / Quality 검증
+↓
+Traffic 확대 또는 Rollback
+```
+
+---
+
+<!-- SOURCE SECURITY CONNECTION END -->
+
+<!-- SOURCE SECURITY STATUS START -->
+
+# 현재 전체 커리큘럼 상태
+
+```text
+1. Linux, Networking, Containers ✅
+2. Kubernetes Core ✅
+3. Kubernetes Production Operations ✅
+4. Redis for Platform Systems ✅
+5. PostgreSQL for Platform Systems ✅
+6. Kafka for Platform Systems ✅
+7. vLLM ✅
+8. LiteLLM ✅
+9. GPU Infrastructure & Scheduling ✅
+10. Platform Security ✅
+11. CI/CD, Helm, Argo CD & GitOps ✅
+12. Terraform & Infrastructure as Code ← 현재/다음
+13. Multi-tenancy, Quotas & Cost Control
+14. Internal Developer Platform / Self-Service
+15. End-to-End AI Platform Architecture
+```
+
+> 다음 학습은 **Chapter 12. Terraform & Infrastructure as Code**부터 이어진다.
+
+<!-- SOURCE SECURITY STATUS END -->
