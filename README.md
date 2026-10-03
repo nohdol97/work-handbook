@@ -95,3 +95,7 @@ npm ci --ignore-scripts --cache _workspace/npm-cache
 이 명령은 고정된 `package-lock.json`을 사용하며 현재 `node_modules`를 다시 구성한다. 기존 사용자 캐시의 소유권이나 시스템 권한을 바꾸지 않아도 된다. 설치 후 `npm run check:mermaid`로 구문 검사 도구를 확인한다.
 
 전체 페이지 수를 README나 양언어 홈에 `한영 N쌍` 또는 `N Korean/English pairs in total`로 표기하면 실제 Markdown 쌍 수와 자동 대조한다. 페이지 추가·통합 뒤 수치가 낡으면 `check_handbook.py`가 실패한다. 일반 장수·분야별 개수·프롬프트 수나 임의 표현은 이 검사 대상이 아니다.
+
+### 원문 중간의 큰 제목 때문에 목차 일부가 안 보일 때
+
+원문 본문에 여러 `#` 제목이 있으면 Material의 기본 목차에 뒤쪽 절이 나타나지 않을 수 있다. AWS 네트워킹 원문에서는 본문에 `2.4 Internet Gateway`가 있어도 중간 CIDR·IP 보충 제목 이후의 절이 기본 목차에서 빠지는 것을 확인했다. 제목 수준을 바꾸면 원문 형태가 달라지므로, `SOURCE CORE` 밖의 서두에 해당 절로 가는 Markdown 바로가기를 추가하는 방법을 쓸 수 있다. 생성 HTML에서 양언어 anchor가 존재하는지 확인하고 데스크톱·모바일에서 클릭해 본문 이동을 확인한다. 원문 동일성과 전체 링크 검사는 기존 `make validate`에 포함된다.
