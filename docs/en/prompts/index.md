@@ -8,7 +8,7 @@ knowledge_ids: []
 
 # Practical prompt library
 
-These **100 new examples** support design reviews, SQL reviews, incident investigation, data checks, and documentation. Together with 34 examples in concept guides, there are 134 examples with bilingual tabs and multiple lines. Choose a topic, then use its scenario list.
+These **100 new examples** support design reviews, SQL reviews, incident investigation, data checks, and documentation. Together with 39 examples in concept guides, there are 139 examples with bilingual tabs and multiple lines. Choose a topic, then use its scenario list.
 
 ## How to use
 
@@ -58,3 +58,7 @@ Provide symptoms, expected behavior, product and connector versions, actual sett
 Each of [Redis](../platform-infrastructure/redis.md), [PostgreSQL](../platform-infrastructure/postgresql.md), [Kafka](../platform-infrastructure/kafka.md), [vLLM](../platform-infrastructure/vllm.md), [LiteLLM](../platform-infrastructure/litellm.md), and [GPU infrastructure](../platform-infrastructure/gpu-infrastructure.md) adds one operations or serving review example.
 
 [Platform security](../platform-infrastructure/platform-security.md) and [CI/CD and GitOps](../platform-infrastructure/cicd-gitops.md) add examples for reviewing security boundaries and planning a safe model change, respectively.
+
+## AWS cloud examples
+
+[AWS foundations](../aws-cloud/foundations.md), [networking](../aws-cloud/networking.md), [compute](../aws-cloud/compute.md), [storage](../aws-cloud/storage.md), and [databases and cache](../aws-cloud/databases-cache.md) each add one sanitized configuration-review or diagnosis example. These are not commands that create AWS resources or make operational changes. See [AWS study progress](../aws-cloud/index.md) for course scope.

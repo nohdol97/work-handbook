@@ -1,24 +1,24 @@
 {
   "pages": {
     "glossary/index.md": {
-      "ko_sha256": "c2a754482b3d96c2ac1c00661193e0aa704a0eabce777261eef616f5f19247d2",
-      "en_sha256": "f44958445482e64dfd82263a1a91a66e9629f3c8b9c7b2deae9eb7b539268952",
+      "ko_sha256": "835037dc7a5d40957283cd0bea59ea7c647f177993e0d925e1d9575e6b78e7d2",
+      "en_sha256": "ef75af9e3f4fa919e7b890961b10bbedbfccf3ee8155b75f42b94c1e19725312",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root author + independent Codex /root/review_ch16",
+      "reviewer": "Codex /root author + independent Codex /root/serving_gpu",
       "reviewed": "2026-10-03",
-      "notes": "전체완독. 기존및신규14개보안/배포용어의의미와정규링크동등. AuthN/AuthZ, SA권한별도, plugin조건, mTLS인가별도, Helm release, sync/health와품질보장구분, 여유GPU조건정확. 영어이해가능하며수정불필요."
+      "notes": "홈·프롬프트·용어집·AWS학습지도 한영8파일 전체 독립 읽기. AWS1~5완료/6다음 및 platform1~11/12다음 별도진도,20용어·전체61쌍139예시 확인. 원문소개/커리큘럼/통합구조/진도 KOexact·EN완역, S3/ALB/NAT/DB도식 조건 분리. 개인정보없음."
     },
     "index.md": {
-      "ko_sha256": "3d8faf9348a008fdb0ce73345bd50279934552008f51ed135289af304ab13d41",
-      "en_sha256": "eec02ae40d61f9a0afa3bf6eff7434e43e15021d679c5586f0efb38a2d6fc520",
+      "ko_sha256": "d35e6e0edd5a73312b90488a42a94b9c0645dfa5951f45d9c489dbc85350d462",
+      "en_sha256": "a17be3f958f43dce40519f4bbbae8a98cebc6cd278f1a5c761a069b0c694b5f9",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root author + independent Codex /root/review_ch16",
+      "reviewer": "Codex /root author + independent Codex /root/serving_gpu",
       "reviewed": "2026-10-03",
-      "notes": "전체 완독. 한영55쌍의 분야별합22+12+18+3=55 및 Basic 개념 학습/실제 운영 미주장 동등. 10~11장완료와12~15장미학습·다음12장일치.134프롬프트는두신규작성완료후최종확인필요. 작성 완료 후 check_prompts.py가134개 한영 예시·오류0건을 확인했다."
+      "notes": "홈·프롬프트·용어집·AWS학습지도 한영8파일 전체 독립 읽기. AWS1~5완료/6다음 및 platform1~11/12다음 별도진도,20용어·전체61쌍139예시 확인. 원문소개/커리큘럼/통합구조/진도 KOexact·EN완역, S3/ALB/NAT/DB도식 조건 분리. 개인정보없음."
     },
     "methodologies/knowledge-workflow.md": {
       "ko_sha256": "89573a872e5ef93c553e1f37044b3c266ea8c2b8b3ed3cce03055480ef77f615",
@@ -361,14 +361,14 @@
       "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
     },
     "prompts/index.md": {
-      "ko_sha256": "5a52a0863299b9f69d7d30f4fcd649345eb536f6bced7bf262d0bfba53783c4c",
-      "en_sha256": "1d7973ed561dc621323f3bb8d26960c702b6bb5b629598d2715199194a7b73bf",
+      "ko_sha256": "826d3cd1c6e7ac18333c63ae7056a9a8364c1c76e4c19758f7e470bf8be1f513",
+      "en_sha256": "48eb983c5159bbbe825bfdbd7cb63dbb1545d9291a0b0ff5670f77a381d14186",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root author + independent Codex /root/review_ch16",
+      "reviewer": "Codex /root author + independent Codex /root/serving_gpu",
       "reviewed": "2026-10-03",
-      "notes": "전체완독. 100개library의표합계16*6+4=100,사용법·비식별입력·관찰가설검증·운영변경권한제약동등. 신규보안경계/모델교체두실습설명동등.134총수는최종작성후재확인필요. 작성 완료 후 check_prompts.py가134개 한영 예시·오류0건을 확인했다."
+      "notes": "홈·프롬프트·용어집·AWS학습지도 한영8파일 전체 독립 읽기. AWS1~5완료/6다음 및 platform1~11/12다음 별도진도,20용어·전체61쌍139예시 확인. 원문소개/커리큘럼/통합구조/진도 KOexact·EN완역, S3/ALB/NAT/DB도식 조건 분리. 개인정보없음."
     },
     "prompts/knowledge-workflow.md": {
       "ko_sha256": "956f10f22a2b3c54f85c471ae5aa2eb96989f9dbe749087cb382f2164a3202ba",
@@ -549,6 +549,66 @@
       "notes": "11.1~11.8 및 GPU보충 원문·한영전체 독립 읽기. Helm3 release와ArgoCD rendering/rollback·sync/health·canary/실패여유·perGPU KV/runtime조건 대응. 원문/구조/숫자/프롬프트 동일성 확인. 개인정보 없음, 실제배포·rollback·부하시험 미실시.",
       "ko_sha256": "dcef964ea4927c47ba0fc7a9e54ed9889562ec7c5179a6ce9d339b35c4dd0ff0",
       "en_sha256": "37a2f7d62bd744e69932a7dfe5b235854b5089291f197d04f961272f6b59845b"
+    },
+    "aws-cloud/foundations.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/dark_mode author + independent Codex /root/review_ch16",
+      "reviewed": "2026-10-03",
+      "notes": "1~2장 원문과 한영4페이지 전문 독립 읽기. IAM/SCP/trust·AZ·VPC/CIDR/IP/route/IGW/NAT/SG/ALB 모든 예시·수치·조건 대응. 공식자료 재확인, source밖6절바로가기·동일프롬프트검토. 원문/구조/수치/줄바꿈 보존. 개인정보없음. 실제AWS명령·리소스작업 미실시.",
+      "ko_sha256": "248d0161904d5d4179f9f09572aa1c437ec54ddb874647e05a015d4c35014a3d",
+      "en_sha256": "07d6614a37c55063eb78b667096fad29a3c820addf2b0170b62365d1abbf4c01"
+    },
+    "aws-cloud/networking.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/dark_mode author + independent Codex /root/review_ch16",
+      "reviewed": "2026-10-03",
+      "notes": "1~2장 원문과 한영4페이지 전문 독립 읽기. IAM/SCP/trust·AZ·VPC/CIDR/IP/route/IGW/NAT/SG/ALB 모든 예시·수치·조건 대응. 공식자료 재확인, source밖6절바로가기·동일프롬프트검토. 원문/구조/수치/줄바꿈 보존. 개인정보없음. 실제AWS명령·리소스작업 미실시.",
+      "ko_sha256": "08c728905e34cb31a06fac35f671d38bdc23f0a007faf6fa6d8e478d58ee7f58",
+      "en_sha256": "b5d937c19b8c022b7321865f188dbcd5ffebef9ebd5a8892c704010f5cd8651c"
+    },
+    "aws-cloud/compute.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/serving_gpu author + independent Codex /root/dark_mode",
+      "reviewed": "2026-10-03",
+      "notes": "3~4장 및 두Q&A 원문과 한영4페이지 전문 독립 읽기. EC2/ASG/ALB·EBS/S3/EFS·저장소공유/PGDATA·Regional/OneZone 조건 및 공식근거 대응. source/구조/수치/줄바꿈/동일프롬프트 검증. 개인정보없음. 실제AWS/DB운영·복구시험 미실시.",
+      "ko_sha256": "feb91b76a37689468f275f8e8895ca53c089ff8a6c1a1fa4dbcf057a2e51a5d8",
+      "en_sha256": "30f57c8828136080a80213d656584633f0ea9a885e463096c34648300d5339da"
+    },
+    "aws-cloud/storage.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/serving_gpu author + independent Codex /root/dark_mode",
+      "reviewed": "2026-10-03",
+      "notes": "3~4장 및 두Q&A 원문과 한영4페이지 전문 독립 읽기. EC2/ASG/ALB·EBS/S3/EFS·저장소공유/PGDATA·Regional/OneZone 조건 및 공식근거 대응. source/구조/수치/줄바꿈/동일프롬프트 검증. 개인정보없음. 실제AWS/DB운영·복구시험 미실시.",
+      "ko_sha256": "9757c2ca0f975503bc00fb6be579f9fbf5a8bc398fad1d9b4f0e9e1ddcee7322",
+      "en_sha256": "acdd4df3d12f06e00ba948712f185049de98be71551bac66342c7abc6f1f3ea7"
+    },
+    "aws-cloud/databases-cache.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/review_ch16 author + independent Codex /root/serving_gpu",
+      "reviewed": "2026-10-03",
+      "notes": "5장 원문 및 한영전체·보완·실습 독립 읽기. RDS책임/MultiAZ유형·100×20연결·Aurora writer/reader/Serverless·cache/replica/shard/TTL/session 조건 대응. 공식자료 확인,source/구조/수치/동일프롬프트 검증. 개인정보없음. 실제AWS/DB실행 미실시.",
+      "ko_sha256": "5c7c229eb4afe6dc3549f94a3cb09b309e5629d7f96ab2088d8bfd66b09d6283",
+      "en_sha256": "63f8a50d83c56ffb74245990aca807b9d671592961e2beb96a69ccc699911616"
+    },
+    "aws-cloud/index.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root author + independent Codex /root/serving_gpu",
+      "reviewed": "2026-10-03",
+      "notes": "홈·프롬프트·용어집·AWS학습지도 한영8파일 전체 독립 읽기. AWS1~5완료/6다음 및 platform1~11/12다음 별도진도,20용어·전체61쌍139예시 확인. 원문소개/커리큘럼/통합구조/진도 KOexact·EN완역, S3/ALB/NAT/DB도식 조건 분리. 개인정보없음.",
+      "ko_sha256": "da5430a15656bb0883c711710f57e2edf8854f5700f9797e3f85905affd6ed7a",
+      "en_sha256": "ce5c9292686fb1aa765f95069faf06686724f01260837cf64fe397724463cd56"
     }
   }
 }

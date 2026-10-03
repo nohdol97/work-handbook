@@ -294,6 +294,68 @@
       "end": null,
       "marker": "SOURCE SECURITY STATUS",
       "include_start": true
+    },
+    {
+      "source": "sources/aws-cloud-basic-ch1-5-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/foundations.md",
+      "start": "# Chapter 1. AWS 기본 구조",
+      "end": "# Chapter 2. Networking"
+    },
+    {
+      "source": "sources/aws-cloud-basic-ch1-5-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/networking.md",
+      "start": "# Chapter 2. Networking",
+      "end": "# Chapter 3. Compute"
+    },
+    {
+      "source": "sources/aws-cloud-basic-ch1-5-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/compute.md",
+      "start": "# Chapter 3. Compute",
+      "end": "# Chapter 4. Storage"
+    },
+    {
+      "source": "sources/aws-cloud-basic-ch1-5-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/storage.md",
+      "start": "# Chapter 4. Storage",
+      "end": "# Chapter 5. Database / Cache"
+    },
+    {
+      "source": "sources/aws-cloud-basic-ch1-5-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/databases-cache.md",
+      "start": "# Chapter 5. Database / Cache",
+      "end": "# Chapter 1~5 통합 아키텍처"
+    },
+    {
+      "source": "sources/aws-cloud-basic-ch1-5-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/index.md",
+      "start": "# AWS Cloud Basic — Source Markdown",
+      "end": "# Chapter 1. AWS 기본 구조",
+      "include_start": true,
+      "marker": "SOURCE INTRO"
+    },
+    {
+      "source": "sources/aws-cloud-basic-ch1-5-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/index.md",
+      "start": "# Chapter 1~5 통합 아키텍처",
+      "end": "# 현재 학습 진행 상태",
+      "include_start": true,
+      "marker": "SOURCE ARCHITECTURE"
+    },
+    {
+      "source": "sources/aws-cloud-basic-ch1-5-2026-10-03/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/index.md",
+      "start": "# 현재 학습 진행 상태",
+      "end": null,
+      "include_start": true,
+      "marker": "SOURCE STATUS"
     }
   ]
 }
