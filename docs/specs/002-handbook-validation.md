@@ -54,6 +54,12 @@ README와 양언어 홈의 전체 페이지 수가 문서 추가·통합 후 낡
 
 인수 기준: 세 표면의 정상 수치 통과, 파일 쌍 추가·삭제 후 낡은 수치 실패, 선언 표면·문구 부재 통과, 분야별 수치·날짜·장수·코드 예시 오탐 없음. `tests/test_handbook.py`에서 실제 임시 Markdown 쌍과 `audit(root)`를 사용해 확인한다.
 
+### R9. 용어집 정의의 중복
+
+`docs/ko/glossary/index.md`와 `docs/en/glossary/index.md`의 `용어`/`Term` 표 첫 열에서 같은 정규화 이름이 두 번 정의되면 실패한다. 공백·대소문자·바깥 inline code/강조 표기의 차이는 같은 이름으로 취급한다. 서로 다른 언어 페이지는 독립적으로 검사하고, 코드블록의 표 예시와 표 제목·구분선은 정의로 세지 않는다. `Snapshot (table)`과 `Snapshot (state)`처럼 맥락을 명시한 다른 이름은 허용한다. 용어집이 없는 최소 문서 fixture는 유지한다. 이는 동일 이름 재등록만 검출하며 의미상 유사어와 문서 본문의 반복을 자동 판정하지 않는다.
+
+인수 기준: 다른 절의 WAL 중복과 영어판에만 있는 중복 실패, 정상 단일 정의·서로 다른 맥락·코드 예시·반복 표 제목 통과, 읽기 전용 검사. `tests/test_handbook.py`의 임시 저장소와 `audit(root)`로 검증한다.
+
 ## 완료 기준
 
 `python -m unittest discover -s tests -p test_handbook.py -v`로 올바른 최소 저장소 통과와 각 규칙 위반의 실패를 확인한다. MkDocs 빌드, Mermaid, 브라우저 언어 전환 검증은 별도 통합 검증이다.

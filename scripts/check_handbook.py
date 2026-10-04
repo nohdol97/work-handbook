@@ -302,6 +302,29 @@ def _total_pair_claims(root, actual, errors):
                     errors.append(f'{relative}: total bilingual page pairs claim {declared} differs from actual {actual}')
 
 
+def _check_glossary_terms(path, body, errors):
+    """Check named definition tables only; repeated prose needs human review."""
+    lines = _prose(body).splitlines()
+    seen = set()
+    in_terms = False
+    for index, line in enumerate(lines):
+        if not re.search(r'(?<!\\)\|', line):
+            in_terms = False
+            continue
+        cells = re.split(r'(?<!\\)\|', line.strip().strip('|'))
+        term = ' '.join(cells[0].strip(' `*_').split()).casefold()
+        if term in {'term', '용어'} and index + 1 < len(lines):
+            separator = lines[index + 1].strip().strip('|')
+            in_terms = all(re.fullmatch(r'\s*:?-{3,}:?\s*', cell)
+                           for cell in separator.split('|'))
+            continue
+        if not in_terms or re.fullmatch(r':?-{3,}:?', term) or not term:
+            continue
+        if term in seen:
+            errors.append(f'{path}: duplicate glossary term: {term}')
+        seen.add(term)
+
+
 def audit(root):
     root = Path(root).resolve()
     errors = []
@@ -343,6 +366,8 @@ def audit(root):
                 errors.append(f'{path}: empty page')
             if re.search(r'^#{1,6}\s*$', _prose(body), re.M):
                 errors.append(f'{path}: empty heading')
+            if relative == 'glossary/index.md':
+                _check_glossary_terms(path, body, errors)
             _check_links(path, body, root, root / 'docs' / lang, errors)
         if 'ko' in pair and 'en' in pair:
             if pair['ko'].get('id') != pair['en'].get('id'):

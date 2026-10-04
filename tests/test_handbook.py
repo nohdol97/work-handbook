@@ -69,6 +69,50 @@ class ValidFixtureTests(unittest.TestCase):
     def test_valid_minimal_handbook(self):
         self.assertEqual(checker.audit(self.root), [])
 
+    def glossary(self, extra):
+        self.write_pair('glossary/index.md', 'handbook-glossary', extra)
+        self.write('mkdocs.yml', 'nav:\n  - Home: index.md\n  - Glossary: glossary/index.md\n')
+        self.reviews()
+
+    def test_glossary_rejects_duplicate_terms_across_sections(self):
+        self.glossary('| Term | Meaning |\n|---|---|\n| WAL | Recovery log |\n'
+                      '\n## Other domain\n\n| Term | Meaning |\n|---|---|\n'
+                      '| **` wal `** | Replication log |\n')
+        errors = checker.audit(self.root)
+        duplicates = [error for error in errors if 'duplicate glossary term' in error]
+        self.assertEqual(len(duplicates), 2, errors)
+        self.assertTrue(all('wal' in error.lower() for error in duplicates))
+
+    def test_glossary_checks_english_independently_and_does_not_write(self):
+        self.glossary('| 용어 | 의미 |\n|---|---|\n| WAL | 로그 |\n')
+        path = self.root / 'docs/en/glossary/index.md'
+        path.write_text(path.read_text() + '| WAL | Another definition |\n')
+        self.reviews()
+        before = {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        errors = checker.audit(self.root)
+        duplicates = [error for error in errors if 'duplicate glossary term' in error]
+        self.assertEqual(len(duplicates), 1, errors)
+        self.assertIn('docs/en/glossary/index.md', duplicates[0])
+        self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()})
+
+    def test_glossary_rejects_duplicates_without_outer_pipes(self):
+        self.glossary('Term | Meaning\n---|---\nWAL | Recovery\nwal | Replication\n')
+        errors = checker.audit(self.root)
+        self.assertEqual(len([error for error in errors if 'duplicate glossary term' in error]), 2, errors)
+
+    def test_glossary_allows_qualified_terms_and_ignores_code_examples(self):
+        self.glossary('| Term | Meaning |\n|---|---|\n| WAL | Log |\n'
+                      '| Snapshot (table) | Table state |\n| Snapshot (state) | Job state |\n'
+                      '\n## More terms\n\n| Term | Meaning |\n|---|---|\n| CDC | Changes |\n'
+                      '\n```markdown\n| Term | Meaning |\n|---|---|\n| WAL | Example |\n```\n')
+        self.assertEqual(checker.audit(self.root), [])
+
+    def test_glossary_rule_does_not_apply_to_other_pages(self):
+        self.write_pair('index.md', 'handbook-home',
+                        '| Term | Meaning |\n|---|---|\n| WAL | A |\n| WAL | B |\n')
+        self.reviews()
+        self.assertEqual(checker.audit(self.root), [])
+
     def total_pair_claims(self, count):
         return [('README.md', f'전체 한영 {count}쌍이다.'),
                 ('docs/ko/index.md', f'합쳐 한영 {count}쌍이다.'),
