@@ -1,8 +1,8 @@
 ---
 id: handbook-glossary
 status: overview
-last_updated: 2026-10-03
-last_reviewed: 2026-10-03
+last_updated: 2026-10-04
+last_reviewed: 2026-10-04
 knowledge_ids: []
 ---
 
@@ -144,3 +144,36 @@ knowledge_ids: []
 | Sync / Health | Agreement with desired declarations / a health assessment of resource state. Neither guarantees application quality. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
 | Canary | A deployment approach that sends some traffic to a new version, checks it, then expands gradually. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
 | Spare GPU capacity | Available resources beyond current serving that can fit a new model, KV Cache, parallel layout, and target load. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
+
+## AWS cloud basics
+
+| Term | Meaning | Canonical topic |
+|---|---|---|
+| Region / Availability Zone | An AWS geographic Region / a separate availability zone within it. An AZ is not necessarily one data center. | [foundations](../aws-cloud/foundations.md) |
+| AWS Account | An AWS account boundary for resources, permissions, and billing, distinct from a Region. | [foundations](../aws-cloud/foundations.md) |
+| AWS Organizations / OU | A service for managing multiple accounts / an organizational unit that groups accounts. | [foundations](../aws-cloud/foundations.md) |
+| SCP | An Organizations policy that limits allowed permissions. It does not itself grant IAM permissions. | [foundations](../aws-cloud/foundations.md) |
+| IAM Role / Temporary credentials | An AWS permission role that can be assumed under a trust policy / credentials with a limited lifetime. | [foundations](../aws-cloud/foundations.md) |
+| VPC / Subnet | A virtual network in an AWS Region / an IP address range within an AZ. | [networking](../aws-cloud/networking.md) |
+| CIDR | A notation that expresses an IP address range using an address and prefix length. | [networking](../aws-cloud/networking.md) |
+| Route table / Longest prefix match | Traffic paths by destination / a rule selecting the most specific matching prefix. | [networking](../aws-cloud/networking.md) |
+| Internet Gateway (IGW) | A gateway supporting communication between a VPC and the internet. Access also needs suitable addresses, routes, and security settings. | [networking](../aws-cloud/networking.md) |
+| NAT Gateway | A managed gateway providing address translation. Distinguish public/private and zonal/regional configurations. | [networking](../aws-cloud/networking.md) |
+| Security Group | Stateful network allowance rules for resources, distinct from a route table that supplies paths. | [networking](../aws-cloud/networking.md) |
+| ALB / Target group | A load balancer distributing requests at the HTTP layer / a group of targets and health-check settings. | [compute](../aws-cloud/compute.md) |
+| EC2 / AMI | An AWS virtual server / an OS and software image used to launch it. | [compute](../aws-cloud/compute.md) |
+| Auto Scaling Group (ASG) | A configuration managing a group of EC2 instances using minimum, desired, and maximum capacity and scaling policies. | [compute](../aws-cloud/compute.md) |
+| EBS / Snapshot | Block storage attached to services such as EC2 / a point-in-time volume copy used for recovery. | [storage-databases](../aws-cloud/storage-databases.md) |
+| S3 Bucket / Object key | A management container for S3 objects / a key identifying an object within a bucket. | [storage-databases](../aws-cloud/storage-databases.md) |
+| EFS / Mount target | A managed shared filesystem / a network endpoint for connecting to it from a VPC. | [storage-databases](../aws-cloud/storage-databases.md) |
+| RDS Multi-AZ / Read replica | Availability placement that varies by configuration / a replicated database used for purposes such as read scaling. Check standby and reader roles by deployment type. | [storage-databases](../aws-cloud/storage-databases.md) |
+| Aurora Writer / Reader endpoint | Endpoints for the current writer / reader connections. Connection distribution differs from query distribution. | [storage-databases](../aws-cloud/storage-databases.md) |
+| ElastiCache Replica / Shard | A copy of the same data / a unit of data partitioning. Roles depend on engine and deployment mode. | [storage-databases](../aws-cloud/storage-databases.md) |
+| ARN | A naming format that identifies an AWS resource. Components vary by service and resource. | [foundations](../aws-cloud/foundations.md) |
+| NLB | A load balancer that distributes transport-layer traffic, such as TCP/UDP, to targets. | [compute](../aws-cloud/compute.md) |
+| EKS / Managed node group | A managed Kubernetes service / a configuration where EKS helps manage EC2 worker node lifecycles. | [eks](../aws-cloud/eks.md) |
+| Amazon VPC CNI | A plugin connecting EKS Pod networking to the VPC network. Address allocation depends on configuration. | [eks](../aws-cloud/eks.md) |
+| AWS Load Balancer Controller | A controller managing AWS load balancer resources from Kubernetes declarations. | [eks](../aws-cloud/eks.md) |
+| EBS / EFS CSI driver | Drivers connecting Kubernetes volume requests to AWS EBS/EFS storage. | [eks](../aws-cloud/eks.md) |
+| ECR | An AWS registry storing container images in repositories. | [eks](../aws-cloud/eks.md) |
+| EKS Pod Identity / IRSA | Ways to link Kubernetes ServiceAccounts to AWS IAM roles for workload permissions. Their implementation and support conditions differ. | [eks](../aws-cloud/eks.md) |

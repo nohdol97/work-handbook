@@ -53,6 +53,11 @@ plugins:
             용어집: Glossary
             데이터 플랫폼: Data platform
             플랫폼·인프라: Platform and infrastructure
+            AWS 클라우드: AWS cloud
+            AWS 기본 구조: AWS foundations
+            네트워킹: Networking
+            컴퓨트·로드밸런싱: Compute and load balancing
+            스토리지·데이터베이스: Storage and databases
             학습 범위: Study scope
             Linux·컨테이너: Linux and containers
             Kubernetes 핵심: Kubernetes core
@@ -126,6 +131,13 @@ nav:
       - GPU 인프라·스케줄링: platform-infrastructure/gpu-infrastructure.md
       - 플랫폼 보안: platform-infrastructure/platform-security.md
       - CI/CD·GitOps: platform-infrastructure/cicd-gitops.md
+  - AWS 클라우드:
+      - 학습 범위: aws-cloud/index.md
+      - AWS 기본 구조: aws-cloud/foundations.md
+      - 네트워킹: aws-cloud/networking.md
+      - 컴퓨트·로드밸런싱: aws-cloud/compute.md
+      - 스토리지·데이터베이스: aws-cloud/storage-databases.md
+      - EKS on AWS: aws-cloud/eks.md
   - 실무 프롬프트:
       - 프롬프트 모음: prompts/index.md
       - 저장·분석 기초: prompts/foundations.md

@@ -1,14 +1,14 @@
 ---
 id: prompt-library
 status: overview
-last_updated: 2026-10-03
-last_reviewed: 2026-10-03
+last_updated: 2026-10-04
+last_reviewed: 2026-10-04
 knowledge_ids: []
 ---
 
 # Practical prompt library
 
-These **100 new examples** support design reviews, SQL reviews, incident investigation, data checks, and documentation. Together with 34 examples in concept guides, there are 134 examples with bilingual tabs and multiple lines. Choose a topic, then use its scenario list.
+These **100 new examples** support design reviews, SQL reviews, incident investigation, data checks, and documentation. Together with 39 examples in concept guides, there are 139 examples with bilingual tabs and multiple lines. Choose a topic, then use its scenario list.
 
 ## How to use
 
@@ -58,3 +58,7 @@ Provide symptoms, expected behavior, product and connector versions, actual sett
 Each of [Redis](../platform-infrastructure/redis.md), [PostgreSQL](../platform-infrastructure/postgresql.md), [Kafka](../platform-infrastructure/kafka.md), [vLLM](../platform-infrastructure/vllm.md), [LiteLLM](../platform-infrastructure/litellm.md), and [GPU infrastructure](../platform-infrastructure/gpu-infrastructure.md) adds one operations or serving review example.
 
 [Platform security](../platform-infrastructure/platform-security.md) and [CI/CD and GitOps](../platform-infrastructure/cicd-gitops.md) add examples for reviewing security boundaries and planning a safe model change, respectively.
+
+## AWS cloud examples
+
+[Foundations](../aws-cloud/foundations.md), [networking](../aws-cloud/networking.md), [compute](../aws-cloud/compute.md), [storage/databases](../aws-cloud/storage-databases.md), and [EKS](../aws-cloud/eks.md) each provide one sanitized configuration-review or diagnosis example. These are not commands that change actual AWS settings. See [AWS study progress](../aws-cloud/index.md) for the compact course scope.

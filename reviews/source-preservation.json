@@ -294,6 +294,68 @@
       "end": null,
       "marker": "SOURCE SECURITY STATUS",
       "include_start": true
+    },
+    {
+      "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/foundations.md",
+      "start": "# Chapter 1. AWS Foundation",
+      "end": "# Chapter 2. Networking"
+    },
+    {
+      "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/networking.md",
+      "start": "# Chapter 2. Networking",
+      "end": "# Chapter 3. Compute & Load Balancing"
+    },
+    {
+      "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/compute.md",
+      "start": "# Chapter 3. Compute & Load Balancing",
+      "end": "# Chapter 4. Storage & Database"
+    },
+    {
+      "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/storage-databases.md",
+      "start": "# Chapter 4. Storage & Database",
+      "end": "# Chapter 5. EKS on AWS"
+    },
+    {
+      "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/eks.md",
+      "start": "# Chapter 5. EKS on AWS",
+      "end": "# Chapter 1~5 최종 요약"
+    },
+    {
+      "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/index.md",
+      "start": "# AWS Cloud Basic — Source Markdown (Chapter 1~5)",
+      "end": "# Chapter 1. AWS Foundation",
+      "include_start": true,
+      "marker": "SOURCE INTRO"
+    },
+    {
+      "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/index.md",
+      "start": "# Chapter 1~5 최종 요약",
+      "end": "# 현재 진도",
+      "include_start": true,
+      "marker": "SOURCE SUMMARY"
+    },
+    {
+      "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
+      "verbatim_language": "ko",
+      "page": "aws-cloud/index.md",
+      "start": "# 현재 진도",
+      "end": null,
+      "include_start": true,
+      "marker": "SOURCE STATUS"
     }
   ]
 }

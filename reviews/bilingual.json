@@ -1,24 +1,24 @@
 {
   "pages": {
     "glossary/index.md": {
-      "ko_sha256": "c2a754482b3d96c2ac1c00661193e0aa704a0eabce777261eef616f5f19247d2",
-      "en_sha256": "f44958445482e64dfd82263a1a91a66e9629f3c8b9c7b2deae9eb7b539268952",
+      "ko_sha256": "6d1f637f5ac42b3863fef458cf177b3de28d4495f5bd192c836516d0f2ab2f34",
+      "en_sha256": "9e4e646d88ce2c1172fe69224ab8ceee5e099ed62e2640b9ca62610f8b1f500a",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root author + independent Codex /root/review_ch16",
-      "reviewed": "2026-10-03",
-      "notes": "전체완독. 기존및신규14개보안/배포용어의의미와정규링크동등. AuthN/AuthZ, SA권한별도, plugin조건, mTLS인가별도, Helm release, sync/health와품질보장구분, 여유GPU조건정확. 영어이해가능하며수정불필요."
+      "reviewer": "Codex /root author + independent Codex agent /root/serving_gpu",
+      "reviewed": "2026-10-04",
+      "notes": "공유KO/EN 홈·prompt목록·glossary·AWSoverview8파일전체직접읽기. 최신source소개/7장목차/최종요약/진도전체읽어대조. 최신7장과정에서1~5완료,EKS는5장,6ManagedServices다음,7AI/GPU후속표시가한영일치. 이전12장AWS목차를복원하지않음. Terraform타세션학습언급은원문보존하고 현재제공본문없는점을설명. 기존platform본문1~11/12~15후속표시는별도범위로유지. AWSoverview INTRO/SUMMARY/STATUS KOexact와ENheading·fence·숫자대응PASS. 실제Markdown61쌍과한영각139시나리오확인. 100개library+39개concept표시일치. 공유한영링크경로·순서동일. storage-databases와eks 최신경로에연결되며이전storage/database분리페이지참조없음. AWS용어28행의정의와정규주제대응확인. ARN,NLB,EKS,CNI,controller,CSI,ECR,PodIdentity/IRSA추가범위영어동일. 개인정보·실계정·인증정보없고개념학습을구축/시험결과로과장하지않음. KOhome 이후는7장 띄어쓰기1건작성자요청후 이후는 7장 반영재확인. 남은수정요청없음."
     },
     "index.md": {
-      "ko_sha256": "3d8faf9348a008fdb0ce73345bd50279934552008f51ed135289af304ab13d41",
-      "en_sha256": "eec02ae40d61f9a0afa3bf6eff7434e43e15021d679c5586f0efb38a2d6fc520",
+      "ko_sha256": "b6182860d5c39388268ff46d33814f5f0328327f86cfaefe433f8e5aaed076b8",
+      "en_sha256": "e4a6f32ad4c9c70637fc5e7c54b408ea46ac3c6bde5470f1282920c3869ecd2c",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root author + independent Codex /root/review_ch16",
-      "reviewed": "2026-10-03",
-      "notes": "전체 완독. 한영55쌍의 분야별합22+12+18+3=55 및 Basic 개념 학습/실제 운영 미주장 동등. 10~11장완료와12~15장미학습·다음12장일치.134프롬프트는두신규작성완료후최종확인필요. 작성 완료 후 check_prompts.py가134개 한영 예시·오류0건을 확인했다."
+      "reviewer": "Codex /root author + independent Codex agent /root/serving_gpu",
+      "reviewed": "2026-10-04",
+      "notes": "공유KO/EN 홈·prompt목록·glossary·AWSoverview8파일전체직접읽기. 최신source소개/7장목차/최종요약/진도전체읽어대조. 최신7장과정에서1~5완료,EKS는5장,6ManagedServices다음,7AI/GPU후속표시가한영일치. 이전12장AWS목차를복원하지않음. Terraform타세션학습언급은원문보존하고 현재제공본문없는점을설명. 기존platform본문1~11/12~15후속표시는별도범위로유지. AWSoverview INTRO/SUMMARY/STATUS KOexact와ENheading·fence·숫자대응PASS. 실제Markdown61쌍과한영각139시나리오확인. 100개library+39개concept표시일치. 공유한영링크경로·순서동일. storage-databases와eks 최신경로에연결되며이전storage/database분리페이지참조없음. AWS용어28행의정의와정규주제대응확인. ARN,NLB,EKS,CNI,controller,CSI,ECR,PodIdentity/IRSA추가범위영어동일. 개인정보·실계정·인증정보없고개념학습을구축/시험결과로과장하지않음. KOhome 이후는7장 띄어쓰기1건작성자요청후 이후는 7장 반영재확인. 남은수정요청없음."
     },
     "methodologies/knowledge-workflow.md": {
       "ko_sha256": "89573a872e5ef93c553e1f37044b3c266ea8c2b8b3ed3cce03055480ef77f615",
@@ -361,14 +361,14 @@
       "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
     },
     "prompts/index.md": {
-      "ko_sha256": "5a52a0863299b9f69d7d30f4fcd649345eb536f6bced7bf262d0bfba53783c4c",
-      "en_sha256": "1d7973ed561dc621323f3bb8d26960c702b6bb5b629598d2715199194a7b73bf",
+      "ko_sha256": "3e652a8a83c9bad6fce781757c3710a363f5b43ad769abbc8ff631688ff270e3",
+      "en_sha256": "e83c7649c0c1af9257a37d21408b64121724afb5be0486c5ac49cb3b629dbf1c",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root author + independent Codex /root/review_ch16",
-      "reviewed": "2026-10-03",
-      "notes": "전체완독. 100개library의표합계16*6+4=100,사용법·비식별입력·관찰가설검증·운영변경권한제약동등. 신규보안경계/모델교체두실습설명동등.134총수는최종작성후재확인필요. 작성 완료 후 check_prompts.py가134개 한영 예시·오류0건을 확인했다."
+      "reviewer": "Codex /root author + independent Codex agent /root/serving_gpu",
+      "reviewed": "2026-10-04",
+      "notes": "공유KO/EN 홈·prompt목록·glossary·AWSoverview8파일전체직접읽기. 최신source소개/7장목차/최종요약/진도전체읽어대조. 최신7장과정에서1~5완료,EKS는5장,6ManagedServices다음,7AI/GPU후속표시가한영일치. 이전12장AWS목차를복원하지않음. Terraform타세션학습언급은원문보존하고 현재제공본문없는점을설명. 기존platform본문1~11/12~15후속표시는별도범위로유지. AWSoverview INTRO/SUMMARY/STATUS KOexact와ENheading·fence·숫자대응PASS. 실제Markdown61쌍과한영각139시나리오확인. 100개library+39개concept표시일치. 공유한영링크경로·순서동일. storage-databases와eks 최신경로에연결되며이전storage/database분리페이지참조없음. AWS용어28행의정의와정규주제대응확인. ARN,NLB,EKS,CNI,controller,CSI,ECR,PodIdentity/IRSA추가범위영어동일. 개인정보·실계정·인증정보없고개념학습을구축/시험결과로과장하지않음. KOhome 이후는7장 띄어쓰기1건작성자요청후 이후는 7장 반영재확인. 남은수정요청없음."
     },
     "prompts/knowledge-workflow.md": {
       "ko_sha256": "956f10f22a2b3c54f85c471ae5aa2eb96989f9dbe749087cb382f2164a3202ba",
@@ -549,6 +549,66 @@
       "notes": "11.1~11.8 및 GPU보충 원문·한영전체 독립 읽기. Helm3 release와ArgoCD rendering/rollback·sync/health·canary/실패여유·perGPU KV/runtime조건 대응. 원문/구조/숫자/프롬프트 동일성 확인. 개인정보 없음, 실제배포·rollback·부하시험 미실시.",
       "ko_sha256": "dcef964ea4927c47ba0fc7a9e54ed9889562ec7c5179a6ce9d339b35c4dd0ff0",
       "en_sha256": "37a2f7d62bd744e69932a7dfe5b235854b5089291f197d04f961272f6b59845b"
+    },
+    "aws-cloud/foundations.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/dark_mode author + independent /root/review_ch16",
+      "reviewed": "2026-10-04",
+      "notes": "최신 compact 원문 1·2장 전체와 한영 4페이지 전체를 직접 읽었고, 수정 뒤 보완·실습 전체를 재독했다. 이전 긴 AWS 본문을 다시 넣지 않았음을 확인했다. 원문의 절 순서, 사례, 수치, 조건과 도식 의미가 영어 번역에도 보존된다. SCP는 권한을 부여하지 않으며 회원 계정 root에 적용되고 관리 계정 및 service-linked role 예외가 있다. Role trust와 서비스 접근 권한, IPv4/IPv6의 인터넷 경로, 일반 subnet의 5개 예약 주소와 BYOIP 예외, zonal/regional/private NAT 조건, SG 참조·합산의 의미가 보완에서 정확히 구분된다. 전체 영어는 간결하고 이해 가능하다. 2.2의 256 nodes + Pods를 256 combined nodes and Pods로 명료화했고 수치 자체는 보존했다. 원문의 단순화에 대한 보완이 양언어에 동등하게 전달된다. 각 장 1개 시나리오, 한영 동일 2개 탭. 최초 inline marker 렌더 검사가 실패함을 재현해 작성자에게 전달했고, 최종본 standalone marker 및 6개 필수 설명 필드를 확인했다. 가상 S3 least-privilege 검토와 AZ별 NAT 경로 장애 분석이 장 내용에 맞으며 미확인 조건·검증 범위를 구분한다. 명령 실행 주장 없음. 원문 및 네 페이지 전체에 실사용 개인정보나 비밀 발견 없음. ARN 123456789012, example-study-bucket/mybucket, RFC1918 주소와 igw-xxxx 등 학습용 placeholder임을 확인했다. 2026-10-04 AWS Organizations SCP, IAM policy elements, VPC subnet sizing, regional NAT 및 SG rules 공식 자료를 다시 열어 해당 보완을 확인했다. 페이지의 공식 검토 날짜가 양언어에 명시됐다. 작성자에게 요청한 standalone prompt markers, 6개 필수 시나리오 필드, 공식 확인일, EN 2.2 수치 표현 명료화가 모두 반영됨. 추가 수정 요청 없음.",
+      "ko_sha256": "e3951aa977d5373b86622b2215730fdc9dc165856a42e26524f48f312a3a8325",
+      "en_sha256": "ccd8323389c938f6d4e25b0fbb5f558cfc83c6b98bc07c0928c4375907cd71f2"
+    },
+    "aws-cloud/networking.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/dark_mode author + independent /root/review_ch16",
+      "reviewed": "2026-10-04",
+      "notes": "최신 compact 원문 1·2장 전체와 한영 4페이지 전체를 직접 읽었고, 수정 뒤 보완·실습 전체를 재독했다. 이전 긴 AWS 본문을 다시 넣지 않았음을 확인했다. 원문의 절 순서, 사례, 수치, 조건과 도식 의미가 영어 번역에도 보존된다. SCP는 권한을 부여하지 않으며 회원 계정 root에 적용되고 관리 계정 및 service-linked role 예외가 있다. Role trust와 서비스 접근 권한, IPv4/IPv6의 인터넷 경로, 일반 subnet의 5개 예약 주소와 BYOIP 예외, zonal/regional/private NAT 조건, SG 참조·합산의 의미가 보완에서 정확히 구분된다. 전체 영어는 간결하고 이해 가능하다. 2.2의 256 nodes + Pods를 256 combined nodes and Pods로 명료화했고 수치 자체는 보존했다. 원문의 단순화에 대한 보완이 양언어에 동등하게 전달된다. 각 장 1개 시나리오, 한영 동일 2개 탭. 최초 inline marker 렌더 검사가 실패함을 재현해 작성자에게 전달했고, 최종본 standalone marker 및 6개 필수 설명 필드를 확인했다. 가상 S3 least-privilege 검토와 AZ별 NAT 경로 장애 분석이 장 내용에 맞으며 미확인 조건·검증 범위를 구분한다. 명령 실행 주장 없음. 원문 및 네 페이지 전체에 실사용 개인정보나 비밀 발견 없음. ARN 123456789012, example-study-bucket/mybucket, RFC1918 주소와 igw-xxxx 등 학습용 placeholder임을 확인했다. 2026-10-04 AWS Organizations SCP, IAM policy elements, VPC subnet sizing, regional NAT 및 SG rules 공식 자료를 다시 열어 해당 보완을 확인했다. 페이지의 공식 검토 날짜가 양언어에 명시됐다. 작성자에게 요청한 standalone prompt markers, 6개 필수 시나리오 필드, 공식 확인일, EN 2.2 수치 표현 명료화가 모두 반영됨. 추가 수정 요청 없음.",
+      "ko_sha256": "e53f864b589a264328dc438851e84cfe017ee66d87e24d42d0715ea8f67f00a0",
+      "en_sha256": "5f0ade325856bb5352cb17705b842af51f3d91fbe0b795df5649d1704e8bf014"
+    },
+    "aws-cloud/compute.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/serving_gpu author + independent /root/dark_mode",
+      "reviewed": "2026-10-04",
+      "notes": "Compact source554~1065 및 4페이지 전체 독립 읽기. 절3.1~3.6,4.1~4.7와4장통합비교 보존; KO exact와 EN 구조/모든수치/예시 대응 PASS. 의미 검토: ASG2/3/10,Service80/8080/TCP, ALB/NLB instance/ip 경로,2049/5432,PGDATA/WAL/replica/shard,TTL 모두 대응. 별도 보완과 intro 연결 확인. AWS 공식문서에서 ALB all-unhealthy fail-open,ASG ELB health check활성,NodePort/PodIP target,EFS Regional/OneZone/advisory lock,RDS subnet/MultiAZ instance와cluster,Aurora reader connection balancing,ElastiCache async replication·Valkey durability 조건 대조. PostgreSQL NFS조건도 확인. 동일 양언어 prompt2탭,각4단독marker,6필드 및 관측/가정/미확인증거/검증 원칙 대응. 개인정보/실자격증명/실운영성과 없음. 수정 요청 없음. 브라우저 렌더와 전체 build/배포는 부모 검증 범위.",
+      "ko_sha256": "dc40529f2497dc450672ad6b6aee18c953f8d752fc09b6f41646d77604ea21f7",
+      "en_sha256": "ccb955e3275c69ed4ab6b4d060348178c6f6744d8e9900a086b16ae67dbe8ce5"
+    },
+    "aws-cloud/storage-databases.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/serving_gpu author + independent /root/dark_mode",
+      "reviewed": "2026-10-04",
+      "notes": "Compact source554~1065 및 4페이지 전체 독립 읽기. 절3.1~3.6,4.1~4.7와4장통합비교 보존; KO exact와 EN 구조/모든수치/예시 대응 PASS. 의미 검토: ASG2/3/10,Service80/8080/TCP, ALB/NLB instance/ip 경로,2049/5432,PGDATA/WAL/replica/shard,TTL 모두 대응. 별도 보완과 intro 연결 확인. AWS 공식문서에서 ALB all-unhealthy fail-open,ASG ELB health check활성,NodePort/PodIP target,EFS Regional/OneZone/advisory lock,RDS subnet/MultiAZ instance와cluster,Aurora reader connection balancing,ElastiCache async replication·Valkey durability 조건 대조. PostgreSQL NFS조건도 확인. 동일 양언어 prompt2탭,각4단독marker,6필드 및 관측/가정/미확인증거/검증 원칙 대응. 개인정보/실자격증명/실운영성과 없음. 수정 요청 없음. 브라우저 렌더와 전체 build/배포는 부모 검증 범위.",
+      "ko_sha256": "342aedd88b80389bcad8b1a726eff1c21150897628607870cb2ade2263ddade6",
+      "en_sha256": "c499598afa952e92bea992cfa93f582bc74a06cb74533a0c4d112e6052e7511d"
+    },
+    "aws-cloud/eks.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root/review_ch16 author + independent Codex agent /root/serving_gpu",
+      "reviewed": "2026-10-04",
+      "notes": "최신compact 원문5장349행·KO/EN각444행 전체읽기. 5.1~5.7과전체구조모두대조. EKS관리경계/NodeGroup/MNG/ASG/autoscaler,VPC CNI·IP숫자,CIDR확장제약,controller,target,CSI,ECR,PodIdentity/IRSA,RBAC차이가한영대응. 10.0.1.0/24,Node10.0.1.10,Pod.21/.22,256/251/4096숫자와도식구조보존. 공식문서로Karpenter직접node provision과CA/ASG차이,EFSFargate static only,ECRnode/execution role,PodIdentityAgent조건직접재확인. 원문의Karpenter→NodeGroup축약·251Pod오해·Service일반화는첫안내및외부보완에서한영동등하게설명. KOcore exact/ENheading·fence·numericmultiset/prompt2탭같음PASS. 6개실습필드·4markers·관측/가정/누락·비실행제약대응. 실제인증정보·내부URL·개인정보없음. 사설IP와model-loader·api·worker는명백한학습예시. 쉬운영어·의미·범위검토상수정요청없음.",
+      "ko_sha256": "b58495f62a9888bd61ab3d11c387a5e47342801ac2a148c5bef86f1cdddc40f2",
+      "en_sha256": "be57250840980c52aac013547b9f152e4a2a8803243fe398eacba2b98fb0533b"
+    },
+    "aws-cloud/index.md": {
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root author + independent Codex agent /root/serving_gpu",
+      "reviewed": "2026-10-04",
+      "notes": "공유KO/EN 홈·prompt목록·glossary·AWSoverview8파일전체직접읽기. 최신source소개/7장목차/최종요약/진도전체읽어대조. 최신7장과정에서1~5완료,EKS는5장,6ManagedServices다음,7AI/GPU후속표시가한영일치. 이전12장AWS목차를복원하지않음. Terraform타세션학습언급은원문보존하고 현재제공본문없는점을설명. 기존platform본문1~11/12~15후속표시는별도범위로유지. AWSoverview INTRO/SUMMARY/STATUS KOexact와ENheading·fence·숫자대응PASS. 실제Markdown61쌍과한영각139시나리오확인. 100개library+39개concept표시일치. 공유한영링크경로·순서동일. storage-databases와eks 최신경로에연결되며이전storage/database분리페이지참조없음. AWS용어28행의정의와정규주제대응확인. ARN,NLB,EKS,CNI,controller,CSI,ECR,PodIdentity/IRSA추가범위영어동일. 개인정보·실계정·인증정보없고개념학습을구축/시험결과로과장하지않음. KOhome 이후는7장 띄어쓰기1건작성자요청후 이후는 7장 반영재확인. 남은수정요청없음.",
+      "ko_sha256": "946d895fd29659f32f465c1fd1226e04212f75ad8c8ebacc477f716a5e188057",
+      "en_sha256": "a2bf304afd5a7c06e207ae666f10a2cf69b3cb410b29e84ea75ebc5a56e5c204"
     }
   }
 }
