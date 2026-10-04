@@ -1,8 +1,8 @@
 ---
 id: platform-infrastructure-overview
 status: overview
-last_updated: 2026-10-03
-last_reviewed: 2026-10-03
+last_updated: 2026-10-04
+last_reviewed: 2026-10-04
 knowledge_ids:
   - PIS-00-01
   - PIS-04-01
@@ -16,27 +16,9 @@ knowledge_ids:
 
 # 플랫폼·인프라 기초와 학습 현황
 
-제공된 **Platform / Infrastructure / AI Serving — Basic Study Notes**의 Chapter 1~11을 정리했다. 첫 자료는 Linux·컨테이너·Kubernetes 1~3장까지였고, 후속 자료로 Redis·PostgreSQL·Kafka·vLLM·LiteLLM·GPU의 4~9장을 추가했다. 10~11장에는 플랫폼 보안과 CI/CD·Helm·Argo CD·GitOps를 추가했다. Terraform부터 12~15장은 후속 목차다.
+현재 학습 범위는 **Chapter 1~11**이다. Linux·컨테이너·Kubernetes에서 데이터 서비스·AI serving·보안·GitOps까지 연결한다. 다음은 **Chapter 12 Terraform & Infrastructure as Code**이며 12~15장은 아직 본문이 없는 후속 과정이다.
 
 이 자료의 “완료”는 플랫폼 엔지니어가 알아야 할 **Basic 핵심 개념 학습**이다. 실제 Linux/Docker/Kubernetes 명령을 실행했거나 운영 클러스터를 구축·시험했다는 의미가 아니다. 구체적인 배포판·kernel·cgroup·runtime·Kubernetes·CNI·CSI·cloud 버전은 제공되지 않았다. 버전에 민감한 동작은 각 문서에서 공식 근거와 조건을 구분한다.
-
-## 이전 자료의 범위: 4~9장
-
-아래 4~9장 범위·연결 구조·진도는 당시 원문을 보존한 기록이다. 최신 진도는 1~11장 완료이며 다음은 12장이다. 각 기술 문서에서는 본문 뒤 보완 구역에서 해당 절의 정정·적용 조건을 확인한다.
-
-<!-- SOURCE INTRO START -->
-
-# Platform / Infrastructure / AI Serving — Basic Study Notes
-
-> 범위: Chapter 4 ~ Chapter 9  
-> 이전 파일: Chapter 1 ~ Chapter 3  
-> 수준: Basic — 플랫폼 엔지니어가 반드시 알아야 할 핵심 개념 중심  
-> 포함: 본 학습 내용 + 중간 실무 질문/보충 설명  
-> 현재까지 완료: Redis / PostgreSQL / Kafka 운영 / vLLM / LiteLLM / GPU Infrastructure
-
----
-
-<!-- SOURCE INTRO END -->
 
 ## 학습 경로
 
@@ -81,7 +63,7 @@ flowchart TD
 | 14 | Internal Developer Platform / Self-Service |
 | 15 | End-to-End AI Platform Architecture |
 
-[데이터 플랫폼 과정](../data-platform/curriculum.md)의 데이터 처리 관점과 이번 서비스 운영·서빙 관점을 연결해 읽는다. 이전 자료가 후속으로 남겼던 10~11장은 이번 자료로 갱신했고, 12~15장의 학습 내용을 만들어 넣지 않는다.
+[데이터 플랫폼 과정](../data-platform/curriculum.md)의 데이터 처리 관점과 이번 서비스 운영·서빙 관점을 연결해 읽는다. 각 기술 문서에서는 원문 뒤 보완 구역에서 해당 절의 정정·적용 조건을 확인한다.
 
 ## 명령과 실무 예시 사용
 
@@ -145,39 +127,9 @@ Kubernetes
 
 <!-- SOURCE CONNECTION END -->
 
-## 이전 원문: 4~9장 자료 당시의 커리큘럼 상태
-
-아래는 이전 자료의 진도 기록이다. 최신 10~11장 자료의 진도는 이 페이지 마지막 구역에서 확인한다.
-
-<!-- SOURCE STATUS START -->
-
-# 현재 전체 커리큘럼 상태
-
-```text
-1. Linux, Networking, Containers ✅
-2. Kubernetes Core ✅
-3. Kubernetes Production Operations ✅
-4. Redis for Platform Systems ✅
-5. PostgreSQL for Platform Systems ✅
-6. Kafka for Platform Systems ✅
-7. vLLM ✅
-8. LiteLLM ✅
-9. GPU Infrastructure & Scheduling ✅
-10. Platform Security ← 다음
-11. CI/CD, Helm, Argo CD & GitOps
-12. Terraform & Infrastructure as Code
-13. Multi-tenancy, Quotas & Cost Control
-14. Internal Developer Platform / Self-Service
-15. End-to-End AI Platform Architecture
-```
-
-> 다음 학습은 **Chapter 10. Platform Security**부터 이어진다.
-
-<!-- SOURCE STATUS END -->
-
 ## 최신 원문: 10~11장 범위·연결·진도
 
-최신 업로드의 전체 소개와 연결 구조, 진도를 원문 순서로 보존했다. “완료”는 Basic 개념 학습을 뜻한다.
+10~11장의 역할과 전체 연결을 보여주는 원문 기록이다. “완료”는 Basic 개념 학습을 뜻한다.
 
 <!-- SOURCE SECURITY INTRO START -->
 
@@ -288,3 +240,51 @@ Traffic 확대 또는 Rollback
 > 다음 학습은 **Chapter 12. Terraform & Infrastructure as Code**부터 이어진다.
 
 <!-- SOURCE SECURITY STATUS END -->
+
+## 과거 원문 기록
+
+아래는 4~9장 자료를 받았을 당시의 소개와 진도다. 현재 진도는 위의 1~11장 표와 12장 이후 안내를 따른다. 원문의 “현재”와 “다음”은 당시 시점을 뜻한다.
+
+## 이전 자료의 범위: 4~9장
+
+<!-- SOURCE INTRO START -->
+
+# Platform / Infrastructure / AI Serving — Basic Study Notes
+
+> 범위: Chapter 4 ~ Chapter 9  
+> 이전 파일: Chapter 1 ~ Chapter 3  
+> 수준: Basic — 플랫폼 엔지니어가 반드시 알아야 할 핵심 개념 중심  
+> 포함: 본 학습 내용 + 중간 실무 질문/보충 설명  
+> 현재까지 완료: Redis / PostgreSQL / Kafka 운영 / vLLM / LiteLLM / GPU Infrastructure
+
+---
+
+<!-- SOURCE INTRO END -->
+
+## 이전 원문: 4~9장 자료 당시의 커리큘럼 상태
+
+<!-- SOURCE STATUS START -->
+
+# 현재 전체 커리큘럼 상태
+
+```text
+1. Linux, Networking, Containers ✅
+2. Kubernetes Core ✅
+3. Kubernetes Production Operations ✅
+4. Redis for Platform Systems ✅
+5. PostgreSQL for Platform Systems ✅
+6. Kafka for Platform Systems ✅
+7. vLLM ✅
+8. LiteLLM ✅
+9. GPU Infrastructure & Scheduling ✅
+10. Platform Security ← 다음
+11. CI/CD, Helm, Argo CD & GitOps
+12. Terraform & Infrastructure as Code
+13. Multi-tenancy, Quotas & Cost Control
+14. Internal Developer Platform / Self-Service
+15. End-to-End AI Platform Architecture
+```
+
+> 다음 학습은 **Chapter 10. Platform Security**부터 이어진다.
+
+<!-- SOURCE STATUS END -->

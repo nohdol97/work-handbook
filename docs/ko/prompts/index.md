@@ -8,57 +8,52 @@ knowledge_ids: []
 
 # 실무 프롬프트 모음
 
-설계 검토·SQL 리뷰·장애 조사·데이터 검증·문서화에 바로 맞춰 쓸 수 있는 **새 예시 100개**다. 개념 문서의 예시 39개를 합치면 총 139개이며, 모두 한영 탭과 여러 줄 형식으로 읽을 수 있다. 아래에서 주제를 고르면 각 페이지의 상황별 목차로 이동할 수 있다.
+SQL·schema·설정 변경 검토, 장애 조사, 비용 분석, 배포·복구 준비에 쓸 템플릿이다. 기술 이름보다 **지금 결정해야 할 작업**으로 고른다. 반복 업무에서 근거를 정리하고 검토 누락을 찾는 용도로 선정했으며, 실제 사용 빈도나 효과를 측정한 결과는 아니다.
+
+## 지금 필요한 작업
+
+| 작업 | 시작할 사례 | 받을 결과 |
+|---|---|---|
+| SQL·모델 PR 검토 | [Join 행 폭증](spark.md#spark-01) · [Incremental 최초 실행·key](dbt.md#dbt-05) · [SCD join 경계](analytical-modeling.md#analytical-modeling-02) | 근거 위치, 반례, 최소 수정 후보 |
+| Schema·계약 변경 | [CDC downstream 영향](cdc-debezium.md#cdc-debezium-03) · [이벤트 단위·의미](event-architecture.md#event-architecture-01) · [계약의 SLO·owner](governance.md#governance-06) | 깨지는 소비 조건, 미합의 항목, 배포 보류 근거 |
+| 장애 초기 조사 | [데이터 최신성 지연](data-observability.md#data-observability-01) · [두 경로 결과 불일치](event-architecture.md#event-architecture-04) · [RAG 오답](ai-ready-data.md#ai-ready-data-04) | 관찰·가설, 영향 범위, 첫 확인 순서 |
+| 성능·비용 검토 | [읽기 비용](foundations.md#foundations-06) · [Trino OOM](trino.md#trino-02) · [Flink backpressure](flink.md#flink-05) | 병목 근거, 한 변수 비교 계획, 채택 기준 |
+| 배포·전환 준비 | [Savepoint 업그레이드](flink.md#flink-04) · [Polling→CDC](cdc-debezium.md#cdc-debezium-05) · [Embedding 갱신](ai-ready-data.md#ai-ready-data-03) | 적용 범위, 복원 조건, 진행·보류 판단 |
+| 재처리·복구 확인 | [실패 task 재개](orchestration.md#orchestration-03) · [격리 데이터 재처리](data-quality.md#data-quality-03) · [소비 재개 조건](data-quality.md#data-quality-06) | 재사용 근거, 중단 조건, 복구 후 대사 |
+| 평가·문서 품질 검토 | [실패를 회귀 사례로](ai-ready-data.md#ai-ready-data-02) · [버전별 평가 비교](online-evaluation.md#online-evaluation-05) · [번역 PR 대조](knowledge-workflow.md#knowledge-workflow-02) | 재발 검사, 비교 한계, 근거가 있는 수정안 |
 
 ## 사용 방법
 
-1. 현재 상황과 맞는 예시를 선택한다.
-2. `한국어` 또는 `English` 탭을 선택한다. 같은 이름의 탭은 다른 예시와 함께 전환된다.
-3. 복사 버튼으로 prompt를 복사하고 `[입력 항목]`을 비식별 자료로 바꾼다. 문서 본문의 설명 언어는 상단 언어 메뉴로 바꾼다.
-4. LLM의 답을 관찰·가설·추가 확인으로 나누어 읽고 각 예시의 검증 방법을 수행한다.
+1. 사례의 **입력 준비**를 읽고 같은 실행·기간을 가리키는 비식별 SQL·설정·로그·표본을 준비한다. 실제 자료가 없으면 가상 표본이라고 명시한다.
+2. `한국어` 또는 `English` 탭에서 프롬프트를 복사하고 대괄호를 채운다. 자료에 행 번호·시각·표본 ID를 붙이고 모르는 값은 `미확인`으로 남긴다.
+3. 답의 지적을 입력 근거와 대조한다. **오류 가능성**과 **기대 결과 / 검증 방법**을 기준으로 채택·보류를 판단한다. 필요한 근거가 없으면 결론보다 추가 자료 질문을 먼저 처리한다.
 
-이 예시는 기존 핸드북의 학습 개념을 적용해 새로 작성했다. 실제 업무 빈도·모델 성능을 측정하거나 production 작업을 실행한 기록이 아니다. 프롬프트 작성 자체로 원문 학습 상태가 달라지지는 않는다. 현재 완료 범위는 [학습 현황](../data-platform/curriculum.md)에서 확인한다.
+프롬프트는 각각 독립적으로 복사할 수 있다. 답은 검토 초안이며 실행·변경 승인이 아니다. 사용 후에는 실제로 채택한 지적, 잘못된 지적, 검토에 걸린 시간을 남겨 자기 업무에 도움이 되는지 확인한다.
 
-## 주제별로 찾기
+## 주제별 전체 사례
 
-| 주제 | 사용 상황 | 새 예시 |
-|---|---|---:|
-| [저장·분석 기초](foundations.md) | 파일 배치·partition·scan 비용 | 6 |
-| [이벤트 아키텍처](event-architecture.md) | 계약·schema·중복·전달 | 6 |
-| [Lakehouse / Iceberg](lakehouse-iceberg.md) | snapshot·commit·유지보수 | 6 |
-| [Spark](spark.md) | 실행 계획·shuffle·skew | 6 |
-| [Flink](flink.md) | watermark·state·checkpoint | 6 |
-| [CDC / Debezium](cdc-debezium.md) | 변경 순서·snapshot·삭제·복구 | 6 |
-| [Orchestration](orchestration.md) | 의존성·retry·backfill | 6 |
-| [dbt](dbt.md) | 모델·증분 처리·테스트·이력 | 6 |
-| [분석 모델링](analytical-modeling.md) | grain·join·차원·metric | 6 |
-| [Trino](trino.md) | 질의 계획·pushdown·메모리 | 6 |
-| [데이터 품질](data-quality.md) | 규칙·격리·SLO·재처리 | 6 |
-| [데이터 관측](data-observability.md) | freshness·volume·drift·alert | 6 |
-| [계보·메타데이터](lineage-metadata.md) | 영향 분석·catalog·업무 의미 | 6 |
-| [거버넌스](governance.md) | owner·권한·마스킹·보존·감사 | 6 |
-| [AI-ready 데이터](ai-ready-data.md) | trace·버전·retrieval·재현성 | 6 |
-| [온라인 AI 평가](online-evaluation.md) | feedback·score·trace 연결 | 6 |
-| [지식 관리](knowledge-workflow.md) | 추출·번역 대조·통합·검토 | 4 |
+100개 사례의 상세 질문과 검증 기준을 주제별로 모았다. 개념 문서의 39개 사례도 한영 탭으로 제공한다. 예시 작성은 학습 완료나 실제 운영 경험을 뜻하지 않는다.
 
-## 좋은 입력의 기준
+| 주제 | 다루는 판단 |
+|---|---|
+| [저장·분석 기초](foundations.md) | 부하 분리·partition·pruning·읽기 비용 |
+| [이벤트 아키텍처](event-architecture.md) | 계약·schema·중복·replay·시각 기준 |
+| [Lakehouse / Iceberg](lakehouse-iceberg.md) | snapshot·쓰기 방식·정비·보존 |
+| [Spark](spark.md) | join·메모리·출력 파일·재시도 |
+| [Flink](flink.md) | window·state·checkpoint·업그레이드 |
+| [CDC / Debezium](cdc-debezium.md) | snapshot 복구·삭제·schema·대사 |
+| [Orchestration](orchestration.md) | 준비 조건·retry·재개·publish gate |
+| [dbt](dbt.md) | 모델 PR·의존성·test·incremental·재계산 |
+| [분석 모델링](analytical-modeling.md) | grain·이력 join·metric·차원 |
+| [Trino](trino.md) | pushdown·메모리·skew·작업 배치 |
+| [데이터 품질](data-quality.md) | 검사 배치·격리·SLO·복구 확인 |
+| [데이터 관측](data-observability.md) | freshness·volume·분포·알림 |
+| [계보·메타데이터](lineage-metadata.md) | catalog·정의 충돌·추적·영향 범위 |
+| [거버넌스](governance.md) | 책임·접근·마스킹·보존·감사 |
+| [AI-ready 데이터](ai-ready-data.md) | telemetry·회귀 사례·embedding·RAG |
+| [온라인 AI 평가](online-evaluation.md) | 평가 연결·미평가·rubric·버전 비교 |
+| [지식 관리](knowledge-workflow.md) | 추출·번역·통합·검토 증거 |
 
-증상과 기대 동작, 제품·connector 버전, 실제 설정, 비교 기간, 비식별 sample, 관찰한 로그·metric, 바꿀 수 없는 조건을 함께 제공한다. 아직 모르는 값은 모른다고 적는다. 예시는 운영계 변경을 자동 승인하는 명령이 아니며, 제안된 조치는 담당자가 실제 권한과 복구 절차를 확인한 뒤 수행한다.
+## 개념 문서의 업무 예시
 
-[데이터 플랫폼 전체 구조](../data-platform/architecture.md) · [학습 범위](../data-platform/curriculum.md) · [지식 관리 방법](../methodologies/knowledge-workflow.md)
-
-## 후속 학습 주제의 예시
-
-새 자료를 반영한 [AI 평가](../data-platform/ai-evaluation.md), [Databricks](../data-platform/databricks.md), [Snowflake](../data-platform/snowflake.md), [플랫폼 비교](../data-platform/platform-comparison.md), [운영·복구](../data-platform/production-operations.md), [전체 구조](../data-platform/architecture.md)에도 각각 한영 예시가 있다.
-
-## 플랫폼·인프라 예시
-
-[Linux·컨테이너](../platform-infrastructure/linux-containers.md), [Kubernetes 핵심](../platform-infrastructure/kubernetes-core.md), [Kubernetes 운영](../platform-infrastructure/kubernetes-operations.md)에도 각각 진단·설계 검토용 한영 예시가 있다. 운영 명령 실행이나 변경 승인을 대신하지 않는다.
-
-[Redis](../platform-infrastructure/redis.md)·[PostgreSQL](../platform-infrastructure/postgresql.md)·[Kafka](../platform-infrastructure/kafka.md)·[vLLM](../platform-infrastructure/vllm.md)·[LiteLLM](../platform-infrastructure/litellm.md)·[GPU 인프라](../platform-infrastructure/gpu-infrastructure.md)에 각 1개씩 운영·서빙 검토 예시를 추가했다.
-
-[플랫폼 보안](../platform-infrastructure/platform-security.md)과 [CI/CD·GitOps](../platform-infrastructure/cicd-gitops.md)에는 각각 보안 경계 검토와 안전한 모델 교체 계획 예시를 추가했다.
-
-## AWS 클라우드 예시
-
-[기본 구조](../aws-cloud/foundations.md)·[네트워킹](../aws-cloud/networking.md)·[컴퓨트](../aws-cloud/compute.md)·[스토리지/DB](../aws-cloud/storage-databases.md)·[EKS](../aws-cloud/eks.md)에 각각 비식별 구성 검토·진단 예시 1개가 있다. 실제 AWS 설정을 변경하는 명령이 아니다. [AWS 학습 현황](../aws-cloud/index.md)에서 압축형 과정의 범위를 확인한다.
+[릴리스 평가](../data-platform/ai-evaluation.md), [플랫폼 선택](../data-platform/platform-comparison.md), [운영·복구](../data-platform/production-operations.md), [전체 구조](../data-platform/architecture.md)에서는 문맥과 함께 검토할 수 있다. 플랫폼·인프라와 AWS 사례는 각 [플랫폼·인프라 목차](../platform-infrastructure/index.md), [AWS 목차](../aws-cloud/index.md)에서 찾는다.

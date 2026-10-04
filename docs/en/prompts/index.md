@@ -8,57 +8,52 @@ knowledge_ids: []
 
 # Practical prompt library
 
-These **100 new examples** support design reviews, SQL reviews, incident investigation, data checks, and documentation. Together with 39 examples in concept guides, there are 139 examples with bilingual tabs and multiple lines. Choose a topic, then use its scenario list.
+Use these templates for SQL, schema, and configuration reviews, incident investigation, cost analysis, and deployment or recovery planning. Choose by **the decision you need to make**, then by technology. The cases were selected to organize evidence and find review gaps in recurring work. Their usage frequency and effectiveness have not been measured.
+
+## Start with your task
+
+| Task | Starting cases | Useful result |
+|---|---|---|
+| Review a SQL or model PR | [Join row explosion](spark.md#spark-01) · [Incremental first runs and keys](dbt.md#dbt-05) · [SCD join boundaries](analytical-modeling.md#analytical-modeling-02) | Evidence locations, counterexamples, and minimal changes |
+| Change a schema or contract | [CDC downstream impact](cdc-debezium.md#cdc-debezium-03) · [Event units and meaning](event-architecture.md#event-architecture-01) · [Contract SLOs and owners](governance.md#governance-06) | Broken consumer assumptions, open agreements, and rollout blockers |
+| Triage an incident | [Freshness lag](data-observability.md#data-observability-01) · [Results differ across paths](event-architecture.md#event-architecture-04) · [Wrong RAG answers](ai-ready-data.md#ai-ready-data-04) | Observations, hypotheses, impact, and first checks |
+| Review performance or cost | [Read cost](foundations.md#foundations-06) · [Trino OOM](trino.md#trino-02) · [Flink backpressure](flink.md#flink-05) | Bottleneck evidence, one-variable comparisons, and acceptance criteria |
+| Prepare a rollout or migration | [Savepoint upgrade](flink.md#flink-04) · [Polling to CDC](cdc-debezium.md#cdc-debezium-05) · [Embedding refresh](ai-ready-data.md#ai-ready-data-03) | Scope, restore conditions, and proceed/hold decisions |
+| Check reprocessing or recovery | [Resume failed tasks](orchestration.md#orchestration-03) · [Replay quarantine](data-quality.md#data-quality-03) · [Resume downstream use](data-quality.md#data-quality-06) | Reuse evidence, stop conditions, and reconciliation |
+| Review evaluations or docs | [Failure to regression case](ai-ready-data.md#ai-ready-data-02) · [Compare agent versions](online-evaluation.md#online-evaluation-05) · [Review a translation PR](knowledge-workflow.md#knowledge-workflow-02) | Regression checks, comparison limits, and evidence-based edits |
 
 ## How to use
 
-1. Choose an example that matches your situation.
-2. Select `한국어` or `English`. Tabs with the same label switch together across examples.
-3. Copy the prompt and replace `[input fields]` with sanitized material. Use the top language menu to change the surrounding page language.
-4. Separate observations, hypotheses, and next checks in the answer. Follow the example's validation steps.
+1. Read **Input preparation** and collect sanitized SQL, settings, logs, and samples for the same run or period. Label synthetic samples when real evidence is unavailable.
+2. Copy the prompt from the `한국어` or `English` tab and fill the brackets. Add line numbers, timestamps, or sample IDs to inputs. Mark unknown values as `unknown`.
+3. Compare each finding with its cited input. Use **What the LLM can get wrong** and **Expected result / validation** to accept or hold findings. Answer requests for missing evidence before relying on a conclusion.
 
-These are newly authored applications of existing handbook concepts. They do not claim measured work frequency, model performance, or executed production work. Writing prompts does not change source study status. See the [study scope](../data-platform/curriculum.md) for current completion.
+Each prompt can be copied on its own. The answer is a review draft and does not authorize execution or changes. After use, record accepted findings, incorrect findings, and review time to judge usefulness for your own work.
 
-## Browse by topic
+## All cases by topic
 
-| Topic | When to use | New examples |
-|---|---|---:|
-| [Storage and analytics](foundations.md) | File layout, partitions, and scan cost | 6 |
-| [Event architecture](event-architecture.md) | Contracts, schema, duplicates, and delivery | 6 |
-| [Lakehouse / Iceberg](lakehouse-iceberg.md) | Snapshots, commits, and maintenance | 6 |
-| [Spark](spark.md) | Plans, shuffle, and skew | 6 |
-| [Flink](flink.md) | Watermarks, state, and checkpoints | 6 |
-| [CDC / Debezium](cdc-debezium.md) | Change order, snapshots, deletes, and recovery | 6 |
-| [Orchestration](orchestration.md) | Dependencies, retries, and backfills | 6 |
-| [dbt](dbt.md) | Models, incremental processing, tests, and history | 6 |
-| [Analytical modeling](analytical-modeling.md) | Grain, joins, dimensions, and metrics | 6 |
-| [Trino](trino.md) | Query plans, pushdown, and memory | 6 |
-| [Data quality](data-quality.md) | Rules, quarantine, SLOs, and reprocessing | 6 |
-| [Data observability](data-observability.md) | Freshness, volume, drift, and alerts | 6 |
-| [Lineage and metadata](lineage-metadata.md) | Impact analysis, catalogs, and business meaning | 6 |
-| [Governance](governance.md) | Ownership, access, masking, retention, and audit | 6 |
-| [AI-ready data](ai-ready-data.md) | Traces, versions, retrieval, and reproducibility | 6 |
-| [Online AI evaluation](online-evaluation.md) | Feedback, scores, and trace links | 6 |
-| [Knowledge workflow](knowledge-workflow.md) | Extraction, translation review, merging, and evidence | 4 |
+The library contains 100 cases with specific questions and checks. Concept guides contain another 39 cases with bilingual tabs. Authored examples do not establish study completion or actual production experience.
 
-## What makes useful context
+| Topic | Decisions covered |
+|---|---|
+| [Storage and analytics](foundations.md) | Workload isolation, partitions, pruning, and read cost |
+| [Event architecture](event-architecture.md) | Contracts, schema, duplicates, replay, and time basis |
+| [Lakehouse / Iceberg](lakehouse-iceberg.md) | Snapshots, write modes, maintenance, and retention |
+| [Spark](spark.md) | Joins, memory, output files, and retries |
+| [Flink](flink.md) | Windows, state, checkpoints, and upgrades |
+| [CDC / Debezium](cdc-debezium.md) | Snapshot recovery, deletes, schema, and reconciliation |
+| [Orchestration](orchestration.md) | Readiness, retries, resume points, and publication gates |
+| [dbt](dbt.md) | Model PRs, dependencies, tests, incremental work, and recalculation |
+| [Analytical modeling](analytical-modeling.md) | Grain, history joins, metrics, and dimensions |
+| [Trino](trino.md) | Pushdown, memory, skew, and workload placement |
+| [Data quality](data-quality.md) | Check placement, quarantine, SLOs, and recovery |
+| [Data observability](data-observability.md) | Freshness, volume, distributions, and alerts |
+| [Lineage and metadata](lineage-metadata.md) | Catalogs, conflicting definitions, tracing, and impact |
+| [Governance](governance.md) | Ownership, access, masking, retention, and audit |
+| [AI-ready data](ai-ready-data.md) | Telemetry, regression cases, embeddings, and RAG |
+| [Online AI evaluation](online-evaluation.md) | Evaluation links, missing scores, rubrics, and version comparisons |
+| [Knowledge workflow](knowledge-workflow.md) | Extraction, translation, merging, and review evidence |
 
-Provide symptoms, expected behavior, product and connector versions, actual settings, comparison periods, sanitized samples, observed logs and metrics, and fixed constraints. Mark unknown values as unknown. These templates do not authorize production changes. Responsible owners check actual permissions and recovery procedures before acting on a proposal.
+## Work examples in concept guides
 
-[Data platform architecture](../data-platform/architecture.md) · [Study scope](../data-platform/curriculum.md) · [Knowledge workflow](../methodologies/knowledge-workflow.md)
-
-## Examples from the continuation
-
-[AI evaluation](../data-platform/ai-evaluation.md), [Databricks](../data-platform/databricks.md), [Snowflake](../data-platform/snowflake.md), [platform comparison](../data-platform/platform-comparison.md), [operations and recovery](../data-platform/production-operations.md), and [architecture](../data-platform/architecture.md) each include another bilingual example based on the new source.
-
-## Platform and infrastructure examples
-
-[Linux and containers](../platform-infrastructure/linux-containers.md), [Kubernetes core](../platform-infrastructure/kubernetes-core.md), and [Kubernetes operations](../platform-infrastructure/kubernetes-operations.md) each include a bilingual diagnosis or design-review example. These do not execute operational commands or approve changes.
-
-Each of [Redis](../platform-infrastructure/redis.md), [PostgreSQL](../platform-infrastructure/postgresql.md), [Kafka](../platform-infrastructure/kafka.md), [vLLM](../platform-infrastructure/vllm.md), [LiteLLM](../platform-infrastructure/litellm.md), and [GPU infrastructure](../platform-infrastructure/gpu-infrastructure.md) adds one operations or serving review example.
-
-[Platform security](../platform-infrastructure/platform-security.md) and [CI/CD and GitOps](../platform-infrastructure/cicd-gitops.md) add examples for reviewing security boundaries and planning a safe model change, respectively.
-
-## AWS cloud examples
-
-[Foundations](../aws-cloud/foundations.md), [networking](../aws-cloud/networking.md), [compute](../aws-cloud/compute.md), [storage/databases](../aws-cloud/storage-databases.md), and [EKS](../aws-cloud/eks.md) each provide one sanitized configuration-review or diagnosis example. These are not commands that change actual AWS settings. See [AWS study progress](../aws-cloud/index.md) for the compact course scope.
+[Release evaluation](../data-platform/ai-evaluation.md), [platform choice](../data-platform/platform-comparison.md), [operations and recovery](../data-platform/production-operations.md), and [architecture](../data-platform/architecture.md) provide review examples with their conceptual context. Find infrastructure and AWS cases through the [platform and infrastructure index](../platform-infrastructure/index.md) and [AWS index](../aws-cloud/index.md).

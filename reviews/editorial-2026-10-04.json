@@ -1,0 +1,2021 @@
+{
+  "reviewed": "2026-10-04",
+  "baseline_commit": "6cb69f60e6ea8617c58144d3f752f067062bb227",
+  "scope": {
+    "published_pairs": 61,
+    "changed_pairs": 59,
+    "unchanged_reviewed_pairs": [
+      "data-platform/curriculum.md",
+      "aws-cloud/index.md"
+    ],
+    "library_scenarios": 100,
+    "embedded_scenarios": 39,
+    "source_ids": 421,
+    "source_files_unchanged": true,
+    "source_spans_byte_identical": 96
+  },
+  "pages": {
+    "aws-cloud/compute.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "35470cc7df4b51bb5612879172e6af32ddb83dca3ce34c459d61ccecaf63428a",
+      "en_sha256": "56ce1d882816fc701bb1d9a6e8d61deccdfeb541ff8ac9c4eb44be16aa1d39a5",
+      "result": "pass"
+    },
+    "aws-cloud/eks.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "79e5ad6c07751b1aea6ce0dde1cf98d0b74dfe6fad6987bda1ac141f050865f7",
+      "en_sha256": "c4f527cf3203604d8f4d66666130073ac5b34746b8d8671caca0ba804bf6acae",
+      "result": "pass"
+    },
+    "aws-cloud/foundations.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "84524e8e2725bae61438853a90a1680d794c94150a83cb915c390c035454a9f4",
+      "en_sha256": "256823d45a8315b86bebc7c654e9136fbc8ed1acbedccb293c376f3ca7dc23a1",
+      "result": "pass"
+    },
+    "aws-cloud/networking.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "988872ed6fde27d9d268c360cf484eb92f70aad0223a6bcba170b29802188498",
+      "en_sha256": "b6ac866c839e38afcfc3f7e38119d3fbafe2aeae98b244e20d71e8c690eb1ea0",
+      "result": "pass"
+    },
+    "aws-cloud/storage-databases.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "53a70855a6ca80d8ec5100bd530b67a4b4473e8a7d2ec820adfa2fbacb898bad",
+      "en_sha256": "df1224850c3a09fbea70f65847dd4220496fe7adcf187eaaf2f7ab2b8a8745cf",
+      "result": "pass"
+    },
+    "data-platform/ai-evaluation.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "98c5532310efdf184501281a09afa4da2ec0a311c78a63ab1947213ff9312bf8",
+      "en_sha256": "afa102317fb0113e9185bb86dc948308e4effc89a7be548a53c7e3feb00f1a20",
+      "result": "pass"
+    },
+    "data-platform/ai-ready-data.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "1d1be5f1e0fd2042a407b6781949b36f391874f0577e0398eb6815471ae73e5e",
+      "en_sha256": "ce67e1a95579f7124eaaaecf0411a2f619694cd2185a729f1a8e8fc9c1fe258e",
+      "result": "pass"
+    },
+    "data-platform/analytical-modeling.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "20826f62bbdd1bfade926ff0c82ae92692be852770a2a1141562b85fe492ddfe",
+      "en_sha256": "278c5356fe349c5aaa429b5cc6eb0b1930581c29e5f344aac185415d4f0defc4",
+      "result": "pass"
+    },
+    "data-platform/architecture.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "26129f99542a5efdcf184fc08cdb80640111d34755b6d44a9980570adc5f2c2b",
+      "en_sha256": "aa5c9c2452d695c0ac3a3ac27966d67ec1584fbfa9a2575ab8a8c9c0630a99ea",
+      "result": "pass"
+    },
+    "data-platform/cdc-debezium.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "5d009da04a890484d05bc70d36d4edbfde1110a70c24e820d06bcdbd0ef52caa",
+      "en_sha256": "7d904413353bd24a16df78df9ef6e538d9db8596a0f973789f254ccc6c82ab30",
+      "result": "pass"
+    },
+    "data-platform/data-observability.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "2a110dce7f09dd2ead6f92bd5d89062ae8e8b046d202c54412e66e0ad53e2286",
+      "en_sha256": "e38a6d5e2798541d71adbd7c6eab362e0bcd307093b74636cd962dbf6da69ed9",
+      "result": "pass"
+    },
+    "data-platform/data-quality.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "a880f2e9ae111fe0c8620f809db783f253015a5ab31c3890d7bb1f04c84644c9",
+      "en_sha256": "ca5b3eb2ad9604eec4521089658fd83873a0d138f214176b9fa46f53cc03d50e",
+      "result": "pass"
+    },
+    "data-platform/databricks.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "b2d62363b6c40b0ddb91825a1e815899e40757b44f684797acb9d75e9ae0b447",
+      "en_sha256": "181ce94cea7076b04daf0b0b451e25dfe4f83bfbf1e2a11635f03a6e7d1deb86",
+      "result": "pass"
+    },
+    "data-platform/dbt.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "c6a7ab3981ff3e5565362129fae450e75d9da60fce4ce0a42c93dcc2ba446fbc",
+      "en_sha256": "46580ea8a7cc1883d1c8a357b7b792265f38c8b278186e9192ce1dfcc9f3f24d",
+      "result": "pass"
+    },
+    "data-platform/event-architecture.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "d555abb36bc45d6fce4bcccc7e9080dd01ea95805970bb0e0b0e6cd6386f376e",
+      "en_sha256": "3e912088d2e38ec3f74c3bc149502450f789b65c2e4a29eb104843e93fe420de",
+      "result": "pass"
+    },
+    "data-platform/flink.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "f5f76142fe4b771ccc9885afa12081ecaaba0915ae03695e1c224c1afea29ad4",
+      "en_sha256": "606511d3f1c91eea348ad7e056fb1c97d93961992e0e2bd2c9b06cbbcae4e303",
+      "result": "pass"
+    },
+    "data-platform/foundations.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "79598ebb5392fd6eaf8cca3f04c8a82efcc6ad4beae85cb68e052e50ec588b3d",
+      "en_sha256": "783669fb9aaaf66103cff2ce31c9600dc7d71f25dfc197d74a8b9012c5a06339",
+      "result": "pass"
+    },
+    "data-platform/governance.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "98a187412aa934224289eab2967e2b399c676952c545bb035b03b1f966e95220",
+      "en_sha256": "5b8241a87cbdf270de38a94c8f71143720dd6a52a2688351ed284204acbd6a25",
+      "result": "pass"
+    },
+    "data-platform/lakehouse-iceberg.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "2d26f4223cdcd90fdc1083755a5195b1886904335f1f611eb90979838129fa96",
+      "en_sha256": "92beb2639b90a125938fa50b8f506320b2e915ea80bb477c75472287b525fb11",
+      "result": "pass"
+    },
+    "data-platform/lineage-metadata.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "60439eecd7c10aaeddff2beae7cf4634fda17e361c615b31f592887c0df53037",
+      "en_sha256": "fc58b339104638a19edb529c739944feebf611fe822ee085ae70de6e3a579a23",
+      "result": "pass"
+    },
+    "data-platform/orchestration.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "6def2c13e7260b4f334bebe3b0084a384368a3e10c96668e3a753443314a3f1f",
+      "en_sha256": "38ed7c1f6c6dabfcfc2bd281eba19cf5d4ef7593d4d07dd15e92e79bbbff9b7a",
+      "result": "pass"
+    },
+    "data-platform/platform-comparison.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "fa7e47f5c5b86079d7dddd04f2fe32794ff7e368c627b66e1e1f44b5a5f9181b",
+      "en_sha256": "9e18cc1ecd331000c77346cfd978028ccb1020abae4c90a9d967433913dde3ae",
+      "result": "pass"
+    },
+    "data-platform/production-operations.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "bc391d49c6652610f119bf8b36f581eadf03466f62e2e6076bf18c4b17e94d69",
+      "en_sha256": "7a38d434600b9288766bb426d50810465ebb23668ab64185971a15143fe3baa4",
+      "result": "pass"
+    },
+    "data-platform/snowflake.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "3880482ce886265e07915d67f0ed47c689357b692c8ac5c509afaf91f445a000",
+      "en_sha256": "9ab67475c5a5d64f87dc4de84fadcd187422666e469fc021917bd6484db4b0fd",
+      "result": "pass"
+    },
+    "data-platform/spark.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "9cc6ea480f645e58f29555f3c24c68ceb6493d60420da05bdb94726e011d6461",
+      "en_sha256": "484c056fd5802dcf9bd9cb7719703310c0ab390a67c4513a7884512e0183fac6",
+      "result": "pass"
+    },
+    "data-platform/trino.md": {
+      "author": "Codex /root/review_data (author review)",
+      "read_scope": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared.",
+      "independent_scope": "Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores.",
+      "ko_sha256": "4cc9fbd67e266062e0f1b74d63e50e6281cfe947ba1c1eef4e09e54798cf1d9a",
+      "en_sha256": "75b32c6f40242987456ff6f1eec9e94838534dfa6c09d55d66663eef9a4d7787",
+      "result": "pass"
+    },
+    "glossary/index.md": {
+      "author": "Codex /root",
+      "read_scope": "양언어 전체 읽기와 변경 구간 대조. 원문 구역 없는 공통 문서. 기존 관리 용어·기술 용어와 조건은 WAL 두 정의 통합 외 그대로 유지.",
+      "independent_scope": "root 소유 한영 3쌍 전문·검사기 delta 독립 검토.",
+      "ko_sha256": "e67e792cb30b13b7738558d41f6a6ff2b282bf9a2677a3ae20518704e6daadce",
+      "en_sha256": "611c8fe0340201d0b8846ef971b74a7c689741c9cdce36d010f4cebde5ad662e",
+      "result": "pass"
+    },
+    "index.md": {
+      "author": "Codex /root",
+      "read_scope": "양언어 전체 읽기와 변경 구간 대조. 원문 구역 없는 공통 문서. 기존 관리 용어·기술 용어와 조건은 WAL 두 정의 통합 외 그대로 유지.",
+      "independent_scope": "root 소유 한영 3쌍 전문·검사기 delta 독립 검토.",
+      "ko_sha256": "bfecbb6920aa80f0f0109c3407bf2b711c7657944147bbd12888f0b6f3507e76",
+      "en_sha256": "8ff2d246e76cbd626d7cd95f726cae2c6891b4706d3170904e6d091f3c21d75b",
+      "result": "pass"
+    },
+    "methodologies/knowledge-workflow.md": {
+      "author": "Codex /root",
+      "read_scope": "양언어 전체 읽기와 변경 구간 대조. 원문 구역 없는 공통 문서. 기존 관리 용어·기술 용어와 조건은 WAL 두 정의 통합 외 그대로 유지.",
+      "independent_scope": "root 소유 한영 3쌍 전문·검사기 delta 독립 검토.",
+      "ko_sha256": "b1b98454ad0e10c8c595ee3841b244236682f57680f6c446fb8abf04de9e948a",
+      "en_sha256": "719bc35e912cfbf1a7ccdf1f61663134b2e9b4aa6d3ae2af42caa14365d55c17",
+      "result": "pass"
+    },
+    "platform-infrastructure/cicd-gitops.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "e494a28df628664481f9aabff6b43ae79c91ebbf9a424b6485b9893856260ba9",
+      "en_sha256": "b324d31e5e4ab7c4adbb4c7abc7cf07c4057af67bd3b26bcfafb88ddc83da7d7",
+      "result": "pass"
+    },
+    "platform-infrastructure/gpu-infrastructure.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "0587d573b6e570ce757cd1b44a2d5b54038e53018a8d5cef6c5e41384c574dca",
+      "en_sha256": "b4feef4a82321bf4b134b0c547cd6e856e14965d84ac233bc90da4ca30b4405e",
+      "result": "pass"
+    },
+    "platform-infrastructure/index.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "9ec8791e4c4d49ae0a36d1e19c2ac347d98997e779a6d2f32ab9299e471102ea",
+      "en_sha256": "3a7b73a905c4d707da7ff8fabbdf8fc95147baff463351f7173e0c49a20e9a37",
+      "result": "pass"
+    },
+    "platform-infrastructure/kafka.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "b0ae98163a31a7acf12cf82c614cb618eab47f8dadc6ecb079b63101521b6989",
+      "en_sha256": "4f65f1c84ceaaa0bc4ca6cf50a075b2e4bfaedd7266a03c7806dd193957e998c",
+      "result": "pass"
+    },
+    "platform-infrastructure/kubernetes-core.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "c572c50779db5aa43200d2c42ff7ea8aa885c330a8b99f8fc90061c80e2a4cdb",
+      "en_sha256": "e063ea520752b7663695fc9c52d287f2a10837e663ace73a5a5fe0bca02b4b97",
+      "result": "pass"
+    },
+    "platform-infrastructure/kubernetes-operations.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "4626091488f76ce51fcc8dcf4297cbbd34468f41baa6eb87245fc1b48ab775fd",
+      "en_sha256": "1d3571fc85c69ef37e95c6755c77136c82dba41ce9ea70f19a4f5ebb815c761a",
+      "result": "pass"
+    },
+    "platform-infrastructure/linux-containers.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "1dbb0461a2e80f0344eac49f44eee51e1063e84f90d3fc6e6d5064206a6c97cb",
+      "en_sha256": "8b55fcbeb4d9ff9bab8330b45271f4a91584967050a725f6d8ca143a52be72dc",
+      "result": "pass"
+    },
+    "platform-infrastructure/litellm.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "d0bfb2b10eb0a4cf432b34765a844a5371f24cc1297170a2a36d615c50d2db0d",
+      "en_sha256": "6f186e9cf21125a8bf5b8f609c2cade8174c9c892b1b8772885937ef17388976",
+      "result": "pass"
+    },
+    "platform-infrastructure/platform-security.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "2911b765ed07c4e049d0189e6b4cb62d5a569a252d4f52fd9c0e03eb4ad3c405",
+      "en_sha256": "9a515c79a7ae784495a2b820fb3e917a0077c74e0578e4e3b19fddf8f910ac35",
+      "result": "pass"
+    },
+    "platform-infrastructure/postgresql.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "bc0000c63436fd83ba20c1602544a812b389927a401c59ddea1f45b23e45091f",
+      "en_sha256": "9aca0aa822f9b7e210543dce7bbb3d366d67418f3b355f43a5c7878d69d6c675",
+      "result": "pass"
+    },
+    "platform-infrastructure/redis.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "c8af0c82a8befd1d2868603fee62873ff9c4cc27c8e06f24882e8c265a165864",
+      "en_sha256": "e472fb8fe2df49fa03e10065faf6692cdff4cd0a3083f4b87e31eb5c3b29537a",
+      "result": "pass"
+    },
+    "platform-infrastructure/vllm.md": {
+      "author": "Codex /root/review_infra",
+      "read_scope": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인.",
+      "independent_scope": "root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님.",
+      "ko_sha256": "55ff45c416bb5918cd6e535a2fe917583065bf3626bafee87314b7f442daf6a7",
+      "en_sha256": "152cba8f570c37c3f8eb00bac2fff68fafa48b5a162fe22b17bb9587cb794cf5",
+      "result": "pass"
+    },
+    "prompts/ai-ready-data.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "1fa38364d1ac18ae5d50f85f89de726cdbf84d66e6bec5eeea8e3c182c070113",
+      "en_sha256": "37c8cc6716a7251494e6f07ecb8ac953d8c5be3327332ee5c1c321691ffa18d8",
+      "result": "pass"
+    },
+    "prompts/analytical-modeling.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "9dad02bf28b8e32c3b74d519a537d92909b3f256252cee7c1e90cdda602ca7b7",
+      "en_sha256": "ac792f09793ec9e5ab367de7378d1bc2d9ff5aa65fba93b4e53763a8463f1eac",
+      "result": "pass"
+    },
+    "prompts/cdc-debezium.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "4e2a47812042c8ab9f9e9f9815b8bd5d042d3a0b3a0b7c78b226d17ac09f8af3",
+      "en_sha256": "c384402c0d1d4a08b92caffa943c221f0d3cd1410f422997e2c2053121c69c92",
+      "result": "pass"
+    },
+    "prompts/data-observability.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "ba886a79c0e91b8fcd5cdd6d1a3431cad9d7984e4e4a18f926b481896350788d",
+      "en_sha256": "c47daad5d1ec2117e7151812ef2d5099ad3be58f44e5b2352ef57ac71d96e4d8",
+      "result": "pass"
+    },
+    "prompts/data-quality.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "2597ddf1aea102e6e10de534f33c704be47badb2ed6299992f40e992aea34b5b",
+      "en_sha256": "3441c820a7e6dbeeab5eaf58ad69ecbc63d5f9655435dc0a988faa7b0148e79b",
+      "result": "pass"
+    },
+    "prompts/dbt.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "8a63dfbe11204077ab40b8aae9d81e7bd3a8a1cad75d24ee33812df177d87ab1",
+      "en_sha256": "2bf433442c4a372ce7cfc28fbdce92347b36e19ae2c7572b9a0f0c4e4efe6498",
+      "result": "pass"
+    },
+    "prompts/event-architecture.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "2127706096a3c858cb13e721a4502e1e17cebf074261b26e053e558a508e3375",
+      "en_sha256": "488e15583086733b50f6c1035ec942581ec6f935a1ca822228bdb0657786a16a",
+      "result": "pass"
+    },
+    "prompts/flink.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "b315fbc0990ff54274812e0fceec4e387205d877b30f13b77b8b8d6c036ce83d",
+      "en_sha256": "96970d727e9aa827993350c7df551f0ed485626601e6483cd2db6976fb01ccfc",
+      "result": "pass"
+    },
+    "prompts/foundations.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "b7f0c996c611ebc3ef8692901f04842ab1c0f569e8837d7c3c0a11884b4f34c4",
+      "en_sha256": "3eae1f5169caeecfb7955e43fbd8bdfb85c7637ea36fdc629e697a0de98a5059",
+      "result": "pass"
+    },
+    "prompts/governance.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "588b6eb79e4bad16d97779f601da2c556f820c51ac53f7d8170dcab8cf2daaea",
+      "en_sha256": "dfe856ff12698c4e5ec67f152112a1910dcb2eb00a270656806e5fd2d39af18c",
+      "result": "pass"
+    },
+    "prompts/index.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "419f46e3750f2c2228be89582a5dd52edf3f17940e1647f59c337267a1694bfc",
+      "en_sha256": "f2c164290414debe16967dc52a472dfb6235ae3a8065047dba8d6b292b117268",
+      "result": "pass"
+    },
+    "prompts/knowledge-workflow.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "f1783412cd2ac104238bf036f242c7eac1a63a1c521210f314a0bc0d8e985d96",
+      "en_sha256": "f14adbed814a14fa4d1368041d37e20bdc6b8c8568d01a12ace43ddc0cc8f653",
+      "result": "pass"
+    },
+    "prompts/lakehouse-iceberg.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "7cf5fcd3074caf0352653efad8b1344c5d778e6f035307d4b15d0d783cc1baf5",
+      "en_sha256": "c4e2651fb538a5aa4175489a11531a5dbbf992be5d3579b34dd5e2f6604ee5de",
+      "result": "pass"
+    },
+    "prompts/lineage-metadata.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "6ee2eddefd6244a47433753b65975e889e474f5f121a566805d310e5e32c3133",
+      "en_sha256": "3f261c00fe913e606a92df9e527aad5461c6def435e65d39e6c2c8871f10a88f",
+      "result": "pass"
+    },
+    "prompts/online-evaluation.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "1b0f61947dc88efd73e1cab048b6167166df56ab9c6d66f08085f219c5823678",
+      "en_sha256": "cec6627591126fc6ec818c9db257ebe7ceb6a64cd7f21dacfd5f4c9595e99e47",
+      "result": "pass"
+    },
+    "prompts/orchestration.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "9552873970aa997c80fe7ee014ad39bc9c6a5f2b50e394f1de0df8c5d5840df3",
+      "en_sha256": "789ad8c45fb6232b1b1b1a3f787dae8951eff602605af692bead1ab32ab7e372",
+      "result": "pass"
+    },
+    "prompts/spark.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "939a3279441eb3ba6668283e37b1b6fc9556d2b299c7d3bb38fbe23332d98764",
+      "en_sha256": "a7c22916f47a904267bcf1d862bedc504499ee5a1fbe8e4774c3137a92482fd1",
+      "result": "pass"
+    },
+    "prompts/trino.md": {
+      "author": "Codex sub-agent /root/review_prompts",
+      "read_scope": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages.",
+      "independent_scope": "100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end.",
+      "ko_sha256": "94b66e054883b6329c9838403645ccdc7f2d70e1e31f13e580c7c778d3ca1e63",
+      "en_sha256": "65ce980ae5d028e98eb1ff04cc0f68e099f3d4a7f4b1c1e73fca90703eebaea7",
+      "result": "pass"
+    }
+  },
+  "duplicate_migrations": [
+    {
+      "page": "index.md",
+      "removed": "연속적인 자료 추가 이력과 분야별 상세 문서 나열",
+      "preserved": "분야별 범위 표와 각 index/curriculum 링크. 복원 노트·Snowflake 요약·미실행 경계는 홈에도 유지."
+    },
+    {
+      "page": "glossary/index.md",
+      "removed": "WAL 중복 정의",
+      "preserved": "데이터 플랫폼 WAL 한 행에 recovery/replication/backup/PITR 및 CDC/PostgreSQL 두 링크. 관리 용어는 말미의 명명된 절로 이동."
+    },
+    {
+      "page": "data-platform/ai-evaluation.md",
+      "language": "ko",
+      "removed_excerpt": "제공된 원문의 번호·하위 제목·문단·목록·예시 순서를 보존했다. 영문은 원문 그대로이며 한국어는 같은 구조의 번역이다. 기술 용어·필드·설명용 코드 값은 원문 표기를 유지한다. 기존 추가 설명은 뒤의 보완 절에 구분했다.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/ai-evaluation.md",
+      "language": "en",
+      "removed_excerpt": "The numbered source preserves the supplied headings, paragraphs, lists, and examples. English is retained verbatim; Korean translates the same structure. Previously added explanations remain in the separate supplement be",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/ai-ready-data.md",
+      "language": "ko",
+      "removed_excerpt": "원문 본문의 번호·순서·형식을 보존했다. 적용 시 필요한 수정·조건은 [원문 보완 설명](#source-notes)에 원문 절 번호별로 구분했다.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/ai-ready-data.md",
+      "language": "en",
+      "removed_excerpt": "The source body keeps its numbering, order, and form. [Source qualifications](#source-notes) separate applicable corrections and conditions by source section number.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/analytical-modeling.md",
+      "language": "ko",
+      "removed_excerpt": "위 본문은 제공된 Markdown의 9~11장 중 이 페이지에 해당하는 장을 원문 형식 그대로 보존했다. 아래는 원문과 구분한 기존 설명·주의사항이다.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/analytical-modeling.md",
+      "language": "ko",
+      "removed_excerpt": "원문의 text 그림과 별도로 기존 Mermaid 그림을 보존한다.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/analytical-modeling.md",
+      "language": "en",
+      "removed_excerpt": "The main text follows the supplied chapter’s headings, examples, and order. These existing explanations and caveats are separate from the source text.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/analytical-modeling.md",
+      "language": "en",
+      "removed_excerpt": "This preserves the existing Mermaid diagram separately from the source’s text diagram.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/architecture.md",
+      "language": "ko",
+      "removed_excerpt": "아래는 이전 문서의 설명·주의사항·관련 링크·Mermaid·실무 프롬프트를 보존한 자료다. 위 원문 본문과 구분하며, 기존의 정확한 내용을 삭제하거나 원문의 중간에 합치지 않았다. 공식 문서 확인일은 기존 기록을 유지한다.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/architecture.md",
+      "language": "en",
+      "removed_excerpt": "The following preserves the prior explanations, caveats, links, Mermaid diagrams, and practical prompts. They are separate from the source body. No existing correct content was deleted or inserted into the middle of the ",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/architecture.md",
+      "language": "ko",
+      "removed_excerpt": "### 구성 요소의 경계\n\n| 구성 요소 | 핵심 역할 | 자세한 내용 |\n|---|---|---|\n| Kafka | 이벤트 전달과 내구성 있는 로그 | [Kafka](event-architecture.md) |\n| S3 | Object storage | [S3](foundations.md) |\n| Parquet | 분석용 columnar 파일 포맷 | [Parquet](foundations",
+      "preserved_at": "21.2–21.18; SOURCE FINAL role map; SOURCE APPENDIX 17.1–17.5; canonical linked pages",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/architecture.md",
+      "language": "en",
+      "removed_excerpt": "### Component boundaries\n\n| Component | Main role | Details |\n|---|---|---|\n| Kafka | Event transport / durable log | [Kafka](event-architecture.md) |\n| S3 | Object storage | [S3](foundations.md) |\n| Parquet | Columnar a",
+      "preserved_at": "21.2–21.18; SOURCE FINAL role map; SOURCE APPENDIX 17.1–17.5; canonical linked pages",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/architecture.md",
+      "language": "ko",
+      "removed_excerpt": "### 도입 결정 질문과 설계 원칙\n\n| 후보 | 답할 질문 |\n|---|---|\n| Kafka | Replayable event transport가 필요한가? 여러 consumer가 같은 event를 독립적으로 읽는가? |\n| Flink | Stateful low-latency streaming이 실제로 필요한가? |\n| Iceberg | Object storage의 open analyti",
+      "preserved_at": "SOURCE CORE 21.29; SOURCE FINAL seven principles and mental model",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/architecture.md",
+      "language": "en",
+      "removed_excerpt": "### Adoption questions and engineering principles\n\n| Candidate | Question to answer |\n|---|---|\n| Kafka | Do we need replayable event transport? Do several consumers independently read the same event? |\n| Flink | Do we a",
+      "preserved_at": "SOURCE CORE 21.29; SOURCE FINAL seven principles and mental model",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/cdc-debezium.md",
+      "language": "ko",
+      "removed_excerpt": "본문은 제공된 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 설명에 필요한 조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에서 구분한다.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/cdc-debezium.md",
+      "language": "en",
+      "removed_excerpt": "The numbered body follows the supplied source’s headings, paragraphs, lists, examples, and order. Conditions on its simplified explanations and previously added guidance appear under **Additional checks before applying t",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/data-quality.md",
+      "language": "ko",
+      "removed_excerpt": "위 본문은 제공된 Markdown의 9~11장 중 이 페이지에 해당하는 장을 원문 형식 그대로 보존했다. 아래는 원문과 구분한 기존 설명·주의사항이다.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/data-quality.md",
+      "language": "ko",
+      "removed_excerpt": "원문의 text 그림과 별도로 기존 Mermaid 그림을 보존한다.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/data-quality.md",
+      "language": "en",
+      "removed_excerpt": "The main text follows the supplied chapter’s headings, examples, and order. These existing explanations and caveats are separate from the source text.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/data-quality.md",
+      "language": "en",
+      "removed_excerpt": "This preserves the existing Mermaid diagram separately from the source’s text diagram.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/databricks.md",
+      "language": "ko",
+      "removed_excerpt": "다음은 원문과 구분한 기존 보완 설명이다. 제품의 지원 조건과 주의사항은 2026-09-26 검토 범위를 유지한다. 이번 편집에서 새 버전을 시험하거나 공식 문서를 재확인한 것은 아니다.",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/databricks.md",
+      "language": "en",
+      "removed_excerpt": "The following notes are separate from the source. They retain the support conditions and cautions reviewed on 2026-09-26. This edit did not test new versions or recheck official documentation.",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/databricks.md",
+      "language": "ko",
+      "removed_excerpt": "Databricks는 개별적으로 운영하던 데이터 엔지니어링, SQL, 거버넌스, ML, AI 기능을 한 데이터 기반에 통합하는 관리형 플랫폼이다. 자체 운영의 `Kafka → Flink → Iceberg → Spark → dbt → Trino → BI`와 주변 Airflow·Catalog·Lineage·Governance·MLflow 역할 중 여러 부분을 묶는다. 모든 역할을 없애는 것은 아",
+      "preserved_at": "17.1; 17.12",
+      "reason": "원문 정의 재서술을 절 링크로 대체"
+    },
+    {
+      "page": "data-platform/databricks.md",
+      "language": "en",
+      "removed_excerpt": "Databricks combines data engineering, SQL, governance, ML, and AI on a shared data foundation. A self-managed stack might use `Kafka → Flink → Iceberg → Spark → dbt → Trino → BI`, with Airflow, Catalog, Lineage, Governan",
+      "preserved_at": "17.1; 17.12",
+      "reason": "원문 정의 재서술을 절 링크로 대체"
+    },
+    {
+      "page": "data-platform/databricks.md",
+      "language": "ko",
+      "removed_excerpt": "### 자체 운영 구성요소를 어디까지 대체하는가\n\n| 기존 책임 | 통합 후보 | 판단 |\n|---|---|---|\n| Spark cluster | Runtime / Serverless | 높은 통합 가능성 |\n| Trino 역할의 BI serving | SQL Warehouse | SQL·동시성·connector 요구 확인 |\n| 자체 Spark pipeline framework | Pip",
+      "preserved_at": "SOURCE CORE 17.12 component list; supplement operational boundaries preserved as bullets",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/databricks.md",
+      "language": "en",
+      "removed_excerpt": "### Which self-managed components can it replace?\n\n| Existing responsibility | Integration candidate | Decision boundary |\n|---|---|---|\n| Spark cluster | Runtime / Serverless | High consolidation potential |\n| Trino-lik",
+      "preserved_at": "SOURCE CORE 17.12 component list; supplement operational boundaries preserved as bullets",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/dbt.md",
+      "language": "ko",
+      "removed_excerpt": "본문은 제공된 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 설명에 필요한 조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에서 구분한다.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/dbt.md",
+      "language": "en",
+      "removed_excerpt": "The numbered body follows the supplied source’s headings, paragraphs, lists, examples, and order. Conditions on its simplified explanations and previously added guidance appear under **Additional checks before applying t",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/event-architecture.md",
+      "language": "ko",
+      "removed_excerpt": "본문은 제공된 최신 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 표현에 필요한 정정·조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에 구분했다.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/event-architecture.md",
+      "language": "en",
+      "removed_excerpt": "The body translates the latest supplied source without merging its headings, paragraphs, lists, or examples. Corrections, conditions on simplified statements, and previous additions appear separately under **Qualificatio",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/flink.md",
+      "language": "ko",
+      "removed_excerpt": "원문 본문의 번호·순서·형식을 보존했다. 적용 시 필요한 수정·조건은 [원문 보완 설명](#source-notes)에 원문 절 번호별로 구분했다.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/flink.md",
+      "language": "en",
+      "removed_excerpt": "The source body keeps its numbering, order, and form. [Source qualifications](#source-notes) separate applicable corrections and conditions by source section number.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/foundations.md",
+      "language": "ko",
+      "removed_excerpt": "본문은 제공된 최신 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 표현에 필요한 정정·조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에 구분했다.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/foundations.md",
+      "language": "en",
+      "removed_excerpt": "The body translates the latest supplied source without merging its headings, paragraphs, lists, or examples. Corrections, conditions on simplified statements, and previous additions appear separately under **Qualificatio",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/foundations.md",
+      "language": "ko",
+      "removed_excerpt": "원문 1.3의 “필요한 row 범위만”은 통계로 제외 가능한 row group 등을 건너뛴다는 뜻이다. 일치하는 row만 정확히 골라 읽는 row index 기능으로 이해하지 않는다.",
+      "preserved_at": "적용 시 보완할 점의 Parquet pruning 문단",
+      "reason": "동일 보완부의 row-index 주의 반복"
+    },
+    {
+      "page": "data-platform/foundations.md",
+      "language": "en",
+      "removed_excerpt": "The source's phrase “only the required row range” means skipping units such as row groups when statistics allow it. It does not promise row-index access to only the exact matching rows.",
+      "preserved_at": "Qualifications for real use: Parquet pruning paragraph",
+      "reason": "동일 보완부의 row-index 주의 반복"
+    },
+    {
+      "page": "data-platform/lakehouse-iceberg.md",
+      "language": "ko",
+      "removed_excerpt": "본문은 제공된 최신 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 표현에 필요한 정정·조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에 구분했다.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/lakehouse-iceberg.md",
+      "language": "en",
+      "removed_excerpt": "The body translates the latest supplied source without merging its headings, paragraphs, lists, or examples. Corrections, conditions on simplified statements, and previous additions appear separately under **Qualificatio",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/orchestration.md",
+      "language": "ko",
+      "removed_excerpt": "본문은 제공된 원문의 번호·문단·목록·예시·순서를 그대로 보존했다. 원문의 단순화된 설명에 필요한 조건과 기존 추가 설명은 뒤의 **적용 시 보완할 점**에서 구분한다.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/orchestration.md",
+      "language": "en",
+      "removed_excerpt": "The numbered body follows the supplied source’s headings, paragraphs, lists, examples, and order. Conditions on its simplified explanations and previously added guidance appear under **Additional checks before applying t",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/orchestration.md",
+      "language": "ko",
+      "removed_excerpt": "Task 상태가 있다고 모든 경우에 실패 지점부터 복구할 수 있는 것은 아니다. 기존 upstream 결과와 구간이 유효한지 먼저 확인한다.\n\n",
+      "preserved_at": "준비 상태와 실패 전파",
+      "reason": "upstream 결과·구간 확인 반복"
+    },
+    {
+      "page": "data-platform/orchestration.md",
+      "language": "en",
+      "removed_excerpt": "Task state alone does not guarantee that recovery can start from the failed task in every case. Check that prior upstream results and intervals remain valid.\n\n",
+      "preserved_at": "Readiness and failure propagation",
+      "reason": "upstream 결과·구간 확인 반복"
+    },
+    {
+      "page": "data-platform/platform-comparison.md",
+      "language": "ko",
+      "removed_excerpt": "제공된 원문의 번호·하위 제목·문단·목록·예시 순서를 보존했다. 영문은 원문 그대로이며 한국어는 같은 구조의 번역이다. 기술 용어·필드·설명용 코드 값은 원문 표기를 유지한다. 기존 추가 설명은 뒤의 보완 절에 구분했다.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/platform-comparison.md",
+      "language": "en",
+      "removed_excerpt": "The numbered source preserves the supplied headings, paragraphs, lists, and examples. English is retained verbatim; Korean translates the same structure. Previously added explanations remain in the separate supplement be",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/platform-comparison.md",
+      "language": "ko",
+      "removed_excerpt": "### 19.14 비교표\n\n아래는 원문의 방향성을 보존한 **조건부 설계 가설**이며 benchmark 순위가 아니다.\n\n| 영역 | Databricks | Snowflake | Open Lakehouse |\n|---|---|---|---|\n| 역사적 중심 | Spark / Data / AI | SQL / DWH | 열린 데이터 구조 |\n| Storage | Object + Delta/Ice",
+      "preserved_at": "19.1–19.14 source comparison and supplemental conditions",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/platform-comparison.md",
+      "language": "en",
+      "removed_excerpt": "### 19.14 Comparison table\n\nThese are **conditional design hypotheses** that preserve the source's direction. They are not benchmark rankings.\n\n| Area | Databricks | Snowflake | Open Lakehouse |\n|---|---|---|---|\n| Histo",
+      "preserved_at": "19.1–19.14 source comparison and supplemental conditions",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/production-operations.md",
+      "language": "ko",
+      "removed_excerpt": "아래는 이전 문서의 설명·주의사항·관련 링크·Mermaid·실무 프롬프트를 보존한 자료다. 위 원문 본문과 구분하며, 기존의 정확한 내용을 삭제하거나 원문의 중간에 합치지 않았다. 공식 문서 확인일은 기존 기록을 유지한다.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/production-operations.md",
+      "language": "en",
+      "removed_excerpt": "The following preserves the prior explanations, caveats, links, Mermaid diagrams, and practical prompts. They are separate from the source body. No existing correct content was deleted or inserted into the middle of the ",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/production-operations.md",
+      "language": "ko",
+      "removed_excerpt": "### 장애 훈련: 스키마 변경\n\n가상 변경은 `amount BIGINT → amount STRING`이다. 영향은 `Producer → CDC/Event → Flink/Spark → Silver → dbt → Dashboard`로 이어질 수 있다.\n\n1. 스키마 변경을 감지한다.\n2. 호환되지 않는 데이터를 중지하거나 격리한다.\n3. Lineage로 소비자와 파생 데이터의 영향을 조사한다.",
+      "preserved_at": "SOURCE CORE 20.3–20.9 keeps every example, failure and response; supplemental table retains unique qualifications",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/production-operations.md",
+      "language": "en",
+      "removed_excerpt": "### Incident drill: schema break\n\nThe hypothetical change is `amount BIGINT → amount STRING`. Its impact may follow `Producer → CDC/Event → Flink/Spark → Silver → dbt → Dashboard`.\n\n1. Detect the schema change.\n2. Stop o",
+      "preserved_at": "SOURCE CORE 20.3–20.9 keeps every example, failure and response; supplemental table retains unique qualifications",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/snowflake.md",
+      "language": "ko",
+      "removed_excerpt": "다음은 원문과 구분한 기존 보완 설명이다. 제품의 지원 조건과 주의사항은 2026-09-26 검토 범위를 유지한다. 이번 편집에서 새 버전을 시험하거나 공식 문서를 재확인한 것은 아니다.",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/snowflake.md",
+      "language": "en",
+      "removed_excerpt": "The following notes are separate from the source. They retain the support conditions and cautions reviewed on 2026-09-26. This edit did not test new versions or recheck official documentation.",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/snowflake.md",
+      "language": "ko",
+      "removed_excerpt": "Snowflake는 storage와 compute를 분리한 관리형 클라우드 데이터 플랫폼이다. SQL/Data Warehouse에서 출발해 data engineering, Iceberg, governance, AI로 확장했다.",
+      "preserved_at": "18.1 Architecture; 18.13 Mental Model",
+      "reason": "원문 정의 재서술을 절 링크로 대체"
+    },
+    {
+      "page": "data-platform/snowflake.md",
+      "language": "en",
+      "removed_excerpt": "Snowflake is a managed cloud data platform with separate storage and compute. It grew from SQL/Data Warehouse workloads into data engineering, Iceberg, governance, and AI.",
+      "preserved_at": "18.1 Architecture; 18.13 Mental Model",
+      "reason": "원문 정의 재서술을 절 링크로 대체"
+    },
+    {
+      "page": "data-platform/snowflake.md",
+      "language": "ko",
+      "removed_excerpt": "Virtual Warehouse는 query/DML을 실행하는 독립 compute cluster다. 서로 다른 warehouse로 workload를 격리할 수 있다. Cloud Services는 metadata, authentication, query optimization, access control, coordination을 맡는다. Storage는 Snowflake 관리형 저장 또는 I",
+      "preserved_at": "18.1 Architecture",
+      "reason": "원문 정의 재서술을 절 링크로 대체"
+    },
+    {
+      "page": "data-platform/snowflake.md",
+      "language": "en",
+      "removed_excerpt": "A Virtual Warehouse is an independent compute cluster for queries and DML. Separate warehouses can isolate workloads. Cloud Services handles metadata, authentication, query optimization, access control, and coordination.",
+      "preserved_at": "18.1 Architecture",
+      "reason": "원문 정의 재서술을 절 링크로 대체"
+    },
+    {
+      "page": "data-platform/snowflake.md",
+      "language": "ko",
+      "removed_excerpt": "Snowflake native table 데이터는 자동으로 micro-partitions에 배치된다. `Table → Micro-partition 1, 2, 3 …`이며 값 범위 등의 metadata가 pruning을 돕는다. 이 설명을 외부 Iceberg 파일의 물리 구조에 그대로 적용하지 않는다.",
+      "preserved_at": "18.2 Micro-partitions",
+      "reason": "원문 정의 재서술을 절 링크로 대체"
+    },
+    {
+      "page": "data-platform/snowflake.md",
+      "language": "en",
+      "removed_excerpt": "Snowflake automatically places native table data in micro-partitions: `Table → Micro-partition 1, 2, 3 …`. Metadata such as value ranges supports pruning. Do not apply this native layout model directly to external Iceber",
+      "preserved_at": "18.2 Micro-partitions",
+      "reason": "원문 정의 재서술을 절 링크로 대체"
+    },
+    {
+      "page": "data-platform/snowflake.md",
+      "language": "ko",
+      "removed_excerpt": "### 멘탈모델\n\n| 책임 | 기억할 기능 |\n|---|---|\n| Storage | Native managed storage / Iceberg 구성 |\n| Compute | Virtual Warehouse |\n| Native layout | Micro-partitions |\n| Performance | Pruning + Clustering |\n| Pipeline | Dynamic Table",
+      "preserved_at": "18.13 Snowflake Mental Model; platform-comparison 19.1–19.15",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/snowflake.md",
+      "language": "en",
+      "removed_excerpt": "### Mental model\n\n| Responsibility | Feature to remember |\n|---|---|\n| Storage | Native managed storage / Iceberg configurations |\n| Compute | Virtual Warehouse |\n| Native layout | Micro-partitions |\n| Performance | Prun",
+      "preserved_at": "18.13 Snowflake Mental Model; platform-comparison 19.1–19.15",
+      "reason": "원문과 보완부의 중복 정의·표 정리"
+    },
+    {
+      "page": "data-platform/spark.md",
+      "language": "ko",
+      "removed_excerpt": "원문 본문의 번호·순서·형식을 보존했다. 적용 시 필요한 수정·조건은 [원문 보완 설명](#source-notes)에 원문 절 번호별로 구분했다.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/spark.md",
+      "language": "en",
+      "removed_excerpt": "The source body keeps its numbering, order, and form. [Source qualifications](#source-notes) separate applicable corrections and conditions by source section number.",
+      "preserved_at": "본문 안내 / Reading note",
+      "reason": "연속된 원문 보존 안내 통합"
+    },
+    {
+      "page": "data-platform/trino.md",
+      "language": "ko",
+      "removed_excerpt": "위 본문은 제공된 Markdown의 9~11장 중 이 페이지에 해당하는 장을 원문 형식 그대로 보존했다. 아래는 원문과 구분한 기존 설명·주의사항이다.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/trino.md",
+      "language": "ko",
+      "removed_excerpt": "원문의 text 그림과 별도로 기존 Mermaid 그림을 보존한다.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/trino.md",
+      "language": "en",
+      "removed_excerpt": "The main text follows the supplied chapter’s headings, examples, and order. These existing explanations and caveats are separate from the source text.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "data-platform/trino.md",
+      "language": "en",
+      "removed_excerpt": "This preserves the existing Mermaid diagram separately from the source’s text diagram.\n\n",
+      "preserved_at": "page reading note / source review dates",
+      "reason": "학습 내용과 무관한 편집 과정 서술 정리"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kafka.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/platform-security.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kubernetes-core.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/litellm.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/redis.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/cicd-gitops.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/vllm.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/gpu-infrastructure.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/postgresql.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kubernetes-operations.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/aws-cloud/storage-databases.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/aws-cloud/networking.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/aws-cloud/foundations.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/aws-cloud/compute.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/aws-cloud/eks.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kafka.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/platform-security.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kubernetes-core.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/litellm.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/redis.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/cicd-gitops.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/vllm.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/gpu-infrastructure.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/postgresql.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kubernetes-operations.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/aws-cloud/storage-databases.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/aws-cloud/networking.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/aws-cloud/foundations.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/aws-cloud/compute.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/en/aws-cloud/eks.md",
+      "removed_excerpt": "기존 학습·가상 구성 프롬프트",
+      "preserved_at": "기존 LLM anchor: 업무 입력·누락 질문·근거 산출물·독립 판정 기준으로 갱신"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.\n\n",
+      "preserved_at": "바로 앞 구체적 원문 보완 안내에 전체 의미 보존"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kubernetes-core.md",
+      "removed_excerpt": "**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.\n\n",
+      "preserved_at": "바로 앞 구체적 원문 보완 안내에 전체 의미 보존"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kubernetes-core.md",
+      "removed_excerpt": "다음은 원문 본문과 구분한 기존 공식 문서 검토 및 운영 설명이다. 원문의 개념 흐름도는 그대로 두고, 기존 Mermaid 그림은 이 보완 영역에 유지했다. 공식 확인일과 실행하지 않았다는 범위는 기존 기록대로 보존한다.",
+      "preserved_at": "공식 문서 확인일: 2026-09-27. 아래는 원문 절에 대한 정정·적용 조건이며 실제 클러스터 실행 검증을 뜻하지 않는다."
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kubernetes-operations.md",
+      "removed_excerpt": "**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.\n\n",
+      "preserved_at": "바로 앞 구체적 원문 보완 안내에 전체 의미 보존"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kubernetes-operations.md",
+      "removed_excerpt": "다음은 원문 본문과 구분한 기존 공식 문서 검토 및 운영 설명이다. 원문의 개념 흐름도는 그대로 두고, 기존 Mermaid 그림은 이 보완 영역에 유지했다. 공식 확인일과 실행하지 않았다는 범위는 기존 기록대로 보존한다.",
+      "preserved_at": "공식 문서 확인일: 2026-09-27. 아래는 원문 절에 대한 정정·적용 조건이며 실제 클러스터 실행 검증을 뜻하지 않는다."
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "scheduler가 request를 바탕으로 배치하며 RAM을 미리 할당하지는 않는다.",
+      "preserved_at": "scheduler가 request를 바탕으로 배치하며 RAM을 미리 할당하지는 않는다. request는 실제 사용량의 상한도 아니다."
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "같은 Pod의 컨테이너는 일반적으로 network namespace를 공유한다.",
+      "preserved_at": "같은 Pod의 컨테이너는 일반적으로 network namespace를 공유하므로 컨테이너마다 별도 Pod IP가 생기는 것은 아니다."
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "containerd→runc도 대표 구현 경로다.",
+      "preserved_at": "containerd→runc도 대표 구현 경로이며 모든 Kubernetes 구성의 필수 경로는 아니다."
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "- **1.2:** request는 배치용 요청량이며 실제 사용량의 상한이 아니다. RAM을 즉시 사전 할당하는 값도 아니다.\n",
+      "preserved_at": "보완의 자원 요청·PID1/종료·network namespace·저장소 수명 절에 합침; 원문 불변"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "- **1.8:** CrashLoopBackOff는 반복 종료 뒤 정책에 따른 재시작을 시도하며 대기 시간이 늘어나는 상태다. 원인 자체가 아니라 재시작 backoff 표시다.\n",
+      "preserved_at": "보완의 자원 요청·PID1/종료·network namespace·저장소 수명 절에 합침; 원문 불변"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "- **1.10:** 같은 Pod의 컨테이너는 보통 network namespace를 공유하므로 각 컨테이너가 반드시 별도 Pod IP를 갖는 것은 아니다.\n",
+      "preserved_at": "보완의 자원 요청·PID1/종료·network namespace·저장소 수명 절에 합침; 원문 불변"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "- **1.11:** 컨테이너 수명에 묶인 저장소 설명은 writable layer를 중심으로 읽는다. 분리한 volume의 수명과 백업 여부는 별개다.\n",
+      "preserved_at": "보완의 자원 요청·PID1/종료·network namespace·저장소 수명 절에 합침; 원문 불변"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "### 1.1 / 1.3 / 1.8~1.11 본문에서 옮긴 추가 조건",
+      "preserved_at": "### 1.1 / 1.3 / 1.4 / 1.8~1.10 재시작·FD·이미지의 추가 조건"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "- **1.8:** 컨테이너가 보통 VM보다 가볍다는 설명은 workload와 구현에 따른 실제 성능 차이를 보장하지 않는다. `containerd → runc`는 대표 경로이며 모든 Kubernetes 구성이 반드시 이를 사용한다는 뜻은 아니다.",
+      "preserved_at": "- **1.8:** 컨테이너가 보통 VM보다 가볍다는 설명은 workload와 구현에 따른 실제 성능 차이를 보장하지 않는다."
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kubernetes-core.md",
+      "removed_excerpt": "### 2.4 보완: ReplicaSet과 Deployment\n\nReplicaSet은 필요한 replica 개수를 유지한다. 목표가 3이면 2개일 때 하나를 만들고 4개일 때 하나를 줄이는 식이다. 보통 ReplicaSet을 직접 운영하기보다 Deployment를 사용한다.\n\n```text\nDeployment → ReplicaSet → Pod\nv1 v1 v1 → v2 v1 v1 → v2 v2",
+      "preserved_at": "### 2.4 보완: ReplicaSet과 Deployment\n\n[원문 2.4](#24-replicaset-deployment)의 replica 유지·rolling update·revision 예시는 다음 조건과 함께 읽는다.\n\n"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kubernetes-operations.md",
+      "removed_excerpt": "| 도구 | 조절 대상 | 원문의 학습 예 |\n| --- | --- | --- |\n| HPA | Pod replica 수 | CPU 증가에 API Pod 3개 → 6개 |\n| VPA | 컨테이너 CPU/Memory requests 권고·조정 | CPU `500m`, Memory `1Gi` → CPU `1`, Memory `2Gi` |\n| Cluster Autoscaler | Node 수 | ",
+      "preserved_at": "[원문 3.6](#36-autoscaling)의 HPA 3→6, VPA `500m/1Gi → 1/2Gi`, Pod 10개에 필요한 Node 확장과 KEDA 예시는 조절 대상의 차이를 보여준다. VPA의 권고·조정 대상은 컨테이너 CPU/Memory requests다."
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/index.md",
+      "removed_excerpt": "이전 4~9장 소개가 현재 학습 경로 앞, 이전 진도가 최신 진도 앞에 표시",
+      "preserved_at": "현재 안내 우선; source INTRO/STATUS bytes 그대로 맨 아래 과거 원문 기록에 이동"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simpli",
+      "preserved_at": "바로 앞 구체적 원문 보완 안내에 전체 의미 보존"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kubernetes-core.md",
+      "removed_excerpt": "**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simpli",
+      "preserved_at": "바로 앞 구체적 원문 보완 안내에 전체 의미 보존"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kubernetes-core.md",
+      "removed_excerpt": "These existing official-documentation reviews and operational notes are separate from the source core. The original text diagrams remain in the core. Existing Mermaid diagrams stay in this supplement. Previously recorded",
+      "preserved_at": "Official documentation checked: 2026-09-27. These corrections and conditions clarify the source sections; they do not claim tests on a running cluster."
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kubernetes-operations.md",
+      "removed_excerpt": "**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simpli",
+      "preserved_at": "바로 앞 구체적 원문 보완 안내에 전체 의미 보존"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kubernetes-operations.md",
+      "removed_excerpt": "These existing official-documentation reviews and operational notes are separate from the source core. The original text diagrams remain in the core. Existing Mermaid diagrams stay in this supplement. Previously recorded",
+      "preserved_at": "Official documentation checked: 2026-09-27. These corrections and conditions clarify the source sections; they do not claim tests on a running cluster."
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "Treat it as an input to scheduling, not preallocated RAM.",
+      "preserved_at": "Treat it as an input to scheduling, not preallocated RAM or a ceiling on actual use."
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "Containers in a Pod normally share a network namespace.",
+      "preserved_at": "Containers in a Pod normally share a network namespace; each container does not receive a separate Pod IP."
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "containerd→runc is also a representative implementation.",
+      "preserved_at": "containerd→runc is also a representative implementation, not a requirement for every Kubernetes setup."
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "- **1.2:** A request is an input to scheduling, not a ceiling on actual usage. It does not immediately preallocate RAM either.\n",
+      "preserved_at": "보완의 자원 요청·PID1/종료·network namespace·저장소 수명 절에 합침; 원문 불변"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "- **1.8:** CrashLoopBackOff describes repeated exits and restart attempts with a growing delay under the restart policy. It is the restart backoff state, not the cause.\n",
+      "preserved_at": "보완의 자원 요청·PID1/종료·network namespace·저장소 수명 절에 합침; 원문 불변"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "- **1.10:** Containers in one Pod normally share its network namespace. Each container does not necessarily have a separate Pod IP.\n",
+      "preserved_at": "보완의 자원 요청·PID1/종료·network namespace·저장소 수명 절에 합침; 원문 불변"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "- **1.11:** Read the container-lifetime storage model as a description of its writable layer. A separate volume lifetime does not imply a backup.\n",
+      "preserved_at": "보완의 자원 요청·PID1/종료·network namespace·저장소 수명 절에 합침; 원문 불변"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "### 1.1 / 1.3 / 1.8–1.11 Additional conditions moved from the body",
+      "preserved_at": "### 1.1 / 1.3 / 1.4 / 1.8–1.10 Additional restart, FD, and image conditions"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "removed_excerpt": "- **1.8:** Containers are usually lighter than VMs, but this does not guarantee actual performance across workloads and implementations. `containerd → runc` is a common path, not a requirement for every Kubernetes setup.",
+      "preserved_at": "- **1.8:** Containers are usually lighter than VMs, but this does not guarantee actual performance across workloads and implementations."
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kubernetes-core.md",
+      "removed_excerpt": "### 2.4 notes: ReplicaSets and Deployments\n\nA ReplicaSet maintains the desired replica count. For a target of three, it adds one when there are two and removes one when there are four. Usually, a Deployment manages Repli",
+      "preserved_at": "### 2.4 notes: ReplicaSets and Deployments\n\nRead the replica-count, rolling-update, and revision examples in [source 2.4](#24-replicaset-deployment) with these conditions.\n\n"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kubernetes-operations.md",
+      "removed_excerpt": "| Tool | What it adjusts | Source learning example |\n| --- | --- | --- |\n| HPA | Pod replica count | API Pods grow from 3 to 6 as CPU use rises |\n| VPA | Recommendations and changes to container CPU/Memory requests | CPU",
+      "preserved_at": "The HPA 3→6, VPA `500m/1Gi → 1/2Gi`, Node expansion for 10 Pods, and KEDA examples in [source 3.6](#36-autoscaling) show different scaling targets. VPA recommends or changes container CPU/Memory requests."
+    },
+    {
+      "page": "docs/en/platform-infrastructure/index.md",
+      "removed_excerpt": "이전 4~9장 소개가 현재 학습 경로 앞, 이전 진도가 최신 진도 앞에 표시",
+      "preserved_at": "현재 안내 우선; source INTRO/STATUS bytes 그대로 맨 아래 과거 원문 기록에 이동"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/redis.md",
+      "removed_excerpt": "하단 자기 자신 페이지 링크",
+      "preserved_at": "현재 페이지 자체; 다른 기술·Kubernetes 링크 보존"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/redis.md",
+      "removed_excerpt": "하단 자기 자신 페이지 링크",
+      "preserved_at": "현재 페이지 자체; 다른 기술·Kubernetes 링크 보존"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/postgresql.md",
+      "removed_excerpt": "하단 자기 자신 페이지 링크",
+      "preserved_at": "현재 페이지 자체; 다른 기술·Kubernetes 링크 보존"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/postgresql.md",
+      "removed_excerpt": "하단 자기 자신 페이지 링크",
+      "preserved_at": "현재 페이지 자체; 다른 기술·Kubernetes 링크 보존"
+    },
+    {
+      "pages": "prompts/*.md",
+      "removed": "코드블록을 반복하던 바깥 입력·출력·검증 문장",
+      "preserved_at": "각 사례의 준비 안내·기대 결과/검증 방법과 독립 복사 코드블록. 100개 anchor·기존 고유 위험/조건 유지."
+    }
+  ],
+  "source_spans": [
+    {
+      "page": "docs/en/aws-cloud/compute.md",
+      "marker": "CORE",
+      "sha256": "03ab599c7b59291e708ac2f4497808d33ddd760a6789319c822323bb84841fb2"
+    },
+    {
+      "page": "docs/en/aws-cloud/eks.md",
+      "marker": "CORE",
+      "sha256": "7c3fa93a9b346f66f13e0cdf13fbed0e042d5453b11d283e7d82cab9e84e3153"
+    },
+    {
+      "page": "docs/en/aws-cloud/foundations.md",
+      "marker": "CORE",
+      "sha256": "2476954732162a3587eac4e89e8fb17d8084db2ead1ee4e3e2733a3df33dcd4a"
+    },
+    {
+      "page": "docs/en/aws-cloud/index.md",
+      "marker": "INTRO",
+      "sha256": "daaa0039f540b89ef53abaa3eb28c5b0249053d763bf28b52a5ba88e2475364d"
+    },
+    {
+      "page": "docs/en/aws-cloud/index.md",
+      "marker": "SUMMARY",
+      "sha256": "62cf2225e3583dc25b64aecb0ac45708d56c4f3fc0ec3a29a12c28c7aa25aab5"
+    },
+    {
+      "page": "docs/en/aws-cloud/index.md",
+      "marker": "STATUS",
+      "sha256": "2284c907f4c149ddf8f0cc9bea4a0867a481be7b5d1f6446d8353471e6972658"
+    },
+    {
+      "page": "docs/en/aws-cloud/networking.md",
+      "marker": "CORE",
+      "sha256": "7afa381b503efc6783a47abb58c6520e65b8223cae14eb01c5783846bfaf885d"
+    },
+    {
+      "page": "docs/en/aws-cloud/storage-databases.md",
+      "marker": "CORE",
+      "sha256": "d3f62e6c57b2096d89e7505245de30cb2c4c392eccc2e7270b394711d470701c"
+    },
+    {
+      "page": "docs/en/data-platform/ai-evaluation.md",
+      "marker": "CORE",
+      "sha256": "be936210d4502b1ccef90215a9e70ba7114e3fc0e1f98d374bd4f9a8a0d1bb5c"
+    },
+    {
+      "page": "docs/en/data-platform/ai-ready-data.md",
+      "marker": "CORE",
+      "sha256": "60dc9a922db0c1004ed79f37c4f8e715f9b7efdfd04a8d81d72093f42eeccd35"
+    },
+    {
+      "page": "docs/en/data-platform/analytical-modeling.md",
+      "marker": "CORE",
+      "sha256": "520c44204f038b607c8d0b49815dc2dce404ded10e6d6e3178c850d0e7199025"
+    },
+    {
+      "page": "docs/en/data-platform/architecture.md",
+      "marker": "CORE",
+      "sha256": "29761433f9c250d29299fef657c0c36c89200074cea2cc3c1057c235090eaa21"
+    },
+    {
+      "page": "docs/en/data-platform/architecture.md",
+      "marker": "FINAL",
+      "sha256": "7be8b7ee3e05caad20e8c48ff451abdee6f17f6fcab1053a5d9934ef13c00438"
+    },
+    {
+      "page": "docs/en/data-platform/architecture.md",
+      "marker": "APPENDIX",
+      "sha256": "5cf8d20f1f3d660fea77644d6d1f5dbec574c24b717789dd8bc9f36c2fe6e4ab"
+    },
+    {
+      "page": "docs/en/data-platform/cdc-debezium.md",
+      "marker": "CORE",
+      "sha256": "0d4acebaedc5ac3c35f76b6628088fc7265dd258171b6da89f735847721df2bf"
+    },
+    {
+      "page": "docs/en/data-platform/data-observability.md",
+      "marker": "CORE",
+      "sha256": "8f7a6b940246eeeafb6aea2653a3fc5a115aee11d2b2e70dd341358bc62f9b23"
+    },
+    {
+      "page": "docs/en/data-platform/data-quality.md",
+      "marker": "CORE",
+      "sha256": "409074b90cda3cea84c42e60a2b42352eef10bf42390dc6a133235ee34c7e114"
+    },
+    {
+      "page": "docs/en/data-platform/databricks.md",
+      "marker": "CORE",
+      "sha256": "7fd8344e8bdc2e0700fd67b7ec1bf8565cc2337ca4788011d3948cbec81f669c"
+    },
+    {
+      "page": "docs/en/data-platform/dbt.md",
+      "marker": "CORE",
+      "sha256": "46000585e29a3aa051b4b3f8b3a760ad4a9f9a4760558a1c73a6577887e735a2"
+    },
+    {
+      "page": "docs/en/data-platform/event-architecture.md",
+      "marker": "CORE",
+      "sha256": "409af6dce016401306193af42a1a1bdb8ae661a0bded96538573fc79e1265067"
+    },
+    {
+      "page": "docs/en/data-platform/flink.md",
+      "marker": "CORE",
+      "sha256": "265fcca8a2e33f4a4fb4f6b3d1379f39e2a0917f5961122c1373075502e7ac9f"
+    },
+    {
+      "page": "docs/en/data-platform/foundations.md",
+      "marker": "CORE",
+      "sha256": "df5497d44bac8d6dc08832dcdde68c27153bc694ee4295d2453b92ae3f6c846f"
+    },
+    {
+      "page": "docs/en/data-platform/governance.md",
+      "marker": "CORE",
+      "sha256": "58ed117edc8f7feb815c7ff39b886a0903be59e2b8dbfa8579252e22d477fb43"
+    },
+    {
+      "page": "docs/en/data-platform/lakehouse-iceberg.md",
+      "marker": "CORE",
+      "sha256": "0ed87005beb737c577041e492780676fc9db7c9dbf9578c2814f7530044792d6"
+    },
+    {
+      "page": "docs/en/data-platform/lineage-metadata.md",
+      "marker": "CORE",
+      "sha256": "67f590ea31ab02ce7187bc5573d3175b5725db78c53bef9c3102b404f0699178"
+    },
+    {
+      "page": "docs/en/data-platform/orchestration.md",
+      "marker": "CORE",
+      "sha256": "158348d1edb9efe4b78243402d1ae3a32354fc986e52935732cc0b78cb38e542"
+    },
+    {
+      "page": "docs/en/data-platform/platform-comparison.md",
+      "marker": "CORE",
+      "sha256": "99f4379269950309a2a1c3d0fff3da3d41c60ca096207c97c44548ce839e7175"
+    },
+    {
+      "page": "docs/en/data-platform/production-operations.md",
+      "marker": "CORE",
+      "sha256": "08bd1aa689f95ff1da1cdd8badc408f0181f1cf7afa00124510ca81055764701"
+    },
+    {
+      "page": "docs/en/data-platform/snowflake.md",
+      "marker": "CORE",
+      "sha256": "bdb97ab5e0847fa196a7aa7abf565fa2674152130170333c40932e796363f3f6"
+    },
+    {
+      "page": "docs/en/data-platform/spark.md",
+      "marker": "CORE",
+      "sha256": "0c40b0f8b044dd18be4824ebe9a215a899f77023d68e34ff7ca1d02903d86d9c"
+    },
+    {
+      "page": "docs/en/data-platform/trino.md",
+      "marker": "CORE",
+      "sha256": "adfa64ef956bc52920e6d88b82fa35103e4333a64741bbf7fa10aaf18a55ca64"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/cicd-gitops.md",
+      "marker": "CORE",
+      "sha256": "11fb440acb23a8cc8a0c31dda6de5cbe70aaf67eabbbc829d9e93ad2c7067246"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/gpu-infrastructure.md",
+      "marker": "CORE",
+      "sha256": "004c9bbc41d5e5fcd706504cf2569e66f81ace7732b811142b74ed8a1dede701"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/index.md",
+      "marker": "INTRO",
+      "sha256": "d0aead782662b9831eb89e5b70195925236bd9ba036ad366ded66a28c80b9597"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/index.md",
+      "marker": "CONNECTION",
+      "sha256": "536b5491769e8f1afdbf722d124c70e8c7b4893048eaecf0981466a62c2a553d"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/index.md",
+      "marker": "STATUS",
+      "sha256": "ac5ebcdd6c075565e8f70996708d5ce41a727bd81d35c943a4ae1df365dd494e"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/index.md",
+      "marker": "SECURITY INTRO",
+      "sha256": "f0a2dacb39cb4ff3820e9d27a22ee75d764f0eb74dcc324094f9230cd98f447e"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/index.md",
+      "marker": "SECURITY CONNECTION",
+      "sha256": "6bde0be92d7724e4ccc9742ca3f480f671314be1c633bc89ee639a38daa7c216"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/index.md",
+      "marker": "SECURITY STATUS",
+      "sha256": "8f27a90de337f9e91da36e76b5ca3ac1e09c53fd836736ad2aa08f1f8468daf4"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kafka.md",
+      "marker": "CORE",
+      "sha256": "36fcdf7cba9f459a6f71a064f46594cc3e6803069c4ffb0a2218341d95f6850c"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kubernetes-core.md",
+      "marker": "CORE",
+      "sha256": "a86764dfab49edd5d5bc8e6ba561a073cdac1b7797d7cd82046f07b2e4c0f354"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/kubernetes-operations.md",
+      "marker": "CORE",
+      "sha256": "16f4fb0195f6cf038e3a5076553ddeb7fd3c1c791c841208411421557bca3bea"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/linux-containers.md",
+      "marker": "CORE",
+      "sha256": "4f7f67e0e7ed69208eec6a3f642080c421db6faaf4ae4be72c487b279a4e0e50"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/litellm.md",
+      "marker": "CORE",
+      "sha256": "d56b5ecc64b42d167dd964346563df7ab6b441d0e077f1e86f20afc28d880d35"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/platform-security.md",
+      "marker": "CORE",
+      "sha256": "2c05deef011660d286d2fd431b7e2a885d2eba4828288ba7a404f9fc7ecf6d4d"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/postgresql.md",
+      "marker": "CORE",
+      "sha256": "8f510383dfe0dfcfab7937bf29d870d2102d81cc429e53cdb6a6c1528672686f"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/redis.md",
+      "marker": "CORE",
+      "sha256": "9678c2728b0da1972a4f9dee44db70e84fca70f9d415a1b8aef63877e50e3bad"
+    },
+    {
+      "page": "docs/en/platform-infrastructure/vllm.md",
+      "marker": "CORE",
+      "sha256": "0eac57441a715e9d1e25d0b0520ac957b70fd6335760ad85c7c1f1abd7feeefb"
+    },
+    {
+      "page": "docs/ko/aws-cloud/compute.md",
+      "marker": "CORE",
+      "sha256": "7c6c7bf8634c379c76bc87b02727e75fb1508a2927d94988aca7c902fe6019f0"
+    },
+    {
+      "page": "docs/ko/aws-cloud/eks.md",
+      "marker": "CORE",
+      "sha256": "2ef73da5cee61dee462c53fc51ec09d29546348548db40b2f6e32a2d6ce534cd"
+    },
+    {
+      "page": "docs/ko/aws-cloud/foundations.md",
+      "marker": "CORE",
+      "sha256": "a98571ce87d58d76a8dc6e0f728b148845fa073d6853a408228993b8f8b04e06"
+    },
+    {
+      "page": "docs/ko/aws-cloud/index.md",
+      "marker": "INTRO",
+      "sha256": "24aeb565ba5d239aef19e520dbb8964564cfcf6bc1ac1bc0c816e4d4dc7cf787"
+    },
+    {
+      "page": "docs/ko/aws-cloud/index.md",
+      "marker": "SUMMARY",
+      "sha256": "d9828efd33ec6a08eca06c38ef2d9ce603685dd0409da31db11cb45130024b7f"
+    },
+    {
+      "page": "docs/ko/aws-cloud/index.md",
+      "marker": "STATUS",
+      "sha256": "9b1f5f728fc7d5513462682dc389043e414441482674d3f994e2d67b878681eb"
+    },
+    {
+      "page": "docs/ko/aws-cloud/networking.md",
+      "marker": "CORE",
+      "sha256": "f4653119164d8c5381302489da22de3dd760f53fc2906dce5434f72fe6026e2c"
+    },
+    {
+      "page": "docs/ko/aws-cloud/storage-databases.md",
+      "marker": "CORE",
+      "sha256": "6f46e2aa10b1bd3c1da5ec81849d37b5e82ba2541e53aa6a21d182972c628e88"
+    },
+    {
+      "page": "docs/ko/data-platform/ai-evaluation.md",
+      "marker": "CORE",
+      "sha256": "7bf50d1491029e447f2a880a49b550e6281cae484d55c6021eef500e675ed203"
+    },
+    {
+      "page": "docs/ko/data-platform/ai-ready-data.md",
+      "marker": "CORE",
+      "sha256": "8bafe82e6e1259a00d61e7be5e7bbbd63da5cd09f13d655ff827f41f0fb691e7"
+    },
+    {
+      "page": "docs/ko/data-platform/analytical-modeling.md",
+      "marker": "CORE",
+      "sha256": "c66420b63fa1e9382a96371a31da9346162688345c6409eb519c53d13f5626d6"
+    },
+    {
+      "page": "docs/ko/data-platform/architecture.md",
+      "marker": "CORE",
+      "sha256": "1faf8d273d87fd527b15d35e841992fed88d3533c740548617c8fbf0c137a28b"
+    },
+    {
+      "page": "docs/ko/data-platform/architecture.md",
+      "marker": "FINAL",
+      "sha256": "a3c92183681330deb01d07a5b490b143e7fee37fb455fa66466bada35ddfec2e"
+    },
+    {
+      "page": "docs/ko/data-platform/architecture.md",
+      "marker": "APPENDIX",
+      "sha256": "bb6e6a36edfbc0888ed161cb9fdff87be5bc8582e798f732ed0dd04c08807fc7"
+    },
+    {
+      "page": "docs/ko/data-platform/cdc-debezium.md",
+      "marker": "CORE",
+      "sha256": "d5c418f8bfe98f48822258e738165b28b7d1833d913ba9c2482eb1a7a0224591"
+    },
+    {
+      "page": "docs/ko/data-platform/data-observability.md",
+      "marker": "CORE",
+      "sha256": "39a30f51021b9c4d4a9a99792b6e599620fd027680ccba0379c08fc5668cd5be"
+    },
+    {
+      "page": "docs/ko/data-platform/data-quality.md",
+      "marker": "CORE",
+      "sha256": "2cae1b3b3a92568f5f9ec3dbea0f6c7f3171d9902d34207599e94f2fa9d188c4"
+    },
+    {
+      "page": "docs/ko/data-platform/databricks.md",
+      "marker": "CORE",
+      "sha256": "1c054e257c5753a01666832809493c4574ed03037bd4d6e08024191a1ab6febe"
+    },
+    {
+      "page": "docs/ko/data-platform/dbt.md",
+      "marker": "CORE",
+      "sha256": "559f738acb8734c75ebb78cfbae92e35e4158eb0de479605c40803248dae3cb8"
+    },
+    {
+      "page": "docs/ko/data-platform/event-architecture.md",
+      "marker": "CORE",
+      "sha256": "ed7092e264c29fb0629639e5fdb403978c59b08f6c31fe97bd3e1c0586589a2f"
+    },
+    {
+      "page": "docs/ko/data-platform/flink.md",
+      "marker": "CORE",
+      "sha256": "57507bb348bb1d2bc4afa574571a238fc0fbfa8c454d96ac9da1c0ad0ac86a9c"
+    },
+    {
+      "page": "docs/ko/data-platform/foundations.md",
+      "marker": "CORE",
+      "sha256": "6ff34ef1fffcb5671b6f4aa8781b1a47d3d612d9491046c1ffed8b4ece569c63"
+    },
+    {
+      "page": "docs/ko/data-platform/governance.md",
+      "marker": "CORE",
+      "sha256": "c6aa8643b4e0cc8578d2e4b18173c28aa436e8c1dad777721eeeb66a742a46fb"
+    },
+    {
+      "page": "docs/ko/data-platform/lakehouse-iceberg.md",
+      "marker": "CORE",
+      "sha256": "8e41fb34d0a50e6ccae075ddc9dd375663717c9eb5fca77382dcc0f4c21ee6ed"
+    },
+    {
+      "page": "docs/ko/data-platform/lineage-metadata.md",
+      "marker": "CORE",
+      "sha256": "0192f5b5cc5bc79af9df8e9990e66132be16b62ebde35ba5c0c2b59baad9b235"
+    },
+    {
+      "page": "docs/ko/data-platform/orchestration.md",
+      "marker": "CORE",
+      "sha256": "a093b441aa7bb5431f2b80f1498898839763c84638727605c8ec774f6fe552dc"
+    },
+    {
+      "page": "docs/ko/data-platform/platform-comparison.md",
+      "marker": "CORE",
+      "sha256": "48ea87b4d3b7f51ecb358d29714f4c7171421b0e0e1d6b008b699f01f4850ef3"
+    },
+    {
+      "page": "docs/ko/data-platform/production-operations.md",
+      "marker": "CORE",
+      "sha256": "26b611228914d13759585ec2d734257319aa9ccd86a4b507a1bb835cf8af2252"
+    },
+    {
+      "page": "docs/ko/data-platform/snowflake.md",
+      "marker": "CORE",
+      "sha256": "42f1536679189249996b5836e7d0fbdb22d02da8db03cac02ed12844fc44dc4e"
+    },
+    {
+      "page": "docs/ko/data-platform/spark.md",
+      "marker": "CORE",
+      "sha256": "600a16dc397a2ea1936964c35eeda38a7fa166a8ddffb03287e3d2f21fa08c08"
+    },
+    {
+      "page": "docs/ko/data-platform/trino.md",
+      "marker": "CORE",
+      "sha256": "3841109850d3ed6147b2a4f3972a4647c9e5ced1c27c078f236d778df3a426f3"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/cicd-gitops.md",
+      "marker": "CORE",
+      "sha256": "44551f159cfba79efce6fbfa888f12fbba36c1307145ef9dd798d7ba5ef2a977"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/gpu-infrastructure.md",
+      "marker": "CORE",
+      "sha256": "f900a2d8d0b7068a56ef962fa6218f1295387592fd13c6277a1e642abb4972ab"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/index.md",
+      "marker": "INTRO",
+      "sha256": "04f801a7b0a66773d64c77f1afe354848e8fe25a521fe5b5bd577ead4722ed64"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/index.md",
+      "marker": "CONNECTION",
+      "sha256": "f43656b965482e8db1a9567a658e058724e343917208333c98cd77481a2be77b"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/index.md",
+      "marker": "STATUS",
+      "sha256": "663b48f9bc694d7d634f4c9de4a4d46c1d0fab6e32fdd3758ec3df98d117e3d1"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/index.md",
+      "marker": "SECURITY INTRO",
+      "sha256": "d23973b427711465aa15f42044ce2f62f6bd0b74d3c2bf78ca87ee337483d090"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/index.md",
+      "marker": "SECURITY CONNECTION",
+      "sha256": "18c5cfd444c99f5d9767d8379cb944789409a012448b0400a8f4cbc19b639e1f"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/index.md",
+      "marker": "SECURITY STATUS",
+      "sha256": "77171e469d4c9ed9b5711e3dde4970efd8cb348e6282e760395654c29e52e895"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kafka.md",
+      "marker": "CORE",
+      "sha256": "0eb18cadd4c02e1971e8e4077de4ed7921b8b8c3aa39c5e6dc710ec5ab53acea"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kubernetes-core.md",
+      "marker": "CORE",
+      "sha256": "74da6172a1bfdb86cd1d9ee6c687dd3bd0b115b184beb6766c1a312cf5009549"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/kubernetes-operations.md",
+      "marker": "CORE",
+      "sha256": "2748412e61cdbc07d59f36fe6d63399cd1164cdeae4290fda775a5b8e0e5ffba"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/linux-containers.md",
+      "marker": "CORE",
+      "sha256": "031edcee6d1623e77fc898ae9401d2688a74d6212089e6173a2f8f69ad6a8e1c"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/litellm.md",
+      "marker": "CORE",
+      "sha256": "7487c40848cdd6911676fa33cd40be5132fc99fc63c076163f2b398e6bad198c"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/platform-security.md",
+      "marker": "CORE",
+      "sha256": "d7174070f478c8a8e8ca14bacc33d994168bf174f7ad6268280f52363a8aafc9"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/postgresql.md",
+      "marker": "CORE",
+      "sha256": "c90d9b2f8f1260a5768bc7646a69db32dfcdf8e572497205be0581ee2549ba03"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/redis.md",
+      "marker": "CORE",
+      "sha256": "4401374f345250970c502aeb4b7f7def91476649c1aa76882c093764d3a9ee98"
+    },
+    {
+      "page": "docs/ko/platform-infrastructure/vllm.md",
+      "marker": "CORE",
+      "sha256": "2fce588de305279ac24edba284b53009dcc4e7e4456b3643004c0a9af2931d17"
+    }
+  ],
+  "resolved_findings": [
+    {
+      "finding": "Initial rewrite omitted some unique standalone checks while replacing generic validation",
+      "resolution": "Author restored support/configuration/artifact checks, production required values and escalation/approval/restore compatibility, bounded experiments, lakehouse read-only and no-deletion-command rule, governance legal/deletion boundaries, and actual lineage/dataset/connector evidence checks; independent reviewer read all final 44 Checks blocks."
+    },
+    {
+      "id": "GLOSSARY-1",
+      "severity": "medium",
+      "path": "scripts/check_handbook.py:311",
+      "issue": "Valid Markdown definition tables without outer pipes are not checked because every row must begin with |.",
+      "reproduction": "Term | Meaning\n---|---\nWAL | Recovery\nwal | Replication",
+      "observed": "Markdown tables extension renders both WAL rows; _check_glossary_terms returns errors=[].",
+      "expected": "R9 normalized duplicate term rejection, or an explicit narrower accepted syntax.",
+      "status": "resolved; independently re-reviewed unescaped-pipe detection delta and new regression test",
+      "recheck": "The same pipe-less Markdown table now produces one duplicate glossary term error; all 40 handbook tests pass."
+    }
+  ],
+  "limitations": [
+    "실제 모델 호출·사용 빈도·효과 측정은 수행하지 않음",
+    "기존 기술 정의의 최신성 전체 재검증은 범위 밖",
+    "원문 내부 반복은 출처 형태 보존을 위해 유지.",
+    "각 독립 검토의 전문/변경부 범위는 page evidence에 구분."
+  ],
+  "task_selection_sources": [
+    "https://docs.aws.amazon.com/wellarchitected/latest/framework/ops_ready_to_support_use_playbooks.html",
+    "https://kubernetes.io/docs/tasks/debug/debug-application/"
+  ],
+  "verification": {
+    "make_finalize": "검증 단계 통과. vault 단계는 sandbox 접근 제한으로 실패하여 make sync-vault를 host 권한으로 별도 수행.",
+    "unit_tests": 87,
+    "handbook_errors": 0,
+    "source_preservation_errors": 0,
+    "mermaid_valid": 50,
+    "prompt_scenarios": 139,
+    "prompt_errors": 0,
+    "rendered_site_errors": 0,
+    "browser": {
+      "results": [
+        {
+          "path": "",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 0,
+          "copy": "not applicable"
+        },
+        {
+          "path": "prompts/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 0,
+          "copy": "not applicable"
+        },
+        {
+          "path": "prompts/spark/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 4,
+          "copy": "exact multiline text"
+        },
+        {
+          "path": "data-platform/architecture/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 4,
+          "copy": "exact multiline text"
+        },
+        {
+          "path": "platform-infrastructure/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 0,
+          "copy": "not applicable"
+        },
+        {
+          "path": "platform-infrastructure/kubernetes-core/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 4,
+          "copy": "exact multiline text"
+        },
+        {
+          "path": "aws-cloud/eks/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 4,
+          "copy": "exact multiline text"
+        },
+        {
+          "path": "methodologies/knowledge-workflow/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 4,
+          "copy": "exact multiline text"
+        },
+        {
+          "path": "en/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 0,
+          "copy": "not applicable"
+        },
+        {
+          "path": "en/prompts/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 0,
+          "copy": "not applicable"
+        },
+        {
+          "path": "en/prompts/spark/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 4,
+          "copy": "exact multiline text"
+        },
+        {
+          "path": "en/data-platform/architecture/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 4,
+          "copy": "exact multiline text"
+        },
+        {
+          "path": "en/platform-infrastructure/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 0,
+          "copy": "not applicable"
+        },
+        {
+          "path": "en/platform-infrastructure/kubernetes-core/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 4,
+          "copy": "exact multiline text"
+        },
+        {
+          "path": "en/aws-cloud/eks/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 4,
+          "copy": "exact multiline text"
+        },
+        {
+          "path": "en/methodologies/knowledge-workflow/",
+          "http": 200,
+          "sameTopicLanguage": true,
+          "viewports": [
+            1280,
+            375
+          ],
+          "promptLayouts": 4,
+          "copy": "exact multiline text"
+        }
+      ]
+    },
+    "visual_review": "root가 1280px 홈·프롬프트 목록, 375px 홈·목록·Spark 화면을 직접 확인. viewport 전환 후 안정된 layout 검사; 본문 가로 넘침 없음. 한영16페이지·32viewport·40탭/복사 검사 통과.",
+    "vault": "make sync-vault: copied=124 unchanged=81; --check: copied=0 unchanged=205 adopted=0 pending=0. 모든 first-party Markdown byte 일치."
+  }
+}

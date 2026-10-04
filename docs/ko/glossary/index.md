@@ -8,15 +8,6 @@ knowledge_ids: []
 
 # 용어집
 
-| 용어 | 의미 |
-|---|---|
-| Canonical knowledge | 여러 자료의 유용한 지식을 통합한 기준 지식. |
-| Canonical page ID | 경로가 바뀌어도 유지하는 페이지 식별자. 한영 쌍은 같은 ID를 쓴다. |
-| Content manifest | 의미 있는 원문 지식과 안정적인 ID의 목록. |
-| Coverage matrix | 각 ID가 포함·통합·보류·제외된 위치와 이유를 추적하는 표. |
-| Semantic audit | 두 언어에 같은 개념, 예시, 제약과 경고가 있는지 검토하는 과정. |
-| Source of truth | 변경과 판단의 기준이 되는 원본. 이 핸드북에서는 Git의 Markdown이다. |
-
 ## 데이터 플랫폼 용어
 
 | 용어 | 의미 | 정규 주제 |
@@ -37,7 +28,7 @@ knowledge_ids: []
 | Checkpoint / savepoint | 장애 복구용 상태 snapshot / 계획된 운영 변경 등에 쓰는 상태 snapshot. | [flink](../data-platform/flink.md) |
 | Backpressure | 하류 처리 속도가 부족해 상류 처리에 압력이 전달되는 현상. | [flink](../data-platform/flink.md) |
 | CDC | INSERT·UPDATE·DELETE 같은 원본 변경을 캡처하는 방식. | [cdc-debezium](../data-platform/cdc-debezium.md) |
-| WAL | DB 변경을 복구와 복제 등에 활용하도록 기록하는 write-ahead log. | [cdc-debezium](../data-platform/cdc-debezium.md) |
+| WAL | DB 변경을 복구·복제하는 Write-Ahead Log. CDC·backup·PITR의 로그 보존 맥락에서 관리한다. | [CDC](../data-platform/cdc-debezium.md) · [PostgreSQL](../platform-infrastructure/postgresql.md) |
 | Tombstone | Kafka compacted topic에서 key 삭제를 표시하는 null-value record. | [cdc-debezium](../data-platform/cdc-debezium.md) |
 | Orchestration / DAG | 작업 의존성과 실행 관리 / 방향이 있고 순환이 없는 작업 그래프. | [orchestration](../data-platform/orchestration.md) |
 | Backfill | 지정한 과거 범위의 데이터를 채우거나 재계산하는 작업. | [orchestration](../data-platform/orchestration.md) |
@@ -112,7 +103,6 @@ knowledge_ids: []
 | Sentinel / Redis Cluster | Redis 장애 감지·failover 조정 / hash slot으로 데이터를 나누는 cluster 구성. | [redis](../platform-infrastructure/redis.md) |
 | MVCC | 트랜잭션이 볼 데이터 버전을 관리해 동시 접근을 지원하는 방식. | [postgresql](../platform-infrastructure/postgresql.md) |
 | Connection pool | 클라이언트 요청들이 재사용할 데이터베이스 연결 묶음. 사용 가능한 DB 자원을 무한히 늘리지는 않는다. | [postgresql](../platform-infrastructure/postgresql.md) |
-| WAL | 데이터 변경 복구에 쓰는 Write-Ahead Log. Backup·replication·PITR 맥락에서 관리한다. | [postgresql](../platform-infrastructure/postgresql.md) |
 | PITR | 기본 backup과 필요한 로그를 사용해 목표 시점까지 복구하는 Point-in-Time Recovery. | [postgresql](../platform-infrastructure/postgresql.md) |
 | ISR | Kafka leader를 따라잡은 상태로 관리되는 In-Sync Replicas 집합. | [kafka](../platform-infrastructure/kafka.md) |
 | min.insync.replicas | Kafka의 acks=all 쓰기를 성공으로 승인하는 데 필요한 최소 ISR 수. | [kafka](../platform-infrastructure/kafka.md) |
@@ -177,3 +167,16 @@ knowledge_ids: []
 | EBS / EFS CSI driver | Kubernetes의 volume 요구를 AWS EBS/EFS 저장소와 연결하는 driver. | [eks](../aws-cloud/eks.md) |
 | ECR | 컨테이너 이미지를 repository에 보관하는 AWS registry. | [eks](../aws-cloud/eks.md) |
 | EKS Pod Identity / IRSA | Kubernetes ServiceAccount와 AWS IAM 역할을 연결해 workload에 AWS 권한을 제공하는 방식. 구현·지원 조건은 서로 다르다. | [eks](../aws-cloud/eks.md) |
+
+## 핸드북 관리 용어
+
+[지식 관리 방법](../methodologies/knowledge-workflow.md)에서 사용하는 용어다.
+
+| 용어 | 의미 |
+|---|---|
+| Canonical knowledge | 여러 자료의 유용한 지식을 통합한 기준 지식. |
+| Canonical page ID | 경로가 바뀌어도 유지하는 페이지 식별자. 한영 쌍은 같은 ID를 쓴다. |
+| Content manifest | 의미 있는 원문 지식과 안정적인 ID의 목록. |
+| Coverage matrix | 각 ID가 포함·통합·보류·제외된 위치와 이유를 추적하는 표. |
+| Semantic audit | 두 언어에 같은 개념, 예시, 제약과 경고가 있는지 검토하는 과정. |
+| Source of truth | 변경과 판단의 기준이 되는 원본. 이 핸드북에서는 Git의 Markdown이다. |

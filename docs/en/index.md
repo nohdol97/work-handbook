@@ -8,32 +8,33 @@ knowledge_ids: []
 
 # Work Knowledge Handbook
 
-This handbook keeps useful knowledge from work and study. It supports concepts, design, operations, troubleshooting, projects, and LLM use.
+Reusable knowledge for concepts, design, operations, and troubleshooting. Choose a topic to study or a prompt to review your work materials.
 
 ## Current scope
 
-The complete data platform source for Chapters 1–21, the infrastructure sources for Chapters 1–11, and compact AWS Cloud Basic Chapters 1–5 cover storage, events, processing, analytics, quality, observability, governance, AI evaluation, managed platforms, operations, and final architecture. There are 22 data-platform topic, architecture, and curriculum pairs, 12 platform/infrastructure pairs, six AWS cloud pairs, 18 prompt library pairs, and the home, workflow, and glossary: 61 Korean/English pairs in total.
+| Area | Available scope | Start here |
+|---|---|---|
+| Data platform | Chapters 1–21: storage, processing, analytics, quality, governance, AI evaluation, managed platforms, and operations | [Architecture](data-platform/architecture.md) · [Study status](data-platform/curriculum.md) |
+| Platform and infrastructure | Chapters 1–11: Linux, Kubernetes, data services, AI serving, GPUs, security, and GitOps | [Study path and next steps](platform-infrastructure/index.md) |
+| AWS cloud | Chapters 1–5 of the compact seven-chapter course: accounts, networking, compute, storage/databases, and EKS | [Study scope](aws-cloud/index.md) |
+| Practical prompts | Design and change reviews, incident investigation, performance and cost analysis, validation, and recovery planning | [Find a prompt by task](prompts/index.md) |
 
-The data-platform continuation completes the conceptual scope of Phases 1–21. The first source labels Chapters 1–4 as reconstructed notes; Snowflake remains a condensed treatment. Studied concepts are not presented as actual implementation, production, or incident-drill experience.
+There are 61 Korean/English pairs in total. Each area's study status lists completed and unstudied chapters and the next topic. Data platform Chapters 1–4 are reconstructed notes, and Snowflake has condensed coverage. Completed study does not mean completed deployment, production work, or failure drills.
 
-New topics: [AI evaluation](data-platform/ai-evaluation.md), [Databricks](data-platform/databricks.md), [Snowflake](data-platform/snowflake.md), [platform comparison](data-platform/platform-comparison.md), and [operations and recovery](data-platform/production-operations.md). The [architecture](data-platform/architecture.md) now includes consistency, recovery, scaling, cost, smaller-scale choices, and open/managed alternatives.
+## Use it at work
 
-The new [platform and infrastructure basics](platform-infrastructure/index.md) section covers [Linux and containers](platform-infrastructure/linux-containers.md), [Kubernetes core](platform-infrastructure/kubernetes-core.md), and [Kubernetes operations](platform-infrastructure/kubernetes-operations.md). Chapters 1–3 represent Basic conceptual study. The continuation adds [Redis](platform-infrastructure/redis.md), [PostgreSQL](platform-infrastructure/postgresql.md), [Kafka operations](platform-infrastructure/kafka.md), [vLLM](platform-infrastructure/vllm.md), [LiteLLM](platform-infrastructure/litellm.md), and [GPU infrastructure](platform-infrastructure/gpu-infrastructure.md) in Chapters 4–9. Chapters 10–11 add [platform security](platform-infrastructure/platform-security.md) and [CI/CD, Helm, Argo CD, and GitOps](platform-infrastructure/cicd-gitops.md). Chapters 12–15 remain unstudied future topics, with Terraform & Infrastructure as Code next.
+1. Choose a case in the [practical prompt library](prompts/index.md) that matches the decision you need to make. There are 100 library examples and 39 on topic pages, for 139 in total.
+2. Replace bracketed inputs with shareable, sanitized SQL, configuration, logs, metrics, and changes. Mark missing evidence explicitly.
+3. Copy the prompt from the Korean or English tab. Check its evidence and acceptance criteria against real materials. Execution and changes follow separate workplace permissions and procedures.
 
-[AWS cloud basics](aws-cloud/index.md) follows the latest compact seven-chapter course. It publishes Chapters 1–5: [AWS Foundation](aws-cloud/foundations.md), [Networking](aws-cloud/networking.md), [Compute & Load Balancing](aws-cloud/compute.md), [Storage & Database](aws-cloud/storage-databases.md), and [EKS on AWS](aws-cloud/eks.md). **Chapter 6, AWS Managed Services**, is next, followed by Chapter 7, AI/GPU + End-to-End. Its supplied content is tracked separately from the existing platform course.
-
-The handbook expands into software, data, AI, platforms, infrastructure, architecture, and operations when source material is available. New roles and technologies do not need to fit an unrelated category.
-
-## Practical examples to adapt
-
-The [practical prompt library](prompts/index.md) contains 100 new examples by topic. All 139 examples, including 39 on concept pages, have Korean/English tabs and copy buttons. Inputs, tasks, outputs, and checks use separate lines. These are authored applications of study concepts, not actual production results.
+These templates apply studied concepts to work. They are not a record of measured model performance or proven workplace results.
 
 ## Source and supplements
 
-Study pages retain the supplied Markdown headings, numbers, order, paragraphs, lists, and examples. The original language stays verbatim; the other language follows the same structure in translation. Additional explanations, corrections, and conditions appear after the source body. Read the linked conditions when a source statement is simplified.
+Study pages retain the supplied Markdown headings, numbers, order, paragraphs, lists, and examples. The original language stays verbatim; the other language follows the same structure. Corrections, conditions, and extra examples follow the source and refer to its sections.
 
 ## How to read
 
-Start with the [data platform architecture](data-platform/architecture.md) to understand tool roles. Use [study scope and next steps](data-platform/curriculum.md) to find a topic. The [knowledge workflow](methodologies/knowledge-workflow.md) explains how sources become handbook pages. The [glossary](glossary/index.md) defines key terms and links to canonical topics.
+Use the [glossary](glossary/index.md) for technical terms and the [knowledge workflow](methodologies/knowledge-workflow.md) for source preservation and writing. New areas are added when sources are available. New roles and technologies do not have to fit an unrelated category.
 
-Every public page has a Korean and an English version with the same knowledge. Use the language selector to stay on the same topic.
+Use the language selector to switch between Korean and English on the same topic.

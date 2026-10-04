@@ -1,194 +1,194 @@
 {
   "pages": {
     "glossary/index.md": {
-      "ko_sha256": "6d1f637f5ac42b3863fef458cf177b3de28d4495f5bd192c836516d0f2ab2f34",
-      "en_sha256": "9e4e646d88ce2c1172fe69224ab8ceee5e099ed62e2640b9ca62610f8b1f500a",
+      "ko_sha256": "e67e792cb30b13b7738558d41f6a6ff2b282bf9a2677a3ae20518704e6daadce",
+      "en_sha256": "611c8fe0340201d0b8846ef971b74a7c689741c9cdce36d010f4cebde5ad662e",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root author + independent Codex agent /root/serving_gpu",
+      "reviewer": "Codex /root + Codex /root/review_data",
       "reviewed": "2026-10-04",
-      "notes": "공유KO/EN 홈·prompt목록·glossary·AWSoverview8파일전체직접읽기. 최신source소개/7장목차/최종요약/진도전체읽어대조. 최신7장과정에서1~5완료,EKS는5장,6ManagedServices다음,7AI/GPU후속표시가한영일치. 이전12장AWS목차를복원하지않음. Terraform타세션학습언급은원문보존하고 현재제공본문없는점을설명. 기존platform본문1~11/12~15후속표시는별도범위로유지. AWSoverview INTRO/SUMMARY/STATUS KOexact와ENheading·fence·숫자대응PASS. 실제Markdown61쌍과한영각139시나리오확인. 100개library+39개concept표시일치. 공유한영링크경로·순서동일. storage-databases와eks 최신경로에연결되며이전storage/database분리페이지참조없음. AWS용어28행의정의와정규주제대응확인. ARN,NLB,EKS,CNI,controller,CSI,ECR,PodIdentity/IRSA추가범위영어동일. 개인정보·실계정·인증정보없고개념학습을구축/시험결과로과장하지않음. KOhome 이후는7장 띄어쓰기1건작성자요청후 이후는 7장 반영재확인. 남은수정요청없음."
+      "notes": "양언어 전체 읽기와 변경 구간 대조. 원문 구역 없는 공통 문서. 기존 관리 용어·기술 용어와 조건은 WAL 두 정의 통합 외 그대로 유지.  독립 검토: root 소유 한영 3쌍 전문·검사기 delta 독립 검토. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "index.md": {
-      "ko_sha256": "b6182860d5c39388268ff46d33814f5f0328327f86cfaefe433f8e5aaed076b8",
-      "en_sha256": "e4a6f32ad4c9c70637fc5e7c54b408ea46ac3c6bde5470f1282920c3869ecd2c",
+      "ko_sha256": "bfecbb6920aa80f0f0109c3407bf2b711c7657944147bbd12888f0b6f3507e76",
+      "en_sha256": "8ff2d246e76cbd626d7cd95f726cae2c6891b4706d3170904e6d091f3c21d75b",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root author + independent Codex agent /root/serving_gpu",
+      "reviewer": "Codex /root + Codex /root/review_data",
       "reviewed": "2026-10-04",
-      "notes": "공유KO/EN 홈·prompt목록·glossary·AWSoverview8파일전체직접읽기. 최신source소개/7장목차/최종요약/진도전체읽어대조. 최신7장과정에서1~5완료,EKS는5장,6ManagedServices다음,7AI/GPU후속표시가한영일치. 이전12장AWS목차를복원하지않음. Terraform타세션학습언급은원문보존하고 현재제공본문없는점을설명. 기존platform본문1~11/12~15후속표시는별도범위로유지. AWSoverview INTRO/SUMMARY/STATUS KOexact와ENheading·fence·숫자대응PASS. 실제Markdown61쌍과한영각139시나리오확인. 100개library+39개concept표시일치. 공유한영링크경로·순서동일. storage-databases와eks 최신경로에연결되며이전storage/database분리페이지참조없음. AWS용어28행의정의와정규주제대응확인. ARN,NLB,EKS,CNI,controller,CSI,ECR,PodIdentity/IRSA추가범위영어동일. 개인정보·실계정·인증정보없고개념학습을구축/시험결과로과장하지않음. KOhome 이후는7장 띄어쓰기1건작성자요청후 이후는 7장 반영재확인. 남은수정요청없음."
+      "notes": "양언어 전체 읽기와 변경 구간 대조. 원문 구역 없는 공통 문서. 기존 관리 용어·기술 용어와 조건은 WAL 두 정의 통합 외 그대로 유지.  독립 검토: root 소유 한영 3쌍 전문·검사기 delta 독립 검토. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "methodologies/knowledge-workflow.md": {
-      "ko_sha256": "89573a872e5ef93c553e1f37044b3c266ea8c2b8b3ed3cce03055480ef77f615",
-      "en_sha256": "a45e3848d26484e8fbb6a5e330120982c0394c2554ceb76267a0b2e40ce51d63",
+      "ko_sha256": "b1b98454ad0e10c8c595ee3841b244236682f57680f6c446fb8abf04de9e948a",
+      "en_sha256": "719bc35e912cfbf1a7ccdf1f61663134b2e9b4aa6d3ae2af42caa14365d55c17",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review + processing/governance_ai independent review",
-      "reviewed": "2026-09-24",
-      "notes": "기존 전체 의미를 보존하고 예시의 추출·작성·추적·개인정보·사람 검토 지시를 한영 탭으로 대조했다. 짧은 영어와 비밀값 없는 가상 입력을 확인했다."
+      "reviewer": "Codex /root + Codex /root/review_data",
+      "reviewed": "2026-10-04",
+      "notes": "양언어 전체 읽기와 변경 구간 대조. 원문 구역 없는 공통 문서. 기존 관리 용어·기술 용어와 조건은 WAL 두 정의 통합 외 그대로 유지.  독립 검토: root 소유 한영 3쌍 전문·검사기 delta 독립 검토. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/foundations.md": {
-      "ko_sha256": "ea4d54579765df585b890d38e793e13bbb5c572c97a3eebb4643b241bb9ca3da",
-      "en_sha256": "ed215e204548e0ef82d623f06af14d41920f7a8934cab383aae83200e638022d",
+      "ko_sha256": "79598ebb5392fd6eaf8cca3f04c8a82efcc6ad4beae85cb68e052e50ec588b3d",
+      "en_sha256": "783669fb9aaaf66103cff2ce31c9600dc7d71f25dfc197d74a8b9012c5a06339",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/rewrite_ch6_8; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "KO source core byte 동일, EN은 H2/H3/H4·목록·인용·구분선·fence·줄 수를 보존하여 번역. 323개 고유 한국어 줄(본문/설명용 text fence 포함)의 영문 매핑을 작성하고 전체 읽기 검토. 기술 식별자·SQL·숫자 예시 보존. 기존 정확한 보완 지식과 양언어 prompt 보존. generic S3 bucket과 가상 팀명 외 실제 개인정보·비밀 값 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/event-architecture.md": {
-      "ko_sha256": "2340f4e116f0d919b676b72ad1bf87ae1e96bff8dd9093d68e9742bf27345b89",
-      "en_sha256": "bbac584f6077aaa7dd8f0dc01d8f969e77bd4f86b74d4948b0efaf216acafb53",
+      "ko_sha256": "d555abb36bc45d6fce4bcccc7e9080dd01ea95805970bb0e0b0e6cd6386f376e",
+      "en_sha256": "3e912088d2e38ec3f74c3bc149502450f789b65c2e4a29eb104843e93fe420de",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/rewrite_ch6_8; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "KO source core byte 동일, EN은 H2/H3/H4·목록·인용·구분선·fence·줄 수를 보존하여 번역. 323개 고유 한국어 줄(본문/설명용 text fence 포함)의 영문 매핑을 작성하고 전체 읽기 검토. 기술 식별자·SQL·숫자 예시 보존. 기존 정확한 보완 지식과 양언어 prompt 보존. generic S3 bucket과 가상 팀명 외 실제 개인정보·비밀 값 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/lakehouse-iceberg.md": {
-      "ko_sha256": "614622fb94dcbb2c2124b7fd33c7af1e54e6fc44ba4b5f2df6acc72075491c92",
-      "en_sha256": "495294b2ee68c695cd68996dbdecf74deab99070158e362261f87c684c3c888d",
+      "ko_sha256": "2d26f4223cdcd90fdc1083755a5195b1886904335f1f611eb90979838129fa96",
+      "en_sha256": "92beb2639b90a125938fa50b8f506320b2e915ea80bb477c75472287b525fb11",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/rewrite_ch6_8; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "KO source core byte 동일, EN은 H2/H3/H4·목록·인용·구분선·fence·줄 수를 보존하여 번역. 323개 고유 한국어 줄(본문/설명용 text fence 포함)의 영문 매핑을 작성하고 전체 읽기 검토. 기술 식별자·SQL·숫자 예시 보존. 기존 정확한 보완 지식과 양언어 prompt 보존. generic S3 bucket과 가상 팀명 외 실제 개인정보·비밀 값 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/spark.md": {
-      "ko_sha256": "a9d9e334dc3407661a38ca4a73e70f4eb1b902941c9971c06f054b441ac3bae0",
-      "en_sha256": "5ed0258071e7bae3c5388802c4271635897b22fd1683de24360ba51cd5b9af15",
+      "ko_sha256": "9cc6ea480f645e58f29555f3c24c68ceb6493d60420da05bdb94726e011d6461",
+      "en_sha256": "484c056fd5802dcf9bd9cb7719703310c0ab390a67c4513a7884512e0183fac6",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/rewrite_ch9_11 (full source and bilingual author review); Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "4.4 join shuffle와4.12 watermark를 원문대로 복원하고 correction을 번호별보완으로 이동. 기존 EN의 plan≠성능보장, physicalshuffle측정, sort/hashjoin비용·build/probe·key유일성, semi/anti용도, task/file크기구분, columnpruning/split/compaction, growingtable·lateevent·dedup범위 추가설명을 한영보완으로 보존. 한국어본문은 source outerblank만 제외 byte동일. 영어는 한국어source와 모든 heading level/number·단락·목록·인용·fence·text도식행·hardbreak·구분선을 대응시켜 전문 완역 검토. 기존 압축요약은 같은 번호의 완전한 source본문으로 대체했으며 비중복 지식은 보완에 남김. source교정사항을 silentlyoverwrite하지 않고 첫머리에서 보완링크 안내. 실제 개인정보/비밀값 없음, 학습예시·미실행구분 유지. 새 공식확인일/시험버전 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/flink.md": {
-      "ko_sha256": "5b01a86d19d7941bb854c5bf7c687dc6fbe8fbc7d42d16038104189b5aac997b",
-      "en_sha256": "65516396915842dfaccdea072f36c983c03d13339b21593455d2ede71bf3eae1",
+      "ko_sha256": "f5f76142fe4b771ccc9885afa12081ecaaba0915ae03695e1c224c1afea29ad4",
+      "en_sha256": "606511d3f1c91eea348ad7e056fb1c97d93961992e0e2bd2c9b06cbbcae4e303",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/rewrite_ch9_11 (full source and bilingual author review); Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "5.4 processing/ingestion시간,5.5 늦은watermark≠정확도보장,5.7 TTL조건을 source본문에서 분리. 기존slot/core구분,slowestactiveinput,idleness,state비용,session eventtime,TTL visibility,unaligned체크포인트,sinktransaction/savepointidentity,upsert제약,source/downstream병렬성,5.14선택조건 모두 한영보완으로 보존. 한국어본문은 source outerblank만 제외 byte동일. 영어는 한국어source와 모든 heading level/number·단락·목록·인용·fence·text도식행·hardbreak·구분선을 대응시켜 전문 완역 검토. 기존 압축요약은 같은 번호의 완전한 source본문으로 대체했으며 비중복 지식은 보완에 남김. source교정사항을 silentlyoverwrite하지 않고 첫머리에서 보완링크 안내. 실제 개인정보/비밀값 없음, 학습예시·미실행구분 유지. 새 공식확인일/시험버전 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/analytical-modeling.md": {
-      "ko_sha256": "24c0a0923d5a79e4300580239321adaa59fc3cfac27991283405e3c14b7de013",
-      "en_sha256": "591638eabdb69fae7146e44281f05b89dde23b9b78c886fa7f7209a65a01cb92",
+      "ko_sha256": "20826f62bbdd1bfade926ff0c82ae92692be852770a2a1141562b85fe492ddfe",
+      "en_sha256": "278c5356fe349c5aaa429b5cc6eb0b1930581c29e5f344aac185415d4f0defc4",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/rewrite_ch9_11 (author full-source and bilingual review); Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "Grain·Fact·Dimension·Star schema·SCD·Denormalization·AI 모델·Metric 8절의 원문을 보존. 17개 H3, AI 필드 전체와 text 도식·공식·예시 복원. 기존 double counting, SCD 유효구간, conformed key, metric 분모와 필터 설명을 부록으로 이동. 한국어 source core는 원문 byte 일치(바깥 공백만 제외), 한영 H2/H3·fence 종류/순서·인용·목록·구분선 구조 일치를 검증. 기존 Mermaid는 부록에, 기존 프롬프트/관련 링크는 그대로 보존. 최신 완전본과 영어를 단락별로 다시 대조하고 SCD Type 1/2, Exchange, Quarantine 목록 뒤 설명, SLO의 합쳐진 단락을 원래 위치에 복원했다. 원문에 없는 새로운 기술 조언은 core에 추가하지 않았다. 단락 토큰·빈 행 위치·전체 행 수도 한영 일치를 검증했다. 짧은 영어와 한영 의미를 전체 대조했고 실제 개인정보·비밀값을 발견하지 않음. 구현/운영을 수행했다는 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/cdc-debezium.md": {
-      "ko_sha256": "515b39ee4c9a3cf757620ebaa453d0d286f9de5e2084e531845bdf3a588e315c",
-      "en_sha256": "cb66adef83ad75ba6f0cab8dbb662b584c8eaa077ff3cdd492b2acd94772dae5",
+      "ko_sha256": "5d009da04a890484d05bc70d36d4edbfde1110a70c24e820d06bcdbd0ef52caa",
+      "en_sha256": "7d904413353bd24a16df78df9ef6e538d9db8596a0f973789f254ccc6c82ab30",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/rewrite_ch6_8; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "원문 개념·예시·흐름·순서와 기존 보완 조건의 합집합을 확인했다. KO 본문은 원문과 byte 동일하며 EN은 같은 H2/H3·fence 순서를 따른다. 영문은 짧은 문장과 표준 용어를 사용했다. 실제 내부 식별자·비밀 값은 없고 원문의 가상 주문·모델 예시만 있다. 후속 검토: EN은 172개 고유 한국어 줄을 각각 번역하여 번호뿐 아니라 단락 경계·목록·인용·fence를 원문과 맞췄다. Source core 내 임의 추가 설명과 문단 병합을 제거하고 해당 정확한 조건은 기존 supplement에서 유지함을 재검토했다. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/dbt.md": {
-      "ko_sha256": "ab6280dbcd77ae0a8ca019b5bee57457b60d9ea025a38573ef996d955a32b3e8",
-      "en_sha256": "4a49311fdb9146e22ef4ef338da8802bb9783e3f8595277639d0397b8980fa12",
+      "ko_sha256": "c6a7ab3981ff3e5565362129fae450e75d9da60fce4ce0a42c93dcc2ba446fbc",
+      "en_sha256": "46580ea8a7cc1883d1c8a357b7b792265f38c8b278186e9192ce1dfcc9f3f24d",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/rewrite_ch6_8; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "원문 개념·예시·흐름·순서와 기존 보완 조건의 합집합을 확인했다. KO 본문은 원문과 byte 동일하며 EN은 같은 H2/H3·fence 순서를 따른다. 영문은 짧은 문장과 표준 용어를 사용했다. 실제 내부 식별자·비밀 값은 없고 원문의 가상 주문·모델 예시만 있다. 후속 검토: EN은 172개 고유 한국어 줄을 각각 번역하여 번호뿐 아니라 단락 경계·목록·인용·fence를 원문과 맞췄다. Source core 내 임의 추가 설명과 문단 병합을 제거하고 해당 정확한 조건은 기존 supplement에서 유지함을 재검토했다. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다. 독립 재검토 rewrite_ch12_14가 지적한 late-arrival MERGE의 명령형을 you can으로 수정하여 원문의 선택 가능성(할 수도 있다)을 복원했다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/orchestration.md": {
-      "ko_sha256": "b6e9ec2ae21f8033ed417ac2a6e4ba381a58d066848960c029dacc3544b001ef",
-      "en_sha256": "536d60901740bf45506e70a1f8d149778539531ef6b085cfd9bdebacad45a225",
+      "ko_sha256": "6def2c13e7260b4f334bebe3b0084a384368a3e10c96668e3a753443314a3f1f",
+      "en_sha256": "38ed7c1f6c6dabfcfc2bd281eba19cf5d4ef7593d4d07dd15e92e79bbbff9b7a",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/rewrite_ch6_8; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "원문 개념·예시·흐름·순서와 기존 보완 조건의 합집합을 확인했다. KO 본문은 원문과 byte 동일하며 EN은 같은 H2/H3·fence 순서를 따른다. 영문은 짧은 문장과 표준 용어를 사용했다. 실제 내부 식별자·비밀 값은 없고 원문의 가상 주문·모델 예시만 있다. 후속 검토: EN은 172개 고유 한국어 줄을 각각 번역하여 번호뿐 아니라 단락 경계·목록·인용·fence를 원문과 맞췄다. Source core 내 임의 추가 설명과 문단 병합을 제거하고 해당 정확한 조건은 기존 supplement에서 유지함을 재검토했다. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/trino.md": {
-      "ko_sha256": "aca3c445d09578f3722286244971bf9a5a228dccd86911dc69a99e59965d752a",
-      "en_sha256": "f38805a4401b56d6069b6bdff403eff80a5d7458505459df6d85f5b1636657e3",
+      "ko_sha256": "4cc9fbd67e266062e0f1b74d63e50e6281cfe947ba1c1eef4e09e54798cf1d9a",
+      "en_sha256": "75b32c6f40242987456ff6f1eec9e94838534dfa6c09d55d66663eef9a4d7787",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/rewrite_ch9_11 (author full-source and bilingual review); Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "Architecture·Connector·Execution·Pushdown·Join·Memory·Spark 비교·Iceberg 8절 원문을 보존. 12개 H3, catalog 경로, 역할 흐름과 원문 text 그림 복원. Broadcast 대상, pushdown 범위, spill/OOM 및 FTE 조건, pruning 조건을 부록으로 이동. 기존 공식 확인일 2026-09-24 유지. 한국어 source core는 원문 byte 일치(바깥 공백만 제외), 한영 H2/H3·fence 종류/순서·인용·목록·구분선 구조 일치를 검증. 기존 Mermaid는 부록에, 기존 프롬프트/관련 링크는 그대로 보존. 최신 완전본과 영어를 단락별로 다시 대조하고 SCD Type 1/2, Exchange, Quarantine 목록 뒤 설명, SLO의 합쳐진 단락을 원래 위치에 복원했다. 원문에 없는 새로운 기술 조언은 core에 추가하지 않았다. 단락 토큰·빈 행 위치·전체 행 수도 한영 일치를 검증했다. 짧은 영어와 한영 의미를 전체 대조했고 실제 개인정보·비밀값을 발견하지 않음. 구현/운영을 수행했다는 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/data-quality.md": {
-      "ko_sha256": "c500ebaeb0dc92fbcbb50a034085f34636bc2be5e9f9bd55596d93279e716dbb",
-      "en_sha256": "060ce5f1020be9d1b594a16edf110cd1c338803e973257b00edee75cec11b268",
+      "ko_sha256": "a880f2e9ae111fe0c8620f809db783f253015a5ab31c3890d7bb1f04c84644c9",
+      "en_sha256": "ca5b3eb2ad9604eec4521089658fd83873a0d138f214176b9fa46f53cc03d50e",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/rewrite_ch9_11 (author full-source and bilingual review); Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "7가지 품질 차원·3개 검증 계층·격리·dbt·품질 도구·SLO·장애 대응 7절 원문을 보존. 18개 H3, 모든 예시·도구·SLO 수치·text 그림 복원. dbt 정적검증 오해, payload 민감정보, freshness 기능, 도구 범위, SLO와 복구 조건을 부록으로 이동. 기존 공식 확인일 2026-09-24 유지. 한국어 source core는 원문 byte 일치(바깥 공백만 제외), 한영 H2/H3·fence 종류/순서·인용·목록·구분선 구조 일치를 검증. 기존 Mermaid는 부록에, 기존 프롬프트/관련 링크는 그대로 보존. 최신 완전본과 영어를 단락별로 다시 대조하고 SCD Type 1/2, Exchange, Quarantine 목록 뒤 설명, SLO의 합쳐진 단락을 원래 위치에 복원했다. 원문에 없는 새로운 기술 조언은 core에 추가하지 않았다. 단락 토큰·빈 행 위치·전체 행 수도 한영 일치를 검증했다. 짧은 영어와 한영 의미를 전체 대조했고 실제 개인정보·비밀값을 발견하지 않음. 구현/운영을 수행했다는 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/data-observability.md": {
-      "ko_sha256": "480242d387baf736883484672c1e91cda1ea8343f183a95e1c49460a347fc2dd",
-      "en_sha256": "63e13c243ebf01b09136929b8e903a90b29ba21ef4229ff9fc1978d02bbff0e4",
+      "ko_sha256": "2a110dce7f09dd2ead6f92bd5d89062ae8e8b046d202c54412e66e0ad53e2286",
+      "en_sha256": "e38a6d5e2798541d71adbd7c6eab362e0bcd307093b74636cd962dbf6da69ed9",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex agent /root/rewrite_ch12_14; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "원문 전체의 개념·목록·예시·흐름을 절별로 대조했다. 한글 핵심 본문은 원문과 완전 동일하고 영어는 동일 번호·하위 제목·단락 및 예시 순서를 유지한다. 기존 올바른 보완점·링크·Mermaid·한영 프롬프트를 보존했다. 실무 수행이나 버전 재검증을 주장하지 않는다. 실제 개인정보나 비밀값 없음. 강화된 문단 검사 후 원문 12.2 목록 뒤 비교 설명과 13.7 흐름도 뒤 발전 방향 설명을 각각 별도 번역 문단으로 복원했다. 의미를 삭제하거나 추가하지 않고 원문 문단 경계를 맞춰 재검토했다. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/lineage-metadata.md": {
-      "ko_sha256": "850c96f8ab1b4d48818dbd12fe960706855a77666c5310e11c1be689f1987d90",
-      "en_sha256": "cd56e7ccb69d615056e699e5798a1264c7039434e11c2872869e898b56206761",
+      "ko_sha256": "60439eecd7c10aaeddff2beae7cf4634fda17e361c615b31f592887c0df53037",
+      "en_sha256": "fc58b339104638a19edb529c739944feebf611fe822ee085ae70de6e3a579a23",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex agent /root/rewrite_ch12_14; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "원문 전체의 개념·목록·예시·흐름을 절별로 대조했다. 한글 핵심 본문은 원문과 완전 동일하고 영어는 동일 번호·하위 제목·단락 및 예시 순서를 유지한다. 기존 올바른 보완점·링크·Mermaid·한영 프롬프트를 보존했다. 실무 수행이나 버전 재검증을 주장하지 않는다. 실제 개인정보나 비밀값 없음. 강화된 문단 검사 후 원문 12.2 목록 뒤 비교 설명과 13.7 흐름도 뒤 발전 방향 설명을 각각 별도 번역 문단으로 복원했다. 의미를 삭제하거나 추가하지 않고 원문 문단 경계를 맞춰 재검토했다. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/governance.md": {
-      "ko_sha256": "39e0ef02ced3984215154340cbd078b6b02a80289ba6d125486fe7784150d8bd",
-      "en_sha256": "147443ceac24a5f0dd57d90627e201f33c41835c797310735801013e06518ef1",
+      "ko_sha256": "98a187412aa934224289eab2967e2b399c676952c545bb035b03b1f966e95220",
+      "en_sha256": "5b8241a87cbdf270de38a94c8f71143720dd6a52a2688351ed284204acbd6a25",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex agent /root/rewrite_ch12_14; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "원문 전체의 개념·목록·예시·흐름을 절별로 대조했다. 한글 핵심 본문은 원문과 완전 동일하고 영어는 동일 번호·하위 제목·단락 및 예시 순서를 유지한다. 기존 올바른 보완점·링크·Mermaid·한영 프롬프트를 보존했다. 실무 수행이나 버전 재검증을 주장하지 않는다. 실제 개인정보나 비밀값 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/ai-ready-data.md": {
-      "ko_sha256": "061a41b70a32611e54a88cf0f778f9cfe6c8ee0fba21ef1f1500377b411cd6d9",
-      "en_sha256": "b936391255e8021477667717ae7d8b7562153b0ba9b8af4f1d828def8b6bedf7",
+      "ko_sha256": "1d1be5f1e0fd2042a407b6781949b36f391874f0577e0398eb6815471ae73e5e",
+      "en_sha256": "ce67e1a95579f7124eaaaecf0411a2f619694cd2185a729f1a8e8fc9c1fe258e",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/review_ch16 independent review",
-      "reviewed": "2026-09-27",
-      "notes": "15.2A 세션질문과대답,15.3 물리table상태표현을 원문대로 복원. 실제 계측/연동범위·미검증개념도·metadata가참조하는파일집합·snapshot/dataset경계 차이는 번호별 보완. 기존Langfuse trace/observation/session,version/schema,수집/identity/검색권한 주의와 모든links/prompts 보존. 한국어본문은 source outerblank만 제외 byte동일. 영어는 한국어source와 모든 heading level/number·단락·목록·인용·fence·text도식행·hardbreak·구분선을 대응시켜 전문 완역 검토. 기존 압축요약은 같은 번호의 완전한 source본문으로 대체했으며 비중복 지식은 보완에 남김. source교정사항을 silentlyoverwrite하지 않고 첫머리에서 보완링크 안내. 실제 개인정보/비밀값 없음, 학습예시·미실행구분 유지. 새 공식확인일/시험버전 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/architecture.md": {
-      "ko_sha256": "63dc3b31043d08e730f963e05217f0ee8628b7cfa3f4535dba79e5d4dca6e2b2",
-      "en_sha256": "a3fd566118840e6404895de665e63a5ccbde9b7aec5d75f3edc73f9d462e54f8",
+      "ko_sha256": "26129f99542a5efdcf184fc08cdb80640111d34755b6d44a9980570adc5f2c2b",
+      "en_sha256": "aa5c9c2452d695c0ac3a3ac27966d67ec1584fbfa9a2575ab8a8c9c0630a99ea",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/review_ch16 independent review",
-      "reviewed": "2026-09-27",
-      "notes": "완성본 Chapter21 도입문과29절 및 Final Mental Model/7개EngineeringPrinciples EN literal/KO 대응번역. AppendixA 한국어5절은 literal, 영어는 원형 대응번역. 전체구조·도입이유·AI평가/버전·장애/일관성·재처리·확장/비용·작은규모·managed/open·선택질문을 누락없이 대조. 각언어의 원문 line-by-line 구조(빈줄·heading level/number·code fence·목록·blockquote·hardbreak·구분선) 비교 PASS. 기존본문전체는 heading깊이 외 byte 동일하게 보완부록에 보존하여 첫batch 지식·정확한주의사항·Mermaid·링크·프롬프트 누락 없음. 삭제한 중복요약 없음. 코드식별자/SQL/기술명 유지, 자연어 설명과 text 질문을 대응번역. 실제 개인정보·비밀값 없음, 가상훈련/예시·미실행구분 유지. EN 원문과 기존영어는 짧은 문장으로 검토, 신규 번역 AppendixA도 단순영어 의미대조. 공식문서확인일2026-09-26 그대로, 이번편집에서 신규브라우징/실험 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다. Root가 보완 부록에서 기존 LLM 섹션과 후속 근거 섹션의 제목 수준을 원래 H2로 복원해 기존 실무 예시 분류를 유지했다. 본문·원문 구역은 변경하지 않았다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/curriculum.md": {
       "ko_sha256": "86632b8389388e53dac0e9627857519a94854b888856ff8a97222b70dba4f321",
@@ -201,404 +201,404 @@
       "notes": "양언어 기존 범위·링크·제약을 보존하며 최신통합본과인프라두기준자료, 원문그대로/동일구조번역/보완분리 안내를 대조했다. 48쌍126prompt수치와실제경험미주장유지. Curriculum의과거원문복원한계·과거상태를 보존하고Appendix A의17번표기와Databricks구분설명확인. 실제민감정보없음. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
     },
     "prompts/foundations.md": {
-      "ko_sha256": "b1acc6e268b70285385edabf60a2b14dd51d9cdb05ad012b54a20041d700895a",
-      "en_sha256": "1f71075f3975c4e226aad794212df25b538fae7fb9a555c678eabc64c380cbea",
+      "ko_sha256": "b7f0c996c611ebc3ef8692901f04842ab1c0f569e8837d7c3c0a11884b4f34c4",
+      "en_sha256": "3eae1f5169caeecfb7955e43fbd8bdfb85c7637ea36fdc629e697a0de98a5059",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
-      "reviewed": "2026-09-24",
-      "notes": "OLTP/OLAP 부하 분리, column pruning, Parquet 통계, 시간 partition, bucket/sort, 원격 I/O 비용의 6개 사례를 직접 대조. 상관관계·통계 부재·과분할·hot key·요청 비용 경계를 보존. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/event-architecture.md": {
-      "ko_sha256": "af7b0c7b63a3c2f9f6a0a2b824ab8902da1949735e5465061e885fe87f898505",
-      "en_sha256": "202c8a3b71207d58ab46e87a532f3603aecb0538f04a87730e090a3397a468d5",
+      "ko_sha256": "2127706096a3c858cb13e721a4502e1e17cebf074261b26e053e558a508e3375",
+      "en_sha256": "488e15583086733b50f6c1035ec942581ec6f935a1ca822228bdb0657786a16a",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
-      "reviewed": "2026-09-24",
-      "notes": "계약 의미·단위, 과거 schema 호환성, dedup 보존, dual-path 결과 차이, 시간 정의, 정정 이벤트의 6개 사례를 직접 대조. Registry 의미 한계·transitive 범위·event identity·보장 경계를 보존. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다. 독립 검토에서 찾은 역직렬화 범위와 source concurrency 상한 표현을 수정 후 대조했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/lakehouse-iceberg.md": {
-      "ko_sha256": "09d7f3d478c51da9effe8bafe91b822e6ab28ebb84966bae11e511d9ffeae8ab",
-      "en_sha256": "20d4e427c4da1d1b8449da0d8c52c4d2a94bc23f7fc2f859e0a55ac5b57bd62e",
+      "ko_sha256": "7cf5fcd3074caf0352653efad8b1344c5d778e6f035307d4b15d0d783cc1baf5",
+      "en_sha256": "c4e2651fb538a5aa4175489a11531a5dbbf992be5d3579b34dd5e2f6604ee5de",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
-      "reviewed": "2026-09-24",
-      "notes": "Snapshot 조회, partition evolution, COW/MOR, maintenance 우선순위, snapshot 보존, catalog/governance의 6개 사례를 직접 대조. 과거 파일·참조·지원 버전·진행 중 write·삭제 명령 금지 경계를 보존. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/spark.md": {
-      "ko_sha256": "e587779332cb4e23cf7f32e8f928e2449a9912f69b7d4ebdccae77287c584dd0",
-      "en_sha256": "4e6f2a00b2a30fa4910dc81f88c297af9ed979d0f39d51dbd8801dfa979881d7",
+      "ko_sha256": "939a3279441eb3ba6668283e37b1b6fc9556d2b299c7d3bb38fbe23332d98764",
+      "en_sha256": "a7c22916f47a904267bcf1d862bedc504499ee5a1fbe8e4774c3137a92482fd1",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
-      "reviewed": "2026-09-24",
-      "notes": "Join grain 폭증, broadcast 메모리, 쓰기 partition, cache 수명, foreachBatch 재시도, streaming output mode의 6개 사례를 직접 대조. 원인 진단과 실행 계획·메모리·멱등성·watermark 한계를 보존. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/flink.md": {
-      "ko_sha256": "5e73af6ec9b5ff9286a9f5a243b08723a763afedcc3ffc7975384c26e208f26b",
-      "en_sha256": "bf1ccd11dbfbbc9feb7fd264679e37ce5bb2d9d4a65d5e89f2653462dccfa335",
+      "ko_sha256": "b315fbc0990ff54274812e0fceec4e387205d877b30f13b77b8b8d6c036ce83d",
+      "en_sha256": "96970d727e9aa827993350c7df551f0ed485626601e6483cd2db6976fb01ccfc",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_foundations (author full-page review); independent review: governance_ai",
-      "reviewed": "2026-09-24",
-      "notes": "Window 선택, TTL, checkpoint 방식, savepoint 변경, backpressure 병렬성, sink 보장의 6개 사례를 직접 대조. Event-time·processing-time·in-flight data·state 호환성·sink 포화·exactly-once 경계를 보존. 양쪽 문서의 한국어 및 English prompt 본문은 탭 순서 외 완전히 같다. 짧은 능동형 영어와 표준 용어, placeholder만 포함한 공개 자료임을 확인했다. 가상 작성 예시이며 실행·운영 경험 또는 빈도·모델 성능을 주장하지 않는다. 이 기록은 담당 작성자의 직접 의미·영어·개인정보 검토이며 브라우저나 실제 엔진 검증 결과는 아니다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다. 독립 검토에서 찾은 역직렬화 범위와 source concurrency 상한 표현을 수정 후 대조했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/cdc-debezium.md": {
-      "ko_sha256": "baa7da7608878233aea4b5075a76d96f38eee02e4962eb030d046878c6b24fb4",
-      "en_sha256": "c953c9c7b60a7c58f7e64c8a0c3c454665ba6ca02dcd178363a3585d2dd4886e",
+      "ko_sha256": "4e2a47812042c8ab9f9e9f9815b8bd5d042d3a0b3a0b7c78b226d17ac09f8af3",
+      "en_sha256": "c384402c0d1d4a08b92caffa943c221f0d3cd1410f422997e2c2053121c69c92",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
-      "reviewed": "2026-09-24",
-      "notes": "직접 작성한 6개 가상 사례의 상황·맥락·요청·기대 결과·오류 가능성·검증을 한영 대조했다. overview/빈 source ID 및 미실행·파생 예시 표시를 확인했다. Snapshot/offset/WAL 복구 범위, DELETE/tombstone 차이, DDL·schema 영향, transaction/partition 순서, polling 삭제 한계, history/current-state 대사의 서로 다른 기준을 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/orchestration.md": {
-      "ko_sha256": "c27b4ac770da52e9f19ce18a8f99437354ba6152b307b1cd52fa131e8a490667",
-      "en_sha256": "d7d7d47523a0abe44ea2b5bb049e28a24583d64f79852cc26e6adc7db55ec63a",
+      "ko_sha256": "9552873970aa997c80fe7ee014ad39bc9c6a5f2b50e394f1de0df8c5d5840df3",
+      "en_sha256": "789ad8c45fb6232b1b1b1a3f787dae8951eff602605af692bead1ab32ab7e372",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
-      "reviewed": "2026-09-24",
-      "notes": "직접 작성한 6개 가상 사례의 상황·맥락·요청·기대 결과·오류 가능성·검증을 한영 대조했다. overview/빈 source ID 및 미실행·파생 예시 표시를 확인했다. Schedule/준비 상태, 일시/영구 실패와 부분 쓰기, upstream 재사용, trigger rule 실패/skip, XCom/compute 역할, timezone·구간 재실행을 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/dbt.md": {
-      "ko_sha256": "dc0c35f40ae0d95d8d1ca3b66cddba5571a1fc4430c8f4d9c75295d059eaf04e",
-      "en_sha256": "8efae202d88d9203cf790668d254d85c3bbbe70fbecf7039ccec62c9b5d4d4e9",
+      "ko_sha256": "8a63dfbe11204077ab40b8aae9d81e7bd3a8a1cad75d24ee33812df177d87ab1",
+      "en_sha256": "2bf433442c4a372ce7cfc28fbdce92347b36e19ae2c7572b9a0f0c4e4efe6498",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
-      "reviewed": "2026-09-24",
-      "notes": "직접 작성한 6개 가상 사례의 상황·맥락·요청·기대 결과·오류 가능성·검증을 한영 대조했다. overview/빈 source ID 및 미실행·파생 예시 표시를 확인했다. 계층별 책임, ref/source와 외부 lineage, 기본/custom test와 gate, snapshot/CDC 중간 이력, grain/key·최초/반복 실행, logic 변경 및 source 보존 범위를 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/analytical-modeling.md": {
-      "ko_sha256": "1422c6cba4c8559c002a37e5f6e7a0412fa0fbe7672d1deb6ee1c8608a7669fe",
-      "en_sha256": "616e7192ff11f4c8b29e44225976e0bc5e47ea4a0fbe782c06991f202be989ac",
+      "ko_sha256": "9dad02bf28b8e32c3b74d519a537d92909b3f256252cee7c1e90cdda602ca7b7",
+      "en_sha256": "ac792f09793ec9e5ab367de7378d1bc2d9ff5aa65fba93b4e53763a8463f1eac",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
-      "reviewed": "2026-09-24",
-      "notes": "직접 작성한 6개 가상 사례의 상황·맥락·요청·기대 결과·오류 가능성·검증을 한영 대조했다. overview/빈 source ID 및 미실행·파생 예시 표시를 확인했다. Execution/call/event grain, SCD 유효 구간, metric 분자·분모와 0 처리, fact 유형, conformed dimension의 의미와 이력, denormalization trade-off를 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/trino.md": {
-      "ko_sha256": "6814f9d905f8312f7eb4de6e2a1cbbb29209885e62ada23aa756403ec03da96e",
-      "en_sha256": "7313052120226d3c10d8480325111c8a67ac8230dafba1ab53f15dbf9ed74632",
+      "ko_sha256": "94b66e054883b6329c9838403645ccdc7f2d70e1e31f13e580c7c778d3ca1e63",
+      "en_sha256": "65ce980ae5d028e98eb1ff04cc0f68e099f3d4a7f4b1c1e73fca90703eebaea7",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_processing author bilingual review; independent review: root",
-      "reviewed": "2026-09-24",
-      "notes": "직접 작성한 6개 가상 사례의 상황·맥락·요청·기대 결과·오류 가능성·검증을 한영 대조했다. overview/빈 source ID 및 미실행·파생 예시 표시를 확인했다. Plan의 pushdown 근거, broadcast/partitioned memory, key skew의 상관/인과, spill 및 retry 적용 조건, Iceberg pruning 계층, Trino/Spark 작업 배치 근거를 대조했다. 영어는 직접적인 짧은 요청과 표준 용어를 사용한다. 두 페이지의 한국어/영어 prompt 본문은 각각 byte-equivalent이며 실제 계정·키·주소·개인/회사 데이터 없이 placeholder와 가상 예시만 있다. 모델 실행 및 실제 DB·운영 검증은 수행하지 않았다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/data-quality.md": {
-      "ko_sha256": "471e24c7305b0f330563b2bfdd58020de37665373fcb831179c5df59804ff493",
-      "en_sha256": "bd55b5e5f4abd182b5090519bbb7cd2a382eafc378b659d018ebbbe3eb4ba524",
+      "ko_sha256": "2597ddf1aea102e6e10de534f33c704be47badb2ed6299992f40e992aea34b5b",
+      "en_sha256": "3441c820a7e6dbeeab5eaf58ad69ecbc63d5f9655435dc0a988faa7b0148e79b",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
-      "reviewed": "2026-09-24",
-      "notes": "7가지 품질 차원·계층·규칙 경계·격리·SLO·청구 대조·재개 조건을 양쪽 대조했다. 유효성과 정확성, job 성공과 복구를 구분하고 업무 목표를 꾸며 넣지 않았다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/data-observability.md": {
-      "ko_sha256": "6c74a3a39cbe340f79722a2d43f5a9afef6f7bf79ecce86e7fa33ef029358a1e",
-      "en_sha256": "a38acf71fcf2951b149e0616a2187558bc9af41bfd0c14a306d2619fd770ed63",
+      "ko_sha256": "ba886a79c0e91b8fcd5cdd6d1a3431cad9d7984e4e4a18f926b481896350788d",
+      "en_sha256": "c47daad5d1ec2117e7151812ef2d5099ad3be58f44e5b2352ef57ac71d96e4d8",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
-      "reviewed": "2026-09-24",
-      "notes": "시각 기준·요일 baseline·partition·분포·schema·알림·pipeline/data health를 양쪽 대조했다. 상관과 원인을 구분하고 관측되지 않은 값을 지어내지 않았다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/lineage-metadata.md": {
-      "ko_sha256": "c90e68c1c674efe928e79c5d4ce969bfd681f167ba6723ccafd01200805c26bd",
-      "en_sha256": "8471355f945c6b82132368021fa2b9cd1a101b1b6ba2582f44bb89319fd27ab2",
+      "ko_sha256": "6ee2eddefd6244a47433753b65975e889e474f5f121a566805d310e5e32c3133",
+      "en_sha256": "3f261c00fe913e606a92df9e527aad5461c6def435e65d39e6c2c8871f10a88f",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
-      "reviewed": "2026-09-24",
-      "notes": "metadata 3분류·semantic 계산·Job/Run/Dataset·수집 공백·upstream·column 경로·catalog 출처를 양쪽 대조했다. 그래프 완전성이나 정책 강제를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/governance.md": {
-      "ko_sha256": "2926b4a50ac896cd92c07a17980bf3b869309bff9f4df00677f76506f0021258",
-      "en_sha256": "2c472a107ee37c05a31ea513d8119faf161172667bbf28702a0e2f335dd083d0",
+      "ko_sha256": "588b6eb79e4bad16d97779f601da2c556f820c51ac53f7d8170dcab8cf2daaea",
+      "en_sha256": "dfe856ff12698c4e5ec67f152112a1910dcb2eb00a270656806e5fd2d39af18c",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
-      "reviewed": "2026-09-24",
-      "notes": "소유권·분류·접근과 masking·retention/snapshot·감사·계약 범위를 양쪽 대조했다. 법적 기준·승인·삭제 완료를 꾸미지 않고 실제 조치를 금지한다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/ai-ready-data.md": {
-      "ko_sha256": "0e4049666f40af739362795ae603ff6042755b146295031e87a71c407244bea4",
-      "en_sha256": "c07de8c257c3ab5f87f7e0f2a3b0d9324809c0eca2063e418c04ce9ae40eb632",
+      "ko_sha256": "1fa38364d1ac18ae5d50f85f89de726cdbf84d66e6bec5eeea8e3c182c070113",
+      "en_sha256": "37c8cc6716a7251494e6f07ecb8ac953d8c5be3327332ee5c1c321691ffa18d8",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/prompts_governance_ai — full bilingual author review; independent review: foundations",
-      "reviewed": "2026-09-24",
-      "notes": "telemetry 연결·평가 사례·embedding 버전·retrieval/generation·provenance·feature/label 시각을 양쪽 대조했다. 권한 없는 근거 제공·결정성·실제 실행을 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/online-evaluation.md": {
-      "ko_sha256": "d65d58b4f3c89416187e4533a2c30a3a712c04b7b18fdd5fdac2186a55a0f8a3",
-      "en_sha256": "f05b01362d4390876b7795f496d4bff7bbfc4002233c262e6a7ca324d0b2a868",
+      "ko_sha256": "1b0f61947dc88efd73e1cab048b6167166df56ab9c6d66f08085f219c5823678",
+      "en_sha256": "cec6627591126fc6ec818c9db257ebe7ceb6a64cd7f21dacfd5f4c9595e99e47",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/review_ch16 independent review",
-      "reviewed": "2026-09-27",
-      "notes": "기존 16.1의 실행 연결·feedback/rule/judge·미평가 상태·온라인 조건 범위를 양쪽 대조했다. 점수와 진실·상관과 인과를 구분하고 미학습 내용의 학습 완료를 주장하지 않는다. 새 6사례 전체의 상황·입력·두 언어 prompt·산출물·오류·검증 의미를 직접 대조했다. 작성된 가상 적용 예시로 표시한다. 짧은 능동문·표준 용어·placeholder만 사용하며 실제 개인정보·비밀값·내부 주소가 없다. 자동 검사는 구조/보존/탭 복사 일치만 증명한다. 모델 실행·운영 검증은 미수행이다. 독립 전체 검토에서 도메인별 상황·한영 의미·6요소·기존 본문 보존을 확인했다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/index.md": {
-      "ko_sha256": "3e652a8a83c9bad6fce781757c3710a363f5b43ad769abbc8ff631688ff270e3",
-      "en_sha256": "e83c7649c0c1af9257a37d21408b64121724afb5be0486c5ac49cb3b629dbf1c",
+      "ko_sha256": "419f46e3750f2c2228be89582a5dd52edf3f17940e1647f59c337267a1694bfc",
+      "en_sha256": "f2c164290414debe16967dc52a472dfb6235ae3a8065047dba8d6b292b117268",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root author + independent Codex agent /root/serving_gpu",
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
       "reviewed": "2026-10-04",
-      "notes": "공유KO/EN 홈·prompt목록·glossary·AWSoverview8파일전체직접읽기. 최신source소개/7장목차/최종요약/진도전체읽어대조. 최신7장과정에서1~5완료,EKS는5장,6ManagedServices다음,7AI/GPU후속표시가한영일치. 이전12장AWS목차를복원하지않음. Terraform타세션학습언급은원문보존하고 현재제공본문없는점을설명. 기존platform본문1~11/12~15후속표시는별도범위로유지. AWSoverview INTRO/SUMMARY/STATUS KOexact와ENheading·fence·숫자대응PASS. 실제Markdown61쌍과한영각139시나리오확인. 100개library+39개concept표시일치. 공유한영링크경로·순서동일. storage-databases와eks 최신경로에연결되며이전storage/database분리페이지참조없음. AWS용어28행의정의와정규주제대응확인. ARN,NLB,EKS,CNI,controller,CSI,ECR,PodIdentity/IRSA추가범위영어동일. 개인정보·실계정·인증정보없고개념학습을구축/시험결과로과장하지않음. KOhome 이후는7장 띄어쓰기1건작성자요청후 이후는 7장 반영재확인. 남은수정요청없음."
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "prompts/knowledge-workflow.md": {
-      "ko_sha256": "956f10f22a2b3c54f85c471ae5aa2eb96989f9dbe749087cb382f2164a3202ba",
-      "en_sha256": "e968d49b189093af63bdf25e9c2d03d1204d57ece642cfe277a1edc5a82dd81e",
+      "ko_sha256": "f1783412cd2ac104238bf036f242c7eac1a63a1c521210f314a0bc0d8e985d96",
+      "en_sha256": "f14adbed814a14fa4d1368041d37e20bdc6b8c8568d01a12ace43ddc0cc8f653",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex root author review + processing/governance_ai independent review",
-      "reviewed": "2026-09-24",
-      "notes": "추출 우선·번역 제약 보존·중복 병합 추적·갱신 근거 4개 시나리오의 한영 본문과 프롬프트 전체를 대조했다. 독립 검토 지적에 따라 영어 검증 방법에도 사람의 최종 검토를 명시했다. 짧은 영어와 비밀값 없는 가상 입력을 확인했다."
+      "reviewer": "Codex sub-agent /root/review_prompts + Codex /root/review_infra (independent of prompt-library author)",
+      "reviewed": "2026-10-04",
+      "notes": "Both full original pages were read during the editorial review with identical lines deduplicated; all resulting added or changed unique lines were read and compared in the implementation pass. Final whitespace/article fixes were then inspected. No source section is present in these authored prompt pages. Existing scenario anchors, topic-specific tasks, version checks, synthetic validation cases, failure risks and concept links retained. Repeated outer input/output/check prose replaced by preparation and acceptance criteria. Each case gains its own required evidence and work deliverable. 독립 검토: 100 KO scenarios: domain context/task/output/check, all new required-evidence/deliverable/acceptance, all pitfalls. EN new required-evidence/deliverable/acceptance compared across all100; unchanged EN domain instructions inspected in old/new code comparison. KO index full read and all library links/explicit anchors in both languages resolved. Whole EN prose not reread end-to-end. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/ai-evaluation.md": {
-      "ko_sha256": "29bf431624a599444da48b4d4e1e592911ed4a109df71eee22ff6a920a18a2b6",
-      "en_sha256": "ef9086ba812a32b04a8a9ad77945218122072a6e3b013140986ac349d5dd7d01",
+      "ko_sha256": "98c5532310efdf184501281a09afa4da2ec0a311c78a63ab1947213ff9312bf8",
+      "en_sha256": "afa102317fb0113e9185bb86dc948308e4effc89a7be548a53c7e3feb00f1a20",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/review_ch16 independent review",
-      "reviewed": "2026-09-27",
-      "notes": "통합 전 네 문서와 최종 KO/EN 두 문서를 전체 읽어 16.1–16.12 의미·예시·조건·번호 대응을 검토했다. Git HEAD 두 core의 정확한 연결과 기존 보완·두 LLM 실습·Mermaid 2개 보존을 문자열 비교로 확인했다. 최신 원문 영어 전체 span과 일치하며 한국어는 같은 구조의 번역이다. 가상 값·실행 미검증·평가 한계 설명을 보존했고 실제 민감 값은 발견하지 않았다. 렌더링·배포 확인은 이 의미 검토에 포함하지 않았다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/production-operations.md": {
-      "ko_sha256": "b2d1a04f1771c9bc63dd6be34ce40a4d58c88ea08b1b8b2152f7e6bec5345f21",
-      "en_sha256": "90ecb8e55205aef8734ebbfef24392b11c0ee8a6056e0832296658b57e323a21",
+      "ko_sha256": "bc391d49c6652610f119bf8b36f581eadf03466f62e2e6076bf18c4b17e94d69",
+      "en_sha256": "7a38d434600b9288766bb426d50810465ebb23668ab64185971a15143fe3baa4",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/rewrite_ch9_11 (full-source and full bilingual author review); Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "완성본 Chapter20 도입문과22절 EN literal/KO 대응번역. 재처리·7개 장애훈련·용량·비용·DR·원본계약·SLO·runbook의 예시/순서/단락/목록/text도식/인용을 누락 없이 대조. 각언어의 원문 line-by-line 구조(빈줄·heading level/number·code fence·목록·blockquote·hardbreak·구분선) 비교 PASS. 기존본문전체는 heading깊이 외 byte 동일하게 보완부록에 보존하여 첫batch 지식·정확한주의사항·Mermaid·링크·프롬프트 누락 없음. 삭제한 중복요약 없음. 코드식별자/SQL/기술명 유지, 자연어 설명과 text 질문을 대응번역. 실제 개인정보·비밀값 없음, 가상훈련/예시·미실행구분 유지. EN 원문과 기존영어는 짧은 문장으로 검토, 신규 번역 AppendixA도 단순영어 의미대조. 공식문서확인일2026-09-26 그대로, 이번편집에서 신규브라우징/실험 주장 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다. Root가 보완 부록에서 기존 LLM 섹션과 후속 근거 섹션의 제목 수준을 원래 H2로 복원해 기존 실무 예시 분류를 유지했다. 본문·원문 구역은 변경하지 않았다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/databricks.md": {
-      "ko_sha256": "088358ebbd6f2e6dc1c1d1f4c6fb1c197d24645f03c778805185158ca95ebbbd",
-      "en_sha256": "a5a443730dd0e99a597623bd864291a7b0d3860a539f1bda3ac482651832dcdb",
+      "ko_sha256": "b2d62363b6c40b0ddb91825a1e815899e40757b44f684797acb9d75e9ae0b447",
+      "en_sha256": "181ce94cea7076b04daf0b0b451e25dfe4f83bfbf1e2a11635f03a6e7d1deb86",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex agent /root/rewrite_ch12_14; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "최신 전체 원문 17/18장과 기존 한영 전문을 읽었다. 영어 본문은 chapter H1 제외 원문과 완전 동일하다. 한국어는 모든 문단·인용·목록·표를 번역하고 원문 제목·번호·text diagram/코드 블록을 그대로 보존했다. 기존 올바른 상세 설명과 공식 조건은 별도 보완 절, Mermaid와 한영 프롬프트도 보존했다. 제품 검토일 2026-09-26을 유지하며 재검증/실행 경험을 주장하지 않는다. 예시 이름과 값은 가상이며 실제 식별/비밀 데이터 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/snowflake.md": {
-      "ko_sha256": "c302ee4f2d9d211a8bef24aac4ff29f29994ae12114086b150ed0515b58eb991",
-      "en_sha256": "02b6189c3f82572b739eda810e67c75ce5b7184f36e89389f6e59edd8ba0b2e9",
+      "ko_sha256": "3880482ce886265e07915d67f0ed47c689357b692c8ac5c509afaf91f445a000",
+      "en_sha256": "9ab67475c5a5d64f87dc4de84fadcd187422666e469fc021917bd6484db4b0fd",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex agent /root/rewrite_ch12_14; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "최신 전체 원문 17/18장과 기존 한영 전문을 읽었다. 영어 본문은 chapter H1 제외 원문과 완전 동일하다. 한국어는 모든 문단·인용·목록·표를 번역하고 원문 제목·번호·text diagram/코드 블록을 그대로 보존했다. 기존 올바른 상세 설명과 공식 조건은 별도 보완 절, Mermaid와 한영 프롬프트도 보존했다. 제품 검토일 2026-09-26을 유지하며 재검증/실행 경험을 주장하지 않는다. 예시 이름과 값은 가상이며 실제 식별/비밀 데이터 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/platform-comparison.md": {
-      "ko_sha256": "9e14ed27e9e9b25dab085fce7a575ebb81c78f2bf25e0fc5823ec9d9312e18ba",
-      "en_sha256": "d6a162096973296617de80442cd90628e89a4e5156e7ba1cc74b7aa1e181b61c",
+      "ko_sha256": "fa7e47f5c5b86079d7dddd04f2fe32794ff7e368c627b66e1e1f44b5a5f9181b",
+      "en_sha256": "9e18cc1ecd331000c77346cfd978028ccb1020abae4c90a9d967433913dde3ae",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex subagent /root/review_ch16 independent review",
-      "reviewed": "2026-09-27",
-      "notes": "EN 본문 literal byte 일치. KO는 모든 설명 문단·인용·목록과 표를 같은 순서로 번역하고 technical names/field/example values는 보존했다. 원문과 같은 줄 수·제목 수준·번호·fence 언어 순서·표 행 수 확인. 기존 추가 조건과 양언어 prompt 유지. 설명용 가상 값 외 실제 내부 endpoint/credential/인물정보 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다. 2026-09-27 review_ch16: 변경 diff를 양언어 대조하고 기존 본문과의 문자열 비교로 Chapter 16 통합 목적지 링크 및 진도 문장만 변경됨을 확인했다. 이전 본문 의미 검토를 유지하며 새 기술 주장이나 민감 정보 추가 없음."
+      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
+      "reviewed": "2026-10-04",
+      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/linux-containers.md": {
-      "ko_sha256": "a8e56f5663730397bc73727294c408efba18f0899bd80aa59baca2215a168517",
-      "en_sha256": "f8f43bb45ab98535a0da7f766aa623fda12d45b1d843ff996f09b6f6c25d4b8d",
+      "ko_sha256": "1dbb0461a2e80f0344eac49f44eee51e1063e84f90d3fc6e6d5064206a6c97cb",
+      "en_sha256": "8b55fcbeb4d9ff9bab8330b45271f4a91584967050a725f6d8ca143a52be72dc",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex agent /root/rewrite_ch12_14; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "원문 전체 및 기존 한영 전문을 읽고 최종 영어를 문장별 원문과 대조했다. 원문 반복 요약도 포함하여 문단·목록·인용·text flow를 축약 없이 번역했다. 기존 inline의 PID namespace/request·반응적OOM/표준FD/UDP·loopback/network namespace/CrashLoop·ImagePull backoff/network policy 조건을 원문 번호가 붙은 부록으로 옮겼다. 기존 공식 보완 전체와 Mermaid·프롬프트·링크 보존. 기술명·short active English 검토 완료. 주소/PID/명령은 가상 학습 예시이며 실제 식별·비밀정보 없음. 명령/모델을 실행하지 않았고 기존 공식 검토일의 의미를 변경하지 않았다. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/kubernetes-core.md": {
-      "ko_sha256": "fbe0d6af165de8b31234d5d5c904fccd00709224e009a7956c7c608dd0eefd61",
-      "en_sha256": "6f1f5da99c0847f7cc2edeb8c89e196a92411b93891fdde1f20ed3075565392b",
+      "ko_sha256": "c572c50779db5aa43200d2c42ff7ea8aa885c330a8b99f8fc90061c80e2a4cdb",
+      "en_sha256": "e063ea520752b7663695fc9c52d287f2a10837e663ace73a5a5fe0bca02b4b97",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex agent /root/rewrite_ch12_14; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "원문 장 전체와 기존 한영 전문을 읽고 최종 한영 본문의 의미를 절별 대조했다. 한글 core 원문 완전 일치. 영어는 원문 모든 설명·인용·목록·text diagram 라벨을 번역하고 H2/H3/H4 계층·단락·예시 순서 보존. 원문 오류/조건 생략은 core에서 조용히 수정하지 않고 서두에서 번호별 보완을 안내했다. 기존 공식 조건, Mermaid, 실무 프롬프트 전부 보존. 실제 명령/클러스터 작업을 실행하지 않았고 날짜/버전 검증 범위를 넓혀 주장하지 않는다. 가상 주소·설정과 placeholder만 있으며 실제 개인정보·secret 값 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/kubernetes-operations.md": {
-      "ko_sha256": "3d10f80113f45bd5771651fb1dc706cf475591fd62cc5a09bd22d997b91a1126",
-      "en_sha256": "a2f26fd0920b0a34c1ffeb006e5684a9cbdc1cf336ba4c16be982bbef753c38b",
+      "ko_sha256": "4626091488f76ce51fcc8dcf4297cbbd34468f41baa6eb87245fc1b48ab775fd",
+      "en_sha256": "1d3571fc85c69ef37e95c6755c77136c82dba41ce9ea70f19a4f5ebb815c761a",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex agent /root/rewrite_ch12_14; Codex root title/reading-note integration review",
-      "reviewed": "2026-09-27",
-      "notes": "원문 장 전체와 기존 한영 전문을 읽고 최종 한영 본문의 의미를 절별 대조했다. 한글 core 원문 완전 일치. 영어는 원문 모든 설명·인용·목록·text diagram 라벨을 번역하고 H2/H3/H4 계층·단락·예시 순서 보존. 원문 오류/조건 생략은 core에서 조용히 수정하지 않고 서두에서 번호별 보완을 안내했다. 기존 공식 조건, Mermaid, 실무 프롬프트 전부 보존. 실제 명령/클러스터 작업을 실행하지 않았고 날짜/버전 검증 범위를 넓혀 주장하지 않는다. 가상 주소·설정과 placeholder만 있으며 실제 개인정보·secret 값 없음. 원문 Chapter H1 제목 복원과 한영 보완 참조 안내 추가만 root가 직접 대조했다. Source core와 나머지 본문은 저자 검토 hash 확인 후 유지했다. 강화된 문단/목록/표/인용/구분선/fence 구조 검사를 적용하며 의미 자동 증명은 주장하지 않는다."
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/index.md": {
-      "ko_sha256": "f9802b43bd387d8f57cf02f379447db6b2134a0af03220b5caa7eaa0aa952d6c",
-      "en_sha256": "23e4b62dd1c76d3adc1dc3e9b44d0567e9dc681805cf2723658672ac7272dcf6",
+      "ko_sha256": "9ec8791e4c4d49ae0a36d1e19c2ac347d98997e779a6d2f32ab9299e471102ea",
+      "en_sha256": "3a7b73a905c4d707da7ff8fabbdf8fc95147baff463351f7173e0c49a20e9a37",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root author + independent Codex /root/review_ch16",
-      "reviewed": "2026-10-03",
-      "notes": "전체 완독. 이전4~9장소개/연결/진도3span은HEAD그대로이며historical안내명확. 최신10~11장소개/연결/진도3span은원문KO전부일치,EN동일구조의완전번역.현재11장완료/12장다음과미실행제약동등."
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/redis.md": {
-      "ko_sha256": "b119e81f51bf34089f6bf70c5ccfde59af40d9e13afcbfb1637ec1b930ef9f7d",
+      "ko_sha256": "c8af0c82a8befd1d2868603fee62873ff9c4cc27c8e06f24882e8c265a165864",
+      "en_sha256": "e472fb8fe2df49fa03e10065faf6692cdff4cd0a3083f4b87e31eb5c3b29537a",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/review_ch16 author + independent Codex /root/serving_gpu",
-      "reviewed": "2026-10-01",
-      "notes": "4~5장 원문·KO/EN 전문 직접읽기. 연결수·TTL·cache·복제·PITR·SQL예시와 적용조건 대응, KO 원문동일성·EN 구조/의미 확인. 샘플명은 설명용이며 실제credential없음. 공식근거 보완은 본문밖. 실행·성능·복구시험 미실시.",
-      "en_sha256": "566b2c4b7974775fee67971299e9f67d9069ef78681a955e1d2a228b4095d0d0"
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/postgresql.md": {
-      "ko_sha256": "9130150a39e9faf4bf8e73f2e93768c73ae760fbfaeefd3ad74ca0719e454ba1",
+      "ko_sha256": "bc0000c63436fd83ba20c1602544a812b389927a401c59ddea1f45b23e45091f",
+      "en_sha256": "9aca0aa822f9b7e210543dce7bbb3d366d67418f3b355f43a5c7878d69d6c675",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/review_ch16 author + independent Codex /root/serving_gpu",
-      "reviewed": "2026-10-01",
-      "notes": "4~5장 원문·KO/EN 전문 직접읽기. 연결수·TTL·cache·복제·PITR·SQL예시와 적용조건 대응, KO 원문동일성·EN 구조/의미 확인. 샘플명은 설명용이며 실제credential없음. 공식근거 보완은 본문밖. 실행·성능·복구시험 미실시.",
-      "en_sha256": "930724996c8c9d5decbd176a719b4ea9188c7bfc94fd47474f518cc128a1a047"
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/kafka.md": {
-      "ko_sha256": "e37196535e326296014ff4f4e2ccbb2c1243ee6947570ee7bb4c731bc63950af",
+      "ko_sha256": "b0ae98163a31a7acf12cf82c614cb618eab47f8dadc6ecb079b63101521b6989",
+      "en_sha256": "4f65f1c84ceaaa0bc4ca6cf50a075b2e4bfaedd7266a03c7806dd193957e998c",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/dark_mode author + independent Codex /root/review_ch16",
-      "reviewed": "2026-10-01",
-      "notes": "6/8장 원문·KO/EN 전문 직접읽기 및 공식근거 재확인. Kafka RF/ISR/acks·ELR와 LiteLLM routing/sharedstate/provider경로/cache조건 대응. 영어2표현 교정 재확인, prompt양언어내용일치. 개인정보없음. 실제운영·성능시험 미실시.",
-      "en_sha256": "aefbe2de978c092fd686b1116478cec1302418ece51fdb93149ffda3f950ed49"
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/litellm.md": {
-      "ko_sha256": "cd812313218c105748f6a7b884e9a34a1eed0f777a79a906588823c56b77e10a",
+      "ko_sha256": "d0bfb2b10eb0a4cf432b34765a844a5371f24cc1297170a2a36d615c50d2db0d",
+      "en_sha256": "6f186e9cf21125a8bf5b8f609c2cade8174c9c892b1b8772885937ef17388976",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/dark_mode author + independent Codex /root/review_ch16",
-      "reviewed": "2026-10-01",
-      "notes": "6/8장 원문·KO/EN 전문 직접읽기 및 공식근거 재확인. Kafka RF/ISR/acks·ELR와 LiteLLM routing/sharedstate/provider경로/cache조건 대응. 영어2표현 교정 재확인, prompt양언어내용일치. 개인정보없음. 실제운영·성능시험 미실시.",
-      "en_sha256": "43222400b8f9375620ebc7acfea9f98b2492bf4b2c54aa36aee12c68775e1509"
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/vllm.md": {
-      "ko_sha256": "39dbba8cbad589f6cd1de8ff514c6c92263f29eadaedefe07a4d14bf3aaa414b",
+      "ko_sha256": "55ff45c416bb5918cd6e535a2fe917583065bf3626bafee87314b7f442daf6a7",
+      "en_sha256": "152cba8f570c37c3f8eb00bac2fff68fafa48b5a162fe22b17bb9587cb794cf5",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/serving_gpu author + independent Codex /root/dark_mode",
-      "reviewed": "2026-10-01",
-      "notes": "7/9장 원문·KO/EN 전문 직접읽기. 원문/번역 구조·숫자 multiset 및KV수치 재계산, 공식config/HGX/vLLM근거 대조. GLM parameter/FP4/1M단위·GPU utilization·node실패여유 정정을 원문밖에 구분. 실제GPU/모델실행·성능/복구실험 미실시. 개인정보없음.",
-      "en_sha256": "1691c03bc699d81bffdad6603aab8e79f4dd9447aa927a3104b908c1b2a236a2"
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/gpu-infrastructure.md": {
-      "ko_sha256": "78909bf6e2f26ac6e55e6b7108b723676d0744dc318a1be8cc411f328e2083fb",
+      "ko_sha256": "0587d573b6e570ce757cd1b44a2d5b54038e53018a8d5cef6c5e41384c574dca",
+      "en_sha256": "b4feef4a82321bf4b134b0c547cd6e856e14965d84ac233bc90da4ca30b4405e",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/serving_gpu author + independent Codex /root/dark_mode",
-      "reviewed": "2026-10-01",
-      "notes": "7/9장 원문·KO/EN 전문 직접읽기. 원문/번역 구조·숫자 multiset 및KV수치 재계산, 공식config/HGX/vLLM근거 대조. GLM parameter/FP4/1M단위·GPU utilization·node실패여유 정정을 원문밖에 구분. 실제GPU/모델실행·성능/복구실험 미실시. 개인정보없음.",
-      "en_sha256": "ea3ae5886cc7f50614fd993373739d0e95df7f7f6e5293a9542dae2ae8e8a270"
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/platform-security.md": {
+      "ko_sha256": "2911b765ed07c4e049d0189e6b4cb62d5a569a252d4f52fd9c0e03eb4ad3c405",
+      "en_sha256": "9a515c79a7ae784495a2b820fb3e917a0077c74e0578e4e3b19fddf8f910ac35",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/dark_mode author + independent Codex /root/serving_gpu",
-      "reviewed": "2026-10-03",
-      "notes": "10장 원문과 한영 전체·보완·프롬프트 독립 읽기. 인증/인가·RBAC·Secret 간접접근/회전·NetworkPolicy·container securityContext·서명/tenant 경계 조건 대응. 부정확 인용문구 교정 재확인. 원문/구조/숫자/프롬프트 동일성 확인. 개인정보 없음, 실제보안정책·회전·침투/복구시험 미실시.",
-      "ko_sha256": "7105e1f98aaeea5ed76b3c1a955449abad66e4daf4a781bb0d623d32c57365fc",
-      "en_sha256": "a220cd2b9b5dccde104055f290e6471fc5a0fa1831ff421e1d5d32d86041a479"
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "platform-infrastructure/cicd-gitops.md": {
+      "ko_sha256": "e494a28df628664481f9aabff6b43ae79c91ebbf9a424b6485b9893856260ba9",
+      "en_sha256": "b324d31e5e4ab7c4adbb4c7abc7cf07c4057af67bd3b26bcfafb88ddc83da7d7",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/serving_gpu author + independent Codex /root/dark_mode",
-      "reviewed": "2026-10-03",
-      "notes": "11.1~11.8 및 GPU보충 원문·한영전체 독립 읽기. Helm3 release와ArgoCD rendering/rollback·sync/health·canary/실패여유·perGPU KV/runtime조건 대응. 원문/구조/숫자/프롬프트 동일성 확인. 개인정보 없음, 실제배포·rollback·부하시험 미실시.",
-      "ko_sha256": "dcef964ea4927c47ba0fc7a9e54ed9889562ec7c5179a6ce9d339b35c4dd0ff0",
-      "en_sha256": "37a2f7d62bd744e69932a7dfe5b235854b5089291f197d04f961272f6b59845b"
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
+      "reviewed": "2026-10-04",
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "aws-cloud/foundations.md": {
+      "ko_sha256": "84524e8e2725bae61438853a90a1680d794c94150a83cb915c390c035454a9f4",
+      "en_sha256": "256823d45a8315b86bebc7c654e9136fbc8ed1acbedccb293c376f3ca7dc23a1",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/dark_mode author + independent /root/review_ch16",
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
       "reviewed": "2026-10-04",
-      "notes": "최신 compact 원문 1·2장 전체와 한영 4페이지 전체를 직접 읽었고, 수정 뒤 보완·실습 전체를 재독했다. 이전 긴 AWS 본문을 다시 넣지 않았음을 확인했다. 원문의 절 순서, 사례, 수치, 조건과 도식 의미가 영어 번역에도 보존된다. SCP는 권한을 부여하지 않으며 회원 계정 root에 적용되고 관리 계정 및 service-linked role 예외가 있다. Role trust와 서비스 접근 권한, IPv4/IPv6의 인터넷 경로, 일반 subnet의 5개 예약 주소와 BYOIP 예외, zonal/regional/private NAT 조건, SG 참조·합산의 의미가 보완에서 정확히 구분된다. 전체 영어는 간결하고 이해 가능하다. 2.2의 256 nodes + Pods를 256 combined nodes and Pods로 명료화했고 수치 자체는 보존했다. 원문의 단순화에 대한 보완이 양언어에 동등하게 전달된다. 각 장 1개 시나리오, 한영 동일 2개 탭. 최초 inline marker 렌더 검사가 실패함을 재현해 작성자에게 전달했고, 최종본 standalone marker 및 6개 필수 설명 필드를 확인했다. 가상 S3 least-privilege 검토와 AZ별 NAT 경로 장애 분석이 장 내용에 맞으며 미확인 조건·검증 범위를 구분한다. 명령 실행 주장 없음. 원문 및 네 페이지 전체에 실사용 개인정보나 비밀 발견 없음. ARN 123456789012, example-study-bucket/mybucket, RFC1918 주소와 igw-xxxx 등 학습용 placeholder임을 확인했다. 2026-10-04 AWS Organizations SCP, IAM policy elements, VPC subnet sizing, regional NAT 및 SG rules 공식 자료를 다시 열어 해당 보완을 확인했다. 페이지의 공식 검토 날짜가 양언어에 명시됐다. 작성자에게 요청한 standalone prompt markers, 6개 필수 시나리오 필드, 공식 확인일, EN 2.2 수치 표현 명료화가 모두 반영됨. 추가 수정 요청 없음.",
-      "ko_sha256": "e3951aa977d5373b86622b2215730fdc9dc165856a42e26524f48f312a3a8325",
-      "en_sha256": "ccd8323389c938f6d4e25b0fbb5f558cfc83c6b98bc07c0928c4375907cd71f2"
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "aws-cloud/networking.md": {
+      "ko_sha256": "988872ed6fde27d9d268c360cf484eb92f70aad0223a6bcba170b29802188498",
+      "en_sha256": "b6ac866c839e38afcfc3f7e38119d3fbafe2aeae98b244e20d71e8c690eb1ea0",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/dark_mode author + independent /root/review_ch16",
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
       "reviewed": "2026-10-04",
-      "notes": "최신 compact 원문 1·2장 전체와 한영 4페이지 전체를 직접 읽었고, 수정 뒤 보완·실습 전체를 재독했다. 이전 긴 AWS 본문을 다시 넣지 않았음을 확인했다. 원문의 절 순서, 사례, 수치, 조건과 도식 의미가 영어 번역에도 보존된다. SCP는 권한을 부여하지 않으며 회원 계정 root에 적용되고 관리 계정 및 service-linked role 예외가 있다. Role trust와 서비스 접근 권한, IPv4/IPv6의 인터넷 경로, 일반 subnet의 5개 예약 주소와 BYOIP 예외, zonal/regional/private NAT 조건, SG 참조·합산의 의미가 보완에서 정확히 구분된다. 전체 영어는 간결하고 이해 가능하다. 2.2의 256 nodes + Pods를 256 combined nodes and Pods로 명료화했고 수치 자체는 보존했다. 원문의 단순화에 대한 보완이 양언어에 동등하게 전달된다. 각 장 1개 시나리오, 한영 동일 2개 탭. 최초 inline marker 렌더 검사가 실패함을 재현해 작성자에게 전달했고, 최종본 standalone marker 및 6개 필수 설명 필드를 확인했다. 가상 S3 least-privilege 검토와 AZ별 NAT 경로 장애 분석이 장 내용에 맞으며 미확인 조건·검증 범위를 구분한다. 명령 실행 주장 없음. 원문 및 네 페이지 전체에 실사용 개인정보나 비밀 발견 없음. ARN 123456789012, example-study-bucket/mybucket, RFC1918 주소와 igw-xxxx 등 학습용 placeholder임을 확인했다. 2026-10-04 AWS Organizations SCP, IAM policy elements, VPC subnet sizing, regional NAT 및 SG rules 공식 자료를 다시 열어 해당 보완을 확인했다. 페이지의 공식 검토 날짜가 양언어에 명시됐다. 작성자에게 요청한 standalone prompt markers, 6개 필수 시나리오 필드, 공식 확인일, EN 2.2 수치 표현 명료화가 모두 반영됨. 추가 수정 요청 없음.",
-      "ko_sha256": "e53f864b589a264328dc438851e84cfe017ee66d87e24d42d0715ea8f67f00a0",
-      "en_sha256": "5f0ade325856bb5352cb17705b842af51f3d91fbe0b795df5649d1704e8bf014"
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "aws-cloud/compute.md": {
+      "ko_sha256": "35470cc7df4b51bb5612879172e6af32ddb83dca3ce34c459d61ccecaf63428a",
+      "en_sha256": "56ce1d882816fc701bb1d9a6e8d61deccdfeb541ff8ac9c4eb44be16aa1d39a5",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/serving_gpu author + independent /root/dark_mode",
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
       "reviewed": "2026-10-04",
-      "notes": "Compact source554~1065 및 4페이지 전체 독립 읽기. 절3.1~3.6,4.1~4.7와4장통합비교 보존; KO exact와 EN 구조/모든수치/예시 대응 PASS. 의미 검토: ASG2/3/10,Service80/8080/TCP, ALB/NLB instance/ip 경로,2049/5432,PGDATA/WAL/replica/shard,TTL 모두 대응. 별도 보완과 intro 연결 확인. AWS 공식문서에서 ALB all-unhealthy fail-open,ASG ELB health check활성,NodePort/PodIP target,EFS Regional/OneZone/advisory lock,RDS subnet/MultiAZ instance와cluster,Aurora reader connection balancing,ElastiCache async replication·Valkey durability 조건 대조. PostgreSQL NFS조건도 확인. 동일 양언어 prompt2탭,각4단독marker,6필드 및 관측/가정/미확인증거/검증 원칙 대응. 개인정보/실자격증명/실운영성과 없음. 수정 요청 없음. 브라우저 렌더와 전체 build/배포는 부모 검증 범위.",
-      "ko_sha256": "dc40529f2497dc450672ad6b6aee18c953f8d752fc09b6f41646d77604ea21f7",
-      "en_sha256": "ccb955e3275c69ed4ab6b4d060348178c6f6744d8e9900a086b16ae67dbe8ce5"
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "aws-cloud/storage-databases.md": {
+      "ko_sha256": "53a70855a6ca80d8ec5100bd530b67a4b4473e8a7d2ec820adfa2fbacb898bad",
+      "en_sha256": "df1224850c3a09fbea70f65847dd4220496fe7adcf187eaaf2f7ab2b8a8745cf",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/serving_gpu author + independent /root/dark_mode",
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
       "reviewed": "2026-10-04",
-      "notes": "Compact source554~1065 및 4페이지 전체 독립 읽기. 절3.1~3.6,4.1~4.7와4장통합비교 보존; KO exact와 EN 구조/모든수치/예시 대응 PASS. 의미 검토: ASG2/3/10,Service80/8080/TCP, ALB/NLB instance/ip 경로,2049/5432,PGDATA/WAL/replica/shard,TTL 모두 대응. 별도 보완과 intro 연결 확인. AWS 공식문서에서 ALB all-unhealthy fail-open,ASG ELB health check활성,NodePort/PodIP target,EFS Regional/OneZone/advisory lock,RDS subnet/MultiAZ instance와cluster,Aurora reader connection balancing,ElastiCache async replication·Valkey durability 조건 대조. PostgreSQL NFS조건도 확인. 동일 양언어 prompt2탭,각4단독marker,6필드 및 관측/가정/미확인증거/검증 원칙 대응. 개인정보/실자격증명/실운영성과 없음. 수정 요청 없음. 브라우저 렌더와 전체 build/배포는 부모 검증 범위.",
-      "ko_sha256": "342aedd88b80389bcad8b1a726eff1c21150897628607870cb2ade2263ddade6",
-      "en_sha256": "c499598afa952e92bea992cfa93f582bc74a06cb74533a0c4d112e6052e7511d"
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "aws-cloud/eks.md": {
+      "ko_sha256": "79e5ad6c07751b1aea6ce0dde1cf98d0b74dfe6fad6987bda1ac141f050865f7",
+      "en_sha256": "c4f527cf3203604d8f4d66666130073ac5b34746b8d8671caca0ba804bf6acae",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/review_ch16 author + independent Codex agent /root/serving_gpu",
+      "reviewer": "Codex /root/review_infra + Codex /root independent changed-section review",
       "reviewed": "2026-10-04",
-      "notes": "최신compact 원문5장349행·KO/EN각444행 전체읽기. 5.1~5.7과전체구조모두대조. EKS관리경계/NodeGroup/MNG/ASG/autoscaler,VPC CNI·IP숫자,CIDR확장제약,controller,target,CSI,ECR,PodIdentity/IRSA,RBAC차이가한영대응. 10.0.1.0/24,Node10.0.1.10,Pod.21/.22,256/251/4096숫자와도식구조보존. 공식문서로Karpenter직접node provision과CA/ASG차이,EFSFargate static only,ECRnode/execution role,PodIdentityAgent조건직접재확인. 원문의Karpenter→NodeGroup축약·251Pod오해·Service일반화는첫안내및외부보완에서한영동등하게설명. KOcore exact/ENheading·fence·numericmultiset/prompt2탭같음PASS. 6개실습필드·4markers·관측/가정/누락·비실행제약대응. 실제인증정보·내부URL·개인정보없음. 사설IP와model-loader·api·worker는명백한학습예시. 쉬운영어·의미·범위검토상수정요청없음.",
-      "ko_sha256": "b58495f62a9888bd61ab3d11c387a5e47342801ac2a148c5bef86f1cdddc40f2",
-      "en_sha256": "be57250840980c52aac013547b9f152e4a2a8803243fe398eacba2b98fb0533b"
+      "notes": "변경 페이지 KO/EN 전체를 이번 작업의 초기 검토·수정 검토·최종 분할 읽기로 확인. 원문 core를 포함하며, 이미 읽은 동일 문단·fenced block만 중복 출력 생략. 변경 도입·보완·16개 LLM 전문은 양언어 대조; 플랫폼 index 현재 안내와 과거 원문 블록 모두 읽음. AWS KO 원문 전체는 초기 검토, AWS EN 원문 전체와 EN 보완은 최종 검토에서 확인. 기존 LLM anchor와 KO/EN prompt code 동등성 유지. 업무별 비식별 실제 자료 placeholder·최대3개 핵심 누락 질문·근거 연결표·도메인 판정 기준·미실행 범위 확인. 기술 최신성 웹 재검증·실제 모델/업무 실행 없음. 독립 검토: root가 한영 16개 prompt 전체와 변경 도입·보완·index를 검토. 원문은 작성자 전문 검토와 byte 비교; 독립 원문 전체 재독은 아님. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "aws-cloud/index.md": {
       "semantic": "pass",

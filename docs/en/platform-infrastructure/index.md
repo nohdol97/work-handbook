@@ -1,8 +1,8 @@
 ---
 id: platform-infrastructure-overview
 status: overview
-last_updated: 2026-10-03
-last_reviewed: 2026-10-03
+last_updated: 2026-10-04
+last_reviewed: 2026-10-04
 knowledge_ids:
   - PIS-00-01
   - PIS-04-01
@@ -16,27 +16,9 @@ knowledge_ids:
 
 # Platform and infrastructure basics: study scope
 
-This section covers Chapters 1–11 of the supplied **Platform / Infrastructure / AI Serving — Basic Study Notes**. The first source covered Linux, containers, and Kubernetes in Chapters 1–3. The continuation adds Redis, PostgreSQL, Kafka, vLLM, LiteLLM, and GPUs in Chapters 4–9. Chapters 10–11 add platform security and CI/CD, Helm, Argo CD, and GitOps. Chapters 12–15, starting with Terraform, remain future topics.
+Current study covers **Chapters 1–11**, connecting Linux, containers, and Kubernetes with data services, AI serving, security, and GitOps. **Chapter 12 Terraform & Infrastructure as Code** is next; study content for Chapters 12–15 has not been supplied.
 
 “Completed” means **Basic conceptual study** for platform engineers. It does not mean Linux/Docker/Kubernetes commands were executed or a production cluster was built and tested. No specific distribution, kernel, cgroup, runtime, Kubernetes, CNI, CSI, or cloud version was supplied. Each topic separates version-sensitive behavior from its official evidence and conditions.
-
-## Earlier source scope: Chapters 4–9
-
-The scope, connected architecture, and progress for Chapters 4–9 below preserve the earlier source record. Current progress covers Chapters 1–11, with Chapter 12 next. Each technical page separates corrections and conditions by section number in its supplement.
-
-<!-- SOURCE INTRO START -->
-
-# Platform / Infrastructure / AI Serving — Basic Study Notes
-
-> Scope: Chapter 4 ~ Chapter 9  
-> Previous file: Chapter 1 ~ Chapter 3  
-> Level: Basic — core concepts every platform engineer should know  
-> Includes: main study material + practical questions and supplementary explanations  
-> Completed so far: Redis / PostgreSQL / Kafka operations / vLLM / LiteLLM / GPU Infrastructure
-
----
-
-<!-- SOURCE INTRO END -->
 
 ## Learning path
 
@@ -81,7 +63,7 @@ These topics are **not-started** because their study content has not been suppli
 | 14 | Internal Developer Platform / Self-Service |
 | 15 | End-to-End AI Platform Architecture |
 
-Connect the data-processing view in the [data platform curriculum](../data-platform/curriculum.md) with the service operations and serving view here. Chapters 10–11 were future topics in the earlier sources and are now covered by the new source. Content for Chapters 12–15 is not invented.
+Connect the data-processing view in the [data platform curriculum](../data-platform/curriculum.md) with the service operations and serving view here. Read each technical page’s supplement for corrections and conditions tied to source section numbers.
 
 ## Using commands and practical examples
 
@@ -145,39 +127,9 @@ Kubernetes
 
 <!-- SOURCE CONNECTION END -->
 
-## Earlier source: curriculum status after Chapters 4–9
-
-The following is the earlier progress record. See the last section of this page for the latest progress from the Chapters 10–11 source.
-
-<!-- SOURCE STATUS START -->
-
-# Current overall curriculum status
-
-```text
-1. Linux, Networking, Containers ✅
-2. Kubernetes Core ✅
-3. Kubernetes Production Operations ✅
-4. Redis for Platform Systems ✅
-5. PostgreSQL for Platform Systems ✅
-6. Kafka for Platform Systems ✅
-7. vLLM ✅
-8. LiteLLM ✅
-9. GPU Infrastructure & Scheduling ✅
-10. Platform Security ← next
-11. CI/CD, Helm, Argo CD & GitOps
-12. Terraform & Infrastructure as Code
-13. Multi-tenancy, Quotas & Cost Control
-14. Internal Developer Platform / Self-Service
-15. End-to-End AI Platform Architecture
-```
-
-> Continue the next study session with **Chapter 10. Platform Security**.
-
-<!-- SOURCE STATUS END -->
-
 ## Latest source: Chapters 10–11 scope, connections, and progress
 
-The latest introduction, connections, and progress follow the full source order. “Completed” means Basic conceptual study.
+This source record connects the roles covered in Chapters 10–11. “Completed” means Basic conceptual study.
 
 <!-- SOURCE SECURITY INTRO START -->
 
@@ -288,3 +240,51 @@ Expand traffic or roll back
 > Continue the next study session with **Chapter 12. Terraform & Infrastructure as Code**.
 
 <!-- SOURCE SECURITY STATUS END -->
+
+## Historical source records
+
+The following introduction and progress describe the earlier Chapters 4–9 source. Use the Chapters 1–11 table and future-topic guide above for current progress. “Current” and “next” inside the source refer to that earlier point in time.
+
+## Earlier source scope: Chapters 4–9
+
+<!-- SOURCE INTRO START -->
+
+# Platform / Infrastructure / AI Serving — Basic Study Notes
+
+> Scope: Chapter 4 ~ Chapter 9  
+> Previous file: Chapter 1 ~ Chapter 3  
+> Level: Basic — core concepts every platform engineer should know  
+> Includes: main study material + practical questions and supplementary explanations  
+> Completed so far: Redis / PostgreSQL / Kafka operations / vLLM / LiteLLM / GPU Infrastructure
+
+---
+
+<!-- SOURCE INTRO END -->
+
+## Earlier source: curriculum status after Chapters 4–9
+
+<!-- SOURCE STATUS START -->
+
+# Current overall curriculum status
+
+```text
+1. Linux, Networking, Containers ✅
+2. Kubernetes Core ✅
+3. Kubernetes Production Operations ✅
+4. Redis for Platform Systems ✅
+5. PostgreSQL for Platform Systems ✅
+6. Kafka for Platform Systems ✅
+7. vLLM ✅
+8. LiteLLM ✅
+9. GPU Infrastructure & Scheduling ✅
+10. Platform Security ← next
+11. CI/CD, Helm, Argo CD & GitOps
+12. Terraform & Infrastructure as Code
+13. Multi-tenancy, Quotas & Cost Control
+14. Internal Developer Platform / Self-Service
+15. End-to-End AI Platform Architecture
+```
+
+> Continue the next study session with **Chapter 10. Platform Security**.
+
+<!-- SOURCE STATUS END -->

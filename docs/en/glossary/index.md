@@ -8,15 +8,6 @@ knowledge_ids: []
 
 # Glossary
 
-| Term | Meaning |
-|---|---|
-| Canonical knowledge | A shared set of useful knowledge merged from several sources. |
-| Canonical page ID | A stable page identifier that stays the same when a path changes. A Korean and English pair shares one ID. |
-| Content manifest | A list of meaningful source items with stable IDs. |
-| Coverage matrix | A table that tracks where each ID is included, merged, deferred, or excluded, and why. |
-| Semantic audit | A review of whether both languages keep the same concepts, examples, constraints, and warnings. |
-| Source of truth | The original used to guide changes and decisions. Here, it is Markdown in Git. |
-
 ## Data platform terms
 
 | Term | Meaning | Canonical topic |
@@ -37,7 +28,7 @@ knowledge_ids: []
 | Checkpoint / savepoint | A state snapshot for recovery / a state snapshot used for planned operational changes. | [flink](../data-platform/flink.md) |
 | Backpressure | Pressure sent upstream when downstream processing cannot keep up. | [flink](../data-platform/flink.md) |
 | CDC | Capturing source changes such as inserts, updates, and deletes. | [cdc-debezium](../data-platform/cdc-debezium.md) |
-| WAL | A write-ahead log of database changes used for recovery and replication. | [cdc-debezium](../data-platform/cdc-debezium.md) |
+| WAL | Write-Ahead Log for database recovery and replication. Log retention matters for CDC, backup, and PITR. | [CDC](../data-platform/cdc-debezium.md) · [PostgreSQL](../platform-infrastructure/postgresql.md) |
 | Tombstone | A null-value record marking key removal in a Kafka compacted topic. | [cdc-debezium](../data-platform/cdc-debezium.md) |
 | Orchestration / DAG | Managing task dependencies and execution / a directed graph without cycles. | [orchestration](../data-platform/orchestration.md) |
 | Backfill | Filling or recomputing data for a past range. | [orchestration](../data-platform/orchestration.md) |
@@ -112,7 +103,6 @@ knowledge_ids: []
 | Sentinel / Redis Cluster | Redis failure detection and failover coordination / a cluster that partitions data with hash slots. | [redis](../platform-infrastructure/redis.md) |
 | MVCC | A method that manages visible row versions to support concurrent transactions. | [postgresql](../platform-infrastructure/postgresql.md) |
 | Connection pool | A set of database connections reused by client requests. It does not create unlimited database capacity. | [postgresql](../platform-infrastructure/postgresql.md) |
-| WAL | Write-Ahead Log used to recover data changes and managed for backup, replication, and PITR. | [postgresql](../platform-infrastructure/postgresql.md) |
 | PITR | Point-in-Time Recovery using a base backup and the required logs to reach a target time. | [postgresql](../platform-infrastructure/postgresql.md) |
 | ISR | The Kafka set of In-Sync Replicas tracked as sufficiently caught up with the leader. | [kafka](../platform-infrastructure/kafka.md) |
 | min.insync.replicas | The minimum ISR size required to acknowledge Kafka writes using acks=all successfully. | [kafka](../platform-infrastructure/kafka.md) |
@@ -177,3 +167,16 @@ knowledge_ids: []
 | EBS / EFS CSI driver | Drivers connecting Kubernetes volume requests to AWS EBS/EFS storage. | [eks](../aws-cloud/eks.md) |
 | ECR | An AWS registry storing container images in repositories. | [eks](../aws-cloud/eks.md) |
 | EKS Pod Identity / IRSA | Ways to link Kubernetes ServiceAccounts to AWS IAM roles for workload permissions. Their implementation and support conditions differ. | [eks](../aws-cloud/eks.md) |
+
+## Handbook management terms
+
+Terms used in the [knowledge workflow](../methodologies/knowledge-workflow.md).
+
+| Term | Meaning |
+|---|---|
+| Canonical knowledge | A shared set of useful knowledge merged from several sources. |
+| Canonical page ID | A stable page identifier that stays the same when a path changes. A Korean and English pair shares one ID. |
+| Content manifest | A list of meaningful source items with stable IDs. |
+| Coverage matrix | A table that tracks where each ID is included, merged, deferred, or excluded, and why. |
+| Semantic audit | A review of whether both languages keep the same concepts, examples, constraints, and warnings. |
+| Source of truth | The original used to guide changes and decisions. Here, it is Markdown in Git. |
