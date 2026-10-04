@@ -144,28 +144,3 @@ knowledge_ids: []
 | Sync / Health | 원하는 선언과의 일치 여부 / 자원 상태에 대한 health 평가. 앱 품질 보장과 구분한다. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
 | Canary | 새 버전에 일부 트래픽을 보내 검증한 뒤 점진적으로 확대하는 배포 방식. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
 | Spare GPU capacity | 기존 서비스 외에 새 모델·KV Cache·병렬화·목표 부하를 수용할 수 있는 여유 자원. | [cicd-gitops](../platform-infrastructure/cicd-gitops.md) |
-
-## AWS 클라우드 기초
-
-| 용어 | 의미 | 정규 주제 |
-|---|---|---|
-| Region / Availability Zone | AWS의 지리적 리전 / 리전 안의 분리된 가용 영역. AZ는 데이터센터 하나와 반드시 같지 않다. | [foundations](../aws-cloud/foundations.md) |
-| AWS Account | 리소스·권한·결제를 구분하는 AWS 계정 경계. 리전과 별도 개념이다. | [foundations](../aws-cloud/foundations.md) |
-| AWS Organizations / OU | 여러 계정을 관리하는 서비스 / 계정을 묶는 조직 단위. | [foundations](../aws-cloud/foundations.md) |
-| SCP | Organizations에서 적용하는 권한 상한 정책. 그 자체로 IAM 권한을 부여하지 않는다. | [foundations](../aws-cloud/foundations.md) |
-| IAM Role / Temporary credentials | 신뢰 정책에 따라 맡을 수 있는 AWS 권한 역할 / 제한된 유효기간의 자격증명. | [foundations](../aws-cloud/foundations.md) |
-| VPC / Subnet | AWS 리전의 가상 네트워크 / AZ에 속하는 IP 주소 범위. | [networking](../aws-cloud/networking.md) |
-| CIDR | IP 주소 범위를 주소와 prefix 길이로 표현하는 방식. | [networking](../aws-cloud/networking.md) |
-| Route table / Longest prefix match | 목적지별 트래픽 경로 / 일치하는 경로 중 더 구체적인 prefix를 선택하는 규칙. | [networking](../aws-cloud/networking.md) |
-| Internet Gateway (IGW) | VPC와 인터넷 사이 통신을 지원하는 gateway. 실제 접근에는 주소·경로·보안 조건도 필요하다. | [networking](../aws-cloud/networking.md) |
-| NAT Gateway | 주소 변환을 제공하는 관리형 gateway. Public/private 및 zonal/regional 구성 조건을 구분한다. | [networking](../aws-cloud/networking.md) |
-| Security Group | 연결 상태를 추적하는 리소스 네트워크 허용 규칙. 경로를 만드는 route table과 구분한다. | [networking](../aws-cloud/networking.md) |
-| ALB / Target group | HTTP 계층에서 요청을 분산하는 load balancer / 요청을 받을 대상과 health check 설정의 묶음. | [compute](../aws-cloud/compute.md) |
-| EC2 / AMI | AWS 가상 서버 / 서버 시작에 사용하는 OS·소프트웨어 이미지. | [compute](../aws-cloud/compute.md) |
-| Auto Scaling Group (ASG) | 최소·원하는·최대 용량과 정책에 따라 EC2 instance 집합을 관리하는 구성. | [compute](../aws-cloud/compute.md) |
-| EBS / Snapshot | EC2 등에 연결하는 block storage / 복구에 쓰는 볼륨 시점 사본. | [storage](../aws-cloud/storage.md) |
-| S3 Bucket / Object key | S3 객체를 담는 관리 단위 / bucket 안에서 객체를 식별하는 key. | [storage](../aws-cloud/storage.md) |
-| EFS / Mount target | 관리형 공유 파일시스템 / VPC에서 파일시스템에 연결하는 네트워크 접근 지점. | [storage](../aws-cloud/storage.md) |
-| RDS Multi-AZ / Read replica | 구성별로 다른 가용성 배치 / 읽기 확장 등에 사용하는 복제 DB. Standby와 reader 역할은 배포 유형별로 확인한다. | [databases-cache](../aws-cloud/databases-cache.md) |
-| Aurora Writer / Reader endpoint | 현재 writer / reader 연결을 위한 endpoint. 연결 분산과 쿼리 분산을 구분한다. | [databases-cache](../aws-cloud/databases-cache.md) |
-| ElastiCache Replica / Shard | 같은 데이터의 복사본 / 데이터 분할 단위. Engine과 배포 방식에 따라 역할이 달라진다. | [databases-cache](../aws-cloud/databases-cache.md) |
