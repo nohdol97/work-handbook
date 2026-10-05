@@ -46,12 +46,20 @@ Distinguish studied concept, hypothetical example, recommended practice and actu
 Assume Pages is public. No company secrets, internal URLs/identifiers, credentials, personal/payment data, proprietary code, restricted architecture or private datasets in public pages. Generalize reusable knowledge and apply the same redaction to both languages. Never commit sensitive raw sources; keep only sanitized evidence. Source tracking, control contracts and reviews stay outside the generated public site, but all tracked files and history are public in this repository. Only sanitized, publishable sources may be committed. The cloud-synced vault has the same privacy boundary as stored Markdown; do not mirror private/credential/runtime folders.
 Store reusable runnable examples under examples/, configs/, scripts/ and link from both languages. Validate executable behavior when practical. Never claim an unrun example was tested.
 
+## Practical English learning
+
+Maintain intermediate practical English learning for the entire existing handbook and every future content addition or revision. First inspect frequency candidates from English canonical prose with `scripts/english_study.py --candidates`, then curate bilingual vocabulary, idioms/expressions/collocations, phrasal verbs, and interview/workplace sentence patterns in `learning/english-entries.json`. Include natural spoken examples with explicit register and distinguish real experience from hypothetical interview examples.
+
+Counts represent this handbook only, not general or spoken English popularity. Exclude code, front matter, comments, URLs, and the generated English study section. Combine only explicit inflected forms, preserve source pages, and keep zero-occurrence supplemental expressions separate. Do not classify every frequent phrase as an idiom or copy external dictionary definitions.
+
+After any canonical English content change, review candidates and useful additions, run `scripts/english_study.py --write`, read the resulting bilingual learning pages and examples, and refresh actual semantic review evidence. `make validate` checks corpus/entry hashes and generated output freshness. Generation does not approve meaning, grammar, register, or teaching quality. Follow spec 008 and ADR 008 for scope, evidence, and ownership.
+
 ## Required update workflow (46–58)
 
 1. Inspect repo, contracts, existing KO/EN and navigation; read curriculum and complete sources.
 2. Extract IDs, complete manifest and mapping before final pages; classify domains and locate existing canonical topics.
 3. Merge useful knowledge, author both languages, review easy English and equivalent scope; add useful diagrams, cross-links, glossary, meaningful LLM scenarios, metadata, navigation and examples.
-4. Complete coverage matrix; generate coverage report and distinguish total/accounted/published/KO/EN/sync rates. Exclusions and deferrals remain visible.
+4. Review practical English frequency candidates, update useful learning entries, regenerate and review learning pages. Complete coverage matrix; generate coverage report and distinguish total/accounted/published/KO/EN/sync rates. Exclusions and deferrals remain visible.
 5. Review semantic scope, simple English and privacy; record current page hashes with real review evidence. Check structural pairs, duplicate IDs, links, navigation/orphans, Mermaid and executable examples.
 6. Run full validation and strict MkDocs build. Inspect generated language alternates and verify control/source files are absent from site. Resolve every error.
 7. Sync generated first-party Markdown to the configured vault, verify byte hashes and fail on edited vault copies. Git Markdown remains authoritative; no reverse sync, silent overwrite or delete. A successful local finalize includes vault sync; CI has no vault access.
