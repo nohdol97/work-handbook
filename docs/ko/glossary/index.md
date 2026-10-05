@@ -214,3 +214,20 @@ knowledge_ids: []
 | Coverage matrix | 각 ID가 포함·통합·보류·제외된 위치와 이유를 추적하는 표. |
 | Semantic audit | 두 언어에 같은 개념, 예시, 제약과 경고가 있는지 검토하는 과정. |
 | Source of truth | 변경과 판단의 기준이 되는 원본. 이 핸드북에서는 Git의 Markdown이다. |
+
+## QLoRA·모델 학습
+
+| 용어 | 의미 | 정규 주제 |
+|---|---|---|
+| LoRA | 일부 weight update를 저랭크 행렬로 표현해 학습하는 parameter-efficient adaptation 방식. | [qlora-artifacts](../ai-model-development/qlora-artifacts.md) |
+| QLoRA | 양자화한 frozen base model에 LoRA adapter를 학습하는 접근. 저장 정밀도와 연산 dtype은 구분한다. | [qlora-artifacts](../ai-model-development/qlora-artifacts.md) |
+| LoRA adapter | Base model과 함께 사용하는 학습된 저랭크 분해 파라미터와 구성. Base revision·target module 등의 호환 조건이 있다. | [adapter-compatibility](../ai-model-development/adapter-compatibility.md) |
+| Training dataset | 모델 파라미터를 학습하는 데 사용하는 데이터 분할. 평가용 holdout과 분리한다. | [training-datasets](../ai-model-development/training-datasets.md) |
+| Validation dataset | 학습 중 설정 선택과 성능 관찰에 쓰는 데이터. 최종 독립 test set과 역할이 다르다. | [training-datasets](../ai-model-development/training-datasets.md) |
+| Golden dataset | 검토된 기대 결과나 기준을 가진 평가 집합. 반복적인 선택에 쓰면 독립 최종 평가와 구분해야 한다. | [training-datasets](../ai-model-development/training-datasets.md) |
+| Target module | LoRA 등을 적용할 모델 내부 module. 이름·shape·architecture에 따라 설정이 달라진다. | [adapter-compatibility](../ai-model-development/adapter-compatibility.md) |
+| Gradient accumulation | 여러 microbatch의 gradient를 누적한 뒤 optimizer update를 수행하는 방식. | [qlora-training](../ai-model-development/qlora-training.md) |
+| Epoch | 학습 데이터 전체를 한 번 거치는 단위. 실제 step 수는 batch·분산·sampling 설정에 따라 달라진다. | [qlora-training](../ai-model-development/qlora-training.md) |
+| Loss masking | 일부 token 위치를 loss 계산에서 제외하는 처리. 학습 목적과 데이터 형식에 맞게 확인한다. | [qlora-training](../ai-model-development/qlora-training.md) |
+| Model promotion | 평가와 운영 기준을 충족한 모델을 다음 사용 단계의 후보로 올리는 절차. | [evaluation-promotion](../ai-model-development/evaluation-promotion.md) |
+| Training lineage | 학습 run과 연결된 data·base model·code·설정·평가·artifact 관계의 추적. | [artifact-lineage](../ai-model-development/artifact-lineage.md) |

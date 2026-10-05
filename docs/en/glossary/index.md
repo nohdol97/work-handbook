@@ -214,3 +214,20 @@ Terms used in the [knowledge workflow](../methodologies/knowledge-workflow.md).
 | Coverage matrix | A table that tracks where each ID is included, merged, deferred, or excluded, and why. |
 | Semantic audit | A review of whether both languages keep the same concepts, examples, constraints, and warnings. |
 | Source of truth | The original used to guide changes and decisions. Here, it is Markdown in Git. |
+
+## QLoRA and model training
+
+| Term | Meaning | Canonical topic |
+|---|---|---|
+| LoRA | A parameter-efficient adaptation method that represents weight updates with low-rank matrices. | [qlora-artifacts](../ai-model-development/qlora-artifacts.md) |
+| QLoRA | An approach that trains LoRA adapters on a quantized, frozen base model. Storage precision and compute dtype are distinct. | [qlora-artifacts](../ai-model-development/qlora-artifacts.md) |
+| LoRA adapter | Trained low-rank parameters and configuration used with a base model, subject to compatibility conditions such as base revision and target modules. | [adapter-compatibility](../ai-model-development/adapter-compatibility.md) |
+| Training dataset | The data split used to train model parameters, kept separate from evaluation holdouts. | [training-datasets](../ai-model-development/training-datasets.md) |
+| Validation dataset | Data used to monitor training and select settings. Its role differs from an independent final test set. | [training-datasets](../ai-model-development/training-datasets.md) |
+| Golden dataset | An evaluation set with reviewed expected outcomes or criteria. Repeated selection use must be distinguished from independent final evaluation. | [training-datasets](../ai-model-development/training-datasets.md) |
+| Target module | A module inside a model to which an adapter such as LoRA is applied. Settings depend on names, shapes, and architecture. | [adapter-compatibility](../ai-model-development/adapter-compatibility.md) |
+| Gradient accumulation | Accumulating gradients across multiple microbatches before an optimizer update. | [qlora-training](../ai-model-development/qlora-training.md) |
+| Epoch | One pass through the training data. The number of steps depends on batching, distribution, and sampling settings. | [qlora-training](../ai-model-development/qlora-training.md) |
+| Loss masking | Excluding selected token positions from the loss calculation, checked against the training objective and data format. | [qlora-training](../ai-model-development/qlora-training.md) |
+| Model promotion | Moving a model to a candidate for its next usage stage after it meets evaluation and operational criteria. | [evaluation-promotion](../ai-model-development/evaluation-promotion.md) |
+| Training lineage | Tracking relationships between a training run and its data, base model, code, settings, evaluation, and artifacts. | [artifact-lineage](../ai-model-development/artifact-lineage.md) |

@@ -2,11 +2,25 @@
 
 ## 이 프로젝트가 해결하는 문제
 
-업무 지식을 분야와 역할이 바뀌어도 계속 확장하는 한영 핸드북이다. 학습 원문을 보존하고 설계·운영·문제 해결에 다시 사용한다. 데이터 플랫폼 1~21장, 플랫폼·인프라 1~15장, 압축형 AWS Cloud Basic 1~7장과 실무 프롬프트를 포함해 한영 67쌍이다. 분야별 범위·학습 현황·시작점은 [핸드북 홈](docs/ko/index.md)에서 확인한다. 학습 완료는 실제 구축·장애 실험 완료를 뜻하지 않는다.
+업무 지식을 분야와 역할이 바뀌어도 계속 확장하는 한영 핸드북이다. 학습 원문을 보존하고 설계·운영·문제 해결에 다시 사용한다. 데이터 플랫폼 1~21장, 플랫폼·인프라 1~15장, 압축형 AWS Cloud Basic 1~7장, AI 모델 개발·QLoRA 1~10장, 실전 영어와 실무 프롬프트를 포함해 한영 83쌍이다. 분야별 범위·학습 현황·시작점은 [핸드북 홈](docs/ko/index.md)에서 확인한다. 학습 완료는 실제 구축·장애 실험 완료를 뜻하지 않는다.
 
 ## 실무 프롬프트
 
-[업무별 프롬프트 모음](docs/ko/prompts/index.md)은 설계·변경 검토, 장애 조사, 성능·비용 분석, 검증·복구 준비에 쓰는 템플릿이다. 모음 100개와 본문 42개, 총 142개를 한국어·English 탭에서 복사할 수 있다. 비식별 업무 자료와 누락 정보를 입력하고 결과를 실제 근거에 대조한다. 사용 빈도나 모델 효과를 측정한 사례로 주장하지 않는다.
+[업무별 프롬프트 모음](docs/ko/prompts/index.md)은 설계·변경 검토, 장애 조사, 성능·비용 분석, 검증·복구 준비에 쓰는 템플릿이다. 모음 100개와 본문 45개, 총 145개를 한국어·English 탭에서 복사할 수 있다. 비식별 업무 자료와 누락 정보를 입력하고 결과를 실제 근거에 대조한다. 사용 빈도나 모델 효과를 측정한 사례로 주장하지 않는다.
+
+## 실전 영어 학습
+
+[한영 어휘·표현 학습](docs/ko/english-study/index.md)은 전체 영어 본문에서 빈도를 먼저 집계하고 중급 기술 설명·면접·회사 대화에 쓸 어휘, 숙어/관용 표현/연어, 구동사, 문장을 정리한다. 작성한 구어체 예문은 원문 인용과 구분하며, 0회 표현은 보충 구역에 둔다.
+
+문서 추가·변경마다 아래 후보를 검토하고 `learning/english-entries.json`의 뜻·사용역·예문을 보완한 다음 생성한다. 생성 후 양언어를 검토하고 기존 `reviews/bilingual.json` 증거를 갱신한다. 자동 집계는 자연스러운 영어를 판정하지 않는다.
+
+```bash
+.venv/bin/python scripts/english_study.py --candidates
+.venv/bin/python scripts/english_study.py --write
+.venv/bin/python scripts/english_study.py --check
+```
+
+`make validate`가 낡은 코퍼스/원고/생성물을 거부하면 후보 확인·생성·의미 검토를 수행한다. 생성 페이지를 직접 수정하지 않고 검토 원고를 수정한다.
 
 ## 설계 원칙
 
@@ -35,7 +49,7 @@ make validate
 2. [입력 스키마](configs/source-model.md)에 맞춰 `content-manifest.md`, `mapping.md`, `coverage-matrix.md`를 만든다. 문서 작성 전에 모든 의미 있는 지식을 먼저 추출한다.
 3. [원문 보존 스킬](.agents/skills/preserve-study-source/SKILL.md)을 적용한다. 최신 지정 자료의 원문 구간과 원래 언어를 `reviews/source-preservation.json`에 등록한다. 원문은 그대로, 번역은 같은 구조로 작성하고 기존의 올바른 보완은 별도 구역에 유지한다.
 4. `.venv/bin/python scripts/check_source_preservation.py`로 원문 동일성과 번역 구조를 검사한 뒤 전체 쌍을 직접 읽어 의미·쉬운 영어·개인정보를 검토한다. `reviews/bilingual.json`에 실제 검토자, 결과, 현재 SHA-256을 기록한다. 해시만 갱신해서 검토를 대신하면 안 된다.
-5. `.venv/bin/python scripts/check_handbook.py --write-reports`로 반영 보고서를 만든다. `make finalize`로 전체 검증과 vault 저장을 실행한다.
+5. 영어 빈도 후보를 먼저 확인하고 실전 영어 원고·생성물·검토 기록을 갱신한다. `.venv/bin/python scripts/check_handbook.py --write-reports`로 반영 보고서를 만든다. `make finalize`로 전체 검증과 vault 저장을 실행한다.
 6. 검증된 지정 파일을 커밋하고 공개 원격에 push한다. 자료·커리큘럼·페이지 쌍·coverage·검증·미해결 사항을 간단히 보고한다.
 
 ## vault 설정
@@ -61,6 +75,8 @@ README·운영 계약·출처·한영 문서·자체 스킬 등 first-party `.md
 | `sources/` | 민감 정보를 제거한 원문과 지식 추적 자료. 사이트에는 미포함 |
 | `sources-private/` | Git과 vault에서 제외되는 로컬 민감 자료 |
 | `examples/`, `configs/`, `scripts/` | 실행 예제·설정·검증과 복사 도구 |
+| `learning/english-entries.json` | 사람이 검토하는 한영 어휘·표현·예문 원고 |
+| `reviews/english-frequency.json` | 영어 본문 hash·집계 횟수·출처 문서 |
 | `reviews/bilingual.json` | 문서 해시에 결속된 실제 검토 기록 |
 | `reviews/source-preservation.json` | 원문 구간·원래 언어·공개 문서의 대응과 형태 검증 |
 | `handbook-contract.md`, `AGENTS.md` | 지식 관리·작업 계약 |

@@ -434,6 +434,94 @@
       "verbatim_language": "ko",
       "marker": "SOURCE MANAGED STATUS",
       "include_start": true
+    },
+    {
+      "page": "ai-model-development/qlora-artifacts.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# Chapter 1. QLoRA와 학습 결과물",
+      "end": "# Chapter 2. Adapter 재사용과 Base Model 변경",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "ai-model-development/adapter-compatibility.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# Chapter 2. Adapter 재사용과 Base Model 변경",
+      "end": "# Chapter 3. Training Dataset과 Golden Dataset",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "ai-model-development/training-datasets.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# Chapter 3. Training Dataset과 Golden Dataset",
+      "end": "# Chapter 4. QLoRA 학습 과정",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "ai-model-development/qlora-training.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# Chapter 4. QLoRA 학습 과정",
+      "end": "# Chapter 5. Evaluation과 Model Promotion",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "ai-model-development/evaluation-promotion.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# Chapter 5. Evaluation과 Model Promotion",
+      "end": "# Chapter 6. Model Change와 Re-Training",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "ai-model-development/model-retraining.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# Chapter 6. Model Change와 Re-Training",
+      "end": "# Chapter 7. Model / Dataset Artifact 관리",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "ai-model-development/artifact-lineage.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# Chapter 7. Model / Dataset Artifact 관리",
+      "end": "# Chapter 8. AI Model Developer의 역할",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "ai-model-development/model-developer.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# Chapter 8. AI Model Developer의 역할",
+      "end": "# Chapter 9. AI Model Developer와 AI Platform Engineer",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "ai-model-development/model-platform-collaboration.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# Chapter 9. AI Model Developer와 AI Platform Engineer",
+      "end": "# Chapter 10. End-to-End Fine-Tuning Platform Architecture",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "ai-model-development/training-platform-architecture.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# Chapter 10. End-to-End Fine-Tuning Platform Architecture",
+      "end": "# Final Summary",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "ai-model-development/index.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# AI Model Fine-Tuning / QLoRA Basic",
+      "end": "# Chapter 1. QLoRA와 학습 결과물",
+      "verbatim_language": "ko",
+      "include_start": true,
+      "marker": "SOURCE INTRO"
+    },
+    {
+      "page": "ai-model-development/index.md",
+      "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
+      "start": "# Final Summary",
+      "end": null,
+      "verbatim_language": "ko",
+      "include_start": true,
+      "marker": "SOURCE SUMMARY"
     }
   ]
 }

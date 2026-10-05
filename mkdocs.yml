@@ -72,6 +72,24 @@ plugins:
             멀티테넌시·비용: Multi-tenancy and cost
             개발자 플랫폼: Developer platform
             AI 플랫폼 전체 구조: End-to-end AI platform architecture
+            AI 모델 개발: AI model development
+            QLoRA 학습 안내: QLoRA study guide
+            QLoRA·학습 결과물: QLoRA and artifacts
+            Adapter 호환성: Adapter compatibility
+            Training·Golden Dataset: Training and golden datasets
+            QLoRA 학습 과정: QLoRA training process
+            평가·Model Promotion: Evaluation and model promotion
+            모델 교체·재학습: Model changes and retraining
+            Artifact·Lineage: Artifacts and lineage
+            AI Model Developer 역할: AI model developer role
+            모델·플랫폼 협업: Model and platform collaboration
+            Fine-Tuning 플랫폼 구조: Fine-tuning platform architecture
+            실전 영어: Practical English
+            영어 학습 안내: English study guide
+            한영 실무 어휘 사전: Practical bilingual vocabulary
+            숙어·관용 표현·연어: Idioms and expressions
+            업무 구동사: Workplace phrasal verbs
+            면접·회사 문장: Interview and workplace expressions
             실무 프롬프트: Practical prompts
             프롬프트 모음: Prompt library
             저장·분석 기초: Storage and analytics
@@ -150,6 +168,24 @@ nav:
       - EKS on AWS: aws-cloud/eks.md
       - AWS 관리형 서비스: aws-cloud/managed-services.md
       - AI/GPU·AWS 전체 구조: aws-cloud/ai-gpu-architecture.md
+  - AI 모델 개발:
+      - QLoRA 학습 안내: ai-model-development/index.md
+      - QLoRA·학습 결과물: ai-model-development/qlora-artifacts.md
+      - Adapter 호환성: ai-model-development/adapter-compatibility.md
+      - Training·Golden Dataset: ai-model-development/training-datasets.md
+      - QLoRA 학습 과정: ai-model-development/qlora-training.md
+      - 평가·Model Promotion: ai-model-development/evaluation-promotion.md
+      - 모델 교체·재학습: ai-model-development/model-retraining.md
+      - Artifact·Lineage: ai-model-development/artifact-lineage.md
+      - AI Model Developer 역할: ai-model-development/model-developer.md
+      - 모델·플랫폼 협업: ai-model-development/model-platform-collaboration.md
+      - Fine-Tuning 플랫폼 구조: ai-model-development/training-platform-architecture.md
+  - 실전 영어:
+      - 영어 학습 안내: english-study/index.md
+      - 한영 실무 어휘 사전: english-study/vocabulary.md
+      - 숙어·관용 표현·연어: english-study/idioms.md
+      - 업무 구동사: english-study/phrasal-verbs.md
+      - 면접·회사 문장: english-study/workplace.md
   - 실무 프롬프트:
       - 프롬프트 모음: prompts/index.md
       - 저장·분석 기초: prompts/foundations.md
