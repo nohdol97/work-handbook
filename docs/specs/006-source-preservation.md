@@ -16,7 +16,11 @@
 - R4. 정정·버전 조건·추가 그림·실무 프롬프트는 원문 구역 밖에 표시한다. 원문의 부정확한 단정을 조용히 수정하지 않는다. 필요한 주석은 원문 밖에서 해당 절 번호를 명시하고, 서두에서 보완 설명을 함께 읽도록 안내한다.
 - R5. 검사기는 읽기 전용이며 `make validate`에 포함한다. 변조·일반 문단 삭제/병합·목록/표 누락·text 도식의 한 줄 압축·재배열·가짜 code fence 제목·양언어 경계 이상을 재현하는 테스트를 먼저 실패시킨 뒤 통과시킨다.
 - R6. 전체 한영 검토, strict 빌드, 화면 목차·언어 전환, vault byte 비교 후 기존 승인된 저장소와 Pages에 반영한다. 실제 엔진·운영 명령 실행이나 새로운 공개 대상은 범위 밖이다.
+- R7. 등록된 한영 원문 구역에서 일반 문장 직후 빈 줄 없이 이어지는 최상위 bullet 목록(`-`, `+`, `*`)과 숫자·마침표 목록, blockquote 내부의 같은 목록은 HTML에서 실제 목록으로 표시한다. MkDocs `on_page_markdown` hook은 `reviews/source-preservation.json`에 등록된 페이지·marker의 완전한 START/END 구간에만 렌더링용 구분 행을 추가한다. 실제 hook과 사이트 Markdown 설정으로 변환한 HTML의 `ul/ol/li`로 검증한다.
+- R8. R7은 원본·한영 Markdown·vault byte를 변경하지 않는다. 원문 밖·미등록 페이지/marker·기존 정상 목록·nested/indented 내용·fenced code 내부는 그대로 두며, code 안의 가짜 source marker도 작동하지 않는다. 목록의 lazy continuation을 새 문단으로 나누지 않고, 일반 indented code와 inline backtick을 fence 시작으로 오인하지 않는다. 한영 fixture, 파일 byte 비교, 멱등성, fence·인용·들여쓰기 회귀로 확인한다. 범용 CommonMark 변환·번호 재작성·본문 보정은 범위 밖이다.
 
 ## 범위와 한계
 
 이번 복원 대상은 원문을 압축·재구성한 학습 페이지다. 이미 원문 흐름을 보존한 Lakehouse 등은 기준 문서로 사용한다. 지식 ID·기존의 올바른 보완 정보·프롬프트는 보존한다. 원문 구역과 보완 구역 분리는 문서 직접 검토와 diff로 확인한다. 자동 검사가 의미 보존 검토를 대신하지 않는다.
+
+표시용 목록 구분의 결정과 한계는 [ADR 007](../adr/007-source-list-rendering.md)을 따른다.

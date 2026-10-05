@@ -193,3 +193,5 @@ validation:
     not_found: warn
     anchors: warn
     unrecognized_links: warn
+hooks:
+  - scripts/source_markdown.py
