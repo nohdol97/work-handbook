@@ -1,8 +1,8 @@
 ---
 id: handbook-home
 status: overview
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-05
+last_reviewed: 2026-10-05
 knowledge_ids: []
 ---
 
@@ -15,15 +15,15 @@ Reusable knowledge for concepts, design, operations, and troubleshooting. Choose
 | Area | Available scope | Start here |
 |---|---|---|
 | Data platform | Chapters 1–21: storage, processing, analytics, quality, governance, AI evaluation, managed platforms, and operations | [Architecture](data-platform/architecture.md) · [Study status](data-platform/curriculum.md) |
-| Platform and infrastructure | Chapters 1–11: Linux, Kubernetes, data services, AI serving, GPUs, security, and GitOps | [Study path and next steps](platform-infrastructure/index.md) |
+| Platform and infrastructure | Chapters 1–15: Linux, Kubernetes, AI serving, security, GitOps, IaC, multi-tenancy, developer platforms, and architecture | [Study path and completion](platform-infrastructure/index.md) |
 | AWS cloud | Chapters 1–5 of the compact seven-chapter course: accounts, networking, compute, storage/databases, and EKS | [Study scope](aws-cloud/index.md) |
 | Practical prompts | Design and change reviews, incident investigation, performance and cost analysis, validation, and recovery planning | [Find a prompt by task](prompts/index.md) |
 
-There are 61 Korean/English pairs in total. Each area's study status lists completed and unstudied chapters and the next topic. Data platform Chapters 1–4 are reconstructed notes, and Snowflake has condensed coverage. Completed study does not mean completed deployment, production work, or failure drills.
+There are 65 Korean/English pairs in total. Each area's study status lists completed and unstudied chapters and the next topic. Data platform Chapters 1–4 are reconstructed notes, and Snowflake has condensed coverage. Completed study does not mean completed deployment, production work, or failure drills.
 
 ## Use it at work
 
-1. Choose a case in the [practical prompt library](prompts/index.md) that matches the decision you need to make. There are 100 library examples and 39 on topic pages, for 139 in total.
+1. Choose a case in the [practical prompt library](prompts/index.md) that matches the decision you need to make. There are 100 library examples and 41 on topic pages, for 141 in total.
 2. Replace bracketed inputs with shareable, sanitized SQL, configuration, logs, metrics, and changes. Mark missing evidence explicitly.
 3. Copy the prompt from the Korean or English tab. Check its evidence and acceptance criteria against real materials. Execution and changes follow separate workplace permissions and procedures.
 

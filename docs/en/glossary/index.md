@@ -1,8 +1,8 @@
 ---
 id: handbook-glossary
 status: overview
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-05
+last_reviewed: 2026-10-05
 knowledge_ids: []
 ---
 
@@ -167,6 +167,23 @@ knowledge_ids: []
 | EBS / EFS CSI driver | Drivers connecting Kubernetes volume requests to AWS EBS/EFS storage. | [eks](../aws-cloud/eks.md) |
 | ECR | An AWS registry storing container images in repositories. | [eks](../aws-cloud/eks.md) |
 | EKS Pod Identity / IRSA | Ways to link Kubernetes ServiceAccounts to AWS IAM roles for workload permissions. Their implementation and support conditions differ. | [eks](../aws-cloud/eks.md) |
+
+## IaC, multi-tenancy, and developer platforms
+
+| Term | Meaning | Canonical topic |
+|---|---|---|
+| IaC | Declaring desired infrastructure configuration in code and tracking changes. | [terraform-iac](../platform-infrastructure/terraform-iac.md) |
+| Terraform state | State that maps Terraform resource addresses to real objects and stores known attributes. | [terraform-iac](../platform-infrastructure/terraform-iac.md) |
+| Remote backend / State locking | Remote state storage / locking that limits concurrent state changes on supporting backends. | [terraform-iac](../platform-infrastructure/terraform-iac.md) |
+| Terraform module | A collection of Terraform configuration files reused together. | [terraform-iac](../platform-infrastructure/terraform-iac.md) |
+| Multi-tenancy / Noisy neighbor | Sharing a platform across tenants / interference when one tenant affects another tenant’s performance. | [multitenancy-cost](../platform-infrastructure/multitenancy-cost.md) |
+| ResourceQuota / LimitRange | Namespace resource totals / defaults and minimum or maximum constraints for individual resources. | [multitenancy-cost](../platform-infrastructure/multitenancy-cost.md) |
+| RPM / TPM | Requests per minute / tokens per minute. Check the quota scope and accounting method. | [multitenancy-cost](../platform-infrastructure/multitenancy-cost.md) |
+| Showback / Chargeback | Showing teams their usage and cost / allocating and charging costs to teams. | [multitenancy-cost](../platform-infrastructure/multitenancy-cost.md) |
+| Golden path | A standard development and deployment path supported by the platform. | [developer-platform](../platform-infrastructure/developer-platform.md) |
+| Internal Developer Platform (IDP) | An internal platform that lets developers use standard capabilities through self-service. | [developer-platform](../platform-infrastructure/developer-platform.md) |
+| CustomResourceDefinition (CRD) | A definition registering a custom resource type with the Kubernetes API. Automation requires a controller or other implementation. | [developer-platform](../platform-infrastructure/developer-platform.md) |
+| Platform governance | Rules and responsibilities governing platform resources, security, cost, and operations. | [developer-platform](../platform-infrastructure/developer-platform.md) |
 
 ## Handbook management terms
 

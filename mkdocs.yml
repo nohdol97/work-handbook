@@ -66,6 +66,10 @@ plugins:
             GPU 인프라·스케줄링: GPU infrastructure and scheduling
             플랫폼 보안: Platform security
             CI/CD·GitOps: CI/CD and GitOps
+            Terraform·IaC: Terraform and IaC
+            멀티테넌시·비용: Multi-tenancy and cost
+            개발자 플랫폼: Developer platform
+            AI 플랫폼 전체 구조: End-to-end AI platform architecture
             실무 프롬프트: Practical prompts
             프롬프트 모음: Prompt library
             저장·분석 기초: Storage and analytics
@@ -131,6 +135,10 @@ nav:
       - GPU 인프라·스케줄링: platform-infrastructure/gpu-infrastructure.md
       - 플랫폼 보안: platform-infrastructure/platform-security.md
       - CI/CD·GitOps: platform-infrastructure/cicd-gitops.md
+      - Terraform·IaC: platform-infrastructure/terraform-iac.md
+      - 멀티테넌시·비용: platform-infrastructure/multitenancy-cost.md
+      - 개발자 플랫폼: platform-infrastructure/developer-platform.md
+      - AI 플랫폼 전체 구조: platform-infrastructure/architecture.md
   - AWS 클라우드:
       - 학습 범위: aws-cloud/index.md
       - AWS 기본 구조: aws-cloud/foundations.md

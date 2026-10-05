@@ -1,8 +1,8 @@
 ---
 id: platform-infrastructure-overview
 status: overview
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-05
+last_reviewed: 2026-10-05
 knowledge_ids:
   - PIS-00-01
   - PIS-04-01
@@ -12,11 +12,12 @@ knowledge_ids:
   - PIS3-00-01
   - PIS3-00-02
   - PIS3-00-03
+  - PIS4-00-01
 ---
 
 # Platform and infrastructure basics: study scope
 
-Current study covers **Chapters 1–11**, connecting Linux, containers, and Kubernetes with data services, AI serving, security, and GitOps. **Chapter 12 Terraform & Infrastructure as Code** is next; study content for Chapters 12–15 has not been supplied.
+Current study covers **Chapters 1–15**, completing the supplied Basic course. It connects Linux, containers, Kubernetes, data services, AI serving, security, GitOps, Terraform, multi-tenancy, and developer platforms with the full AI platform architecture.
 
 “Completed” means **Basic conceptual study** for platform engineers. It does not mean Linux/Docker/Kubernetes commands were executed or a production cluster was built and tested. No specific distribution, kernel, cgroup, runtime, Kubernetes, CNI, CSI, or cloud version was supplied. Each topic separates version-sensitive behavior from its official evidence and conditions.
 
@@ -31,10 +32,10 @@ flowchart TD
   Operations --> Services[Redis / PostgreSQL / Kafka]
   Services --> Serving[vLLM / LiteLLM / GPU]
   Serving --> Security[Security / CI/CD / GitOps]
-  Security -. Future study .-> Future[IaC / tenant cost / IDP / platform design]
+  Security --> Platform[IaC / tenant cost / IDP / platform design]
 ```
 
-This is a learning path, not a finished deployment or a required tool combination for every workload. The dotted arrow points to Terraform and later topics that have not been studied.
+This is a learning path, not a finished deployment or a required tool combination for every workload. Terraform and the later topics are also covered in the supplied study material.
 
 | Completed chapter | Canonical topic | Scope |
 |---|---|---|
@@ -49,19 +50,16 @@ This is a learning path, not a finished deployment or a required tool combinatio
 | 9 | [GPU infrastructure and scheduling](gpu-infrastructure.md) | GPU stack, node pools, sharing, multiple GPUs/nodes, capacity, failure diagnosis |
 | 10 | [Platform security](platform-security.md) | Identity, RBAC, Secrets, NetworkPolicy, TLS/mTLS, containers, supply chain, tenant isolation |
 | 11 | [CI/CD, Helm, Argo CD, and GitOps](cicd-gitops.md) | Builds, environments, declarative deployment, sync/health, canaries, model changes, spare GPU capacity |
+| 12 | [Terraform and IaC](terraform-iac.md) | Providers, resources, state, remote backends, plan/apply, modules, environments, operations |
+| 13 | [Multi-tenancy, quotas, and cost](multitenancy-cost.md) | Isolation, ResourceQuota, LimitRange, LLM quotas, GPU cost, showback/chargeback |
+| 14 | [Developer platform and self-service](developer-platform.md) | Golden paths, portal/API, CRDs, automation, policy, approval, lifecycle, governance |
+| 15 | [End-to-end AI platform architecture](architecture.md) | Requests, applications, serving, reliability, security, deployment, tenants, self-service, failures, final design |
 
 Start with component roles and boundaries. Then connect source symptoms to the relevant layer: “Pod Pending → scheduling/resources,” “application unavailable → process/port/DNS/Service,” or “failed shutdown → signals/PID 1/grace period.” A symptom alone does not prove one cause. Check hypotheses against actual state, events, and logs.
 
-## Future curriculum
+## Basic course complete
 
-These topics are **not-started** because their study content has not been supplied. Chapter 12 Terraform & Infrastructure as Code is next.
-
-| Chapter | Next topic |
-|---|---|
-| 12 | Terraform & Infrastructure as Code — next |
-| 13 | Multi-tenancy, Quotas & Cost Control |
-| 14 | Internal Developer Platform / Self-Service |
-| 15 | End-to-End AI Platform Architecture |
+Chapters 12–15 connect Terraform/IaC, resource and usage isolation, cost, self-service, failure diagnosis, and the full architecture. The supplied 15-chapter Basic course is complete. Further advanced study and lab material have not been supplied.
 
 Connect the data-processing view in the [data platform curriculum](../data-platform/curriculum.md) with the service operations and serving view here. Read each technical page’s supplement for corrections and conditions tied to source section numbers.
 
@@ -69,9 +67,23 @@ Connect the data-processing view in the [data platform curriculum](../data-platf
 
 Shell and YAML snippets are learning examples. Names such as `server`, `backend`, and `my-api` are hypothetical targets, not actual addresses. Even diagnosis requires read access and care with sensitive output. Configuration changes, signals, drain, and restore need impact and recovery checks under actual authority. None of those commands were executed during this import.
 
-The LLM example at the end of each technical page supports Korean/English tabs and copying with line breaks. Separate model output into observations, hypotheses, and further checks, then compare it with official documentation, settings, and state. An automated diagnosis alone does not authorize an operational change.
+LLM examples on technical pages support Korean/English tabs and copying with line breaks. Separate model output into observations, hypotheses, and further checks, then compare it with official documentation, settings, and state. An automated diagnosis alone does not authorize an operational change.
 
 The [data platform architecture](../data-platform/architecture.md) explains data-processing roles. This section explains runtime environments and cluster operations. [Glossary](../glossary/index.md) · [Prompt library](../prompts/index.md) · [Home](../index.md)
+
+## Latest source: Chapters 12–15 scope
+
+<!-- SOURCE FINAL INTRO START -->
+
+# Platform / Infrastructure / AI Serving Basic
+## Source Markdown — Chapter 12~15
+
+> This source markdown summarizes the material studied **after Chapter 11** in this study session.  
+> Scope: **Chapter 12 Terraform & Infrastructure as Code ~ Chapter 15 End-to-End AI Platform Architecture**
+
+---
+
+<!-- SOURCE FINAL INTRO END -->
 
 ## Source: the connection between Chapters 4–9
 
@@ -127,9 +139,9 @@ Kubernetes
 
 <!-- SOURCE CONNECTION END -->
 
-## Latest source: Chapters 10–11 scope, connections, and progress
+## Earlier source: Chapters 10–11 scope, connections, and progress
 
-This source record connects the roles covered in Chapters 10–11. “Completed” means Basic conceptual study.
+This record describes progress when Chapters 10–11 were supplied. “Next study” below refers to that earlier point; current study covers Chapters 1–15. “Completed” means Basic conceptual study.
 
 <!-- SOURCE SECURITY INTRO START -->
 
@@ -243,7 +255,7 @@ Expand traffic or roll back
 
 ## Historical source records
 
-The following introduction and progress describe the earlier Chapters 4–9 source. Use the Chapters 1–11 table and future-topic guide above for current progress. “Current” and “next” inside the source refer to that earlier point in time.
+The following introduction and progress describe the earlier Chapters 4–9 source. Use the Chapters 1–15 table and Basic course completion note above for current progress. “Current” and “next” inside the source refer to that earlier point in time.
 
 ## Earlier source scope: Chapters 4–9
 

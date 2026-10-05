@@ -1,8 +1,8 @@
 ---
 id: handbook-glossary
 status: overview
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-05
+last_reviewed: 2026-10-05
 knowledge_ids: []
 ---
 
@@ -167,6 +167,23 @@ knowledge_ids: []
 | EBS / EFS CSI driver | Kubernetes의 volume 요구를 AWS EBS/EFS 저장소와 연결하는 driver. | [eks](../aws-cloud/eks.md) |
 | ECR | 컨테이너 이미지를 repository에 보관하는 AWS registry. | [eks](../aws-cloud/eks.md) |
 | EKS Pod Identity / IRSA | Kubernetes ServiceAccount와 AWS IAM 역할을 연결해 workload에 AWS 권한을 제공하는 방식. 구현·지원 조건은 서로 다르다. | [eks](../aws-cloud/eks.md) |
+
+## IaC·멀티테넌시·개발자 플랫폼
+
+| 용어 | 의미 | 정규 주제 |
+|---|---|---|
+| IaC | 인프라의 원하는 구성을 코드로 선언하고 변경을 추적하는 방식. | [terraform-iac](../platform-infrastructure/terraform-iac.md) |
+| Terraform state | Terraform 자원 주소와 실제 객체의 대응 및 알려진 속성을 저장하는 상태. | [terraform-iac](../platform-infrastructure/terraform-iac.md) |
+| Remote backend / State locking | 원격 state 저장 / 지원하는 backend에서 동시 state 변경을 제한하는 잠금. | [terraform-iac](../platform-infrastructure/terraform-iac.md) |
+| Terraform module | 함께 재사용하는 Terraform 설정 파일의 묶음. | [terraform-iac](../platform-infrastructure/terraform-iac.md) |
+| Multi-tenancy / Noisy neighbor | 여러 tenant의 플랫폼 공유 / 한 tenant의 사용이 다른 tenant의 성능에 주는 간섭. | [multitenancy-cost](../platform-infrastructure/multitenancy-cost.md) |
+| ResourceQuota / LimitRange | Namespace의 자원 총량 제한 / 개별 자원의 기본값과 최소·최대 제약. | [multitenancy-cost](../platform-infrastructure/multitenancy-cost.md) |
+| RPM / TPM | 분당 요청 수 / 분당 token 수. 할당량의 적용 범위와 집계 방식을 함께 확인한다. | [multitenancy-cost](../platform-infrastructure/multitenancy-cost.md) |
+| Showback / Chargeback | 사용량과 비용을 팀에 보여주기 / 비용을 팀에 배분·청구하기. | [multitenancy-cost](../platform-infrastructure/multitenancy-cost.md) |
+| Golden path | 플랫폼이 지원하는 표준 개발·배포 경로. | [developer-platform](../platform-infrastructure/developer-platform.md) |
+| Internal Developer Platform (IDP) | 개발자가 표준 기능을 self-service로 사용할 수 있게 하는 내부 플랫폼. | [developer-platform](../platform-infrastructure/developer-platform.md) |
+| CustomResourceDefinition (CRD) | Kubernetes API에 사용자 정의 자원 유형을 등록하는 정의. 실제 자동화에는 controller 등이 필요하다. | [developer-platform](../platform-infrastructure/developer-platform.md) |
+| Platform governance | 플랫폼 자원·보안·비용·운영의 허용 규칙과 책임을 관리하는 체계. | [developer-platform](../platform-infrastructure/developer-platform.md) |
 
 ## 핸드북 관리 용어
 

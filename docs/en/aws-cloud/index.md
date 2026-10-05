@@ -1,8 +1,8 @@
 ---
 id: aws-cloud-overview
 status: overview
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-05
+last_reviewed: 2026-10-05
 knowledge_ids:
   - AWSC-00-01
   - AWSC-00-02
@@ -24,7 +24,7 @@ The source numbering, order, tables, diagrams, and examples are preserved in tra
 | 4 | [Storage & Database](storage-databases.md) | EBS, S3, EFS, PostgreSQL Pods, RDS, Aurora, ElastiCache |
 | 5 | [EKS on AWS](eks.md) | Control plane, node groups, CNI, load balancer controller, CSI, ECR, Pod Identity/IRSA |
 
-The source states that Terraform/IaC was already covered in another Platform/Infrastructure session and excludes it from the AWS curriculum. This file does not supply that study material, so the [existing platform course](../platform-infrastructure/index.md) still publishes Chapters 1–11. AWS progress follows the source below.
+The source states that Terraform/IaC was already covered in another Platform/Infrastructure session and excludes it from the AWS curriculum. The later [platform course](../platform-infrastructure/index.md) source supplies Chapters 12–15. See [Terraform and IaC](../platform-infrastructure/terraform-iac.md) for the source and its conditions. AWS progress follows the source below.
 
 ## Source introduction and compact curriculum
 

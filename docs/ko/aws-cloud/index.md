@@ -1,8 +1,8 @@
 ---
 id: aws-cloud-overview
 status: overview
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-05
+last_reviewed: 2026-10-05
 knowledge_ids:
   - AWSC-00-01
   - AWSC-00-02
@@ -24,7 +24,7 @@ knowledge_ids:
 | 4 | [Storage & Database](storage-databases.md) | EBS·S3·EFS·PostgreSQL Pod·RDS·Aurora·ElastiCache |
 | 5 | [EKS on AWS](eks.md) | Control plane·Node Group·CNI·LB Controller·CSI·ECR·Pod Identity/IRSA |
 
-원문은 Terraform/IaC를 다른 Platform/Infrastructure 세션에서 이미 다뤘다고 밝혀 AWS 목차에서 제외한다. 이 파일에 해당 학습 본문은 없으므로 [기존 플랫폼 과정](../platform-infrastructure/index.md)의 공개 본문 범위는 1~11장 그대로 유지한다. AWS 과정의 진도는 아래 원문 기준이다.
+원문은 Terraform/IaC를 다른 Platform/Infrastructure 세션에서 이미 다뤘다고 밝혀 AWS 목차에서 제외한다. 이후 제공된 [플랫폼 과정](../platform-infrastructure/index.md) 12~15장에 해당 학습 본문이 반영되었다. [Terraform·IaC](../platform-infrastructure/terraform-iac.md)에서 원문과 적용 조건을 확인한다. AWS 과정의 진도는 아래 원문 기준이다.
 
 ## 원문 소개와 압축 커리큘럼
 

@@ -1,8 +1,8 @@
 ---
 id: prompt-library
 status: overview
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-05
+last_reviewed: 2026-10-05
 knowledge_ids: []
 ---
 
@@ -32,7 +32,7 @@ Each prompt can be copied on its own. The answer is a review draft and does not 
 
 ## All cases by topic
 
-The library contains 100 cases with specific questions and checks. Concept guides contain another 39 cases with bilingual tabs. Authored examples do not establish study completion or actual production experience.
+The library contains 100 cases with specific questions and checks. Concept guides contain another 41 cases with bilingual tabs. Authored examples do not establish study completion or actual production experience.
 
 | Topic | Decisions covered |
 |---|---|

@@ -356,6 +356,43 @@
       "end": null,
       "include_start": true,
       "marker": "SOURCE STATUS"
+    },
+    {
+      "page": "platform-infrastructure/terraform-iac.md",
+      "source": "sources/platform-infrastructure-basic-ch12-15-2026-10-05/source.md",
+      "start": "# Chapter 12. Terraform & Infrastructure as Code",
+      "end": "# Chapter 13. Multi-tenancy, Quotas & Cost Control",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/multitenancy-cost.md",
+      "source": "sources/platform-infrastructure-basic-ch12-15-2026-10-05/source.md",
+      "start": "# Chapter 13. Multi-tenancy, Quotas & Cost Control",
+      "end": "# Chapter 14. Internal Developer Platform / Self-Service",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/developer-platform.md",
+      "source": "sources/platform-infrastructure-basic-ch12-15-2026-10-05/source.md",
+      "start": "# Chapter 14. Internal Developer Platform / Self-Service",
+      "end": "# Chapter 15. End-to-End AI Platform Architecture",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/architecture.md",
+      "source": "sources/platform-infrastructure-basic-ch12-15-2026-10-05/source.md",
+      "start": "# Chapter 15. End-to-End AI Platform Architecture",
+      "end": null,
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "platform-infrastructure/index.md",
+      "source": "sources/platform-infrastructure-basic-ch12-15-2026-10-05/source.md",
+      "start": "# Platform / Infrastructure / AI Serving Basic",
+      "end": "# Chapter 12. Terraform & Infrastructure as Code",
+      "verbatim_language": "ko",
+      "include_start": true,
+      "marker": "SOURCE FINAL INTRO"
     }
   ]
 }
