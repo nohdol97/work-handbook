@@ -393,6 +393,47 @@
       "verbatim_language": "ko",
       "include_start": true,
       "marker": "SOURCE FINAL INTRO"
+    },
+    {
+      "page": "aws-cloud/managed-services.md",
+      "source": "sources/aws-cloud-basic-ch6-7-2026-10-05/source.md",
+      "start": "# Chapter 6. AWS Managed Services",
+      "end": "# Chapter 7. AI/GPU + End-to-End",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "aws-cloud/ai-gpu-architecture.md",
+      "source": "sources/aws-cloud-basic-ch6-7-2026-10-05/source.md",
+      "start": "# Chapter 7. AI/GPU + End-to-End",
+      "end": "# Chapter 6~7 최종 요약",
+      "verbatim_language": "ko"
+    },
+    {
+      "page": "aws-cloud/index.md",
+      "source": "sources/aws-cloud-basic-ch6-7-2026-10-05/source.md",
+      "start": "# AWS Cloud Basic — Source Markdown (Chapter 6~7)",
+      "end": "# Chapter 6. AWS Managed Services",
+      "verbatim_language": "ko",
+      "marker": "SOURCE MANAGED INTRO",
+      "include_start": true
+    },
+    {
+      "page": "aws-cloud/index.md",
+      "source": "sources/aws-cloud-basic-ch6-7-2026-10-05/source.md",
+      "start": "# Chapter 6~7 최종 요약",
+      "end": "# AWS Cloud Basic 최종 학습 완료 상태",
+      "verbatim_language": "ko",
+      "marker": "SOURCE MANAGED SUMMARY",
+      "include_start": true
+    },
+    {
+      "page": "aws-cloud/index.md",
+      "source": "sources/aws-cloud-basic-ch6-7-2026-10-05/source.md",
+      "start": "# AWS Cloud Basic 최종 학습 완료 상태",
+      "end": null,
+      "verbatim_language": "ko",
+      "marker": "SOURCE MANAGED STATUS",
+      "include_start": true
     }
   ]
 }

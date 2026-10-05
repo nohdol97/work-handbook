@@ -168,6 +168,23 @@ knowledge_ids: []
 | ECR | An AWS registry storing container images in repositories. | [eks](../aws-cloud/eks.md) |
 | EKS Pod Identity / IRSA | Ways to link Kubernetes ServiceAccounts to AWS IAM roles for workload permissions. Their implementation and support conditions differ. | [eks](../aws-cloud/eks.md) |
 
+## AWS managed services and GPU serving
+
+| Term | Meaning | Canonical topic |
+|---|---|---|
+| SQS | A managed messaging service that stores messages in queues for consumers to receive and process. | [managed-services](../aws-cloud/managed-services.md) |
+| Visibility timeout | The period when a received SQS message is hidden from other receive requests. It does not prove completion or deletion. | [managed-services](../aws-cloud/managed-services.md) |
+| Dead-letter queue (DLQ) | A queue that separates repeatedly failed messages for investigation and reprocessing. | [managed-services](../aws-cloud/managed-services.md) |
+| SNS / Fan-out | A pub/sub service that distributes messages to subscribers / delivering one message to multiple subscribed destinations. | [managed-services](../aws-cloud/managed-services.md) |
+| Amazon MSK | A service where AWS manages parts of Kafka infrastructure operations. Data, consumer, and application responsibilities remain separate. | [managed-services](../aws-cloud/managed-services.md) |
+| AWS KMS | A service for managing cryptographic keys and their usage permissions, and providing cryptographic operations. | [managed-services](../aws-cloud/managed-services.md) |
+| Data key / Envelope encryption | A key used to encrypt data / an encryption approach that protects that key with another key. | [managed-services](../aws-cloud/managed-services.md) |
+| AWS Secrets Manager | A service that stores and retrieves application secrets and supports rotation when configured. | [managed-services](../aws-cloud/managed-services.md) |
+| CloudWatch | An observability service for collecting and using metrics, logs, and alarms from AWS resources and applications. | [managed-services](../aws-cloud/managed-services.md) |
+| CloudTrail | An audit service that records AWS account activity as events. Coverage depends on event types and configuration. | [managed-services](../aws-cloud/managed-services.md) |
+| VRAM | GPU memory used for model weights, KV cache, and intermediate computation values. | [ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md) |
+| Serving cold start | The initial delay while instances, images, and models become ready to serve requests. | [ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md) |
+
 ## IaC, multi-tenancy, and developer platforms
 
 | Term | Meaning | Canonical topic |

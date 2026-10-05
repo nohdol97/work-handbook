@@ -58,6 +58,8 @@ plugins:
             네트워킹: Networking
             컴퓨트·로드밸런싱: Compute and load balancing
             스토리지·데이터베이스: Storage and databases
+            AWS 관리형 서비스: AWS managed services
+            AI/GPU·AWS 전체 구조: AI/GPU and end-to-end AWS architecture
             학습 범위: Study scope
             Linux·컨테이너: Linux and containers
             Kubernetes 핵심: Kubernetes core
@@ -146,6 +148,8 @@ nav:
       - 컴퓨트·로드밸런싱: aws-cloud/compute.md
       - 스토리지·데이터베이스: aws-cloud/storage-databases.md
       - EKS on AWS: aws-cloud/eks.md
+      - AWS 관리형 서비스: aws-cloud/managed-services.md
+      - AI/GPU·AWS 전체 구조: aws-cloud/ai-gpu-architecture.md
   - 실무 프롬프트:
       - 프롬프트 모음: prompts/index.md
       - 저장·분석 기초: prompts/foundations.md

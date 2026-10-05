@@ -8,11 +8,14 @@ knowledge_ids:
   - AWSC-00-02
   - AWSC-00-03
   - AWSC-00-04
+  - AWSC2-00-01
+  - AWSC2-00-02
+  - AWSC2-00-03
 ---
 
 # AWS cloud basics and study progress
 
-This section follows the newly supplied **compact seven-chapter curriculum**. Chapters 1–5 cover accounts, networking, compute, storage/databases, and EKS. **Chapter 6, AWS Managed Services**, is next. Completed means Basic conceptual study, not actual AWS implementation, operations, load tests, or recovery tests.
+This section covers the **full compact seven-chapter curriculum**. **Basic conceptual study of Chapters 1–7 is complete**, from accounts, networking, compute, storage/databases, and EKS to managed services, security, observability, GPU serving, and the final AWS architecture. Completed means Basic conceptual study, not actual AWS implementation, operations, load tests, or recovery tests.
 
 The source numbering, order, tables, diagrams, and examples are preserved in translation. Read the short supplement after each chapter for product-specific conditions.
 
@@ -23,10 +26,122 @@ The source numbering, order, tables, diagrams, and examples are preserved in tra
 | 3 | [Compute & Load Balancing](compute.md) | EC2/EBS, launch templates/ASGs, ALB/NLB, Kubernetes Services |
 | 4 | [Storage & Database](storage-databases.md) | EBS, S3, EFS, PostgreSQL Pods, RDS, Aurora, ElastiCache |
 | 5 | [EKS on AWS](eks.md) | Control plane, node groups, CNI, load balancer controller, CSI, ECR, Pod Identity/IRSA |
+| 6 | [AWS Managed Services](managed-services.md) | SQS, SNS, MSK, KMS, Secrets Manager, CloudWatch, CloudTrail |
+| 7 | [AI/GPU and end-to-end AWS architecture](ai-gpu-architecture.md) | GPU EC2, EKS GPU nodes, ECR/S3, vLLM, final AI/data platform |
 
-The source states that Terraform/IaC was already covered in another Platform/Infrastructure session and excludes it from the AWS curriculum. The later [platform course](../platform-infrastructure/index.md) source supplies Chapters 12–15. See [Terraform and IaC](../platform-infrastructure/terraform-iac.md) for the source and its conditions. AWS progress follows the source below.
+The source states that Terraform/IaC was already covered in another Platform/Infrastructure session and excludes it from the AWS curriculum. The later [platform course](../platform-infrastructure/index.md) source supplies Chapters 12–15. See [Terraform and IaC](../platform-infrastructure/terraform-iac.md) for the source and its conditions. Current AWS progress follows the latest Chapters 6–7 completion record below. Further advanced study and lab material have not been supplied.
 
-## Source introduction and compact curriculum
+## Latest Source: Chapters 6–7 Scope, Summary, and Completion
+
+<!-- SOURCE MANAGED INTRO START -->
+
+# AWS Cloud Basic — Source Markdown (Chapter 6~7)
+
+> Scope: material studied after Chapter 5  
+> Included: Chapter 6. AWS Managed Services + Chapter 7. AI/GPU + End-to-End  
+> Principles:
+> - Based on material actually studied in the session
+> - Includes questions and supplementary explanations from the session
+> - Removes duplication
+> - Focuses on core concepts at the Basic level
+> - Does not repeat Terraform / IaC, which was already studied in another session
+
+---
+
+<!-- SOURCE MANAGED INTRO END -->
+
+<!-- SOURCE MANAGED SUMMARY START -->
+
+# Final Summary of Chapters 6~7
+
+## Messaging / Event
+
+```text
+SQS = Task Queue
+SNS = Pub/Sub / Fan-out
+MSK = Kafka / Event Streaming
+```
+
+## Security
+
+```text
+IAM = Permissions
+KMS = Encryption Key
+Secrets Manager = Secret storage / Rotation
+```
+
+## Observability
+
+```text
+CloudWatch = Monitoring
+CloudTrail = Audit
+```
+
+## AI / GPU
+
+```text
+GPU EC2 = GPU Compute
+EKS GPU Node = GPU Worker Node
+ECR = Container Image
+S3 = Model / Dataset
+vLLM = GPU-based LLM Serving
+```
+
+---
+
+<!-- SOURCE MANAGED SUMMARY END -->
+
+<!-- SOURCE MANAGED STATUS START -->
+
+# AWS Cloud Basic Final Study Completion Status
+
+Completed:
+- Chapter 1. AWS Foundation ✅
+- Chapter 2. Networking ✅
+- Chapter 3. Compute & Load Balancing ✅
+- Chapter 4. Storage & Database ✅
+- Chapter 5. EKS on AWS ✅
+- Chapter 6. AWS Managed Services ✅
+- Chapter 7. AI/GPU + End-to-End ✅
+
+Final core structure:
+
+```text
+Network
+→ VPC / Subnet / Route / IGW / NAT / SG
+
+Compute
+→ EC2 / ASG / EKS
+
+Traffic
+→ ALB / NLB / Service
+
+Storage
+→ EBS / EFS / S3
+
+Data
+→ RDS / Aurora / ElastiCache
+
+Messaging
+→ SQS / SNS / MSK
+
+Security
+→ IAM / KMS / Secrets Manager
+
+Observability
+→ CloudWatch / CloudTrail
+
+AI
+→ GPU EC2 / EKS GPU Node / ECR / S3 / vLLM
+```
+
+You have met the AWS Cloud Basic goal if you can explain why each AWS service exists, where it fits, and what it connects to.
+
+<!-- SOURCE MANAGED STATUS END -->
+
+## Earlier Source: Chapters 1–5 Introduction and Compact Curriculum
+
+The following introduction, summary, and progress describe the earlier Chapters 1–5 source. “Next” inside that source refers to that point in time, separate from the current completion of Chapters 1–7.
 
 <!-- SOURCE INTRO START -->
 
@@ -54,7 +169,7 @@ This document records the material studied in Chapters 1~5.
 
 <!-- SOURCE INTRO END -->
 
-## Source final summary
+## Earlier Source: Chapters 1–5 Final Summary
 
 <!-- SOURCE SUMMARY START -->
 
@@ -126,7 +241,7 @@ EKS
 
 <!-- SOURCE SUMMARY END -->
 
-## Source progress and next study
+## Earlier Source: Progress and Next Study After Chapters 1–5
 
 <!-- SOURCE STATUS START -->
 

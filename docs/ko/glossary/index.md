@@ -168,6 +168,23 @@ knowledge_ids: []
 | ECR | 컨테이너 이미지를 repository에 보관하는 AWS registry. | [eks](../aws-cloud/eks.md) |
 | EKS Pod Identity / IRSA | Kubernetes ServiceAccount와 AWS IAM 역할을 연결해 workload에 AWS 권한을 제공하는 방식. 구현·지원 조건은 서로 다르다. | [eks](../aws-cloud/eks.md) |
 
+## AWS 관리형 서비스·GPU 서빙
+
+| 용어 | 의미 | 정규 주제 |
+|---|---|---|
+| SQS | 처리할 메시지를 queue에 보관하고 consumer가 받아 처리하는 관리형 메시지 서비스. | [managed-services](../aws-cloud/managed-services.md) |
+| Visibility timeout | SQS에서 받은 메시지를 일정 시간 다른 수신 요청에 보이지 않게 하는 기간. 처리 완료나 삭제의 보장은 아니다. | [managed-services](../aws-cloud/managed-services.md) |
+| Dead-letter queue (DLQ) | 처리에 반복 실패한 메시지를 분리해 조사·재처리하는 queue. | [managed-services](../aws-cloud/managed-services.md) |
+| SNS / Fan-out | 구독자에게 메시지를 배포하는 pub/sub 서비스 / 한 메시지를 여러 구독 대상으로 전달하는 방식. | [managed-services](../aws-cloud/managed-services.md) |
+| Amazon MSK | AWS가 Kafka 인프라의 운영 일부를 관리하는 서비스. 데이터·consumer·애플리케이션 책임은 별도로 남는다. | [managed-services](../aws-cloud/managed-services.md) |
+| AWS KMS | 암호화 key와 그 사용 권한을 관리하고 암호 연산을 제공하는 서비스. | [managed-services](../aws-cloud/managed-services.md) |
+| Data key / Envelope encryption | 데이터를 암호화하는 key / 그 key를 다른 key로 보호하는 암호화 방식. | [managed-services](../aws-cloud/managed-services.md) |
+| AWS Secrets Manager | 애플리케이션 비밀값을 저장·조회하고 구성에 따라 회전을 지원하는 서비스. | [managed-services](../aws-cloud/managed-services.md) |
+| CloudWatch | AWS 리소스와 애플리케이션의 지표·로그·알림을 수집·조회·운영하는 관측 서비스. | [managed-services](../aws-cloud/managed-services.md) |
+| CloudTrail | AWS 계정 활동을 event로 기록하는 감사 서비스. 수집 범위는 event 유형과 설정에 따라 다르다. | [managed-services](../aws-cloud/managed-services.md) |
+| VRAM | GPU가 모델 가중치·KV Cache·연산 중간값 등을 담는 메모리. | [ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md) |
+| Serving cold start | 인스턴스·이미지·모델 준비부터 요청을 처리할 수 있게 되기까지의 초기 준비 지연. | [ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md) |
+
 ## IaC·멀티테넌시·개발자 플랫폼
 
 | 용어 | 의미 | 정규 주제 |
