@@ -21,6 +21,7 @@
 - R6. 공개 페이지에는 실데이터·비밀값 없이 placeholder만 사용한다. prompt는 관찰·가설·누락 근거·검증을 구분하며, 실제 production 실행 권한을 새로 부여하지 않는다.
 - R7. 닫힌 code fence, 두 언어 prompt, 여러 줄, 시나리오 anchor를 회귀 검사한다. `make validate`, `git diff --check`, `make finalize`, 원격 SHA·배포 HTTP로 전달을 확인한다.
 - R8. 기존 139개 예시의 업무 적용성과 설명 중복 정리는 [스펙 007](007-editorial-and-practical-use.md)을 따른다. 원문 지식·100개 모음 anchor와 한영 독립 복사 기능을 보존하고 실제 사용 빈도나 효과를 측정한 것으로 표현하지 않는다.
+- R9. 일반 개념 페이지는 2단계 제목이 `LLM in Practice`, `LLM 활용`, `LLM 실전`, `LLM 실무`, `LLM 실습`으로 시작하고 뒤가 제목 끝·공백·콜론인 경우 실무 프롬프트 검사 대상으로 삼는다. 번호가 붙은 `AI / LLM Quota`, `Kubernetes Quota와 LLM Quota 차이`, `LLM Serving Fundamentals`, `LiteLLM 역할` 같은 원문 개념 절에는 프롬프트를 요구하지 않는다. `prompts/` 모음의 기존 검사와 100개 기준은 유지한다. `audit()`에 개념 제목과 실습 제목을 각각 넣는 회귀 검사로 개념 절의 오탐 부재와 모든 기존 실습 제목 계열의 누락 감지를 확인한다. 원문 본문·렌더링 방식·실제 실행 권한은 변경하지 않으며 범용 Markdown 파서 확장은 범위 밖이다.
 
 ## 검증 방법과 권한
 

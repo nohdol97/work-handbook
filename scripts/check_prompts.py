@@ -56,7 +56,9 @@ def audit(root):
         relative = source.relative_to(root / 'docs/ko')
         text = source.read_text()
         library = relative.parts[0] == 'prompts' and relative.name != 'index.md'
-        existing = bool(re.search(r'^## .*LLM', text, re.M))
+        existing = bool(re.search(
+            r'^##[ \t]+LLM[ \t]+(?:in Practice|활용|실전|실무|실습)(?=[ \t:]|$)',
+            text, re.M))
         if not (library or existing):
             continue
         html_relative = relative.with_suffix('') / 'index.html'

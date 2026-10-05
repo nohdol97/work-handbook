@@ -117,6 +117,46 @@ class PromptAuditTests(unittest.TestCase):
                 errors, _ = self.audit.inspect_html(self.group(en=en))
                 self.assertTrue(any('section' in e for e in errors))
 
+    def test_audit_does_not_require_prompts_for_llm_concept_headings(self):
+        headings = [
+            '13.6 AI / LLM Quota',
+            '13.7 Kubernetes Quota와 LLM Quota 차이',
+            '7.1 LLM Serving Fundamentals',
+            '8.1 LiteLLM 역할',
+        ]
+        for heading in headings:
+            with self.subTest(heading=heading), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                source = root / 'docs/ko/concepts/example.md'
+                source.parent.mkdir(parents=True)
+                source.write_text(f'# Concepts\n\n## {heading}\n\nConcept notes.\n')
+                errors, total, new_total = self.audit.audit(root)
+                self.assertEqual(errors, ['expected at least 100 new scenarios, found 0'])
+                self.assertEqual((total, new_total), (0, 0))
+
+    def test_audit_still_requires_prompts_for_practice_heading_families(self):
+        headings = [
+            'LLM in Practice',
+            'LLM in Practice: Review',
+            'LLM 활용: 검토',
+            'LLM 실전: 검토',
+            'LLM 실무 활용',
+            'LLM 실습: 검토',
+        ]
+        for heading in headings:
+            with self.subTest(heading=heading), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                source = root / 'docs/ko/concepts/example.md'
+                source.parent.mkdir(parents=True)
+                source.write_text(f'# Practice\n\n## {heading}\n\nReview notes.\n')
+                for prefix in ['', 'en/']:
+                    page = root / f'site/{prefix}concepts/example/index.html'
+                    page.parent.mkdir(parents=True)
+                    page.write_text('<h2>Practice</h2>')
+                errors, _, _ = self.audit.audit(root)
+                self.assertIn('ko/concepts/example.md: no bilingual prompts rendered', errors)
+                self.assertIn('en/concepts/example.md: no bilingual prompts rendered', errors)
+
     def test_audit_detects_prompt_drift_between_localized_pages(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
