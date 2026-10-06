@@ -1,0 +1,36 @@
+.md-header .md-select[data-floating-language-replaced][hidden] {
+  display: none !important;
+}
+.language-switch-float {
+  position: fixed;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 50%;
+  background: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color) !important;
+  box-shadow: 0 3px 12px #0004;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+.language-switch-float.is-dragging { cursor: grabbing; }
+.language-switch-float:focus-visible {
+  outline: 3px solid var(--md-accent-fg-color);
+  outline-offset: 3px;
+}
+[data-md-color-scheme="slate"] .language-switch-float {
+  border-color: #ffffff80;
+  box-shadow: 0 3px 12px #0008;
+}

@@ -49,6 +49,14 @@ def audit_links(site):
                     errors.append(f'{page.relative_to(site)}: missing fragment {fragment}')
     return errors
 
+def reading_heading_structure(soup):
+    """Match the runtime's heading order, independent of translated IDs."""
+    article = soup.select_one('article.md-content__inner')
+    if article is None:
+        return None
+    return [heading.name for heading in article.select('h1,h2,h3,h4,h5,h6')
+            if not heading.find_parent(class_='tabbed-content')]
+
 def audit_site(root):
     site = root/'site'
     errors = audit_links(site)
@@ -57,6 +65,7 @@ def audit_site(root):
     for source in pages:
         rel = source.relative_to(root/'docs/ko')
         html = rel.with_suffix('.html') if rel.name == 'index.md' else rel.with_suffix('')/'index.html'
+        heading_structures = {}
         for lang, prefix, other_prefix, other in [('ko',Path(),Path('en'),'en'),('en',Path('en'),Path(),'ko')]:
             page = site/prefix/html
             expected.add((prefix/html).as_posix())
@@ -64,10 +73,17 @@ def audit_site(root):
                 errors.append(f'missing rendered {lang} page: {rel}')
                 continue
             soup = BeautifulSoup(page.read_text(), 'html.parser')
+            headings = reading_heading_structure(soup)
+            if headings is None:
+                errors.append(f'missing article for reading position: {lang}/{rel}')
+            else:
+                heading_structures[lang] = headings
             alternatives = soup.select(f'a[hreflang="{other}"]')
             target = (site/other_prefix/html).resolve()
             if not any(resolve_url(site,page,a['href'])[0] == target for a in alternatives):
                 errors.append(f'wrong language switch: {lang}/{rel}')
+        if len(heading_structures) == 2 and heading_structures['ko'] != heading_structures['en']:
+            errors.append(f'bilingual heading structure mismatch: {rel}')
     actual = {p.relative_to(site).as_posix() for p in site.rglob('*.html')}
     unexpected = actual - expected - {'404.html','en/404.html'}
     errors.extend(f'unexpected public HTML: {name}' for name in sorted(unexpected))

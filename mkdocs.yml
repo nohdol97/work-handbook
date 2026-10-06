@@ -222,9 +222,13 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+extra_javascript:
+  - assets/javascripts/reading-position.js
+  - assets/javascripts/language-button.js
 extra_css:
   - assets/stylesheets/prompts.css
   - assets/stylesheets/theme.css
+  - assets/stylesheets/language-button.css
 validation:
   nav:
     omitted_files: warn

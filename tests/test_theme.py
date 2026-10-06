@@ -51,3 +51,12 @@ class ThemeTests(unittest.TestCase):
                     self.assertEqual(label['title'], option['aria-label'])
                     self.assertEqual(label['for'], options[(index + 1) % 3]['id'])
                     self.assertIsNotNone(label.select_one('svg'), 'Visible toggle icon')
+
+    def test_language_runtime_and_floating_styles_are_loaded_in_both_languages(self):
+        for page in ('index.html', 'en/index.html', 'data-platform/foundations/index.html', 'en/data-platform/foundations/index.html'):
+            with self.subTest(page=page):
+                soup = BeautifulSoup((Path(self.output.name) / page).read_text(), 'html.parser')
+                scripts = [item['src'] for item in soup.select('script[src]')]
+                for name in ('reading-position.js', 'language-button.js'):
+                    self.assertTrue(any(src.endswith('/' + name) for src in scripts), name)
+                self.assertTrue(any(item['href'].endswith('/language-button.css') for item in soup.select('link[rel="stylesheet"]')))
