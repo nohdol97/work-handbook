@@ -17,7 +17,7 @@ knowledge_ids:
 
 문서 유형: Learn. 제공된 학습 자료의 개념과 설계 예시를 정리했다. `studied`는 개념 학습을 뜻하며, 직접 구현하거나 운영 검증했다는 뜻이 아니다. SQL과 수치는 설명용 예시이며 실행하지 않았다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 사용자 요청에 따라 Compression 절의 추가 설명은 원문 사이에 표시했다. 그 밖의 정정·적용 조건은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
 
 <!-- SOURCE CORE START -->
 
@@ -198,6 +198,22 @@ B
 - 분석 Query 성능 향상
 
 에 유리하다.
+
+<!-- INLINE ADDITION COMPRESSION START -->
+
+#### 대표 압축 기술 (추가 설명) {#compression-techniques}
+
+[Compression](#compression)과 [Encoding / Compression](#encoding-compression)에 등장하는 대표 기술은 다음과 같다. 앞의 네 가지는 값의 표현을 줄이는 **인코딩**, 마지막은 인코딩한 바이트를 압축하는 **코덱**이다.
+
+- **RLE (Run-Length Encoding):** 연속된 같은 값을 값과 반복 횟수로 표현한다. 개념적으로 `A,A,A,B,B → (A,3),(B,2)`다.
+- **Dictionary Encoding:** 중복 값을 사전에 한 번 저장하고 각 값은 작은 정수 ID로 표현한다. 값 종류가 적은 column에 유리하다.
+- **Delta Encoding:** 첫 값과 이후 값 사이의 차이를 저장한다. 개념적으로 `100,101,102 → 100,+1,+1`이다.
+- **Bit packing:** 작은 정수를 필요한 비트 수로 묶는다. 예를 들어 `0~7`은 값당 3비트로 표현할 수 있다.
+- **Snappy·LZ4·Zstandard(Zstd)·Gzip:** 바이트를 무손실 압축하는 코덱이다. Parquet의 LZ4는 구형 `LZ4` 대신 `LZ4_RAW` 표기를 확인한다.
+
+Parquet은 인코딩과 코덱을 조합할 수 있다. 압축률과 CPU 비용은 데이터·설정에 따라 달라진다. 위 예시는 실제 파일 바이트가 아닌 개념 표기다. [공식 인코딩 설명](https://parquet.apache.org/docs/file-format/data-pages/encodings/), [공식 압축 코덱 설명](https://parquet.apache.org/docs/file-format/data-pages/compression/) — 확인일: 2026-10-06.
+
+<!-- INLINE ADDITION COMPRESSION END -->
 
 ---
 
@@ -650,18 +666,6 @@ Lakehouse는 대량 Scan workload가 중심이므로:
 Parquet의 column chunk는 row group 내부에 있다. 통계나 page index의 존재와 이를 사용하는 reader에 따라 pruning 효과가 달라진다. Predicate pushdown은 필터를 하위 처리 계층으로 전달하는 것이고, pruning은 일치할 수 없는 저장 단위를 건너뛰는 것이다. row index처럼 임의의 row만 바로 찾는 기능으로 이해하지 않는다. Encoding과 compression도 서로 다른 단계다. [Apache Parquet 파일 형식](https://parquet.apache.org/docs/file-format/)
 
 큰 Parquet 파일도 여러 scan split으로 나뉠 수 있으므로 파일 하나와 task 하나를 항상 같다고 보면 안 된다. 목표 파일 크기는 병렬성·재작성 비용·요청 비용을 함께 보고 정한다. Bucket 예시는 개념 표기이며 실제 인수 순서와 SQL 문법은 엔진마다 확인한다. Iceberg transform의 개념 표기는 `bucket(32, user_id)`다.
-
-### 1.2·1.3 보완: 압축 기술 {#compression-techniques}
-
-[Compression](#compression)과 [Encoding / Compression](#encoding-compression)에 등장하는 대표 기술은 다음과 같다. 앞의 네 가지는 값의 표현을 줄이는 **인코딩**, 마지막은 인코딩한 바이트를 압축하는 **코덱**이다.
-
-- **RLE (Run-Length Encoding):** 연속된 같은 값을 값과 반복 횟수로 표현한다. 개념적으로 `A,A,A,B,B → (A,3),(B,2)`다.
-- **Dictionary Encoding:** 중복 값을 사전에 한 번 저장하고 각 값은 작은 정수 ID로 표현한다. 값 종류가 적은 column에 유리하다.
-- **Delta Encoding:** 첫 값과 이후 값 사이의 차이를 저장한다. 개념적으로 `100,101,102 → 100,+1,+1`이다.
-- **Bit packing:** 작은 정수를 필요한 비트 수로 묶는다. 예를 들어 `0~7`은 값당 3비트로 표현할 수 있다.
-- **Snappy·LZ4·Zstandard(Zstd)·Gzip:** 바이트를 무손실 압축하는 코덱이다. Parquet의 LZ4는 구형 `LZ4` 대신 `LZ4_RAW` 표기를 확인한다.
-
-Parquet은 인코딩과 코덱을 조합할 수 있다. 압축률과 CPU 비용은 데이터·설정에 따라 달라진다. 위 예시는 실제 파일 바이트가 아닌 개념 표기다. [공식 인코딩 설명](https://parquet.apache.org/docs/file-format/data-pages/encodings/), [공식 압축 코덱 설명](https://parquet.apache.org/docs/file-format/data-pages/compression/) — 확인일: 2026-10-06.
 
 ### 1.3·1.6 보완: 통계와 cardinality
 

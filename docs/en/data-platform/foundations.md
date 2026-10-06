@@ -17,7 +17,7 @@ knowledge_ids:
 
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. SQL and numbers are illustrative and were not run.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** The source core below keeps the original order and form. At the user’s request, added compression explanations appear within the source material. Read other section-specific corrections and conditions in the supplement after the source material; some original statements are simplified.
 
 <!-- SOURCE CORE START -->
 
@@ -198,6 +198,22 @@ Columnar storage therefore helps with:
 - Improving analytical query performance
 
 These are useful benefits.
+
+<!-- INLINE ADDITION COMPRESSION START -->
+
+#### Common compression techniques (added explanation) {#compression-techniques}
+
+Common techniques behind [Compression](#compression) and [Encoding / Compression](#encoding-compression) include the following. The first four are **encodings** that reduce value representations. The last group contains **codecs** that compress encoded bytes.
+
+- **RLE (Run-Length Encoding):** Store consecutive equal values as a value and count. Conceptually, `A,A,A,B,B → (A,3),(B,2)`.
+- **Dictionary Encoding:** Store distinct values once in a dictionary and represent each value with a small integer ID. This helps columns with few distinct values.
+- **Delta Encoding:** Store the first value and subsequent differences. Conceptually, `100,101,102 → 100,+1,+1`.
+- **Bit packing:** Pack small integers using only the required bits. For example, values `0–7` fit in 3 bits each.
+- **Snappy, LZ4, Zstandard (Zstd), and Gzip:** These codecs compress bytes without losing data. For Parquet, check for `LZ4_RAW` rather than the legacy `LZ4` codec.
+
+Parquet can combine encodings with codecs. Compression ratio and CPU cost depend on data and settings. These examples show concepts, not actual file bytes. [Official encoding documentation](https://parquet.apache.org/docs/file-format/data-pages/encodings/), [official codec documentation](https://parquet.apache.org/docs/file-format/data-pages/compression/) — checked: 2026-10-06.
+
+<!-- INLINE ADDITION COMPRESSION END -->
 
 ---
 
@@ -650,18 +666,6 @@ These sections are starting models. Choose whether to separate PostgreSQL analyt
 Parquet column chunks live inside row groups. Pruning depends on available statistics or indexes and reader support. Pushdown sends a filter to a lower layer; pruning skips storage units that cannot match. Neither is arbitrary row lookup. Encoding and compression are distinct steps. [Apache Parquet file format](https://parquet.apache.org/docs/file-format/)
 
 A large Parquet file can have several scan splits. One file is not always one task. Balance parallelism, rewrite cost, and request cost when setting file-size targets. Bucket notation is conceptual; check the engine's argument order and syntax.
-
-### Sections 1.2 and 1.3: compression techniques {#compression-techniques}
-
-Common techniques behind [Compression](#compression) and [Encoding / Compression](#encoding-compression) include the following. The first four are **encodings** that reduce value representations. The last group contains **codecs** that compress encoded bytes.
-
-- **RLE (Run-Length Encoding):** Store consecutive equal values as a value and count. Conceptually, `A,A,A,B,B → (A,3),(B,2)`.
-- **Dictionary Encoding:** Store distinct values once in a dictionary and represent each value with a small integer ID. This helps columns with few distinct values.
-- **Delta Encoding:** Store the first value and subsequent differences. Conceptually, `100,101,102 → 100,+1,+1`.
-- **Bit packing:** Pack small integers using only the required bits. For example, values `0–7` fit in 3 bits each.
-- **Snappy, LZ4, Zstandard (Zstd), and Gzip:** These codecs compress bytes without losing data. For Parquet, check for `LZ4_RAW` rather than the legacy `LZ4` codec.
-
-Parquet can combine encodings with codecs. Compression ratio and CPU cost depend on data and settings. These examples show concepts, not actual file bytes. [Official encoding documentation](https://parquet.apache.org/docs/file-format/data-pages/encodings/), [official codec documentation](https://parquet.apache.org/docs/file-format/data-pages/compression/) — checked: 2026-10-06.
 
 ### Sections 1.3 and 1.6: statistics and cardinality
 

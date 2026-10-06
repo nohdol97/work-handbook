@@ -5,7 +5,15 @@
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 1 — Data Engineering Foundations",
       "end": "# Chapter 2 — Event Data Architecture",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "inline_additions": [
+        {
+          "marker": "COMPRESSION",
+          "user_request": "2026-10-06 사용자 지시: 원문 사이에 추가해. Compression 설명을 해당 원문 절 내부로 이동한다.",
+          "ko_sha256": "92965891bdce88d8303c7f41b82e98a6aa4c2db4aa11a03a38329994564e7b7b",
+          "en_sha256": "0295204da3901e962f8f10128a65e74fa39d554d475aaa4a794878fe5d2f29a0"
+        }
+      ]
     },
     {
       "page": "data-platform/event-architecture.md",

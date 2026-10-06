@@ -33,7 +33,7 @@
     "data-platform/dbt.md": "46580ea8a7cc1883d1c8a357b7b792265f38c8b278186e9192ce1dfcc9f3f24d",
     "data-platform/event-architecture.md": "3e912088d2e38ec3f74c3bc149502450f789b65c2e4a29eb104843e93fe420de",
     "data-platform/flink.md": "606511d3f1c91eea348ad7e056fb1c97d93961992e0e2bd2c9b06cbbcae4e303",
-    "data-platform/foundations.md": "35bdb13a793f6b8a7254944b13be40cfbe268faa2b189c90976efe94dffa87f7",
+    "data-platform/foundations.md": "2babc7ce09181af361983b004a2cf1e654adc3d214f28d96992f5b66680ecfe2",
     "data-platform/governance.md": "5b8241a87cbdf270de38a94c8f71143720dd6a52a2688351ed284204acbd6a25",
     "data-platform/lakehouse-iceberg.md": "92beb2639b90a125938fa50b8f506320b2e915ea80bb477c75472287b525fb11",
     "data-platform/lineage-metadata.md": "fc58b339104638a19edb529c739944feebf611fe822ee085ae70de6e3a579a23",
@@ -615,7 +615,7 @@
       "id": "vocab-request",
       "category": "vocabulary",
       "term": "request",
-      "count": 208,
+      "count": 209,
       "documents": 30,
       "sources": [
         "ai-model-development/model-platform-collaboration.md",

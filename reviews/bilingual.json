@@ -31,14 +31,14 @@
       "notes": "양언어 전체 읽기와 변경 구간 대조. 원문 구역 없는 공통 문서. 기존 관리 용어·기술 용어와 조건은 WAL 두 정의 통합 외 그대로 유지.  독립 검토: root 소유 한영 3쌍 전문·검사기 delta 독립 검토. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/foundations.md": {
-      "ko_sha256": "898bcd40d02688ded3b7235d178aec3d2301ad6791e91ee58d5b24b942495f79",
-      "en_sha256": "35bdb13a793f6b8a7254944b13be40cfbe268faa2b189c90976efe94dffa87f7",
+      "ko_sha256": "d467f187cd9a59e5962a8f840678e8e713c9e62e65e1030e11a8f09e3fd124a2",
+      "en_sha256": "2babc7ce09181af361983b004a2cf1e654adc3d214f28d96992f5b66680ecfe2",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root + Codex /root/review_compression (independent reviewer)",
+      "reviewer": "Codex /root + Codex /root/inline_docs (independent reviewer)",
       "reviewed": "2026-10-06",
-      "notes": "기존 전문 검토본과 변경부 한영 대조. Compression 보충의 인코딩 4종과 무손실 코덱, 개념 예시, LZ4_RAW 조건, 공식 출처를 검토했다. 원문 코어 보존 검사 통과. 구현·성능 시험은 하지 않았다. 독립 검토자가 두 페이지 전문을 읽고 최종 보충·학습 페이지 변경부를 대조했다. HEAD 대비 원문 코어 bytes가 양언어 모두 동일하다. Browser 연결이 없어 시각 검토는 미수행."
+      "notes": "앞선 전문 검토본과 최종 변경부를 대조했다. 사용자 명시 요청에 따라 동일한 압축 설명을 양언어 Compression 절 안의 추가 구역으로 이동했다. 설명·예시·출처와 anchor를 유지하며 원문 비교에서 등록된 블록만 제외한다. 추가 구역을 제외한 원문·번역 구조 보존 검사를 통과했다. 시각 렌더링은 미확인."
     },
     "data-platform/event-architecture.md": {
       "ko_sha256": "d555abb36bc45d6fce4bcccc7e9080dd01ea95805970bb0e0b0e6cd6386f376e",
@@ -801,14 +801,14 @@
       "notes": "이전 검토본의 설명·예문·격식은 그대로이며 변경된 날짜와 빈도를 한영 대조했다. 후보를 검토했고 reduce 및 X depends on Y 등 기존 학습 항목으로 충분하여 새 항목은 추가하지 않았다. --write로 본문 빈도를 갱신했다."
     },
     "english-study/vocabulary.md": {
-      "ko_sha256": "48ce3e9bd7c30bf9c1386e797c31cb2237d251068405a9a9f2d4b9891d6eaaa0",
-      "en_sha256": "5338a43c22aca474750406682b05de8ae053affedf727f8eecad8eae57090bc7",
+      "ko_sha256": "9c52c4471d9abda13d06af067bcb0f50e5c9737a8f3eb31aa9131df3fe0a88f2",
+      "en_sha256": "52a593f1cb1e548404ff9151d63209ebd0d0566c1cf1a85c104042d1636e0e63",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root",
+      "reviewer": "Codex /root + Codex /root/inline_docs (independent reviewer)",
       "reviewed": "2026-10-06",
-      "notes": "이전 검토본의 설명·예문·격식은 그대로이며 변경된 날짜와 빈도를 한영 대조했다. 후보를 검토했고 reduce 및 X depends on Y 등 기존 학습 항목으로 충분하여 새 항목은 추가하지 않았다. --write로 본문 빈도를 갱신했다."
+      "notes": "이전 전문 검토본의 설명·예문·격식은 유지했다. 이동 안내의 request 출현 증가 208→209를 한영 대조했고 새 학습 항목은 필요하지 않았다."
     },
     "english-study/idioms.md": {
       "ko_sha256": "eae56da22cddffed9fb2ff1dc1d9e16de6260b83fc42669be40f2c1a42a593e1",

@@ -126,7 +126,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### request {#vocab-request}
 
-**208 occurrences · 30 documents · neutral**
+**209 occurrences · 30 documents · neutral**
 
 **요청하다; 요청**
 

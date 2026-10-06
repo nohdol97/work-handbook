@@ -126,7 +126,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### request {#vocab-request}
 
-**208회 · 30개 문서 · 중립**
+**209회 · 30개 문서 · 중립**
 
 **요청하다; 요청**
 
