@@ -2,7 +2,7 @@
 
 - 상태: active
 - 날짜: 2026-09-27
-- 관련 ADR: [006](../adr/006-source-preserving-study-pages.md)
+- 관련 ADR: [006](../adr/006-source-preserving-study-pages.md), [009](../adr/009-explicit-inline-additions.md)
 
 ## 문제와 목표
 
@@ -18,6 +18,19 @@
 - R6. 전체 한영 검토, strict 빌드, 화면 목차·언어 전환, vault byte 비교 후 기존 승인된 저장소와 Pages에 반영한다. 실제 엔진·운영 명령 실행이나 새로운 공개 대상은 범위 밖이다.
 - R7. 등록된 한영 원문 구역에서 일반 문장 직후 빈 줄 없이 이어지는 최상위 bullet 목록(`-`, `+`, `*`)과 숫자·마침표 목록, blockquote 내부의 같은 목록은 HTML에서 실제 목록으로 표시한다. MkDocs `on_page_markdown` hook은 `reviews/source-preservation.json`에 등록된 페이지·marker의 완전한 START/END 구간에만 렌더링용 구분 행을 추가한다. 실제 hook과 사이트 Markdown 설정으로 변환한 HTML의 `ul/ol/li`로 검증한다.
 - R8. R7은 원본·한영 Markdown·vault byte를 변경하지 않는다. 원문 밖·미등록 페이지/marker·기존 정상 목록·nested/indented 내용·fenced code 내부는 그대로 두며, code 안의 가짜 source marker도 작동하지 않는다. 목록의 lazy continuation을 새 문단으로 나누지 않고, 일반 indented code와 inline backtick을 fence 시작으로 오인하지 않는다. 한영 fixture, 파일 byte 비교, 멱등성, fence·인용·들여쓰기 회귀로 확인한다. 범용 CommonMark 변환·번호 재작성·본문 보정은 범위 밖이다.
+- R9. 사용자가 추가 설명을 원문 사이에 넣으라고 명시적으로 요청한 경우에만, 해당 source span의 선택적 `inline_additions`에 `marker`, 비어 있지 않은 `user_request`, `ko_sha256`, `en_sha256`을 등록할 수 있다. 기본값은 기존 R2–R4이며, 원문 자체를 고치거나 요약할 권한은 생기지 않는다. 사용자 요청 증거는 공개 가능한 문구만 기록한다.
+- R10. 각 등록 항목은 양언어 구역 안에서 `<!-- INLINE ADDITION <marker> START -->`와 `<!-- INLINE ADDITION <marker> END -->`로 감싼 유일한 블록이어야 한다. SHA-256은 시작 marker부터 끝 marker 뒤의 빈 줄까지, 즉 마지막 `\n\n`을 포함한 정확한 UTF-8 블록에 각각 적용한다. 검사기는 등록·쌍·유일성·비중첩·언어별 hash를 확인한 블록만 비교용 문자열에서 제거한다. 제거 후 원래 언어 동일성과 반대 언어 구조 검사는 R2–R3대로 수행하고 파일은 변경하지 않는다.
+- R11. 미등록 marker, marker 중복·누락·잘못된 쌍·중첩, 비어 있는 요청 증거, 잘못된 설정이나 양언어 hash 불일치는 실패한다. 추가 블록 밖의 원문 변조·삭제·병합은 계속 실패해야 한다. 자동 검사는 요청의 진위나 추가 설명의 의미·번역·가독성을 승인하지 않으며 전문 검토·렌더링·vault 기준은 유지한다.
+
+## 원문 사이 추가 회귀 기준
+
+| 기준 | 실행 가능한 증거 |
+|---|---|
+| R9 기본값·명시 요청 | 등록 없는 기존 fixture 통과, 요청 증거가 없는 등록 실패 |
+| R10 한영 추가 | 등록된 한영 블록 통과, 블록 제거 뒤 원문과 구조 동일, 실행 전후 파일 byte 동일 |
+| R10 hash 범위 | 본문·marker·뒤쪽 빈 줄 변조 및 한 언어 hash 불일치 실패 |
+| R11 경계·등록 | 미등록·중복·누락·중첩 marker, 잘못된 설정 실패 |
+| R11 원문 보호 | 유효한 추가 블록이 있어도 블록 밖 원문 변경·문단 삭제·병합 실패 |
 
 ## 범위와 한계
 

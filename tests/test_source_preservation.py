@@ -1,4 +1,5 @@
 import importlib.util
+import hashlib
 import json
 import tempfile
 import unittest
@@ -35,6 +36,90 @@ class PreservationTests(unittest.TestCase):
     def test_preserved_source_and_translated_structure_pass(self):
         self.pair(self.core.replace('Original paragraph.', 'Translated paragraph.'), 'en')
         self.assertEqual(checker.audit(self.root), [])
+
+    def inline_addition(self):
+        block = '<!-- INLINE ADDITION EXAMPLE START -->\n\nAdditional explanation.\n\n<!-- INLINE ADDITION EXAMPLE END -->\n\n'
+        self.record['inline_additions'] = [{
+            'marker': 'EXAMPLE', 'user_request': 'User explicitly requested an inline explanation.',
+            **{lang + '_sha256': hashlib.sha256(block.encode()).hexdigest() for lang in ('ko', 'en')},
+        }]
+        self.config()
+        self.pair(self.core.replace('### Example', block + '### Example'))
+        return block
+
+    def test_registered_inline_addition_preserves_original_and_translation(self):
+        self.inline_addition()
+        before = {p: p.read_bytes() for p in self.root.rglob('*.md')}
+        self.assertEqual(checker.audit(self.root), [])
+        self.assertEqual(before, {p: p.read_bytes() for p in before})
+        page = self.root / 'docs/ko/topic.md'
+        page.write_text(page.read_text().replace('Original paragraph.', 'Changed original.'))
+        self.assertTrue(any('verbatim' in x for x in checker.audit(self.root)))
+
+    def test_inline_addition_requires_request_and_current_hash(self):
+        for field, value in [('user_request', ''), ('ko_sha256', '0' * 64), ('en_sha256', None)]:
+            with self.subTest(field=field):
+                self.inline_addition()
+                self.record['inline_additions'][0][field] = value
+                self.config()
+                self.assertTrue(checker.audit(self.root))
+
+    def test_inline_addition_rejects_missing_duplicate_unregistered_and_nested_blocks(self):
+        for change in ('missing', 'duplicate', 'unregistered', 'nested'):
+            with self.subTest(change=change):
+                block = self.inline_addition()
+                if change == 'missing':
+                    text = self.core
+                elif change == 'duplicate':
+                    text = block + block + self.core
+                elif change == 'unregistered':
+                    text = block.replace('EXAMPLE', 'UNKNOWN') + self.core
+                else:
+                    inner = '<!-- INLINE ADDITION NESTED START -->\n\nNested.\n\n<!-- INLINE ADDITION NESTED END -->\n\n'
+                    outer = block.replace('Additional explanation.', inner)
+                    self.record['inline_additions'][0]['ko_sha256'] = hashlib.sha256(outer.encode()).hexdigest()
+                    self.record['inline_additions'][0]['en_sha256'] = hashlib.sha256(outer.encode()).hexdigest()
+                    self.record['inline_additions'].append({
+                        'marker': 'NESTED', 'user_request': 'Explicit inline request.',
+                        **{lang + '_sha256': hashlib.sha256(inner.encode()).hexdigest() for lang in ('ko', 'en')},
+                    })
+                    self.config()
+                    text = outer + self.core
+                self.pair(text)
+                self.assertTrue(checker.audit(self.root))
+
+    def test_inline_addition_does_not_hide_translation_loss(self):
+        self.inline_addition()
+        page = self.root / 'docs/en/topic.md'
+        page.write_text(page.read_text().replace('- one\n- two', '- one'))
+        self.assertTrue(any('structure' in x for x in checker.audit(self.root)))
+
+    def test_inline_addition_rejects_changed_payload_and_spacing(self):
+        for old, new in [('Additional explanation.', 'Changed explanation.'),
+                         ('EXAMPLE END -->\n\n', 'EXAMPLE END -->\n'),
+                         ('EXAMPLE END -->', 'EXAMPLE START -->')]:
+            with self.subTest(old=old):
+                self.inline_addition()
+                page = self.root / 'docs/en/topic.md'
+                page.write_text(page.read_text().replace(old, new))
+                self.assertTrue(checker.audit(self.root))
+
+    def test_inline_addition_hash_checks_exact_line_endings(self):
+        block = self.inline_addition()
+        page = self.root / 'docs/en/topic.md'
+        page.write_bytes(page.read_bytes().replace(block.encode(), block.replace('\n', '\r\n').encode()))
+        self.assertTrue(checker.audit(self.root))
+
+    def test_inline_addition_rejects_malformed_and_duplicate_registration(self):
+        for value in (None, {}, [None], [{'marker': 'bad'}]):
+            with self.subTest(value=value):
+                self.record['inline_additions'] = value
+                self.config()
+                self.assertTrue(checker.audit(self.root))
+        self.inline_addition()
+        self.record['inline_additions'] *= 2
+        self.config()
+        self.assertTrue(checker.audit(self.root))
 
     def test_source_rewriting_fails_even_with_all_numbers_present(self):
         self.pair(self.core.replace('Original paragraph.', 'Shortened summary.'), 'ko')

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -74,6 +75,48 @@ def _span(source, start, end, include_start=False):
     return ''.join(lines[first if include_start else first + 1:last]).strip('\r\n')
 
 
+def _without_inline_additions(core, additions, lang):
+    """Remove only explicitly registered, hash-bound additions for comparison."""
+    if not isinstance(additions, list):
+        raise ValueError('inline additions must be a list')
+    if core.count('<!-- INLINE ADDITION ') != 2 * len(additions):
+        raise ValueError('inline addition markers do not match registration')
+    intervals, seen = [], set()
+    for addition in additions:
+        if not isinstance(addition, dict):
+            raise ValueError('invalid inline addition record')
+        marker = addition.get('marker')
+        request = addition.get('user_request')
+        digest = addition.get(lang + '_sha256')
+        if not isinstance(marker, str) or not re.fullmatch(r'[A-Z][A-Z ]*', marker) or marker in seen:
+            raise ValueError('invalid or duplicate inline addition marker')
+        seen.add(marker)
+        if not isinstance(request, str) or not request.strip():
+            raise ValueError('inline addition requires explicit user request evidence')
+        if not isinstance(digest, str) or not re.fullmatch(r'[0-9a-f]{64}', digest):
+            raise ValueError('invalid inline addition hash')
+        start = f'<!-- INLINE ADDITION {marker} START -->'
+        end = f'<!-- INLINE ADDITION {marker} END -->'
+        if core.count(start) != 1 or core.count(end) != 1:
+            raise ValueError('inline addition boundary missing or duplicate')
+        first, last = core.index(start), core.index(end)
+        if first >= last or (first and not core[:first].endswith('\n\n')):
+            raise ValueError('inline addition boundary out of order or not a block')
+        last += len(end) + 2
+        block = core[first:last]
+        if not block.endswith(end + '\n\n') or hashlib.sha256(block.encode()).hexdigest() != digest:
+            raise ValueError('inline addition hash or trailing boundary mismatch')
+        intervals.append((first, last))
+    intervals.sort()
+    if any(left[1] > right[0] for left, right in zip(intervals, intervals[1:])):
+        raise ValueError('inline additions overlap or nest')
+    for first, last in reversed(intervals):
+        core = core[:first] + core[last:]
+    if '<!-- INLINE ADDITION ' in core:
+        raise ValueError('unregistered inline addition marker')
+    return core
+
+
 def audit(root):
     root = Path(root).resolve()
     errors = []
@@ -108,11 +151,15 @@ def audit(root):
                 if not isinstance(relative, str) or Path(relative).is_absolute():
                     raise ValueError('invalid page path')
                 page = _file(root, f'docs/{lang}/{relative}', root / 'docs' / lang)
-                text = page.read_text()
+                text = page.read_bytes().decode('utf-8')
                 start, end = f'<!-- {marker} START -->', f'<!-- {marker} END -->'
                 if text.count(start) != 1 or text.count(end) != 1 or text.index(start) >= text.index(end):
                     raise ValueError(f'{lang}: page boundary missing, duplicate, or out of order')
-                core = text.split(start, 1)[1].split(end, 1)[0].strip('\r\n')
+                core = text.split(start, 1)[1].split(end, 1)[0]
+                core = _without_inline_additions(core, record.get('inline_additions', []), lang)
+                # Keep the existing source comparison's universal-newline behavior
+                # after checking addition hashes against their exact stored bytes.
+                core = core.replace('\r\n', '\n').replace('\r', '\n').strip('\n')
                 if lang == original_language and core != original:
                     errors.append(f'{label}: {lang} verbatim source mismatch')
                 if structure(core) != expected_structure:

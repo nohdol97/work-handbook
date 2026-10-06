@@ -12,6 +12,7 @@
 | [006](adr/006-source-preserving-study-pages.md) | accepted | 학습 원문의 형태 보존과 보완 분리 |
 | [007](adr/007-source-list-rendering.md) | accepted | 원문 byte를 유지하고 등록 구역의 목록을 HTML에서 복원 |
 | [008](adr/008-practical-english.md) | accepted | 전체 영어 본문 빈도와 검토 원고에서 실전 영어 학습 자료 생성 |
+| [009](adr/009-explicit-inline-additions.md) | accepted | 명시적 사용자 요청에 한해 등록·hash 검증한 설명을 원문 사이에 추가 |
 
 ## 스펙
 
@@ -22,7 +23,7 @@
 | [003](specs/003-vault-mirror.md) | active | 충돌 보호 Markdown vault 사본 |
 | [004](specs/004-build-and-delivery.md) | active | 사이트 빌드·검증·전달, 모바일·데스크톱 대주제 접기, 시스템·라이트·다크 모드와 흰색 글자 대비 |
 | [005](specs/005-practical-prompts.md) | active | 프롬프트 줄바꿈·언어 전환·실무 예시 100개·개념 절과 실습 절의 검사 구분 |
-| [006](specs/006-source-preservation.md) | active | 원래 언어 본문 동일성·한영 Markdown 구조·원문 목록 렌더링 검사 |
+| [006](specs/006-source-preservation.md) | active | 원래 언어 본문 동일성·한영 Markdown 구조·원문 목록 렌더링·명시 요청의 등록된 추가 블록 검사 |
 | [007](specs/007-editorial-and-practical-use.md) | active | 원문 밖 중복 정리·현재 학습 범위·업무 자료 기반 프롬프트 |
 | [008](specs/008-practical-english.md) | active | 빈도 집계·한영 어휘/표현·생성물 최신성·기존/신규 문서 반복 학습 |
 
