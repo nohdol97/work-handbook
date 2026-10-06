@@ -1,5 +1,9 @@
 # 자료 매핑
 
+## 2026-10-06 Compression 보충
+
+사용자 요청에 따라 기존 DPE-01-02·DPE-01-03의 압축 설명을 `data-platform/foundations.md` 한영 보완 구역에 확장한다. 원문·지식 ID·학습 상태는 유지한다. Apache Parquet 공식 [Encodings](https://parquet.apache.org/docs/file-format/data-pages/encodings/)와 [Compression](https://parquet.apache.org/docs/file-format/data-pages/compression/)에서 RLE, dictionary, delta, bit packing과 범용 codec의 구분 및 LZ4_RAW 표기를 확인했다. 예시는 개념 설명이며 실제 파일 바이트나 성능 측정 결과가 아니다.
+
 - **Source:** `data_platform_engineering_study_source-3.md` 업로드 전체. 공개 가능한 원문을 `source.md`에 보존했고, 행 끝 공백 제거 위치를 source.md 주석 ledger에 남기고 복원한 bytes를 업로드와 대조했다. 개인 upload 경로는 저장하지 않는다.
 - **Source language:** 한국어와 표준 영어 기술 용어.
 - **Curriculum:** 원문 Chapter 18에서 `curriculum.md`로 추출. Phase 1~15 및 16.1 완료, 16.2~16.11과 Phase 17~21 미학습.

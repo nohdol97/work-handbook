@@ -1,8 +1,8 @@
 ---
 id: english-study-workplace
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-06
+last_reviewed: 2026-10-06
 knowledge_ids: []
 ---
 
@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### X depends on Y {#workplace-depends-on}
 
-**47 occurrences · 25 documents · neutral**
+**48 occurrences · 25 documents · neutral**
 
 **X는 Y에 따라 달라진다**
 
@@ -78,7 +78,7 @@ Example source pages: [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/e
 
 ### For example, ... {#workplace-for-example}
 
-**17 occurrences · 12 documents · neutral**
+**18 occurrences · 12 documents · neutral**
 
 **예를 들어 ...**
 

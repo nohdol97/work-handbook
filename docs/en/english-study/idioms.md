@@ -1,8 +1,8 @@
 ---
 id: english-study-idioms
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-06
+last_reviewed: 2026-10-06
 knowledge_ids: []
 ---
 
@@ -62,7 +62,7 @@ Example source pages: [ai-model-development/model-developer](../ai-model-develop
 
 ### rather than {#idioms-rather-than}
 
-**29 occurrences · 21 documents · neutral**
+**30 occurrences · 22 documents · neutral**
 
 **~보다는, ~하지 않고**
 

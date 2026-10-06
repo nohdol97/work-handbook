@@ -1,8 +1,8 @@
 ---
 id: english-study-workplace
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-06
+last_reviewed: 2026-10-06
 knowledge_ids: []
 ---
 
@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### X depends on Y {#workplace-depends-on}
 
-**47회 · 25개 문서 · 중립**
+**48회 · 25개 문서 · 중립**
 
 **X는 Y에 따라 달라진다**
 
@@ -78,7 +78,7 @@ knowledge_ids: []
 
 ### For example, ... {#workplace-for-example}
 
-**17회 · 12개 문서 · 중립**
+**18회 · 12개 문서 · 중립**
 
 **예를 들어 ...**
 

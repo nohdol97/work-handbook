@@ -31,14 +31,14 @@
       "notes": "양언어 전체 읽기와 변경 구간 대조. 원문 구역 없는 공통 문서. 기존 관리 용어·기술 용어와 조건은 WAL 두 정의 통합 외 그대로 유지.  독립 검토: root 소유 한영 3쌍 전문·검사기 delta 독립 검토. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
     },
     "data-platform/foundations.md": {
-      "ko_sha256": "79598ebb5392fd6eaf8cca3f04c8a82efcc6ad4beae85cb68e052e50ec588b3d",
-      "en_sha256": "783669fb9aaaf66103cff2ce31c9600dc7d71f25dfc197d74a8b9012c5a06339",
+      "ko_sha256": "898bcd40d02688ded3b7235d178aec3d2301ad6791e91ee58d5b24b942495f79",
+      "en_sha256": "35bdb13a793f6b8a7254944b13be40cfbe268faa2b189c90976efe94dffa87f7",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/review_data (author review) + Codex sub-agent /root/review_prompts (independent reviewer; did not edit data-platform files)",
-      "reviewed": "2026-10-04",
-      "notes": "Both complete source cores read, identical repeated lines deduplicated; all introductions/supplements read during the editorial review, then every final changed Korean/English passage and both prompt variants compared. Preserved every registered source block verbatim, including translated core. Removed only supplementary repetition with original section or canonical-topic destinations recorded. Kept unique qualifications and all diagrams. Reworked the existing scenario into an evidence-linked work artifact with missing-input questions and domain acceptance criteria. Rechecked original prompt validation conditions after independent review; retained source-specific settings/document checks and operational boundaries inside standalone prompts. 독립 검토: Read all changed Korean and English exterior passages against HEAD, all 22 current standalone prompt scenarios in both languages (identical repeated lines read once), and all final restored Checks plus architecture/production Output. Read relevant source sections for removed supplementary explanations. Unchanged large original and translated cores were compared byte-for-byte; this is not a claim of rereading all source cores. 미실행 업무 템플릿이며 효과·빈도는 측정하지 않음. 상세 변경·보존 증거: reviews/editorial-2026-10-04.json."
+      "reviewer": "Codex /root + Codex /root/review_compression (independent reviewer)",
+      "reviewed": "2026-10-06",
+      "notes": "기존 전문 검토본과 변경부 한영 대조. Compression 보충의 인코딩 4종과 무손실 코덱, 개념 예시, LZ4_RAW 조건, 공식 출처를 검토했다. 원문 코어 보존 검사 통과. 구현·성능 시험은 하지 않았다. 독립 검토자가 두 페이지 전문을 읽고 최종 보충·학습 페이지 변경부를 대조했다. HEAD 대비 원문 코어 bytes가 양언어 모두 동일하다. Browser 연결이 없어 시각 검토는 미수행."
     },
     "data-platform/event-architecture.md": {
       "ko_sha256": "d555abb36bc45d6fce4bcccc7e9080dd01ea95805970bb0e0b0e6cd6386f376e",
@@ -781,54 +781,54 @@
       "notes": "해당 원문 구간과 KO/EN 완성 페이지를 작성자와 독립 검토자가 전문 읽음. 제목·번호·순서·코드·수치·hard break 보존, 쉬운 영어·조건·예문·privacy 검토. 잘못된 원문 주장과 라이브러리 적용 조건은 source core 밖 공식 근거 보완으로 분리. 실제 GPU 학습·성능 평가·배포·LLM 실행 기록이 아님."
     },
     "english-study/index.md": {
-      "ko_sha256": "1f98759623473097b8d850c0e6e4b0220fc3550b0e0653631093afcf691f2cd9",
-      "en_sha256": "55976657d22d4c1f43074bec1818c261637521d67a5d082f696c283eefbe8833",
+      "ko_sha256": "e067e35f9549ada1d47acc6e1e32930a21fc6976838ef432823b812d5676a308",
+      "en_sha256": "9ccd95b45e6150c9370b266abd8000ad4ba79eb2d578551cf8a957ca0d22454d",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex 작성자 + 독립 편집/생성 검토 Codex /root/chapter14 + 통합 수정 검토 Codex /root",
-      "reviewed": "2026-10-05",
-      "notes": "검토 원고의 모든 뜻·양언어 용법·예문·활용형·사용역을 읽고 독립 검토. 생성 안내와 항목 동등성·순서·0회 분리·명시 집계 한계를 확인. scale up 문맥/rather than 예문/instead of 분류/determine 격식 수정 반영; root가 단수 frequency 문구 수정 및 재생성 후 실제 출력을 확인. 78개 영어 문서의 철자 기준 횟수이며 일반 영어 빈도·학습 효과·개인 업무 경험은 주장하지 않음. 마지막 모바일 편집: 상세 집계 기준을 index로 이동하고 각 분류에는 짧은 학습 안내를 둠. Codex /root/chapter14가 안내 한영 전문·집계 anchor·114개 항목의 원고 보존·단수형 수정·생성물 일치를 독립 확인."
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-06",
+      "notes": "이전 검토본의 설명·예문·격식은 그대로이며 변경된 날짜와 빈도를 한영 대조했다. 후보를 검토했고 reduce 및 X depends on Y 등 기존 학습 항목으로 충분하여 새 항목은 추가하지 않았다. --write로 본문 빈도를 갱신했다."
     },
     "english-study/workplace.md": {
-      "ko_sha256": "f3bb48f81936026728914a435e398e778f8431c6923e5f139909885ddc97b7a3",
-      "en_sha256": "7d139503ccee57812536d1b6cc26b88060d2217be67a382c4924c41adf4c5fe9",
+      "ko_sha256": "d69eaf208b92bde06145a510926f3b63e907714bfb3396c72000b7d2e88745a9",
+      "en_sha256": "9a32aa3fee3bc2523661ae55b88fb38d832589cc7a4e1cd5815fc2cfa2adac12",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex 작성자 + 독립 편집/생성 검토 Codex /root/chapter14 + 통합 수정 검토 Codex /root",
-      "reviewed": "2026-10-05",
-      "notes": "검토 원고의 모든 뜻·양언어 용법·예문·활용형·사용역을 읽고 독립 검토. 생성 안내와 항목 동등성·순서·0회 분리·명시 집계 한계를 확인. scale up 문맥/rather than 예문/instead of 분류/determine 격식 수정 반영; root가 단수 frequency 문구 수정 및 재생성 후 실제 출력을 확인. 78개 영어 문서의 철자 기준 횟수이며 일반 영어 빈도·학습 효과·개인 업무 경험은 주장하지 않음. 마지막 모바일 편집: 상세 집계 기준을 index로 이동하고 각 분류에는 짧은 학습 안내를 둠. Codex /root/chapter14가 안내 한영 전문·집계 anchor·114개 항목의 원고 보존·단수형 수정·생성물 일치를 독립 확인. 생성 파일 끝의 여분 빈 줄만 제거했으며 본문·예문·수치는 동일."
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-06",
+      "notes": "이전 검토본의 설명·예문·격식은 그대로이며 변경된 날짜와 빈도를 한영 대조했다. 후보를 검토했고 reduce 및 X depends on Y 등 기존 학습 항목으로 충분하여 새 항목은 추가하지 않았다. --write로 본문 빈도를 갱신했다."
     },
     "english-study/vocabulary.md": {
-      "ko_sha256": "3a4c97944c26cad3ac1c812b6b0e911970896d705d7da833a5490c5741de1c1c",
-      "en_sha256": "6fdc6203aa631886a5378fd8344fecc70bf5045def26eb58d01ce0dc564747c4",
+      "ko_sha256": "48ce3e9bd7c30bf9c1386e797c31cb2237d251068405a9a9f2d4b9891d6eaaa0",
+      "en_sha256": "5338a43c22aca474750406682b05de8ae053affedf727f8eecad8eae57090bc7",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex 작성자 + 독립 편집/생성 검토 Codex /root/chapter15 + 통합 수정 검토 Codex /root",
-      "reviewed": "2026-10-05",
-      "notes": "검토 원고의 모든 뜻·양언어 용법·예문·활용형·사용역을 읽고 독립 검토. 생성 안내와 항목 동등성·순서·0회 분리·명시 집계 한계를 확인. scale up 문맥/rather than 예문/instead of 분류/determine 격식 수정 반영; root가 단수 frequency 문구 수정 및 재생성 후 실제 출력을 확인. 78개 영어 문서의 철자 기준 횟수이며 일반 영어 빈도·학습 효과·개인 업무 경험은 주장하지 않음. 마지막 모바일 편집: 상세 집계 기준을 index로 이동하고 각 분류에는 짧은 학습 안내를 둠. Codex /root/chapter14가 안내 한영 전문·집계 anchor·114개 항목의 원고 보존·단수형 수정·생성물 일치를 독립 확인. 생성 파일 끝의 여분 빈 줄만 제거했으며 본문·예문·수치는 동일."
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-06",
+      "notes": "이전 검토본의 설명·예문·격식은 그대로이며 변경된 날짜와 빈도를 한영 대조했다. 후보를 검토했고 reduce 및 X depends on Y 등 기존 학습 항목으로 충분하여 새 항목은 추가하지 않았다. --write로 본문 빈도를 갱신했다."
     },
     "english-study/idioms.md": {
-      "ko_sha256": "0206e35fea82bfa90e4b48a7fea3beb00a05c75d0a6595645e23293d95c56f79",
-      "en_sha256": "8496155b9bc01d68a6650d89478a2bd96f16a16b5cc587738774a31d79ffde9d",
+      "ko_sha256": "eae56da22cddffed9fb2ff1dc1d9e16de6260b83fc42669be40f2c1a42a593e1",
+      "en_sha256": "9bf7b536bb852ac0258687cb471f4b6c8a65977853d4c62361b795af5f610e95",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex 작성자 + 독립 편집/생성 검토 Codex /root/chapters12_13 + 통합 수정 검토 Codex /root",
-      "reviewed": "2026-10-05",
-      "notes": "검토 원고의 모든 뜻·양언어 용법·예문·활용형·사용역을 읽고 독립 검토. 생성 안내와 항목 동등성·순서·0회 분리·명시 집계 한계를 확인. scale up 문맥/rather than 예문/instead of 분류/determine 격식 수정 반영; root가 단수 frequency 문구 수정 및 재생성 후 실제 출력을 확인. 78개 영어 문서의 철자 기준 횟수이며 일반 영어 빈도·학습 효과·개인 업무 경험은 주장하지 않음. 마지막 모바일 편집: 상세 집계 기준을 index로 이동하고 각 분류에는 짧은 학습 안내를 둠. Codex /root/chapter14가 안내 한영 전문·집계 anchor·114개 항목의 원고 보존·단수형 수정·생성물 일치를 독립 확인. 생성 파일 끝의 여분 빈 줄만 제거했으며 본문·예문·수치는 동일."
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-06",
+      "notes": "이전 검토본의 설명·예문·격식은 그대로이며 변경된 날짜와 빈도를 한영 대조했다. 후보를 검토했고 reduce 및 X depends on Y 등 기존 학습 항목으로 충분하여 새 항목은 추가하지 않았다. --write로 본문 빈도를 갱신했다."
     },
     "english-study/phrasal-verbs.md": {
-      "ko_sha256": "34e533eb304b34c1acac4dc02ef25c1ae2819fd6d85cf3eda69a0e63a6badbbd",
-      "en_sha256": "7e1e8ae54c2a61044b197ce6a0ab0ce9e2cc9ad9606f4577fd28d8f70218e438",
+      "ko_sha256": "b7b307b73d1b2cada87238a52bb5ebe89bd5e3f5a1ef810bc9e3d8a6cf2f04b2",
+      "en_sha256": "fbcdf299831baa030565e353063e4b4d3bd7cdd41b8372e87f8ef18e3130760a",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex 작성자 + 독립 편집/생성 검토 Codex /root/chapters12_13 + 통합 수정 검토 Codex /root",
-      "reviewed": "2026-10-05",
-      "notes": "검토 원고의 모든 뜻·양언어 용법·예문·활용형·사용역을 읽고 독립 검토. 생성 안내와 항목 동등성·순서·0회 분리·명시 집계 한계를 확인. scale up 문맥/rather than 예문/instead of 분류/determine 격식 수정 반영; root가 단수 frequency 문구 수정 및 재생성 후 실제 출력을 확인. 78개 영어 문서의 철자 기준 횟수이며 일반 영어 빈도·학습 효과·개인 업무 경험은 주장하지 않음. 마지막 모바일 편집: 상세 집계 기준을 index로 이동하고 각 분류에는 짧은 학습 안내를 둠. Codex /root/chapter14가 안내 한영 전문·집계 anchor·114개 항목의 원고 보존·단수형 수정·생성물 일치를 독립 확인. 생성 파일 끝의 여분 빈 줄만 제거했으며 본문·예문·수치는 동일."
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-06",
+      "notes": "이전 검토본의 설명·예문·격식은 그대로이며 변경된 날짜와 빈도를 한영 대조했다. 후보를 검토했고 reduce 및 X depends on Y 등 기존 학습 항목으로 충분하여 새 항목은 추가하지 않았다. --write로 본문 빈도를 갱신했다."
     }
   }
 }

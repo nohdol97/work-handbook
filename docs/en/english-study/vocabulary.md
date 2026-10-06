@@ -1,8 +1,8 @@
 ---
 id: english-study-vocabulary
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-06
+last_reviewed: 2026-10-06
 knowledge_ids: []
 ---
 
@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### check {#vocab-check}
 
-**538 occurrences · 76 documents · neutral**
+**540 occurrences · 76 documents · neutral**
 
 **확인하다; 점검**
 
@@ -30,7 +30,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### use {#vocab-use}
 
-**510 occurrences · 76 documents · neutral**
+**511 occurrences · 76 documents · neutral**
 
 **사용하다; 사용**
 
@@ -158,7 +158,7 @@ Example source pages: [ai-model-development/evaluation-promotion](../ai-model-de
 
 ### actual {#vocab-actual}
 
-**185 occurrences · 59 documents · neutral**
+**186 occurrences · 59 documents · neutral**
 
 **실제의**
 
@@ -206,7 +206,7 @@ Example source pages: [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-archit
 
 ### require {#vocab-require}
 
-**134 occurrences · 54 documents · neutral**
+**135 occurrences · 54 documents · neutral**
 
 **필요로 하다; 요구하다**
 
@@ -368,7 +368,7 @@ Example source pages: [ai-model-development/artifact-lineage](../ai-model-develo
 
 ### reduce {#vocab-reduce}
 
-**66 occurrences · 28 documents · neutral**
+**67 occurrences · 28 documents · neutral**
 
 **줄이다**
 

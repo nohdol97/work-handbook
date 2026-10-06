@@ -1,8 +1,8 @@
 ---
 id: english-study-index
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-06
+last_reviewed: 2026-10-06
 knowledge_ids: []
 ---
 

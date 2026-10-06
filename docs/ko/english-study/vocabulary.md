@@ -1,8 +1,8 @@
 ---
 id: english-study-vocabulary
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-06
+last_reviewed: 2026-10-06
 knowledge_ids: []
 ---
 
@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### check {#vocab-check}
 
-**538회 · 76개 문서 · 중립**
+**540회 · 76개 문서 · 중립**
 
 **확인하다; 점검**
 
@@ -30,7 +30,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### use {#vocab-use}
 
-**510회 · 76개 문서 · 중립**
+**511회 · 76개 문서 · 중립**
 
 **사용하다; 사용**
 
@@ -158,7 +158,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### actual {#vocab-actual}
 
-**185회 · 59개 문서 · 중립**
+**186회 · 59개 문서 · 중립**
 
 **실제의**
 
@@ -206,7 +206,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### require {#vocab-require}
 
-**134회 · 54개 문서 · 중립**
+**135회 · 54개 문서 · 중립**
 
 **필요로 하다; 요구하다**
 
@@ -368,7 +368,7 @@ provide A for B 또는 provide B with A로 제공 대상과 받는 대상을 표
 
 ### reduce {#vocab-reduce}
 
-**66회 · 28개 문서 · 중립**
+**67회 · 28개 문서 · 중립**
 
 **줄이다**
 
