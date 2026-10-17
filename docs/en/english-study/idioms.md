@@ -1,8 +1,8 @@
 ---
 id: english-study-idioms
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids: []
 ---
 
@@ -46,7 +46,7 @@ Example source pages: [ai-model-development/qlora-training](../ai-model-developm
 
 ### instead of {#idioms-instead-of}
 
-**46 occurrences · 31 documents · neutral**
+**52 occurrences · 33 documents · neutral**
 
 **~ 대신에**
 
@@ -62,7 +62,7 @@ Example source pages: [ai-model-development/model-developer](../ai-model-develop
 
 ### rather than {#idioms-rather-than}
 
-**32 occurrences · 24 documents · neutral**
+**35 occurrences · 27 documents · neutral**
 
 **~보다는, ~하지 않고**
 
@@ -126,7 +126,7 @@ Example source pages: [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-archit
 
 ### at a time {#idioms-at-a-time}
 
-**6 occurrences · 5 documents · neutral**
+**9 occurrences · 8 documents · neutral**
 
 **한 번에**
 
@@ -138,7 +138,7 @@ This fixed expression is a collocation used after one or another quantity. It st
 
 Counted forms: at a time.
 
-Example source pages: [data-platform/spark](../data-platform/spark.md), [platform-infrastructure/architecture](../platform-infrastructure/architecture.md), [platform-infrastructure/kafka](../platform-infrastructure/kafka.md).
+Example source pages: [data-platform/ai-evaluation](../data-platform/ai-evaluation.md), [data-platform/databricks](../data-platform/databricks.md), [data-platform/lakehouse-iceberg](../data-platform/lakehouse-iceberg.md).
 
 ### as a result {#idioms-as-a-result}
 
@@ -158,7 +158,7 @@ Example source pages: [data-platform/flink](../data-platform/flink.md), [platfor
 
 ### in advance {#idioms-in-advance}
 
-**1 occurrence · 1 document · neutral**
+**2 occurrences · 2 documents · neutral**
 
 **미리, 사전에**
 
@@ -170,7 +170,7 @@ This fixed expression is a collocation for doing something before an event or de
 
 Counted forms: in advance.
 
-Example source pages: [platform-infrastructure/vllm](../platform-infrastructure/vllm.md).
+Example source pages: [data-platform/production-operations](../data-platform/production-operations.md), [platform-infrastructure/vllm](../platform-infrastructure/vllm.md).
 
 ### in place {#idioms-in-place}
 

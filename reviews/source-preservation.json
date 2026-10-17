@@ -13,147 +13,189 @@
           "ko_sha256": "92965891bdce88d8303c7f41b82e98a6aa4c2db4aa11a03a38329994564e7b7b",
           "en_sha256": "0295204da3901e962f8f10128a65e74fa39d554d475aaa4a794878fe5d2f29a0"
         }
-      ]
+      ],
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/event-architecture.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 2 — Event Data Architecture",
       "end": "# Chapter 3 — Lakehouse / Iceberg",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/lakehouse-iceberg.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 3 — Lakehouse / Iceberg",
       "end": "# Chapter 4 — Spark",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/spark.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 4 — Spark",
       "end": "# Chapter 5 — Flink",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/flink.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 5 — Flink",
       "end": "# Chapter 6 — CDC / Debezium",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/cdc-debezium.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 6 — CDC / Debezium",
       "end": "# Chapter 7 — Orchestration",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/orchestration.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 7 — Orchestration",
       "end": "# Chapter 8 — dbt",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/dbt.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 8 — dbt",
       "end": "# Chapter 9 — Analytical Data Modeling",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/analytical-modeling.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 9 — Analytical Data Modeling",
       "end": "# Chapter 10 — Trino",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/trino.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 10 — Trino",
       "end": "# Chapter 11 — Data Quality Engineering",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/data-quality.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 11 — Data Quality Engineering",
       "end": "# Chapter 12 — Data Observability",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/data-observability.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 12 — Data Observability",
       "end": "# Chapter 13 — Lineage & Metadata Platform",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/lineage-metadata.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 13 — Lineage & Metadata Platform",
       "end": "# Chapter 14 — Data Governance",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/governance.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 14 — Data Governance",
       "end": "# Chapter 15 — AI-Ready Data",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/ai-ready-data.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 15 — AI-Ready Data",
       "end": "# Chapter 16 — AI Evaluation Data Platform",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/ai-evaluation.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 16 — AI Evaluation Data Platform",
       "end": "# Chapter 17 — Databricks Deep Dive",
-      "verbatim_language": "en"
+      "verbatim_language": "en",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/databricks.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 17 — Databricks Deep Dive",
       "end": "# Chapter 18 — Snowflake Deep Dive (Condensed)",
-      "verbatim_language": "en"
+      "verbatim_language": "en",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/snowflake.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 18 — Snowflake Deep Dive (Condensed)",
       "end": "# Chapter 19 — Databricks vs Snowflake vs Open Lakehouse",
-      "verbatim_language": "en"
+      "verbatim_language": "en",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/platform-comparison.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 19 — Databricks vs Snowflake vs Open Lakehouse",
       "end": "# Chapter 20 — Production Data Platform Engineering",
-      "verbatim_language": "en"
+      "verbatim_language": "en",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/production-operations.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 20 — Production Data Platform Engineering",
       "end": "# Chapter 21 — Final End-to-End Data Platform Architecture",
-      "verbatim_language": "en"
+      "verbatim_language": "en",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/architecture.md",
       "source": "sources/data-platform-engineering-2026-09-24/complete-source-2026-09-27.md",
       "start": "# Chapter 21 — Final End-to-End Data Platform Architecture",
       "end": "# Final Mental Model",
-      "verbatim_language": "en"
+      "verbatim_language": "en",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/architecture.md",
@@ -162,7 +204,9 @@
       "end": "# Study Session Status",
       "include_start": true,
       "verbatim_language": "en",
-      "marker": "SOURCE FINAL"
+      "marker": "SOURCE FINAL",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "data-platform/architecture.md",
@@ -170,7 +214,9 @@
       "start": "# Appendix A — Supplementary Clarifications",
       "end": null,
       "verbatim_language": "ko",
-      "marker": "SOURCE APPENDIX"
+      "marker": "SOURCE APPENDIX",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
     },
     {
       "page": "platform-infrastructure/linux-containers.md",

@@ -1,8 +1,8 @@
 ---
 id: english-study-workplace
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids: []
 ---
 
@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### X depends on Y {#workplace-depends-on}
 
-**57 occurrences · 25 documents · neutral**
+**62 occurrences · 27 documents · neutral**
 
 **X는 Y에 따라 달라진다**
 
@@ -30,7 +30,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### X does not mean Y {#workplace-does-not-mean}
 
-**49 occurrences · 33 documents · neutral**
+**48 occurrences · 32 documents · neutral**
 
 **X라고 해서 Y라는 뜻은 아니다**
 
@@ -44,41 +44,9 @@ Counted forms: does not mean, doesn't mean.
 
 Example source pages: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/qlora-artifacts](../ai-model-development/qlora-artifacts.md).
 
-### X does not guarantee Y {#workplace-does-not-guarantee}
-
-**34 occurrences · 25 documents · neutral**
-
-**X가 Y를 보장하지는 않는다**
-
-Explain a design limit or distinguish a necessary condition from a sufficient one. Follow guarantee with an outcome noun or a that-clause.
-
-> Adding replicas does not guarantee lower latency when the database is the bottleneck.
->
-> 데이터베이스가 병목이면 replica를 늘려도 latency 감소가 보장되지는 않는다.
-
-Counted forms: does not guarantee, doesn't guarantee.
-
-Example source pages: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md).
-
-### Check that ... {#workplace-check-that}
-
-**31 occurrences · 28 documents · neutral**
-
-**...인지 점검하다**
-
-Ask someone to verify an expected condition. Check whether often investigates an open possibility; check that fits a condition that should hold.
-
-> Check that the artifact checksum matches the checksum recorded during evaluation.
->
-> Artifact checksum이 평가 때 기록한 checksum과 일치하는지 점검한다.
-
-Counted forms: check that.
-
-Example source pages: [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md), [aws-cloud/foundations](../aws-cloud/foundations.md).
-
 ### For example, ... {#workplace-for-example}
 
-**25 occurrences · 17 documents · neutral**
+**39 occurrences · 20 documents · neutral**
 
 **예를 들어 ...**
 
@@ -92,9 +60,41 @@ Counted forms: for example.
 
 Example source pages: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md).
 
+### Check that ... {#workplace-check-that}
+
+**34 occurrences · 30 documents · neutral**
+
+**...인지 점검하다**
+
+Ask someone to verify an expected condition. Check whether often investigates an open possibility; check that fits a condition that should hold.
+
+> Check that the artifact checksum matches the checksum recorded during evaluation.
+>
+> Artifact checksum이 평가 때 기록한 checksum과 일치하는지 점검한다.
+
+Counted forms: check that.
+
+Example source pages: [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md), [aws-cloud/foundations](../aws-cloud/foundations.md).
+
+### X does not guarantee Y {#workplace-does-not-guarantee}
+
+**32 occurrences · 25 documents · neutral**
+
+**X가 Y를 보장하지는 않는다**
+
+Explain a design limit or distinguish a necessary condition from a sufficient one. Follow guarantee with an outcome noun or a that-clause.
+
+> Adding replicas does not guarantee lower latency when the database is the bottleneck.
+>
+> 데이터베이스가 병목이면 replica를 늘려도 latency 감소가 보장되지는 않는다.
+
+Counted forms: does not guarantee, doesn't guarantee.
+
+Example source pages: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md).
+
 ### Check whether ... {#workplace-check-whether}
 
-**16 occurrences · 13 documents · neutral**
+**17 occurrences · 14 documents · neutral**
 
 **...인지 확인하다**
 

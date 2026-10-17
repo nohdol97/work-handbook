@@ -1,8 +1,8 @@
 ---
 id: english-study-workplace
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids: []
 ---
 
@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### X depends on Y {#workplace-depends-on}
 
-**57회 · 25개 문서 · 중립**
+**62회 · 27개 문서 · 중립**
 
 **X는 Y에 따라 달라진다**
 
@@ -30,7 +30,7 @@ knowledge_ids: []
 
 ### X does not mean Y {#workplace-does-not-mean}
 
-**49회 · 33개 문서 · 중립**
+**48회 · 32개 문서 · 중립**
 
 **X라고 해서 Y라는 뜻은 아니다**
 
@@ -44,41 +44,9 @@ knowledge_ids: []
 
 본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/qlora-artifacts](../ai-model-development/qlora-artifacts.md).
 
-### X does not guarantee Y {#workplace-does-not-guarantee}
-
-**34회 · 25개 문서 · 중립**
-
-**X가 Y를 보장하지는 않는다**
-
-필요 조건과 충분 조건을 구분하거나 설계의 한계를 설명한다. Guarantee 뒤에 결과를 나타내는 명사나 that절을 쓴다.
-
-> Adding replicas does not guarantee lower latency when the database is the bottleneck.
->
-> 데이터베이스가 병목이면 replica를 늘려도 latency 감소가 보장되지는 않는다.
-
-집계한 형태: does not guarantee, doesn't guarantee.
-
-본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md).
-
-### Check that ... {#workplace-check-that}
-
-**31회 · 28개 문서 · 중립**
-
-**...인지 점검하다**
-
-충족돼야 하는 조건을 점검하라는 작업 지시에 쓴다. Check whether가 불확실한 선택지를 조사하는 데 흔히 쓰인다면 check that은 기대한 조건의 확인에 잘 맞는다.
-
-> Check that the artifact checksum matches the checksum recorded during evaluation.
->
-> Artifact checksum이 평가 때 기록한 checksum과 일치하는지 점검한다.
-
-집계한 형태: check that.
-
-본문 예: [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md), [aws-cloud/foundations](../aws-cloud/foundations.md).
-
 ### For example, ... {#workplace-for-example}
 
-**25회 · 17개 문서 · 중립**
+**39회 · 20개 문서 · 중립**
 
 **예를 들어 ...**
 
@@ -92,9 +60,41 @@ knowledge_ids: []
 
 본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md).
 
+### Check that ... {#workplace-check-that}
+
+**34회 · 30개 문서 · 중립**
+
+**...인지 점검하다**
+
+충족돼야 하는 조건을 점검하라는 작업 지시에 쓴다. Check whether가 불확실한 선택지를 조사하는 데 흔히 쓰인다면 check that은 기대한 조건의 확인에 잘 맞는다.
+
+> Check that the artifact checksum matches the checksum recorded during evaluation.
+>
+> Artifact checksum이 평가 때 기록한 checksum과 일치하는지 점검한다.
+
+집계한 형태: check that.
+
+본문 예: [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md), [aws-cloud/foundations](../aws-cloud/foundations.md).
+
+### X does not guarantee Y {#workplace-does-not-guarantee}
+
+**32회 · 25개 문서 · 중립**
+
+**X가 Y를 보장하지는 않는다**
+
+필요 조건과 충분 조건을 구분하거나 설계의 한계를 설명한다. Guarantee 뒤에 결과를 나타내는 명사나 that절을 쓴다.
+
+> Adding replicas does not guarantee lower latency when the database is the bottleneck.
+>
+> 데이터베이스가 병목이면 replica를 늘려도 latency 감소가 보장되지는 않는다.
+
+집계한 형태: does not guarantee, doesn't guarantee.
+
+본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md).
+
 ### Check whether ... {#workplace-check-whether}
 
-**16회 · 13개 문서 · 중립**
+**17회 · 14개 문서 · 중립**
 
 **...인지 확인하다**
 

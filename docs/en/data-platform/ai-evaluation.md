@@ -1,8 +1,8 @@
 ---
 id: data-platform-ai-evaluation
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-16-01
   - DPE2-16-01
@@ -23,15 +23,13 @@ knowledge_ids:
 
 This page records conceptual study of sections 16.1–16.12. All data, scores, costs, versions, and gates below are hypothetical teaching examples, not production measurements or implemented results. Online evaluation observes real executions. Offline evaluation compares changes with fixed cases. Turning failures into regression cases and linking executions to version bundles connects the two flows.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
-
-**Reading guide:** AI evaluation resembles both practice tests and feedback after real use. Online evaluation in 16.1 observes signals from real requests; offline evaluation in 16.2 compares changes on fixed cases. Sections 16.3–16.4 cover the different limits of human review and Model-as-Judge, where a model scores an answer against criteria. Sections 16.5–16.8 link prompt, model, agent, and experiment versions. Sections 16.9–16.10 check recurring failures alongside quality, cost, and latency. Sections 16.11–16.12 explain where to store and connect those records.
+**Reading note:** The chapter below keeps the source numbering, outline, technical content, and examples while explaining them in simpler language. Check the section-specific conditions and additions in the supplement after the chapter.
 
 <!-- SOURCE CORE START -->
 
 ## 16.1 Online Evaluation Events
 
-Online Evaluation means:
+Real requests are hard to recreate exactly, so inspect execution records together with feedback. If a score is low, inspect its trace ID together with the prompt, model, and tools to decide where to investigate. A score alone does not prove the cause. Do not count unscored requests as successes.
 
 > **Evaluating AI executions that actually happened in production and attaching evaluation data to those traces.**
 
@@ -60,7 +58,7 @@ rule_based_score
 error_type
 ```
 
-A score alone is not enough.
+A score alone does not show which execution produced it.
 
 Bad:
 
@@ -80,7 +78,7 @@ score
 feedback
 ```
 
-This allows the platform to answer:
+Linking the execution and evaluation helps investigate:
 
 ```text
 Why was this response bad?
@@ -92,7 +90,7 @@ Which agent release produced it?
 
 ### User feedback
 
-The simplest online evaluation is:
+The simplest online evaluation attaches a user reaction to a response:
 
 ```text
 Response
@@ -110,7 +108,7 @@ comment = "wrong tool was selected"
 
 ### Automatic evaluation
 
-Production responses can also be evaluated automatically.
+Rules or evaluator models can also check responses from real requests.
 
 ```text
 Response
@@ -155,9 +153,9 @@ Offline tests can miss:
 
 ## 16.2 Offline Evaluation Datasets
 
-Offline Evaluation means:
+Use fixed cases when the inputs need to stay comparable across versions. It resembles comparing scores on the same exam questions. Fixed inputs make differences easier to interpret, but they do not automatically fix the evaluator, data permissions, or retrieval state. Record those conditions too.
 
-> **Running a fixed evaluation dataset against different Prompt / Model / Agent versions so they can be compared under the same conditions.**
+> **Applying the same set of cases to prompt, model, or agent versions and comparing the results.**
 
 Example:
 
@@ -200,7 +198,7 @@ Agent v11
 Scores
 ```
 
-Because the dataset is fixed, the comparison is much fairer than comparing different production traffic windows.
+Using the same cases reduces input differences that would affect a comparison of separate production periods.
 
 ### Dataset fields may include
 
@@ -215,7 +213,7 @@ difficulty
 metadata
 ```
 
-For agent evaluation, a single exact answer is often not enough.
+An agent also needs to choose tools and follow access rules, so one exact answer rarely covers the full behavior.
 
 Example:
 
@@ -260,7 +258,7 @@ Security      = 100%
 Regression    = 70%
 ```
 
-This makes regression diagnosis easier.
+Category results reveal regressions that an overall average can hide.
 
 ### Online and offline form a loop
 
@@ -288,7 +286,7 @@ Important pattern:
 
 ## 16.3 Human Feedback
 
-Human Feedback means:
+User reactions and expert judgments provide different information. A thumbs-down can find a case to review, but it may not explain why it failed. Ratings and a rubric, or scoring guide, help when more detail is needed. Reviewers may disagree, so check agreement and reasons for important cases.
 
 > **A human directly evaluates an AI response and produces quality data.**
 
@@ -327,7 +325,7 @@ domain-specific accuracy
 
 ### Rubrics
 
-Instead of asking "Is this answer good?", define a rubric:
+Instead of only asking “Is this answer good?”, define scoring criteria in a rubric:
 
 ```text
 Accuracy       0~2
@@ -337,7 +335,7 @@ Tool Selection 0~2
 Format         0~2
 ```
 
-This improves consistency.
+Shared criteria make reviewer differences easier to compare and resolve.
 
 ### Human feedback is not perfect
 
@@ -382,7 +380,7 @@ bad_format
 
 ## 16.4 Model-as-Judge Outputs
 
-Model-as-Judge means:
+Automatic scoring can help when there are too many requests for people to read one by one, but it may disagree with them. Scores can change when the judge version changes even if the agent does not. Save the judge version and reason, then calibrate against human-reviewed samples.
 
 > **Using another LLM as an evaluator of an AI response.**
 
@@ -445,7 +443,7 @@ reason
 timestamp
 ```
 
-The judge itself can change.
+The judge model or its instructions can change versions too.
 
 Example:
 
@@ -488,7 +486,7 @@ Human Review provides higher-confidence calibration.
 
 ## 16.5 Prompt Versions
 
-Prompt Versioning means:
+To compare responses, first know which instructions each one used. Like changing one line of a recipe, the change needs a version before results can be compared. Link the actual prompt version to its trace and score. In an A/B comparison, also check the dataset, model, and evaluation rules.
 
 > **Treating prompts as versioned AI assets and linking prompt versions to traces and evaluation results.**
 
@@ -590,11 +588,13 @@ summarization_prompt
 
 ## 16.6 Model Versions
 
+Providers can change a deployment while its public model name stays the same. A name alone may not reconstruct the conditions. For self-hosted or fine-tuned models, also record checkpoints, tokenizers, and training-data versions.
+
 Model Versioning means:
 
 > **Recording exactly which model version generated an AI result.**
 
-A model name alone may not be sufficient.
+The same public model name may refer to different deployed versions.
 
 ```text
 model = model-X
@@ -680,6 +680,8 @@ Fine-tune    → ft_v7
 
 ## 16.7 Agent Versions
 
+An agent’s behavior depends on more than its prompt. The prompt can stay the same while a new tool or routing rule changes results. When comparing releases, inspect the versions inside that bundle too.
+
 Agent Versioning means:
 
 > **Versioning the full behavior/configuration of an agent, not only its prompt.**
@@ -710,7 +712,7 @@ Agent v11
 → new routing rule
 ```
 
-Prompt may stay identical while behavior changes.
+The prompt can stay the same while a changed tool or workflow changes agent behavior.
 
 Possible metadata:
 
@@ -768,7 +770,7 @@ retrieval quality
 
 ## 16.8 Experiment Tracking
 
-Experiment Tracking means:
+To compare experiments, first know the conditions behind each result. Change one variable at a time when possible to narrow the cause of a score difference. Online experiments also need a comparison of the live traffic mix. A score change alone does not establish causation.
 
 > **Recording both the configuration of an AI experiment and the resulting metrics.**
 
@@ -832,7 +834,7 @@ Agent changed
 Dataset changed
 ```
 
-the result is hard to interpret.
+it is hard to isolate which change caused the score difference.
 
 ### Offline vs Online Experiments
 
@@ -858,11 +860,13 @@ Online gives real-world evidence.
 
 ## 16.9 Regression Datasets
 
+Keep past failures so later releases can be checked for the same problem. If an agent once chose the wrong tool, save that request as a test for later releases. The pass thresholds below are teaching examples. Set real release gates with agreed risk, denominators, and handling of unscored cases.
+
 Regression Dataset:
 
 > **A collection of previously failed cases that must continue to work in future releases.**
 
-Example production failure:
+A production failure to keep for repeat testing:
 
 ```text
 Request:
@@ -927,6 +931,8 @@ Important pattern:
 
 ## 16.10 Cost / Quality / Latency Analysis
 
+Optimizing only one score can miss other requirements. A higher average score can hide a failed security case or slow p95 response time (the point below which 95% of response times fall). The model figures below are hypothetical. Larger models and extra tool calls do not have one guaranteed effect across workloads.
+
 AI optimization requires three major dimensions together:
 
 ```text
@@ -949,7 +955,7 @@ Latency = 1.5s
 Cost    = $0.02
 ```
 
-There is no universal best choice without product requirements.
+Quality, cost, and latency priorities depend on product needs, so there is no universal best choice.
 
 ### Quality metrics
 
@@ -1004,7 +1010,7 @@ LLM  2s
 Total 9s
 ```
 
-Use percentiles, not only averages:
+Slow requests can be hidden by an average, so also inspect percentiles such as p50, p95, and p99:
 
 ```text
 p50
@@ -1044,6 +1050,8 @@ Target:
 ---
 
 ## 16.11 Langfuse + Iceberg Integration
+
+To analyze AI execution records with other business data, the records need a path into long-term analytical tables. Exported files do not automatically become Iceberg tables. Design ingestion, transformation, commit, and access paths separately.
 
 Core idea:
 
@@ -1155,7 +1163,7 @@ Product Usage
 Business KPI
 ```
 
-This is more natural in a Data Platform.
+A data platform can run this analysis on tables joined with other business data.
 
 ### Source-of-truth split
 
@@ -1173,6 +1181,8 @@ Iceberg
 ---
 
 ## 16.12 Where Are All These Versions Usually Managed?
+
+Reconstructing an experiment requires linking records for different assets. Like linking a library catalog, loan log, and member register, an experiment ID can connect the actual prompt, model, agent, and dataset versions. Keep the artifacts, inputs, and runtime too; a moving alias or ID alone is not enough.
 
 This was asked as a supplementary question during the session.
 
@@ -1242,15 +1252,13 @@ latency_p95         = 3.4s
 cost_per_execution  = $0.08
 ```
 
-This record makes evaluation reproducible and explainable.
+These version records help reconstruct evaluation conditions and explain score differences.
 
 ---
 
 <!-- SOURCE CORE END -->
 
 ## Supplement: 16.1 Langfuse links and evaluation conditions
-
-For example, a new prompt may raise the average score while failing a security case. Check the regression dataset in 16.9, a set of past failures kept for repeat tests. In 16.8, hold the dataset, evaluator, and model fixed when possible to narrow the cause of a change. A failure found online can become an offline case for the next release; this links 16.1–16.2 with 16.9. Real user requests are not exam questions with one known answer, so keep evaluator failures, unscored cases, and actual failures separate.
 
 ### Langfuse connection from the earlier source
 

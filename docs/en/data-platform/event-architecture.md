@@ -1,8 +1,8 @@
 ---
 id: data-platform-event-architecture
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-02-01
   - DPE-02-02
@@ -16,7 +16,7 @@ knowledge_ids:
 
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run. Kafka broker, ISR, and replica operations are outside this page. The focus is event meaning for data engineering.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
 
 An **event** records something that already happened, such as “an order was created.” Like a parcel label with a unique number and time, an event needs an identity and a clear time basis. Sections 2.1–2.6 show how to define its meaning and keep that meaning during replay and delivery to several destinations.
 
@@ -27,7 +27,9 @@ An **event** records something that already happened, such as “an order was cr
 
 ## 2.1 Event Modeling
 
-An event is data that describes a fact that happened in the past.
+A stable ID and time on an order-created event help consumers identify repeat deliveries and analyze when it happened.
+
+An event is a record of something that already happened, such as an order creation or button click, kept so it can be read later.
 
 Example:
 
@@ -92,7 +94,9 @@ execution_id
 
 ## 2.2 Event Contracts
 
-An event contract is an agreement between producer and consumer about the meaning of an event.
+Producers and consumers must agree on field meaning as well as names. Even if `latency_ms` is an integer, a consumer can misread it unless the contract says the unit is milliseconds.
+
+An event contract is a shared rule between the sender (producer) and reader (consumer) for field meaning, units, and required values.
 
 Example:
 
@@ -129,7 +133,9 @@ The contract must define which unit applies.
 
 ## 2.3 Schema Evolution
 
-Event schemas change over time.
+Old events and current consumers coexist when fields are added or changed. Schema evolution manages these version differences and helps answer which consumer can read which version.
+
+Event schemas gain versions as fields are added or formats change. Check compatibility when old and new events must be read together.
 
 Example:
 
@@ -174,7 +180,7 @@ Provides an explicit schema and a compact binary format.
 
 ### Schema Registry
 
-Manages event schemas centrally.
+A Schema Registry keeps event schema versions in one place and checks the configured compatibility rules.
 
 Role:
 
@@ -208,11 +214,13 @@ Example:
 
 ## 2.4 Delivery Semantics
 
+Delivery semantics describe how many times a message may arrive. A retried order event could create two stored orders, so define the guarantee boundary and how the consumer prevents duplicate effects.
+
 ### At-Most-Once
 
-Deliver at most once.
+Deliver zero or one time within the stated boundary.
 
-Fewer duplicates, but loss is possible.
+Delivery is not duplicated within that boundary, but an event can be lost.
 
 ```text
 Zero or one time
@@ -220,7 +228,7 @@ Zero or one time
 
 ### At-Least-Once
 
-Deliver at least once.
+Deliver one or more times under the stated retention and recovery conditions.
 
 Helps prevent loss, but duplicates are possible.
 
@@ -277,7 +285,9 @@ This can be used to find duplicates.
 
 ## 2.5 Replay
 
-An important benefit of an event log such as Kafka is the ability to reread past events.
+Replay reads retained events again. It can rebuild a missing search index or apply new analysis logic, but first check retention and the risk of duplicate writes.
+
+An event log such as Kafka can replay past events while they remain retained. This helps recover gaps or build a new consumer.
 
 ### Offset Replay
 
@@ -328,7 +338,9 @@ these are important.
 
 ## 2.6 Event → Serving + Lakehouse Dual Path
 
-One logical event can be materialized for several purposes.
+The same event can feed a serving store for quick reads and a lakehouse for long-term analysis. Their processing and recovery paths may differ, so do not assume their results are always in sync.
+
+One event can be stored in several forms for different uses. This is materialization, useful when quick lookup and long-term analysis both need the event.
 
 ```text
 Application
@@ -355,12 +367,6 @@ Key point:
 ---
 
 <!-- SOURCE CORE END -->
-
-## A beginner's guide to the connections
-
-- **Sections 2.1–2.3, contract and schema:** An order-created event might carry `event_id`, `order_id`, and `occurred_at`. They support duplicate checks, order linking, and event-time analysis. An event contract is the shared promise between producer and consumer about these fields. A schema checks field shape, but it cannot automatically detect every meaning change, such as changing latency from milliseconds to seconds.
-- **Sections 2.4–2.5, delivery and replay:** Just as a parcel label may arrive twice, an at-least-once path can redeliver an event. Decide whether the consumer must prevent duplicate effects based on the sink and the guarantee boundary. Replay reads retained messages again. Before rebuilding a search index, check retention, old schemas, and side effects of external writes.
-- **Section 2.6, two paths:** The same order event can feed a serving store for quick lookup and a lakehouse for long-term analysis. The paths can catch up at different times. Check each path's lag and recovery state before comparing results.
 
 ## Qualifications for real use
 

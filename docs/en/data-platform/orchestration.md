@@ -1,8 +1,8 @@
 ---
 id: data-platform-orchestration
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-07-01
   - DPE-07-02
@@ -18,13 +18,15 @@ knowledge_ids:
 
 This page records conceptual study of orchestration, with Airflow as the main example. It does not claim that a DAG was deployed or operated. Official documentation was checked on 2026-09-24.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
 
 **Orchestration** manages the order of data jobs and what happens when they fail. Think of a cooking plan that waits for ingredients before starting the next step. Sections 7.1–7.8 cover DAGs, retries, historical reruns, and waiting conditions.
 
 <!-- SOURCE CORE START -->
 
 ## 7.1 DAG Fundamentals
+
+Orchestration manages job order, schedules, and retries. An Airflow DAG shows dependencies so cleaning and checks run after input ingestion is ready.
 
 Airflow is:
 
@@ -34,19 +36,19 @@ This is its role.
 
 ### DAG
 
-The whole workflow.
+A DAG is the whole workflow of tasks and dependencies. Its arrows show order without cycles.
 
 ### Task
 
-An individual unit of execution.
+A task is one executable step in a DAG.
 
 ### Dependency
 
-Task execution order.
+A dependency states which task must finish before another can start.
 
 ### Schedule
 
-When a DAG runs.
+A schedule sets when or how often a DAG run is attempted. It does not prove that input data is ready.
 
 Example:
 
@@ -67,6 +69,8 @@ Airflow directs other systems rather than processing large datasets itself.
 ---
 
 ## 7.2 Operators / Tasks
+
+An operator defines how a task runs. Airflow can start Spark work or SQL, while the appropriate external engine performs the large data computation.
 
 Operator:
 
@@ -100,6 +104,8 @@ Trino
 
 ## 7.3 Retries
 
+A retry runs the same task again. It may help with a temporary connection failure, but not invalid SQL; a blind append can duplicate output.
+
 Task failures can be viewed as two types.
 
 ### Transient Failure
@@ -108,7 +114,7 @@ Task failures can be viewed as two types.
 - DB connection
 - Temporary cluster issue
 
-Retry is effective.
+A retry may help when the temporary cause has cleared. Repeated failure calls for investigation.
 
 ### Permanent Failure
 
@@ -116,7 +122,7 @@ Retry is effective.
 - Wrong schema
 - Code bug
 
-Retry does not resolve the problem.
+The same failure repeats until the input or code is fixed.
 
 ### Idempotency
 
@@ -128,7 +134,7 @@ Bad example:
 Blind append
 ```
 
-Good examples:
+Methods that can help avoid duplicates when their conditions are designed correctly:
 
 ```text
 Partition overwrite
@@ -139,6 +145,8 @@ replace
 ---
 
 ## 7.4 Backfills
+
+A backfill recomputes a defined historical interval. Use it to fill a gap or apply corrected logic, after defining the interval and how outputs will be replaced.
 
 Backfill:
 
@@ -166,6 +174,8 @@ Idempotency also matters for backfills.
 
 ## 7.5 Sensors / Event Dependencies
 
+A sensor waits for required input. A 2 AM schedule may start a run, but downstream work should wait if the source file is not ready.
+
 Sensor:
 
 > **A task that waits until a particular condition is met.**
@@ -190,7 +200,9 @@ Both polling and event-driven approaches exist.
 
 ## 7.6 Parameterization
 
-Reuse the same DAG under different conditions.
+A date interval parameter lets the same DAG run for an earlier day. An explicit interval such as `2026-09-24` is easier to reproduce for reads and writes than the current day at execution time.
+
+Date and environment parameters let the same DAG run for different intervals.
 
 Example:
 
@@ -220,7 +232,9 @@ Receiving an explicit data interval like this helps reruns and backfills.
 
 ## 7.7 Failure Handling
 
-Because each task has its own state, the whole DAG does not need to restart from the beginning.
+Task status can show where to restart after failure. Before resuming downstream publication, check that earlier outputs are still valid and belong to the same data interval.
+
+Task status can identify the restart point. First check that earlier outputs are valid for the same data interval.
 
 ```text
 Extract ✅
@@ -247,6 +261,8 @@ context such as these items.
 ---
 
 ## 7.8 Orchestrator Anti-Patterns
+
+Large computation or data transfer inside the orchestrator can consume resources needed to manage runs. Airflow can coordinate work while Spark, Flink, SQL engines, and shared storage handle the data.
 
 Things to avoid:
 
@@ -277,12 +293,6 @@ Iceberg
 ---
 
 <!-- SOURCE CORE END -->
-
-## A beginner's guide to the connections
-
-- **Sections 7.1–7.3, order and retries:** A DAG is a directed graph of task dependencies with no cycles. In `ingest → clean → aggregate`, aggregation waits for cleaned data. A temporary network failure may recover on retry, while an invalid schema will likely fail again on the same input. Idempotency means a retry of the same interval does not create duplicate effects.
-- **Sections 7.4–7.6, historical intervals and inputs:** A backfill recalculates a past interval to fill a gap or apply corrected logic. If you rerun only `2026-10-01`, check that the date parameter controls both input reads and output writes. A sensor waits for a file or upstream job, but “exists” may differ from “complete and ready to use.”
-- **Sections 7.7–7.8, responsibility:** The orchestrator decides when to run work; Spark and the query engine that runs dbt models perform the data calculations. A failure alert does not prove data correctness. Define result checks and the safe rerun range together.
 
 ## Additional checks before applying these ideas
 

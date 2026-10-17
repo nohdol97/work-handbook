@@ -1,8 +1,8 @@
 ---
 id: data-platform-data-observability
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-12-01
   - DPE-12-02
@@ -17,33 +17,35 @@ knowledge_ids:
 
 이 Learn 문서는 데이터 상태를 지속적으로 측정하는 개념을 다룬다. 아래 수치와 장애는 학습용 예시이며 실측이나 실무 경험이 아니다. 데이터 품질이 기대 조건을 정의한다면, 관측성은 데이터가 지금 어떤 상태인지 확인하고 이상 구간을 찾도록 돕는다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
-
-**읽기 길잡이:** 데이터 관측성(observability)은 배송 추적처럼 데이터가 어디까지 왔고 어느 단계에서 늦어졌는지 보여 준다. 12.1의 freshness는 최신 자료인지, 12.2의 volume은 예상 건수인지, 12.3–12.4는 구조와 값의 분포가 달라졌는지 묻는다. 예를 들어 수집 작업이 성공했어도 오늘 날짜 partition이 비어 있으면 대시보드는 0건을 보여 줄 수 있다. 그래서 12.5–12.7에서는 작업 상태와 데이터 상태를 나눠 보고, 측정 지표와 알림을 업무 영향에 연결한다.
+**본문 안내:** 아래 본문은 원본의 번호·목차·핵심 기술 내용과 예시를 유지하면서 처음 배우는 독자가 이해하기 쉽게 다시 썼다. 원본의 적용 조건과 보충 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
 
 <!-- SOURCE CORE START -->
 
 ## 12.1 Data Freshness
 
+Freshness(최신성)은 데이터가 필요한 시점까지 도착했는지를 보는 것이다. 택배의 접수·분류·도착 시각이 다르듯 이벤트 생성, 수집, 처리, 화면 갱신 시각도 다르다. 어느 시각을 기준으로 늦었다고 말하는지 먼저 정해야 지연 구간을 찾을 수 있다.
+
 ### Source Freshness
 
-원본 데이터가 제시간에 생성/수집되는가.
+원본 이벤트가 필요한 시각까지 생성되고 수집됐는가.
 
 ### Pipeline Freshness
 
-Kafka → Bronze → Silver → Gold 처리 지연.
+Kafka에서 Bronze·Silver·Gold로 처리되는 동안 어디서 지연됐는지 본다.
 
 ### Downstream Freshness
 
-Dashboard/BI가 최신 데이터를 보여주는가.
+대시보드와 BI가 새로 처리된 데이터를 실제로 보여 주는가.
 
-단계별 Freshness를 보면 어느 구간부터 지연됐는지 찾을 수 있다.
+단계마다 갱신 시각을 비교하면 지연이 시작된 구간을 좁힐 수 있다.
 
 ---
 
 ## 12.2 Volume Monitoring
 
-평소 대비 데이터 건수 급감/급증 탐지.
+Volume monitoring(건수 관측)은 데이터가 평소보다 적거나 많은지 확인한다. 예를 들어 전체 주문 건수가 정상이어도 오늘 날짜 partition 하나가 비어 있을 수 있다. 같은 요일이나 계절별 기준선과 비교해야 정상적인 주말 감소를 장애로 오해하지 않는다.
+
+평소와 비교해 데이터 건수가 갑자기 줄거나 늘었는지 찾는다.
 
 급감 원인 예:
 
@@ -58,9 +60,9 @@ Dashboard/BI가 최신 데이터를 보여주는가.
 - Retry Storm
 - Traffic Spike
 
-Missing Partition도 중요한 Signal.
+누락된 partition도 건수 이상을 찾는 중요한 신호다.
 
-단순 절대값이 아니라:
+한 숫자만 기준으로 삼지 말고 다음과 비교한다:
 
 - 최근 평균
 - 같은 요일
@@ -72,6 +74,8 @@ Missing Partition도 중요한 Signal.
 
 ## 12.3 Schema Monitoring
 
+Schema(스키마)는 열 이름·타입·필수 여부 같은 데이터 구조의 약속이다. 생산자가 `amount` 타입을 바꾸면 변환 SQL이나 대시보드가 깨질 수 있다. 구조 변화를 감지한 뒤 [lineage](lineage-metadata.md)로 영향을 받을 소비자를 찾는다.
+
 감시:
 
 - Column 추가
@@ -80,17 +84,19 @@ Missing Partition도 중요한 Signal.
 - Type 변경
 - Nullable 변경
 
-Breaking Change는 Downstream Consumer를 깨뜨릴 수 있다.
+기존 사용자가 기대한 구조와 맞지 않는 변경은 downstream 소비자의 쿼리를 실패하게 할 수 있다.
 
-Schema Monitoring + Lineage를 연결하면 영향 범위를 찾을 수 있다.
+스키마 변경을 감지한 뒤 lineage로 영향을 받을 데이터셋과 소비자를 찾는다.
 
 ---
 
 ## 12.4 Distribution Drift
 
-Volume은 정상인데 값 분포가 달라질 수 있다.
+Distribution drift(분포 변화)는 건수가 같아도 값의 비율이나 범위가 달라지는 현상이다. 아래처럼 `FAILED` 비율이 5%에서 45%로 바뀌면 상태 기록 방식과 실제 실패 증가를 모두 조사한다. 변화 자체는 신호이지 원인 증거는 아니다.
 
-대표 Signal:
+전체 건수가 평소와 같아도 값의 비율이나 범위는 달라질 수 있다.
+
+자주 확인하는 변화 신호:
 
 - Null Rate Drift
 - Cardinality Drift
@@ -104,11 +110,13 @@ Volume은 정상인데 값 분포가 달라질 수 있다.
 오늘 FAILED = 45%
 ```
 
-Volume은 정상이어도 Data Health는 이상할 수 있다.
+전체 건수가 정상이어도 데이터 내용에는 문제가 있을 수 있다.
 
 ---
 
 ## 12.5 Pipeline Health vs Data Health
+
+Pipeline health는 작업이 실행됐는지, data health는 나온 데이터가 쓸 만한지 묻는다. 배달 차량이 도착해도 상자가 비어 있을 수 있는 것과 같다. 성공한 Gold 작업의 결과가 0행이면 필터·원본·partition을 다시 확인해야 한다.
 
 Pipeline Health:
 
@@ -137,7 +145,9 @@ Job이 성공해도 Query Logic이 잘못돼 결과가 0 rows일 수 있다.
 
 ## 12.6 Data SLIs / SLOs
 
-Observability 관점에서 Data State를 지속 측정한다.
+실제 값과 목표를 같은 측정 구간으로 비교해야 한다. 아래 `Volume = 98M`만으로 목표 충족을 판단할 수는 없다. 어느 기간, 어느 partition, 어떤 평소 값과 비교하는지 정해야 한다. [품질 규칙](data-quality.md)을 지속해서 측정할 때 두 정의를 맞춘다.
+
+데이터 관측성은 데이터 상태를 한 번이 아니라 계속 측정한다.
 
 SLI 예:
 
@@ -155,11 +165,13 @@ NULL Rate < 1%
 Volume Deviation < 20%
 ```
 
-여러 Signal을 동시에 본다.
+한 지표가 정상이어도 다른 지표가 나쁠 수 있으므로 함께 본다.
 
 ---
 
 ## 12.7 Alert Design
+
+좋은 알림은 “무엇이 얼마나 오래 잘못됐고 어디부터 볼지”를 알려 준다. 예를 들어 `gold_orders`의 오늘 partition이 20분째 비었다는 알림은 단순히 “건수 낮음”보다 대응하기 쉽다. 임계값 근처에서 반복되는 알림은 조사 부담을 늘리므로 기간과 영향도를 함께 설계한다.
 
 목표:
 
@@ -189,15 +201,13 @@ Warning / Critical을 나눌 수 있다.
 
 Dataset 중요도 Tier별 Alert 정책도 가능.
 
-Alert Fatigue를 방지해야 한다.
+반복되거나 쓸모없는 알림이 중요한 문제를 가리지 않게 한다.
 
 ---
 
 <!-- SOURCE CORE END -->
 
 ## 적용 시 보완할 점
-
-12.1의 여러 시각은 택배의 접수·분류·도착 시각처럼 서로 다른 단계다. `event_time`이 오래됐는지, 처리 완료만 늦었는지 구분해야 원인 조사 방향이 달라진다. 12.6의 SLI(Service Level Indicator)는 실제 측정값이고 SLO(Service Level Objective)는 그 값에 대해 합의한 목표다. [품질 검사](data-quality.md)가 기대 조건을 정의하면 관측성은 그 조건이 시간에 따라 지켜지는지 보여 준다. 12.7의 알림은 값 하나보다 위반 기간과 영향받는 데이터셋을 함께 알려 줄 때 조사에 유용하다.
 
 ### Freshness 측정 시각
 

@@ -1,8 +1,8 @@
 ---
 id: data-platform-foundations
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-01-01
   - DPE-01-02
@@ -17,7 +17,7 @@ knowledge_ids:
 
 문서 유형: Learn. 제공된 학습 자료의 개념과 설계 예시를 정리했다. `studied`는 개념 학습을 뜻하며, 직접 구현하거나 운영 검증했다는 뜻이 아니다. SQL과 수치는 설명용 예시이며 실행하지 않았다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 사용자 요청에 따라 Compression 절의 추가 설명은 원문 사이에 표시했다. 그 밖의 정정·적용 조건은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 원본의 목차·절 번호·핵심 기술 내용을 유지하면서 본문 문장을 입문자가 읽기 쉽게 다듬었다. 원본 자료는 출처에 보존되어 있다. 버전·운영 조건과 추가 설명은 뒤의 보완 구역을 확인한다.
 
 데이터 플랫폼을 처음 볼 때는 주문을 처리하는 계산대와 하루 매출을 살피는 장부를 떠올리면 된다. **OLTP**는 개별 거래를 빠르게 기록하는 처리 방식이고, **OLAP**는 많은 기록을 묶어 분석하는 방식이다. 아래 1.1~1.7은 분석 목적에 따라 저장 형식과 파일 배치를 고르는 흐름으로 읽는다.
 
@@ -25,11 +25,13 @@ knowledge_ids:
 
 ## 1.1 OLTP vs OLAP
 
+서비스는 주문 한 건을 즉시 저장하고, 분석가는 여러 달의 주문을 한꺼번에 살핀다. 이 차이 때문에 거래 처리(OLTP)와 분석 처리(OLAP)는 저장 방식과 성능 목표가 다르다.
+
 ### OLTP
 
 OLTP는 **Online Transaction Processing**의 약자다.
 
-주요 목적은 서비스의 실시간 트랜잭션 처리다.
+서비스에서 회원가입이나 결제처럼 한 번에 적은 기록을 빠르고 정확하게 처리할 때 쓴다.
 
 예:
 
@@ -67,7 +69,7 @@ payments
 
 OLAP는 **Online Analytical Processing**의 약자다.
 
-목적은 대량 데이터를 분석하는 것이다.
+많은 기록을 모아 추세나 합계를 알아볼 때 쓴다.
 
 예:
 
@@ -130,9 +132,11 @@ Lakehouse / Warehouse
 
 ## 1.2 Row-Oriented vs Column-Oriented Storage
 
+Row는 한 기록의 값을 함께 두고, column은 같은 항목의 값을 모아 둔다. 한 고객의 전체 정보를 찾을 때와 모든 주문의 금액만 합산할 때 필요한 읽기 방식이 다르기 때문에 이 구분이 중요하다.
+
 ### Row-Oriented
 
-Row 기반 저장은 한 row의 값들을 같이 저장한다.
+Row 기반 저장은 한 사람의 이름·나이·팀처럼 한 기록의 값을 가까이 둔다.
 
 개념적으로:
 
@@ -149,7 +153,7 @@ OLTP에서 유리하다.
 
 ### Column-Oriented
 
-Column 기반 저장은 같은 column의 값들을 같이 저장한다.
+Column 기반 저장은 여러 기록의 같은 항목을 모아 둔다. 분석에서 그 항목만 읽기 좋다.
 
 개념적으로:
 
@@ -240,13 +244,13 @@ FROM fact_llm_call
 
 ## 1.3 Parquet
 
-Parquet은 대표적인 **Columnar File Format**이다.
+대량 분석에서는 읽을 데이터량이 성능에 큰 영향을 준다. Parquet을 사용하는 이유는 필요한 column과 저장 단위만 골라 I/O를 줄이기 위해서다.
+
+Parquet은 값을 열(column)별로 묶어 저장하는 대표적인 분석용 파일 형식이며, 데이터베이스처럼 쿼리를 직접 실행하지는 않는다.
 
 역할:
 
 > **대량 분석 데이터를 효율적으로 저장하는 파일 포맷**
-
-Parquet 자체는 Database가 아니다.
 
 ```text
 S3
@@ -318,7 +322,7 @@ I/O 감소
 
 ### Statistics
 
-Parquet은 Row Group이나 Page에 대해 통계를 가질 수 있다.
+Parquet에는 row group이나 page의 최솟값·최댓값 같은 통계가 있을 수 있다. Reader가 이를 사용하면 조건에 맞지 않는 단위를 건너뛸 수 있다.
 
 예:
 
@@ -371,6 +375,8 @@ Parquet의 중요한 장점은:
 ---
 
 ## 1.4 Object Storage
+
+Object storage는 데이터를 파일 같은 object로 오래 보관하는 서비스다. 계산 엔진과 별도로 유지할 수 있어 같은 분석 파일을 Spark나 Trino가 읽는 구조에 자주 쓴다.
 
 대표적인 Object Storage:
 
@@ -443,7 +449,7 @@ Compute와 Storage가 분리되어 있으므로 네트워크를 통해 파일을
 
 ## 1.5 File Layout Engineering
 
-Lakehouse에서는 파일 하나의 크기도 성능에 영향을 준다.
+같은 데이터량이라도 파일이 아주 많거나 너무 크면 읽기와 재작성 비용이 달라진다. 따라서 파일 배치는 저장 공간뿐 아니라 쿼리 계획, 병렬 처리, 유지보수까지 고려하는 설계다.
 
 ---
 
@@ -513,6 +519,8 @@ Streaming → Lakehouse 구조에서는 특히 중요하다.
 ---
 
 ## 1.6 Partitioning Fundamentals
+
+Partition은 데이터를 날짜처럼 자주 거르는 기준으로 나눈 단위다. 필요한 날짜만 찾을 수 있지만 너무 잘게 나누면 작은 파일과 metadata가 늘 수 있으므로 쿼리 패턴을 보고 정한다.
 
 Partitioning은 데이터를 특정 기준으로 물리적/논리적으로 나누는 것이다.
 
@@ -609,6 +617,8 @@ date=2026-09-24
 
 ## 1.7 Bucketing / Sorting / Indexing
 
+Partition으로 큰 범위를 줄인 뒤에도 파일 안에 값이 흩어져 있으면 많이 읽을 수 있다. Bucketing, sorting, clustering은 값을 배치해 읽기나 join을 돕는 방법이며 효과는 엔진과 쿼리 조건에 따라 확인해야 한다.
+
 ### Bucketing
 
 Hash를 이용해 데이터를 일정 개수 bucket으로 나눈다.
@@ -660,12 +670,6 @@ Lakehouse는 대량 Scan workload가 중심이므로:
 ---
 
 <!-- SOURCE CORE END -->
-
-## 처음 읽는 독자를 위한 연결 설명
-
-- **1.2~1.3 저장 형식:** 한 주문의 모든 항목을 함께 읽는다면 row 저장이 자연스럽다. 반대로 “지난달 주문의 금액 합계”처럼 몇 개 column만 읽는 분석에는 column 저장과 Parquet가 유리할 수 있다. Parquet의 통계는 책의 목차처럼 읽지 않아도 되는 저장 단위를 찾는 데 도움을 준다. 실제 건너뛰기 범위는 파일 통계와 reader에 달려 있다.
-- **1.4~1.6 파일 배치:** Object Storage는 파일을 보관하는 창고, Spark 같은 compute는 그 파일을 읽어 작업하는 사람에 가깝다. 날짜 partition은 창고의 날짜별 선반처럼 검색 범위를 줄일 수 있다. 하지만 선반을 너무 잘게 나누면 작은 파일과 metadata가 늘어 planning과 요청 비용이 커질 수 있다. 파일 개수와 scan bytes를 함께 측정해 compaction 여부를 정한다.
-- **1.7 읽기 최적화:** Partition으로 큰 범위를 고른 뒤 정렬이나 bucketing으로 내부 데이터 배치를 조정할 수 있다. 어떤 방법이 유효한지는 실제 filter·join 패턴과 엔진의 읽기 방식에 달려 있다. Iceberg의 metadata와 Spark의 scan 계획이 이 배치를 어떻게 쓰는지도 함께 확인한다.
 
 ## 적용 시 보완할 점
 

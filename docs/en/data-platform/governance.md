@@ -1,8 +1,8 @@
 ---
 id: data-platform-governance
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-14-01
   - DPE-14-02
@@ -19,15 +19,13 @@ knowledge_ids:
 
 This Learn page covers studied concepts of ownership, policy, access, and audit. Durations and datasets are hypothetical. It does not claim that security policies were deployed or legal duties were verified. Governance asks, “Who may use this data, and under which conditions?”
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
-
-**Reading guide:** Data governance sets who may use which data under what conditions, much like library lending rules. Listing a rule on a screen is different from enforcing entry. Sections 14.1–14.2 assign owners and classify sensitivity; 14.3–14.4 set retention and deletion scope. Sections 14.5–14.6 can mask email values, block access to the email column, or show only rows allowed for a user's team. Sections 14.7–14.9 connect usage records, producer–consumer agreements, and policy tools. This sequence helps when sharing a new dataset or reviewing which copies a deletion request covers.
+**Reading note:** The chapter below keeps the source numbering, outline, technical content, and examples while explaining them in simpler language. Check the section-specific conditions and additions in the supplement after the chapter.
 
 <!-- SOURCE CORE START -->
 
 ## 14.1 Dataset Ownership
 
-Make responsibility clear for each dataset.
+Ownership names who decides and fixes things when a dataset fails or its meaning changes. The technical owner handles pipelines and schemas; the business owner handles metric meaning and use. If teams disagree about an order count, both the source processing and the aggregation definition need owners.
 
 ### Technical Owner
 
@@ -42,13 +40,13 @@ Make responsibility clear for each dataset.
 - KPIs
 - Business definitions
 
-Without an owner, responding to problems and changes becomes harder.
+Without owners, it is unclear who fixes an error or approves a change in meaning.
 
 ---
 
 ## 14.2 Classification
 
-Classify data by importance and sensitivity.
+Classification labels importance and sensitivity so access, masking, and retention rules can use them. Like library materials with different borrowing rules, email addresses and ordinary team codes need different handling. PII (personally identifiable information) is a data type, not one step on a universal importance scale; it can sit beside another classification.
 
 Examples:
 
@@ -58,7 +56,7 @@ Examples:
 - PII
 - Sensitive
 
-Column-level classification also matters.
+Classify sensitive columns as well as whole tables.
 
 Example:
 
@@ -67,11 +65,13 @@ email → PII
 team_id → Internal
 ```
 
-Connect classification to access, masking, and retention policies.
+Use these classifications when setting access, masking, and retention policies.
 
 ---
 
 ## 14.3 Retention Policies
+
+Set a retention period by weighing reprocessing and analysis needs against cost and exposure. The periods below are teaching examples. Set actual periods after checking legal, contract, business, and deletion requirements.
 
 Retention defines:
 
@@ -92,19 +92,21 @@ User event → 1 year
 Aggregated metrics → Long-term storage
 ```
 
-Storage can use Hot, Cold, and Archive tiers.
+Storage may use fast, lower-cost, and archive tiers based on how often data is read.
 
-Iceberg snapshot expiration is also related to retention.
+Decide when old Iceberg snapshots expire as part of the retention policy.
 
 ---
 
 ## 14.4 Deletion Policies
 
+Logical deletion marks records so queries can exclude them. Physical deletion also addresses removal of stored data. An order absent from the current screen may still have copies in old snapshots, Kafka logs, or backups. Define which copies a deletion request covers before judging completion.
+
 Deletion defines:
 
 > **When, where, and how data is actually removed.**
 
-Deleting only the source may not be enough.
+Deleting the source can leave copies in transport logs and derived tables.
 
 ```text
 PostgreSQL
@@ -120,7 +122,7 @@ Gold
 Backup
 ```
 
-Consider all copies and derived data.
+Check every copy and derived dataset in the deletion scope.
 
 ### Logical Delete
 
@@ -130,7 +132,7 @@ Mark a record as deleted.
 
 Actually remove it.
 
-In Iceberg, data absent from the current snapshot may not be fully removed from storage.
+In Iceberg, an older snapshot may still reference files absent from the current snapshot.
 
 Consider older snapshots and file cleanup too.
 
@@ -138,7 +140,7 @@ Consider older snapshots and file cleanup too.
 
 ## 14.5 Masking
 
-Masking hides real sensitive values when data is shown.
+Masking hides sensitive values when users see data. For example, an analyst may see only part of an `email` value. Static masking stores a separately masked copy; dynamic masking changes query output by user or role. Encryption protects data in a different way and at different points.
 
 ### Static Masking
 
@@ -156,13 +158,15 @@ PII
 Masking policy
 ```
 
-AI prompts and responses may also need PII masking.
+AI prompts and responses can contain personal data, so check whether masking is needed on those paths too.
 
-Masking and encryption are different controls.
+Masking hides displayed values; encryption protects data in storage or transit. They serve different purposes.
 
 ---
 
 ## 14.6 Row / Column Access
+
+Row access asks “which records may this user see?” Column access asks “which fields?” A user might see orders for their team while the email column is blocked or masked. RBAC (Role-Based Access Control) groups permissions by role. Test allowed and denied behavior across real access paths.
 
 ### Row-Level Access
 
@@ -184,13 +188,13 @@ Masking
 
 ### RBAC
 
-Manage permissions by role.
+Group privileges by role instead of granting each user permission one by one.
 
 ---
 
 ## 14.7 Auditability
 
-Record who accessed or changed which data and when.
+Audit records who used or changed data and policies, and when. Observability asks whether data is healthy; audit asks who did what. For example, investigating denied access may require both the user privilege and the policy change record at that time. Audit logs can themselves be sensitive.
 
 Access audit:
 
@@ -223,7 +227,7 @@ Audit
 
 ## 14.8 Data Contracts
 
-A data contract is an agreement between a producer and a consumer.
+A data contract is an agreement between producers and consumers about format, meaning, quality, and ownership. Calling `latency_ms` an integer does not say which unit it uses or whether negative values are valid. Check the contract before changes so consumers are less likely to receive unexpected results.
 
 It can include:
 
@@ -252,11 +256,13 @@ Owner
 → AI Platform Team
 ```
 
-A data contract is broader than a schema contract.
+It covers business meaning and quality responsibility as well as schema shape.
 
 ---
 
 ## 14.9 Governance Platforms
+
+Governance platforms combine catalogs, permissions, lineage, and audits to help operate policies. The products below address similar questions, but they do not promise identical behavior across engines, access paths, or editions. Test policy enforcement through actual query and storage paths before choosing one.
 
 ### Databricks Unity Catalog
 
@@ -312,8 +318,6 @@ Is it healthy?
 <!-- SOURCE CORE END -->
 
 ## Details to check in practice
-
-Logical deletion in 14.4 marks records so queries can exclude them; physical deletion also addresses removal of stored data. Old snapshots or exports can make those outcomes differ. Masking in 14.5 hides values. RBAC (Role-Based Access Control) in 14.6 grants access by role. To assess actual protection, check whether the same rules apply through query engines and direct storage paths, not only in the catalog.
 
 ### Examples and actual policy
 

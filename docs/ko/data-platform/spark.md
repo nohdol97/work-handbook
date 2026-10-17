@@ -1,8 +1,8 @@
 ---
 id: data-platform-spark
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-04-01
   - DPE-04-02
@@ -24,7 +24,7 @@ knowledge_ids:
 
 문서 유형: Learn. 제공된 학습 자료의 개념과 설계 예시를 정리했다. `studied`는 개념 학습을 뜻하며, 직접 구현하거나 운영 검증했다는 뜻이 아니다. SQL과 수치는 설명용 예시이며 실행하지 않았다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 원본의 목차·절 번호·핵심 기술 내용을 유지하면서 본문 문장을 입문자가 읽기 쉽게 다듬었다. 원본 자료는 출처에 보존되어 있다. 버전·운영 조건과 추가 설명은 뒤의 보완 구역을 확인한다.
 
 **Spark**는 많은 데이터를 여러 작업자에게 나누어 처리하는 엔진이다. 큰 장부를 여러 사람이 나누어 읽고 마지막에 결과를 합치는 작업을 떠올리면 된다. 아래 4.1~4.14는 작업 분배, 데이터 이동, 저장 형식, 배치와 스트리밍의 연결을 설명한다.
 
@@ -32,7 +32,9 @@ knowledge_ids:
 
 ## 4.1 Spark Architecture
 
-Spark Application의 기본 구성:
+Spark는 큰 작업을 계획하는 driver와 데이터를 나누어 처리하는 executor로 구성된다. 여러 사람이 장부를 나눠 읽는 것처럼 병렬로 처리하되, cluster manager가 실행 자원을 마련한다.
+
+Spark application에서 계획과 실행을 맡는 구성 요소는 다음과 같다.
 
 ```text
 Application
@@ -71,7 +73,9 @@ Spark on Kubernetes는 Kubernetes가 Driver/Executor Pod의 실행 Resource를 �
 
 ## 4.2 Execution Model
 
-Spark 실행 단위:
+Action 하나는 job을 시작하고, job은 stage와 task로 나뉜다. 이 단위를 알면 느린 쿼리에서 전체 작업이 느린지, 특정 stage나 partition의 task만 느린지 구별할 수 있다.
+
+실행 상태를 볼 때는 큰 application을 job·stage·task로 나누어 읽는다.
 
 ```text
 Application
@@ -107,7 +111,9 @@ Transformation 의존 관계를 그래프로 표현한다.
 
 ## 4.3 Lazy Evaluation
 
-Spark Transformation은 호출 즉시 실행되지 않는다.
+Lazy evaluation은 변환을 선언할 때 바로 계산하지 않고 결과가 필요할 때 실행한다는 뜻이다. 여러 변환을 함께 계획할 수 있으므로 실제 동작을 알고 싶다면 `explain()`의 계획과 실행 지표를 확인한다.
+
+Spark에서 `filter` 같은 transformation(변환)을 정의해도 그 순간 데이터를 계산하지 않는다.
 
 예:
 
@@ -159,6 +165,8 @@ Spark SQL/DataFrame에서는 Catalyst Optimizer가 Query Plan을 최적화한다
 
 ## 4.4 Narrow vs Wide Dependencies
 
+Dependency는 출력 partition이 어떤 입력 partition에 의존하는지 말한다. 각 partition 안에서 끝나는 작업과 여러 작업자 사이에 데이터를 다시 모으는 작업은 비용 구조가 다르다.
+
 ### Narrow Dependency
 
 각 Output Partition이 소수 Input Partition에만 의존.
@@ -190,7 +198,9 @@ repartition
 
 ## 4.5 Shuffle
 
-Shuffle은 Spark 성능에서 매우 중요한 개념이다.
+고객별 주문을 집계할 때 흩어진 주문을 같은 고객 기준으로 다시 모으는 과정을 떠올리면 shuffle 비용을 이해하기 쉽다.
+
+Shuffle은 같은 key의 데이터를 모으려고 작업자 사이에 옮기는 과정이다. 대량 이동이 필요하면 성능 비용이 커진다.
 
 ```text
 Worker A ─┐
@@ -216,6 +226,8 @@ Worker C ─┘
 
 ## 4.6 Join Strategies
 
+Join은 두 데이터셋을 key로 연결한다. 작은 dimension을 복사할지 양쪽을 재분배할지는 크기와 분포에 따라 달라지므로 실제 물리 계획을 확인한다.
+
 ### Broadcast Hash Join
 
 큰 Fact + 작은 Dimension.
@@ -226,7 +238,7 @@ Large Fact
 Small Dimension
 ```
 
-작은 Table을 모든 Executor에 Broadcast한다.
+작은 table을 join에 참여하는 executor로 복사한다. 큰 table을 모두 재분배하지 않아도 되지만 복사본이 각 executor의 memory에 맞아야 한다.
 
 장점:
 - 큰 Table Shuffle 감소
@@ -278,9 +290,11 @@ Join Key 중복이 많으면 결과 row 수가 예상보다 크게 늘어날 수
 
 ## 4.7 Partition Management
 
+Spark partition은 task가 맡는 데이터 조각이다. 조각이 너무 적으면 병렬성이 낮고 너무 많으면 task 관리 비용이 늘 수 있으므로 입력 크기와 출력 파일 수를 함께 본다.
+
 ### repartition
 
-Partition을 다시 나눈다.
+`repartition`은 데이터를 다시 나누어 task 병렬성이나 key별 배치를 바꾼다.
 
 Shuffle 발생 가능.
 
@@ -318,6 +332,8 @@ Partition 수는:
 
 ## 4.8 Cache / Persist
 
+Cache는 여러 작업에서 다시 쓸 중간 결과를 보관한다. 한 번만 쓰는 결과까지 모두 저장하면 memory를 차지하므로 재계산 비용과 재사용 횟수를 비교한다.
+
 Spark는 중간 결과를 Memory/Disk에 유지할 수 있다.
 
 ### 왜 사용하나
@@ -352,7 +368,9 @@ Cache
 
 ## 4.9 Data Skew
 
-Data Skew는 데이터가 특정 Partition에 몰리는 현상이다.
+Skew는 일부 key나 partition에 일이 몰리는 현상이다. 대부분 task가 끝났는데 하나만 남는다면 해당 key의 입력량과 join 결과 행 수를 확인한다.
+
+예를 들어 주문의 80%가 한 고객 key에 몰리면 해당 task가 다른 task보다 훨씬 오래 걸릴 수 있다.
 
 예:
 
@@ -398,7 +416,9 @@ Adaptive Query Execution이 runtime statistics를 이용해 일부 skew 최적�
 
 ## 4.10 Spark Performance Engineering
 
-대표 병목:
+성능 문제를 볼 때는 CPU만 늘리기보다 어느 stage에서 시간과 자원이 쓰이는지 찾는다. Spark UI의 task 시간, shuffle, spill, GC를 함께 보면 병목 가설을 좁힐 수 있다.
+
+느린 작업은 다음 중 어느 자원에서 막히는지 Spark UI로 확인한다.
 
 - CPU
 - Executor Memory
@@ -437,7 +457,7 @@ Skew 등이 원인이 될 수 있다.
 
 ## 4.11 Spark + Iceberg
 
-Spark는 Iceberg 데이터를 Batch 처리하는 주요 Compute Engine 중 하나다.
+Spark는 Iceberg 테이블의 파일을 읽고 대규모 batch 변환 결과를 새 snapshot으로 기록할 수 있는 compute engine이다. 파일 배치와 commit 방식은 scan과 쓰기 비용에 영향을 준다.
 
 ```text
 Iceberg
@@ -493,7 +513,9 @@ Streaming Write, MERGE, 작은 File 등이 쌓이면 Compaction 등 Maintenance�
 
 ## 4.12 Structured Streaming
 
-Spark Structured Streaming은 Streaming 데이터를 Table처럼 다루는 모델을 제공한다.
+Structured Streaming은 계속 들어오는 데이터를 작은 처리 구간으로 나누어 다룰 수 있다. Kafka 입력을 Iceberg에 자주 쓰면 작은 파일이 늘 수 있고, 상태 처리에는 checkpoint와 지연 이벤트 정책이 필요하다.
+
+Spark Structured Streaming은 계속 들어오는 데이터를 증가하는 table처럼 다루고, 결과를 반복해서 계산하는 모델을 제공한다.
 
 주로 **Micro-batch** 방식으로 이해할 수 있다.
 
@@ -567,6 +589,8 @@ Aggregation 결과를 어떤 방식으로 출력할지 결정.
 
 ## 4.13 Spark의 역할
 
+Spark는 데이터를 저장하는 곳이 아니라 대규모 변환을 실행하는 엔진이다. 과거 데이터를 다시 계산하거나 큰 join을 수행할 때 저장소인 Iceberg·S3와 역할을 나누어 쓴다.
+
 질문:
 
 > Spark 역할이 무엇인가?
@@ -600,6 +624,8 @@ Spark
 
 ## 4.14 Spark를 써도 dbt가 필요한가?
 
+Spark를 쓰더라도 SQL 모델의 의존성, 문서, 테스트를 관리해야 할 수 있다. dbt는 그 관리 계층을 맡을 수 있고 실제 계산은 연결된 엔진이 수행하므로 두 도구는 요구에 따라 함께 쓴다.
+
 역할이 다르다.
 
 ```text
@@ -631,12 +657,6 @@ Gold / Mart
 ---
 
 <!-- SOURCE CORE END -->
-
-## 처음 읽는 독자를 위한 연결 설명
-
-- **4.1~4.5 실행 흐름:** Driver는 작업 계획을 세우고 executor는 분할된 일을 수행한다. `groupBy`처럼 같은 key의 행을 모으려면 작업자 사이에 데이터가 이동하는 shuffle이 필요할 수 있다. 이는 시험지를 학생별로 나눴다가 과목별로 다시 모으는 과정과 비슷하다. 느린 stage를 보면 계산 자체뿐 아니라 이동량도 확인한다.
-- **4.6~4.10 성능 선택:** 작은 dimension을 각 작업자에게 복사하는 broadcast join은 큰 fact를 다시 섞는 비용을 줄일 수 있지만, 복사본이 memory에 맞아야 한다. 일부 key에 데이터가 몰리는 skew는 담당자 한 명에게 서류가 몰리는 상황이다. Partition 수, spill, 느린 task 분포를 Spark UI에서 함께 보며 원인을 구분한다.
-- **4.11~4.14 역할 연결:** Spark가 Iceberg 파일을 읽고 쓰는 방식은 file layout과 commit에 영향을 받는다. Structured Streaming은 이어서 들어오는 데이터를 처리하지만 상태와 checkpoint를 함께 관리해야 한다. dbt는 SQL 모델의 의존성과 테스트를 맡을 수 있어 Spark의 대규모 계산과 역할이 다르다. 어떤 조합이 맞는지는 데이터 양, 지연 목표, 모델 관리 요구로 결정한다.
 
 ## 원문 적용 시 보완 {#source-notes}
 

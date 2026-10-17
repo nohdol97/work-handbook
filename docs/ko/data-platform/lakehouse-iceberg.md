@@ -1,8 +1,8 @@
 ---
 id: data-platform-lakehouse-iceberg
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-03-01
   - DPE-03-02
@@ -21,13 +21,13 @@ knowledge_ids:
 
 문서 유형: Learn. 제공된 학습 자료의 개념과 설계 예시를 정리했다. `studied`는 개념 학습을 뜻하며, 직접 구현하거나 운영 검증했다는 뜻이 아니다. SQL과 수치는 설명용 예시이며 실행하지 않았다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 아래 구역은 원문의 목차와 기술 내용을 유지하면서 입문자가 읽기 쉽게 문장을 다듬은 본문이다. 제품별 적용 조건과 추가 설명은 뒤의 보완 구역에서 해당 절 번호와 함께 확인한다.
 
 <!-- SOURCE CORE START -->
 
 ## 3.1 Lakehouse Architecture
 
-Lakehouse는 Data Lake의 열린 Storage와 Data Warehouse의 Table Management 기능을 결합하려는 구조다.
+Lakehouse는 데이터 레이크의 열린 저장소와 데이터 웨어하우스의 테이블 관리 기능을 함께 쓰는 구조다. 파일을 유연하게 쌓으면서도 하나의 표처럼 안전하게 조회·변경해야 할 때 유용하다.
 
 큰 그림:
 
@@ -71,13 +71,13 @@ Control Plane:
 - Governance
 - Table Definition
 
-정도로 개념적으로 나눌 수 있다.
+이렇게 구분하면 파일을 실제로 읽고 쓰는 작업과, 테이블 정의·권한을 관리하는 작업의 책임이 분명해진다.
 
 ---
 
 ## 3.2 Iceberg Metadata Internals
 
-Iceberg의 핵심은 단순히 Parquet 파일을 저장하는 것이 아니라 **Table Metadata를 관리하는 것**이다.
+Iceberg의 핵심은 Parquet 파일 자체보다 **테이블 메타데이터**다. 메타데이터는 어떤 파일이 현재 테이블에 속하는지 적은 목록과 설명서로, 여러 엔진이 같은 테이블을 일관되게 읽도록 돕는다.
 
 구조를 단순화하면:
 
@@ -99,7 +99,7 @@ Data Files
 
 ### Metadata JSON
 
-Table의 현재 상태를 설명한다.
+Metadata JSON은 현재 테이블의 스키마, 파티션 규칙, 스냅샷 같은 상태를 설명한다. 데이터 파일을 직접 읽기 전에 확인하는 목차다.
 
 포함될 수 있는 정보:
 
@@ -113,7 +113,7 @@ Table의 현재 상태를 설명한다.
 
 ### Current Snapshot
 
-현재 Table 상태를 가리키는 Snapshot.
+현재 스냅샷은 지금 테이블에 속한 파일들의 일관된 집합을 가리킨다.
 
 ---
 
@@ -149,7 +149,7 @@ Manifest
 Data File
 ```
 
-이를 통해 대규모 Table의 File 목록과 Statistics를 효율적으로 관리한다.
+중간 목록이 파일 경로와 통계를 나누어 관리하므로, 큰 테이블에서도 모든 파일을 무작정 열지 않고 필요한 파일을 고를 수 있다.
 
 ---
 
@@ -165,7 +165,7 @@ Merge-on-Read 같은 방식에서 삭제 정보를 별도 파일로 관리할 �
 
 ## 3.3 Snapshot Semantics
 
-Snapshot은 특정 시점의 Table 상태다.
+Snapshot(스냅샷)은 특정 시점의 테이블 전체 상태를 가리키는 기록이다. 책의 새 판본을 만들 때 목차는 갱신하되 바뀌지 않은 페이지는 다시 복사하지 않고 함께 쓴다고 생각하면 된다.
 
 중요한 점:
 
@@ -195,7 +195,7 @@ Table을 과거 Snapshot 상태로 되돌릴 수 있다.
 
 ### Consistent Read
 
-Query는 특정 Snapshot 기준으로 일관된 Table 상태를 읽는다.
+쿼리는 시작할 때 선택한 스냅샷을 기준으로 읽는다. 쓰기가 동시에 진행돼도 절반만 바뀐 테이블을 보지 않도록 하는 경계다.
 
 ### Snapshot Isolation Intuition
 
@@ -205,9 +205,7 @@ Query는 특정 Snapshot 기준으로 일관된 Table 상태를 읽는다.
 
 ## 3.4 Atomic Commit Model
 
-여러 Writer가 동시에 Table을 변경할 수 있다.
-
-Iceberg는 **Optimistic Concurrency** 방식으로 이해할 수 있다.
+여러 작성자(Writer)가 동시에 테이블을 바꿀 수 있다. Iceberg의 **낙관적 동시성 제어(Optimistic Concurrency)**는 먼저 작업하고 커밋할 때 충돌을 확인하므로 동시 쓰기에서 중간 상태를 공개하지 않도록 돕는다.
 
 개념적으로:
 
@@ -223,7 +221,7 @@ Writer B
 
 한 Writer가 먼저 Commit하면 현재 Metadata가 바뀐다.
 
-다른 Writer는:
+나중에 커밋하려는 작성자는 먼저 현재 상태가 바뀌었는지 확인한다:
 
 - Conflict 확인
 - 필요한 경우 retry
@@ -248,7 +246,7 @@ File은 만들어졌는데 Commit에 실패하면 Table Metadata에서 참조되
 
 ## 3.5 Partitioning in Iceberg
 
-Iceberg는 **Hidden Partitioning** 개념이 중요하다.
+Iceberg의 **숨겨진 파티셔닝(Hidden Partitioning)**은 파일 묶음을 나누는 규칙을 쿼리 작성자에게 숨긴다. 사용자는 날짜 열로 검색하고 Iceberg는 내부 변환 규칙을 이용해 필요한 묶음만 찾는다.
 
 사용자는 Query에서 Partition Column을 직접 의식하지 않고 논리 column 조건을 사용할 수 있다.
 
@@ -282,7 +280,7 @@ bucket(32, user_id)
 
 ### Partition Evolution
 
-Table을 다시 전체 Rewrite하지 않고 Partition Spec을 변경할 수 있다.
+파티션 규칙(Partition Spec)이 바뀌어도 과거 파일 전체를 다시 쓰지 않고 새 파일부터 다른 규칙을 적용할 수 있다.
 
 예:
 
@@ -303,7 +301,7 @@ Table을 다시 전체 Rewrite하지 않고 Partition Spec을 변경할 수 있�
 
 ## 3.6 Query Pruning
 
-Iceberg Query 성능에서 핵심은:
+Iceberg 쿼리 성능의 핵심은 **프루닝(Pruning)**, 즉 조건에 맞지 않는 파일이나 데이터 범위를 읽기 전에 건너뛰는 것이다.
 
 > **얼마나 적은 데이터를 읽게 할 수 있는가**
 
@@ -325,7 +323,7 @@ Column Pruning
 
 ### Scan Amplification
 
-실제로 필요한 데이터보다 훨씬 많은 데이터를 읽으면 Scan Amplification이 크다고 볼 수 있다.
+필요한 결과는 적은데 파일을 많이 읽는 현상을 **스캔 증폭(Scan Amplification)**이라고 한다. 예를 들어 한 고객의 기록을 찾느라 모든 파일을 훑는 경우다.
 
 좋은 Layout은 이를 줄인다.
 
@@ -333,7 +331,7 @@ Column Pruning
 
 ## 3.7 Sort Order and Clustering
 
-File min/max statistics가 효과적이려면 값이 어느 정도 모여 있는 것이 좋다.
+파일의 최솟값·최댓값 통계를 잘 쓰려면 자주 조회하는 값이 어느 정도 모여 있어야 한다. 예를 들어 `user_id` 범위 조회가 많으면 관련 값이 함께 저장된 파일을 더 쉽게 골라낼 수 있다.
 
 예:
 
@@ -357,9 +355,7 @@ user_id 순으로 어느 정도 정렬
 
 ## 3.8 UPDATE / DELETE / MERGE
 
-Object Storage의 Parquet 파일은 일반 DB row처럼 작은 단위로 즉시 수정하기 어렵다.
-
-Iceberg는 Table Format 차원에서 Update/Delete를 지원한다.
+객체 저장소의 Parquet 파일은 일반 데이터베이스의 한 행처럼 즉시 수정하기 어렵다. Iceberg는 UPDATE·DELETE·MERGE를 테이블 수준에서 지원하지만 변경량과 읽기 비용에 맞는 방식을 골라야 한다.
 
 ---
 
@@ -390,11 +386,11 @@ Iceberg는 Table Format 차원에서 Update/Delete를 지원한다.
 
 ### Position Delete
 
-특정 File의 특정 row position을 삭제 대상으로 표시.
+Position Delete는 특정 파일의 특정 행 위치를 삭제 대상으로 기록한다. 읽을 때 그 위치를 건너뛴다.
 
 ### Equality Delete
 
-특정 key/value 조건에 해당하는 row를 삭제 대상으로 표현.
+Equality Delete는 키나 값 조건에 맞는 행을 삭제 대상으로 기록한다. 파일 내 행 위치를 몰라도 조건으로 찾는다.
 
 ---
 
@@ -418,7 +414,7 @@ CDC Upsert 등에 사용 가능하지만 큰 Table에서는 비용을 고려해�
 
 ## 3.9 Maintenance
 
-Lakehouse는 파일 기반이므로 Maintenance가 중요하다.
+Lakehouse는 파일이 쌓이는 구조라 **유지보수(Maintenance)**가 필요하다. 작은 파일·삭제 파일·오래된 스냅샷이 늘면 쓰기와 조회가 느려지거나 저장 비용이 커질 수 있다.
 
 ### Data File Compaction
 
@@ -448,7 +444,7 @@ Metadata에서 더 이상 참조되지 않는 File을 제거한다.
 
 ## 3.10 Catalogs
 
-Iceberg Table을 운영하려면 현재 Metadata를 찾을 수 있어야 한다.
+Iceberg 테이블을 열려면 현재 메타데이터가 어디 있는지 알아야 한다. **카탈로그(Catalog)**는 도서관 검색대처럼 테이블 이름을 현재 메타데이터 위치에 연결한다.
 
 Catalog의 역할:
 
@@ -469,7 +465,7 @@ Catalog의 역할:
 
 ## 3.11 Catalog vs Governance
 
-둘은 관련 있지만 같은 개념이 아니다.
+카탈로그는 테이블을 찾게 하고, **거버넌스(Governance)**는 누가 무엇을 볼 수 있는지 같은 사용 규칙을 관리한다. 실제 제품은 두 역할을 함께 제공할 수도 있다.
 
 ### Catalog 기본 역할
 

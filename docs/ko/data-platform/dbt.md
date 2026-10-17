@@ -1,8 +1,8 @@
 ---
 id: data-platform-dbt
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-08-01
   - DPE-08-02
@@ -20,12 +20,14 @@ knowledge_ids:
 
 이 문서는 dbt의 역할과 모델 계층을 개념적으로 학습한 기록이다. 프로젝트 실행·성능 측정·운영 경험을 주장하지 않는다. 공식 문서는 2026-09-24에 확인했다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 원본의 목차·절 번호·핵심 기술 내용을 유지하면서 본문 문장을 입문자가 읽기 쉽게 다듬었다. 원본 자료는 출처에 보존되어 있다. 버전·운영 조건과 추가 설명은 뒤의 보완 구역을 확인한다.
 
 **dbt**는 SQL 변환을 model 단위로 정리하고 의존성·테스트·문서를 관리하는 도구다. 여러 단계의 요리법에서 어떤 재료가 어느 단계에서 만들어지는지 표시하는 것과 비슷하다. 아래 8.1~8.10은 원천 데이터에서 분석용 mart까지의 흐름을 다룬다.
 
 <!-- SOURCE CORE START -->
 ## 8.1 Project Structure
+
+dbt는 SQL 변환을 작은 model과 재사용 가능한 구성 요소로 정리한다. 원천 테이블에서 분석용 결과까지 단계가 늘어날수록 어떤 model이 무엇에 의존하는지 드러내는 일이 중요하다.
 
 dbt:
 
@@ -35,19 +37,19 @@ dbt:
 
 ### Models
 
-SQL Transformation 단위.
+Model은 하나의 SQL 변환 결과를 정의하는 단위다.
 
 ### Sources
 
-dbt 밖에서 만들어진 원본 Table.
+Source는 dbt 밖에서 들어온 원본 table을 이름과 설명으로 등록한다.
 
 ### Tests
 
-데이터 품질 규칙.
+Test는 null·중복·참조 관계처럼 지정한 데이터 규칙을 검사한다.
 
 ### Macros
 
-반복 SQL Logic 재사용.
+Macro는 여러 model에서 반복되는 SQL 로직을 재사용하게 한다.
 
 일반 구조:
 
@@ -64,6 +66,8 @@ macros/
 ---
 
 ## 8.2 ref()
+
+`ref()`는 다른 dbt model의 결과를 가리키고 그 model이 먼저 필요하다는 의존성을 선언한다. 예를 들어 주문 mart가 `stg_orders`를 참조하면 dbt가 두 model의 관계를 알 수 있다.
 
 `ref()`:
 
@@ -99,6 +103,8 @@ dbt 외부 원본
 
 ## 8.3 Staging Models
 
+Staging은 원천의 이름과 형식을 일관되게 다듬는 첫 단계다. 예를 들어 여러 날짜 표기를 하나로 맞춰 두면 이후 model이 같은 정리 작업을 반복하지 않아도 된다.
+
 Staging:
 
 > **원본을 깨끗하게 정리하는 첫 변환 계층**
@@ -116,6 +122,8 @@ Staging:
 ---
 
 ## 8.4 Intermediate Models
+
+Intermediate model은 여러 mart가 함께 쓸 수 있는 변환을 만든다. 고객 정보와 주문을 연결하는 공통 SQL을 한 곳에 두면 뒤의 지표 모델이 같은 로직을 재사용할 수 있다.
 
 Intermediate:
 
@@ -138,6 +146,8 @@ int_orders_with_customer
 ---
 
 ## 8.5 Marts
+
+Mart는 특정 분석 질문이나 보고서에 맞춘 최종 데이터 계층이다. Fact의 측정값과 dimension의 설명 속성을 함께 설계하면 사용자가 무엇을 집계하는지 알기 쉽다.
 
 Mart:
 
@@ -172,7 +182,9 @@ Bronze/Silver
 
 ## 8.6 Incremental Models
 
-매번 전체 Table을 다시 계산하지 않고 변경분만 처리.
+늦게 도착한 주문이 이전 날짜의 결과를 바꿀 수 있으므로 filter, key, lookback 범위를 함께 설계한다.
+
+Incremental model은 전체 table을 매번 다시 만들지 않고 선택한 새 데이터나 변경 구간을 처리한다. 어떤 행을 다시 읽을지는 모델 SQL이 정한다.
 
 ### Append
 
@@ -180,7 +192,7 @@ Bronze/Silver
 
 ### Merge
 
-INSERT + UPDATE.
+MERGE는 key를 기준으로 새 행을 넣고 기존 행을 갱신하는 전략이다. 지원 방식은 adapter와 엔진에 따라 확인한다.
 
 ### Incremental Filter
 
@@ -199,6 +211,8 @@ Logic 변경 등 필요 시 전체 재생성.
 ---
 
 ## 8.7 dbt Tests
+
+dbt test는 지정한 데이터 규칙을 검사한다. 주문 ID가 비어 있지 않은지, 참조 고객이 존재하는지 확인할 수 있지만 업무 의미가 모두 맞는지는 별도 규칙이 필요하다.
 
 대표 Test:
 
@@ -226,7 +240,9 @@ dbt Test는 Data Quality 전체가 아니라 기본적인 Model/Table 규칙 검
 
 ## 8.8 Snapshots
 
-dbt Snapshot:
+Snapshot은 현재 테이블을 주기적으로 비교해 값의 이전 버전을 남길 수 있다. 고객 등급이 바뀐 이력을 분석할 때 유용하지만 관측 사이의 모든 중간 변경을 자동으로 보존하지는 않는다.
+
+dbt snapshot은 현재 table을 비교해 이전 값과 새 값을 구분하는 기능이다.
 
 > **현재 Table을 비교해 변경 이력을 보존**
 
@@ -246,7 +262,9 @@ CDC History가 이미 충분히 있다면 별도의 Snapshot이 반드시 필요
 
 ## 8.9 Documentation / Lineage
 
-Table/Column 설명을 Metadata로 관리할 수 있다.
+Lineage는 결과 model이 어떤 원천과 중간 model에서 왔는지를 보여 준다. 지표가 틀렸을 때 `source()`와 `ref()` 관계를 따라가면 영향받는 dbt model을 찾는 데 도움이 된다.
+
+Table과 column의 설명을 metadata로 남기면 모델을 사용하는 사람이 값의 뜻을 확인할 수 있다.
 
 `source()`와 `ref()` 관계를 이용해 dbt Model Lineage를 생성한다.
 
@@ -269,6 +287,8 @@ dbt Lineage는 전체 Data Platform Lineage의 일부다.
 ---
 
 ## 8.10 dbt + Databricks / Snowflake / Trino
+
+dbt는 SQL을 정의·관리하지만 실제 계산은 연결된 플랫폼이 수행한다. 같은 model도 Databricks, Snowflake, Trino의 adapter와 지원 SQL에 따라 동작을 확인해야 한다.
 
 dbt는 Compute Engine이 아니다.
 
@@ -295,12 +315,6 @@ Spark와 dbt는 경쟁 관계가 아니라 함께 사용할 수 있다.
 ---
 
 <!-- SOURCE CORE END -->
-
-## 처음 읽는 독자를 위한 연결 설명
-
-- **8.1~8.5 모델 흐름:** Source는 외부에서 들어온 table을 가리키고, staging은 이름과 형식을 정리하며, intermediate는 공통 변환을, mart는 분석자가 쓰는 fact·dimension을 만든다. `ref()`는 모델 사이의 참조와 실행 의존성을 나타낸다. 주문 원천에서 날짜와 통화를 정리한 뒤 고객별 매출 mart를 만든다고 생각하면 각 계층의 책임이 분명해진다.
-- **8.6~8.8 증분과 품질:** Incremental model은 새 데이터나 바뀐 범위만 처리해 반복 계산량을 줄일 수 있다. 단, 늦게 도착한 주문을 놓치지 않도록 필터와 unique key, 재처리 범위를 설계해야 한다. Tests는 지정한 조건을 검사하고 snapshots는 값의 과거 버전을 남길 수 있다. 둘 다 모든 업무 의미 오류를 자동으로 잡지는 못한다.
-- **8.9~8.10 연결:** Lineage는 어떤 model이 어떤 source와 상위 model에 의존하는지 보여 준다. dbt가 SQL을 조직해도 실제 실행은 연결된 warehouse나 query engine이 맡는다. 따라서 Trino·Snowflake 등의 지원 기능과 adapter 조건을 확인한다.
 
 ## 적용 시 보완할 점
 

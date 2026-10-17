@@ -1,8 +1,8 @@
 ---
 id: data-platform-curriculum
 status: overview
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-00-01
   - DPE-18-01
@@ -24,11 +24,11 @@ knowledge_ids:
 
 This page preserves the progress recorded in the supplied Data Platform Engineering notes. The study aimed to explain why technologies exist, which problems they solve, their core functions, their connections and differences, and their place in the overall architecture. It does not claim deep implementation study or completed production work.
 
-The source calls Chapters 1–4 **reconstructed notes** of earlier completed study. Chapter 5 onward follows the continued study session. The original conversation and earlier material were not supplied, so the reconstruction could not be independently verified. “Completed” below means the study status reported in the source.
+The source calls Chapters 1–4 **reconstructed notes** of earlier completed study. Chapter 5 onward follows the continued study session. The original conversation and earlier material were not supplied, so the reconstruction could not be independently verified. “Completed” below means the concepts were studied in the supplied material. It does not claim hands-on implementation or operation.
 
 In the first source, Chapter 17 contains supplementary explanations and Chapter 18 records progress at that time. Chapters 16–21 in the source added on 2026-09-26 match the Phase numbers below and declare **conceptual study of Phases 1–21 complete**. The first source keeps its historical not-started record; this page reflects the new material.
 
-The current study body follows `data_platform_engineering_complete_source_ch01_21.md`, supplied on 2026-09-27. Both earlier sources remain as provenance. Pages preserve the original numbers, headings, paragraphs, lists, and code; supplements and corrections follow separately. Appendix A retains earlier supplementary material and is separate from the numbered sections in the Databricks chapter.
+The study scope follows `data_platform_engineering_complete_source_ch01_21.md`, supplied on 2026-09-27. Both earlier sources remain as provenance. Each chapter keeps the source numbering, outline, and core technical facts while rewriting the prose for beginners. Separate source records preserve traceability, and each chapter explains corrections and conditions. Appendix A retains earlier supplementary material and is separate from the numbered sections in the Databricks chapter.
 
 If you are new to the topic, use this list like a travel map. Each phase leads to the next idea. For example, understand storage formats in [Foundations](foundations.md), then table management in [Lakehouse](lakehouse-iceberg.md), transformation in [Spark](spark.md), and checks in [Operations and recovery](production-operations.md). “Completed” records conceptual study of these links, not hands-on operation in a real environment.
 

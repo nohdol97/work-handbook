@@ -1,8 +1,8 @@
 ---
 id: data-platform-trino
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-10-01
   - DPE-10-02
@@ -18,13 +18,15 @@ knowledge_ids:
 
 이 문서는 Trino를 개념적으로 학습한 기록이다. Query 성능이나 실제 운영 결과를 검증했다는 뜻이 아니다. 공식 문서는 2026-09-24에 확인했다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 원본의 목차·절 번호·핵심 기술 내용을 유지하면서 본문 문장을 입문자가 읽기 쉽게 다듬었다. 원본 자료는 출처에 보존되어 있다. 버전·운영 조건과 추가 설명은 뒤의 보완 구역을 확인한다.
 
 **Trino**는 여러 저장소의 데이터를 SQL로 조회하는 분산 query engine이다. 여러 창고의 물품 목록을 한 창구에서 찾되, 물품을 어디서 얼마나 옮겨야 할지도 계산하는 방식에 가깝다. 아래 10.1~10.8은 connector, query 실행, pushdown, join과 memory의 관계를 설명한다.
 
 <!-- SOURCE CORE START -->
 
 ## 10.1 Architecture
+
+Trino는 외부 저장소의 데이터를 SQL로 조회하는 분산 엔진이다. Coordinator가 계획을 세우고 worker가 나누어 실행하므로 큰 데이터도 병렬로 읽을 수 있다.
 
 Trino:
 
@@ -55,7 +57,7 @@ Trino Worker ≈ Spark Executor
 
 ## 10.2 Connector Model
 
-Connector는 Trino와 외부 시스템 사이 Adapter.
+Connector는 Trino가 Iceberg나 PostgreSQL 같은 서로 다른 원천에 접근하는 통로다. 한 SQL에서 둘을 join할 수 있어도 원격 읽기와 데이터 이동 비용을 따져야 한다.
 
 예:
 
@@ -82,11 +84,13 @@ Trino Catalog:
 
 > 어떤 Connector/Data Source를 사용할지 구분.
 
-Federated Query로 서로 다른 시스템을 한 SQL에서 Join할 수도 있지만 성능을 무조건 보장하는 것은 아니다.
+Federated query는 서로 다른 시스템을 한 SQL에서 join할 수 있게 한다. 다만 원천에서 읽는 양과 네트워크 이동량에 따라 느릴 수 있다.
 
 ---
 
 ## 10.3 Query Execution
+
+Trino는 query를 stage와 task로 나눠 worker에 보낸다. Split은 읽기 작업의 작은 단위이고 exchange는 worker 사이의 데이터 이동이라서 느린 join을 볼 때 중요하다.
 
 구조:
 
@@ -116,7 +120,7 @@ Scan의 작은 작업 단위.
 
 ### Exchange
 
-Worker 간 Data Redistribution.
+Exchange는 join이나 집계를 위해 worker 사이에서 데이터를 다시 나누어 옮기는 과정이다.
 
 Spark Shuffle과 비슷한 개념.
 
@@ -125,6 +129,8 @@ Join / GroupBy에서 Exchange가 많이 발생할 수 있다.
 ---
 
 ## 10.4 Pushdown
+
+Pushdown은 filter나 집계 같은 일을 가능한 경우 원천 가까이에서 먼저 하는 방법이다. 필요한 상자만 창고에서 꺼내듯 전송량을 줄일 수 있지만 connector와 SQL 형태가 지원해야 한다.
 
 목적:
 
@@ -148,9 +154,11 @@ Iceberg에서는 Partition/File/Row Group/Column Pruning이 비슷한 목적을 
 
 ## 10.5 Join Strategies
 
+Join 전략은 작은 쪽을 복사할지 양쪽을 key별로 재분배할지 결정한다. 두 방법 모두 데이터 크기와 key 쏠림에 영향을 받으므로 계획과 실행량을 함께 본다.
+
 ### Broadcast Join
 
-작은 Table을 모든 Worker에 복사.
+Broadcast join은 작은 table을 join에 참여하는 worker에 복사해 큰 table의 재분배를 줄인다. 복사본이 각 worker의 memory에 맞아야 한다.
 
 ```text
 Huge Fact
@@ -160,7 +168,7 @@ Tiny Dimension
 
 ### Partitioned Join
 
-큰 Table끼리 Join Key 기준 재분배.
+Partitioned join은 양쪽 큰 table을 join key 기준으로 재분배해 같은 key를 만나게 한다.
 
 Exchange 비용 발생.
 
@@ -172,7 +180,7 @@ Exchange 비용 발생.
 
 ## 10.6 Memory
 
-Trino는 Join/Aggregation/Sort의 중간 데이터를 Memory에 유지한다.
+Trino는 join·집계·정렬 중간 결과를 memory에 둘 수 있다. 데이터가 크거나 한쪽으로 쏠리면 memory 한도에 닿아 query가 느려지거나 실패할 수 있다. Spill은 일부 데이터를 disk로 내리지만 모든 메모리 문제를 해결하지는 않는다.
 
 주요 개념:
 
@@ -188,11 +196,13 @@ Memory 부족
 Disk 사용
 ```
 
-Query 실패를 피할 수 있지만 느려진다.
+Spill이 허용되는 조건에서는 일부 memory 부족을 완화할 수 있지만 disk I/O로 느려지고 모든 실패를 막지는 못한다.
 
 ---
 
 ## 10.7 Trino vs Spark
+
+Trino는 대화형 SQL 조회에, Spark는 큰 변환·재계산에 자주 쓰인다. 이는 흔한 역할 분담일 뿐 기능의 절대 경계가 아니므로 실제 지연·규모·운영 조건을 비교한다.
 
 핵심:
 
@@ -232,6 +242,8 @@ Trino
 
 ## 10.8 Trino + Iceberg
 
+Iceberg는 테이블의 현재 파일과 snapshot을 설명하고 Parquet은 파일 안의 데이터를 담는다. Trino는 metadata로 읽을 파일을 찾고 필요한 column을 조회하므로 layout과 connector 지원이 중요하다.
+
 구조:
 
 ```text
@@ -246,7 +258,7 @@ Trino
 BI / Analyst
 ```
 
-Trino는 Iceberg Metadata를 이용해 필요한 File을 찾고 Parquet Columnar 특성을 이용해 필요한 Column만 읽는다.
+Trino는 Iceberg metadata로 읽을 파일을 고르고, 지원되는 경우 Parquet의 열(column) 배치를 이용해 필요한 column만 읽는다.
 
 역할:
 
@@ -267,12 +279,6 @@ Trino
 ---
 
 <!-- SOURCE CORE END -->
-
-## 처음 읽는 독자를 위한 연결 설명
-
-- **10.1~10.3 실행 흐름:** Coordinator는 query를 계획하고 worker는 나누어진 일을 수행한다. Connector는 Iceberg나 PostgreSQL 같은 원천에 접근하는 통로다. 예를 들어 Iceberg의 큰 fact와 PostgreSQL의 작은 dimension을 join하면 어느 쪽에서 읽고 어디서 데이터를 모을지에 따라 속도와 원천 부하가 달라진다.
-- **10.4~10.6 이동량과 memory:** Pushdown은 filter나 집계를 가능한 한 원천 가까이 보내는 방식이다. 창고에서 필요한 상자만 골라 가져오는 것과 비슷하지만 connector와 SQL 형태에 따라 지원 여부가 다르다. Broadcast join은 작은 쪽을 참여 worker에 복사한다. 크기 추정이 틀리거나 key가 쏠리면 memory 압박이 생길 수 있으므로 EXPLAIN과 실제 scan·exchange 양을 확인한다.
-- **10.7~10.8 역할 연결:** Trino는 대화형 분석 질의에 쓰일 수 있고 Spark는 큰 변환 작업에 쓰일 수 있다. 역할이 절대적으로 나뉘는 것은 아니다. Iceberg table을 함께 읽더라도 metadata pruning, 파일 배치, connector 지원에 따라 결과 성능이 달라진다.
 
 ## 부록: 기존 보완 설명
 

@@ -1,8 +1,8 @@
 ---
 id: data-platform-ai-ready-data
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-15-01
   - DPE-15-02
@@ -20,15 +20,13 @@ knowledge_ids:
 
 This page organizes the concepts from source Chapter 15. `studied` means conceptual study, not a deployed or tested system. Version names and numbers below are examples.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
-
-**Reading guide:** AI-ready data resembles cooking ingredients: labels alone do not make them usable. You need to know origin, freshness, version, and permission before interpreting an evaluation again. Section 15.1 sets these conditions. Telemetry in 15.2 means records of a running request: which prompt, model, and tool produced an output. Sections 15.3–15.5 version datasets and evaluation cases for comparison. Sections 15.6–15.8 connect document chunks, embeddings (number vectors that represent meaning), retrieval access, and origin. Section 15.9 asks whether model inputs and answer labels arrive on time.
+**Reading note:** The chapter below keeps the source numbering, outline, technical content, and examples while explaining them in simpler language. Check the section-specific conditions and additions in the supplement after the chapter.
 
 <!-- SOURCE CORE START -->
 
 ## 15.1 What Makes Data AI-Ready
 
-AI-ready data is not a specific file format.
+AI-ready data is a state to check before AI use, not a file format. A labeled ingredient is still hard to use if you do not know its origin, freshness, or permission to use it. Check quality, freshness, versions, discoverability, and access together so results can be trusted and evaluated again.
 
 > **Data with the quality, freshness, versions, metadata, and governance that let AI use it repeatedly and reliably**
 
@@ -54,13 +52,13 @@ Discoverable through catalogs and metadata.
 
 Access/Masking/Retention/Audit.
 
-Existing data-platform capabilities are the foundation for AI-ready data.
+Existing quality, catalog, and access controls provide the foundation for AI use.
 
 ---
 
 ## 15.2 AI Telemetry Model
 
-Telemetry for analyzing AI service execution.
+Telemetry records how a prompt, model, tool, response, cost, and feedback relate during an AI request. If an answer is wrong, a trace ID groups retrieval results and tool calls from one execution. This helps separate retrieval from generation problems. Also decide which sensitive fields to collect and how long to keep them.
 
 Overall flow:
 
@@ -84,7 +82,7 @@ Main data to collect:
 
 ### Prompt / Response
 
-The basis for evaluation and improvement.
+Record what was asked and answered so it can be evaluated and improved.
 
 ### Model
 
@@ -118,7 +116,7 @@ Tool name, input/output, latency, status.
 
 ### Trace / Execution / Session ID
 
-Connect all events into one execution flow.
+Use IDs to connect the request and its steps into one execution path.
 
 AI telemetry is more than logs. It supports:
 
@@ -135,13 +133,15 @@ It is a data asset for these uses.
 
 ## 15.2A Langfuse as AI Telemetry / Evaluation Layer
 
+Langfuse is an example tool for execution and evaluation records such as traces, observations, and scores. A trace groups one request, an observation is a step inside it, and a session groups related traces. Records can feed long-term analytical tables, but arrows in this diagram do not guarantee automatic collection or synchronization.
+
 Question during the study session:
 
 > We could use Langfuse.
 
 Yes.
 
-Langfuse can handle much of AI telemetry.
+Langfuse provides several features for AI execution records and evaluation.
 
 Concept mapping:
 
@@ -204,13 +204,15 @@ Trace / Observation / Score
        BI / Long-term Analysis
 ```
 
-Langfuse does not replace the entire data platform.
+Do not assume Langfuse alone provides long-term joined analytics and full governance.
 
 ---
 
 ## 15.3 Dataset Versioning
 
-Evaluation datasets change over time.
+A dataset version identifies the evaluation items, answers, and criteria used together. Scores from different exam papers are hard to compare directly. Likewise, `eval_v1` and `eval_v2` may contain different cases.
+
+Evaluation datasets change as teams add failures or revise answers.
 
 Example:
 
@@ -224,7 +226,7 @@ eval_v2
 → Correct answers
 ```
 
-Comparing model scores across different dataset versions may not be fair.
+Scores from different dataset versions may reflect different case difficulty, not only model quality.
 
 Record together:
 
@@ -235,7 +237,7 @@ Record together:
 - evaluator_version
 - score
 
-An Iceberg snapshot and a dataset version are not the same.
+An Iceberg snapshot identifies table-file state; an evaluation dataset version identifies the cases used in a test.
 
 ```text
 Iceberg Snapshot
@@ -248,6 +250,8 @@ Dataset Version
 ---
 
 ## 15.4 Reproducibility
+
+To investigate an earlier score change, the inputs and settings must still be available. A model name alone can hide a changed prompt or evaluator. Record the version bundle and runtime settings below. Because generative models can be stochastic, restored conditions do not guarantee identical wording.
 
 Reproducibility:
 
@@ -273,7 +277,7 @@ judge_v2
 temperature=0
 ```
 
-Difference from lineage:
+Lineage and reproducibility answer different questions:
 
 ```text
 Lineage
@@ -283,11 +287,13 @@ Reproducibility
 → Can we reconstruct the same experiment conditions?
 ```
 
-LLMs can be stochastic. Reproducibility does not mean always generating the same sentence; the key is **reconstructing the conditions precisely**.
+An LLM can use different wording under the same conditions. Reproducibility means **reconstructing the inputs and settings**, not guaranteeing identical sentences.
 
 ---
 
 ## 15.5 Evaluation Dataset Construction
+
+An evaluation dataset lets teams test prompt, model, and agent changes repeatedly on the same cases. After fixing a real failure, add it as a regression case to check that the issue does not return in later releases.
 
 Evaluation Dataset:
 
@@ -301,7 +307,7 @@ Good sources:
 - Edge Case
 - Hard Case
 
-Do not include only success cases.
+Success cases alone may miss failures that need repeat testing.
 
 Example categories:
 
@@ -326,9 +332,7 @@ Add a regression case
 Evaluate again in all later versions
 ```
 
-An expected answer is not always required.
-
-Expected behavior or a rubric can also be used.
+A single exact answer is not always needed; expected behavior or a rubric can define success.
 
 Example:
 
@@ -341,6 +345,8 @@ Must include a required citation
 ---
 
 ## 15.6 Embedding Data
+
+An embedding represents the meaning of a document chunk as a number vector for similarity search. RAG (Retrieval-Augmented Generation) uses retrieved material as context for an answer.
 
 RAG Pipeline:
 
@@ -356,7 +362,7 @@ Vector
 Vector DB / Search
 ```
 
-Storing vectors alone is not enough.
+Vectors alone cannot show the source document and version, so keep those details too.
 
 Manage together:
 
@@ -381,13 +387,15 @@ Manage together:
 - embedding_model_version
 - embedding_vector
 
-Changing the embedding model can change the vector space, so version management matters.
+A changed embedding model can move vectors and change search results, so record its version.
 
-Changing the chunking strategy also changes retrieval results.
+Changing how documents are split can also change which chunks retrieval finds.
 
 ---
 
 ## 15.7 Retrieval Metadata
+
+Retrieval metadata describes which document, chunk, and version a search returned. A retrieval score signals relevance, not permission to read. For internal documents, use trusted user permissions to select authorized chunks during retrieval; hiding them later in the UI is too late.
 
 Store with RAG retrieval results:
 
@@ -426,6 +434,8 @@ These failures can be distinguished.
 
 ## 15.8 Provenance
 
+Provenance records the source and production path from an original document through chunks, embeddings, retrieval, and response. Lineage follows data movement and transformation; provenance can extend to evidence for an AI result. Use it to find derived outputs to review when a source document is deleted or no longer allowed.
+
 Provenance:
 
 > **Information that broadly tracks the sources and production process of data/AI results**
@@ -461,11 +471,13 @@ Reproducibility
 → Reconstruct those conditions
 ```
 
-Connecting this to governance helps trace affected derived data when a source is banned or deleted.
+When policy stops or deletes a source, provenance helps find related chunks, embeddings, and responses to review.
 
 ---
 
 ## 15.9 Feature / Label Freshness
+
+A feature is an input to a prediction; a label is the outcome learned later. If the last 30 days of usage predicts whether a user leaves in the next seven days, usage is the feature and actual departure is the label. Unconfirmed labels can distort training or evaluation, so separate when each was created and used.
 
 ### Feature
 
@@ -507,7 +519,7 @@ Confirm whether it was returned
 Create label
 ```
 
-Using unconfirmed labels can distort training/evaluation.
+An outcome that is not final can give training or evaluation the wrong label.
 
 A similar distinction applies to LLMs/agents:
 
@@ -526,8 +538,6 @@ Label-like
 <!-- SOURCE CORE END -->
 
 ## Source qualifications {#source-notes}
-
-A trace in 15.2 groups the steps of one request. If a new agent scores differently, compare dataset, prompt, and model versions in 15.3–15.4 along with runtime settings. Embeddings in 15.6 help find similar chunks, but access metadata in 15.7 does not itself enforce permission. Check authorization on each retrieval request and use provenance (origin and transformation history) in 15.8 to trace answer evidence.
 
 ### 15.2A Langfuse data model
 

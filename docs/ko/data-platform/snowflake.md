@@ -1,8 +1,8 @@
 ---
 id: data-platform-snowflake
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE2-18-01
   - DPE2-18-02
@@ -23,7 +23,7 @@ knowledge_ids:
 
 문서 유형: Learn. 원문 18장은 한 번 요약하고 넘어간 학습 범위다. `studied`는 이 요약 개념의 학습이며 상세 구현·운영 경험이나 심화 실습 완료를 뜻하지 않는다. 예시는 실행하지 않았다. 제품 동작은 2026-09-26 공식 문서로 확인했으며 edition, cloud, region, table type, feature 상태에 따라 달라진다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 아래 구역은 원문의 목차와 기술 내용을 유지하면서 입문자가 읽기 쉽게 문장을 다듬은 본문이다. 제품별 적용 조건과 추가 설명은 뒤의 보완 구역에서 해당 절 번호와 함께 확인한다.
 
 <!-- SOURCE CORE START -->
 
@@ -37,7 +37,7 @@ Snowflake는 다음과 같이 요약할 수 있다:
 
 ## 18.1 Architecture
 
-전체 계층:
+Snowflake는 저장소, 계산 자원인 Virtual Warehouse, 조정 기능인 Cloud Services를 나눈다. 같은 데이터에 여러 업무가 접근하되 계산 자원을 따로 운영하고 싶을 때 이 구분이 중요하다.
 
 ```text
 Cloud Services
@@ -49,11 +49,11 @@ Storage
 
 ### Storage
 
-Snowflake가 관리하는 storage 또는 Iceberg 관련 storage.
+저장 계층은 Snowflake가 관리하는 데이터 또는 Iceberg 관련 객체 저장소를 담는다. 계산 자원을 쉬게 해도 데이터는 별도로 남는다.
 
 ### Virtual Warehouse
 
-Query와 DML을 실행하는 독립 compute cluster.
+Virtual Warehouse는 쿼리와 DML(데이터 변경 명령)을 실행하는 독립 계산 자원이다. 팀별 작업대를 따로 두는 것처럼 업무 간 자원 간섭을 줄인다.
 
 서로 다른 warehouse를 통해 workload를 격리한다.
 
@@ -71,7 +71,7 @@ Query와 DML을 실행하는 독립 compute cluster.
 
 ## 18.2 Micro-partitions
 
-Snowflake는 table 데이터를 **micro-partitions**으로 자동 구성한다.
+Snowflake는 테이블 데이터를 작은 물리 묶음인 **micro-partition**으로 자동 구성한다. 도서관의 책을 여러 서가에 나누어 두듯, 어느 묶음에 어떤 값이 있는지 기록해 필요한 것만 읽도록 돕는다.
 
 ```text
 Table
@@ -83,13 +83,13 @@ Table
 
 Snowflake는 값 범위 등의 metadata를 추적한다.
 
-이 정보가 pruning을 돕는다.
+쿼리 조건이 기록된 값 범위와 겹치지 않으면 해당 묶음을 읽지 않는 프루닝에 이 정보를 쓴다.
 
 ---
 
 ## 18.3 Pruning
 
-Query:
+**프루닝(Pruning)**은 쿼리 조건에 맞을 수 없는 데이터 묶음을 읽기 전에 제외하는 것이다. 예를 들어 날짜가 9월 26일인 행만 찾는다면 다른 날짜만 담긴 묶음을 건너뛸 수 있다.
 
 ```sql
 WHERE event_date = '2026-09-26'
@@ -108,7 +108,7 @@ Parquet Row Group Pruning
 
 ## 18.4 Clustering
 
-자주 쓰는 filter에 맞지 않게 데이터가 배치되어 있다면 clustering으로 pruning 효율을 높일 수 있다.
+자주 거는 필터와 실제 데이터 배치가 어긋나면 **클러스터링(Clustering)**으로 비슷한 값을 모아 프루닝 효율을 높일 수 있다. 큰 테이블에서 조회 패턴과 유지 비용을 함께 보고 결정한다.
 
 큰 table에서는 clustering key를 사용할 수 있다.
 
@@ -118,7 +118,7 @@ Parquet Row Group Pruning
 
 ## 18.5 Streams
 
-Stream은 table의 row-level 변경을 추적한다.
+**Stream**은 테이블의 행 변경을 추적해 지난 처리 이후의 변화만 읽도록 돕는다. 전체 테이블을 매번 다시 처리하기 어려운 증분 작업에 쓴다.
 
 ```text
 Table
@@ -128,13 +128,13 @@ Stream
 Change Data
 ```
 
-증분 처리에 유용하다.
+예를 들어 새 주문만 집계한다면 전체 주문 테이블을 다시 읽는 대신 Stream이 가리키는 변경을 처리할 수 있다.
 
 ---
 
 ## 18.6 Tasks
 
-Task는 SQL 작업을 예약하거나 trigger한다.
+**Task**는 SQL 작업을 시간표나 조건에 따라 실행한다. 예를 들어 Stream의 새 변경을 읽어 대상 테이블에 MERGE하는 작업을 예약할 수 있다.
 
 자주 사용하는 조합:
 
@@ -150,7 +150,7 @@ MERGE / SQL Transform
 
 ## 18.7 Dynamic Tables
 
-Dynamic Table:
+**Dynamic Table**은 원하는 쿼리 결과와 목표 신선도(freshness)를 선언하면 Snowflake가 갱신을 관리하는 테이블이다. 원본에서 Silver·Gold를 지속적으로 만들 때 사용한다.
 
 > **Query 결과와 원하는 freshness를 선언하면 Snowflake가 refresh를 관리한다.**
 
@@ -174,13 +174,13 @@ Target lag를 사용한다:
 TARGET_LAG = 10 minutes
 ```
 
-이는 개념적으로 선언형 데이터 pipeline과 비슷하다.
+작업 순서를 하나씩 짜기보다 원하는 결과와 갱신 목표를 적는 **선언형 파이프라인**에 가깝다. 실제 지연은 작업량과 설정에 따라 달라진다.
 
 ---
 
 ## 18.8 Snowpipe / Snowpipe Streaming
 
-Snowpipe:
+**Snowpipe**는 객체 저장소에 들어온 파일을 Snowflake로 수집한다. **Snowpipe Streaming**은 staged file에만 의존하지 않고 더 낮은 지연의 연속 수집이 필요할 때 검토한다.
 
 ```text
 Object Storage File
@@ -196,7 +196,7 @@ Snowpipe Streaming은 staged file에만 의존하지 않고 더 낮은 지연으
 
 ## 18.9 Iceberg Tables
 
-Snowflake는 Apache Iceberg table과 다중 엔진 상호운용을 지원한다.
+Snowflake는 Apache Iceberg 테이블을 사용해 객체 저장소의 데이터를 여러 엔진과 연결할 수 있다. 다만 실제 공유 범위는 테이블 유형·카탈로그 설정·기능 지원을 확인해야 한다.
 
 ```text
 Snowflake
@@ -206,7 +206,7 @@ Iceberg Table
 Object Storage
 ```
 
-Snowflake와 Horizon은 Iceberg catalog workflow에 참여할 수 있다.
+Snowflake와 Horizon은 Iceberg 카탈로그 흐름에 참여할 수 있다. 테이블이 있는 위치와 현재 상태를 여러 도구가 찾게 하는 연결 지점이다.
 
 Spark와 Trino 같은 외부 엔진도 열린 Iceberg workflow에 참여할 수 있다.
 
@@ -214,7 +214,7 @@ Spark와 Trino 같은 외부 엔진도 열린 Iceberg workflow에 참여할 수 
 
 ## 18.10 Governance — Horizon Catalog
 
-Unity Catalog와 개념적으로 대응하는 관계:
+**Horizon Catalog**는 데이터 찾기와 메타데이터, 접근 정책 같은 거버넌스 기능을 묶는다. 담당자가 같은 데이터를 찾더라도 역할에 따라 볼 수 있는 범위를 관리할 때 필요하다.
 
 ```text
 Databricks
@@ -240,7 +240,7 @@ Horizon이 제공하는 영역:
 
 ## 18.11 Cortex / AI
 
-Snowflake는 AI 기능을 점차 통합하고 있다:
+**Cortex** 등 AI 기능은 관리되는 기업 데이터 가까이에서 검색·분석·에이전트 기능을 활용하려는 방향이다. 실제 지원 범위와 비용은 선택한 서비스에서 확인한다.
 
 ```text
 Cortex AI
@@ -258,7 +258,7 @@ AI interfaces
 
 ## 18.12 Cost Model
 
-Compute 단위:
+Snowflake 비용은 Virtual Warehouse 계산뿐 아니라 serverless 기능, Cloud Services, 저장소에서도 생긴다. 쿼리 빈도와 자동 중지 설정을 함께 보면 불필요한 계산 시간을 줄일 수 있다.
 
 ```text
 Virtual Warehouse
@@ -289,7 +289,7 @@ Use incremental refresh where possible
 
 ## 18.13 Snowflake Mental Model
 
-기억할 구조:
+Snowflake를 기억할 때는 데이터 저장, Virtual Warehouse 계산, micro-partition 배치, 프루닝 조회, 수집·변환, 거버넌스, 비용을 한 흐름으로 연결한다.
 
 ```text
 Storage
@@ -333,7 +333,7 @@ Snowflake
 → expanded into Data Engineering / Iceberg / AI
 ```
 
-현재 두 플랫폼은 상당한 기능 영역이 겹친다.
+현재 두 플랫폼은 SQL·데이터 엔지니어링·AI 영역에서 기능이 겹친다. 출발점이 달랐다는 사실만으로 현재의 성능이나 적합성을 판단하지 않는다.
 
 ---
 

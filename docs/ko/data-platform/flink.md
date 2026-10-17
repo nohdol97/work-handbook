@@ -1,8 +1,8 @@
 ---
 id: data-platform-flink
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-05-01
   - DPE-05-02
@@ -24,13 +24,15 @@ knowledge_ids:
 
 문서 유형: Learn. 제공된 학습 자료의 개념과 설계 예시를 정리했다. `studied`는 개념 학습을 뜻하며, 직접 구현하거나 운영 검증했다는 뜻이 아니다. SQL과 수치는 설명용 예시이며 실행하지 않았다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 원본의 목차·절 번호·핵심 기술 내용을 유지하면서 본문 문장을 입문자가 읽기 쉽게 다듬었다. 원본 자료는 출처에 보존되어 있다. 버전·운영 조건과 추가 설명은 뒤의 보완 구역을 확인한다.
 
 **Flink**는 계속 도착하는 이벤트를 상태와 함께 처리하는 엔진이다. 계산원이 주문이 들어올 때마다 장부를 갱신하는 모습과 비슷하다. 아래 5.1~5.14는 이벤트 시각, 늦은 도착, 상태 복구, 외부 저장소에 결과를 쓰는 조건을 연결한다.
 
 <!-- SOURCE CORE START -->
 
 ## 5.1 Why Flink
+
+Flink는 끝없이 들어오는 이벤트를 계속 처리하면서 이전 결과를 기억할 수 있다. 주문이 들어올 때마다 최근 5분 주문 수를 갱신해야 한다면 이런 stateful streaming이 필요한 이유가 드러난다.
 
 핵심:
 
@@ -66,15 +68,17 @@ Flink가 강한 영역:
 
 ## 5.2 Flink Architecture
 
+Flink job은 관리 역할과 실제 처리 역할로 나뉜다. JobManager가 전체 실행을 조정하고 TaskManager가 연산을 수행하지만, Spark의 구성 요소와 완전히 같은 실행 모델은 아니다.
+
 ### JobManager
 
-전체 Job 관리.
+JobManager는 job 전체의 실행과 조정을 맡는다.
 
 Spark Driver와 개념적으로 유사.
 
 ### TaskManager
 
-실제 Task 실행.
+TaskManager는 operator의 실제 task를 실행한다.
 
 Spark Executor와 개념적으로 유사.
 
@@ -100,6 +104,8 @@ TaskManager 내부의 논리적 실행 공간.
 
 ## 5.3 DataStream Model
 
+DataStream은 source에서 읽은 이벤트를 변환해 sink에 내보내는 흐름이다. 같은 고객의 이벤트를 함께 집계하려면 `keyBy`로 재분배하고 key별 상태를 유지한다.
+
 기본 흐름:
 
 ```text
@@ -124,7 +130,7 @@ Iceberg / Kafka / DB / Search Store.
 
 ### KeyBy
 
-같은 key를 같은 논리 처리 단위로 묶는다.
+`keyBy`는 같은 key의 이벤트를 같은 논리적 처리 단위로 보내 이후 이벤트와 함께 계산할 수 있게 한다.
 
 ```text
 keyBy(user_id)
@@ -146,13 +152,15 @@ Stateful Processing
 
 ## 5.4 Event Time
 
+늦게 도착한 주문을 도착 시각이 아니라 실제 주문 시각의 집계에 넣으려면 event time이 필요하다.
+
 주요 시간:
 
 - Event Time
 - Processing Time
 - Ingestion Time
 
-Event Time은 실제 사건 발생 시각이다.
+Event time은 플랫폼에 도착한 시각이 아니라 사건이 실제로 일어난 시각이다.
 
 Streaming에서는 Event가 늦거나 순서가 바뀔 수 있다.
 
@@ -163,6 +171,8 @@ Event Time 기준 처리 덕분에 실제 발생 시간에 맞는 분석이 가�
 ---
 
 ## 5.5 Watermark
+
+Watermark는 이벤트 시각이 어디까지 진행했다고 볼지 나타내는 신호다. 늦은 이벤트가 절대 없다는 보장은 아니며, 결과를 언제 내고 상태를 얼마나 보관할지 결정하는 데 쓴다.
 
 Watermark:
 
@@ -205,7 +215,9 @@ Idle Partition 때문에 Watermark 진행이 막힐 수 있어 idle detection �
 
 ## 5.6 Window
 
-Streaming은 끝이 없으므로 일정 구간으로 잘라 집계한다.
+Window는 끝이 없는 이벤트 흐름을 집계 가능한 시간 구간으로 나눈다. 분당 주문 수에는 고정 구간을, 최근 5분을 매분 갱신하려면 겹치는 구간을 쓸 수 있다.
+
+Streaming 입력은 계속 이어지므로 window라는 시간 구간을 정해 그 안의 이벤트를 집계한다.
 
 ### Tumbling Window
 
@@ -242,6 +254,8 @@ Watermark와 Window는 함께 사용된다.
 
 ## 5.7 State
 
+State는 이전 이벤트에서 기억해야 할 값이다. 고객별 클릭 횟수처럼 다음 이벤트가 왔을 때 이전 값에 더해야 한다면 key별 state가 필요하다.
+
 State:
 
 > **이전에 처리한 정보를 Flink가 기억하는 것**
@@ -271,13 +285,15 @@ Key-Value 형태.
 
 ### State TTL
 
-오래 사용되지 않은 State 자동 정리.
+설정한 만료 기준이 지난 state를 읽고 정리하는 규칙이다. 실제 제거 시점은 cleanup 방식에 따라 달라질 수 있다.
 
 Window도 내부적으로 State를 사용한다고 이해할 수 있다.
 
 ---
 
 ## 5.8 Checkpoint
+
+Checkpoint는 장애 뒤에 job을 다시 이어가기 위해 상태와 입력 위치를 기록한다. 장부의 특정 페이지와 책갈피를 함께 보관하는 것과 비슷하지만 외부 sink까지 자동으로 복구하는 백업은 아니다.
 
 Checkpoint:
 
@@ -311,11 +327,13 @@ Stream에 Barrier가 흐르며 어느 지점까지 Snapshot에 포함할지 맞�
 
 Backpressure 상황 등에서 in-flight data까지 포함해 빠르게 Snapshot할 수 있다.
 
-Checkpoint는 일반 Backup이 아니라 **Streaming Job을 이어서 실행하기 위한 실행 상태 저장**이다.
+Checkpoint는 외부 저장소까지 복사하는 일반 백업이 아니라 **streaming job의 상태와 입력 위치를 복원하기 위한 기록**이다.
 
 ---
 
 ## 5.9 Savepoint
+
+Savepoint는 계획한 변경 전에 운영자가 남기는 상태 기록이다. Job upgrade나 병렬성 변경에 쓸 수 있지만 새 코드가 기존 state를 읽을 수 있는지 확인해야 한다.
 
 Savepoint:
 
@@ -348,6 +366,8 @@ State 구조 변경 시 State Migration / Compatibility도 고려해야 한다.
 
 ## 5.10 Exactly-Once Processing
 
+Exactly-once는 약속한 범위에서 한 이벤트의 효과가 한 번 확정된다는 뜻이다. Flink 상태가 정확히 복구되어도 외부 저장소가 중복 쓰기를 허용하면 최종 결과는 별도로 검증해야 한다.
+
 Exactly-once:
 
 > **각 Event의 효과가 최종 결과에 한 번만 반영되는 것**
@@ -379,6 +399,8 @@ Idempotent Sink
 ---
 
 ## 5.11 Backpressure
+
+Backpressure는 뒤 단계가 처리하지 못한 데이터가 앞 단계까지 밀리는 현상이다. 계산대가 막히면 줄 전체가 느려지듯 sink가 느린지 중간 연산이 무거운지 구분해야 한다.
 
 Backpressure:
 
@@ -419,11 +441,13 @@ Database 느림
 - 외부 시스템 Scaling
 - Skew 해소
 
-Backpressure 자체는 overload로부터 시스템을 보호하는 자연스러운 flow control이기도 하다.
+Backpressure는 느린 뒷단이 앞단 입력 속도를 제한하는 자연스러운 흐름 제어이기도 하다. 이를 없애기 전에 어느 단계가 실제 병목인지 확인한다.
 
 ---
 
 ## 5.12 Flink + Kafka
+
+Kafka는 이벤트를 보관·전달하고 Flink는 그 이벤트를 계산한다. Kafka partition은 읽기 병렬성에, Flink `keyBy`는 상태를 묶는 기준에 영향을 주므로 둘을 같은 분할로 보지 않는다.
 
 역할:
 
@@ -456,7 +480,7 @@ Kafka/Event timestamp를 Event Time으로 사용할 수 있다.
 
 ### Ordering
 
-Kafka는 Partition 내부 순서를 유지하지만 global ordering은 보장하지 않는다.
+Kafka는 같은 partition 안의 순서를 유지하지만 여러 partition을 합친 하나의 전역 순서는 보장하지 않는다.
 
 ### Kafka Partitioning vs Flink keyBy
 
@@ -473,6 +497,8 @@ Flink keyBy
 ---
 
 ## 5.13 Flink + Iceberg
+
+Flink 결과를 Iceberg에 계속 쓸 수 있지만 자주 commit하면 작은 파일이 늘 수 있다. 실시간 적재와 이후 compaction·대규모 재계산의 책임을 함께 설계한다.
 
 목적:
 
@@ -522,6 +548,8 @@ Current-State Table 등에서는 UPDATE / DELETE / MERGE가 필요할 수 있다
 
 ## 5.14 Flink vs Spark
 
+Flink와 Spark는 모두 데이터를 처리하지만 요구 지연과 상태 사용 방식에 따라 강점이 다르다. 낮은 지연의 복잡한 이벤트 처리와 큰 과거 배치 작업을 비교해 선택한다.
+
 ### Flink가 잘 맞는 경우
 
 - 낮은 latency
@@ -557,12 +585,6 @@ Flink
 ---
 
 <!-- SOURCE CORE END -->
-
-## 처음 읽는 독자를 위한 연결 설명
-
-- **5.3~5.7 시간과 상태:** `keyBy`는 같은 고객의 이벤트를 같은 논리적 묶음으로 보낸다. Window는 “10분 동안의 주문 수”처럼 범위를 정한다. Event time은 실제 발생 시각이고 watermark는 보통 어느 시각까지의 이벤트가 도착했을 것으로 볼지 나타내는 진행 신호다. 우편물이 늦게 올 수 있듯 watermark 뒤에도 지연 이벤트가 올 수 있으므로 허용 지연과 상태 보존 기간을 함께 설계한다.
-- **5.8~5.11 복구와 병목:** Checkpoint는 처리 상태와 입력 위치를 함께 복원하기 위한 기록이다. Savepoint는 작업 변경·이전 등에 쓰는 관리용 상태 기록이다. 이 기록이 있어도 외부 sink의 쓰기 방식까지 확인해야 end-to-end 효과를 말할 수 있다. Backpressure는 뒤쪽 작업이 느려 앞쪽 입력까지 밀리는 현상으로, 병목 위치를 측정해야 한다.
-- **5.12~5.14 연결:** Kafka는 이벤트 공급원이 될 수 있고 Iceberg는 결과를 분석용으로 보관할 수 있다. 예를 들어 클릭 이벤트의 시간별 집계는 Flink가 계산하고, 장기 재계산이나 대규모 배치는 Spark가 맡을 수 있다. 이 구분은 요구 지연과 처리 방식에 따른 설계 예시다.
 
 ## 원문 적용 시 보완 {#source-notes}
 

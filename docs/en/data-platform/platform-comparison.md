@@ -1,8 +1,8 @@
 ---
 id: data-platform-platform-comparison
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE2-19-01
   - DPE2-19-02
@@ -25,7 +25,7 @@ knowledge_ids:
 
 Page type: Decision guide. This page records comparative concepts from Chapter 19. It is not an actual adoption decision, benchmark, or production report. Suitability statements are hypotheses to test with workloads. Product details were checked against official documentation on 2026-09-26.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
 
 <!-- SOURCE CORE START -->
 
@@ -65,11 +65,13 @@ MLflow/Langfuse
 
 The goal is not to declare a universal winner.
 
-The goal is to understand trade-offs.
+The goal is to understand each **trade-off**: what a choice gains and what the team must take on. More tool choice can also mean more integration work.
 
 ---
 
 ## 19.1 Storage Ownership
+
+**Storage ownership** asks who controls source files and table metadata. Check it early when planning migration, backup, or access from other engines.
 
 ### Databricks
 
@@ -105,7 +107,7 @@ Your S3 / ADLS / GCS
 Your Iceberg Tables
 ```
 
-The organization directly controls object storage and table metadata architecture.
+The organization chooses where object storage and table metadata live and how they are managed. This helps migration planning but adds operating responsibility.
 
 Mental model:
 
@@ -121,7 +123,7 @@ Managed Platforms
 
 ## 19.2 Iceberg Openness
 
-Apache Iceberg is designed for multi-engine interoperability.
+Apache Iceberg was designed for interoperability across engines. **Iceberg openness** asks more than whether a product supports the format: check which operations multiple engines can safely perform on the same table.
 
 ```text
 Spark
@@ -151,6 +153,8 @@ Instead ask:
 ---
 
 ## 19.3 Compute Model
+
+A **compute model** describes how a platform provides and separates resources for queries, batch jobs, and streams. Compare it when one workload must not crowd out another.
 
 ### Databricks
 
@@ -194,11 +198,13 @@ vLLM
 → AI Serving
 ```
 
-Strong flexibility, higher integration burden.
+The team can choose engines by workload but must connect authentication, catalog, monitoring, and recovery.
 
 ---
 
 ## 19.4 Batch
+
+**Batch** processes a bounded set of data, such as yesterday's orders each night. Compare execution tools and the work needed to manage result tables.
 
 ### Databricks
 
@@ -231,11 +237,13 @@ dbt
 other engines
 ```
 
-But the organization must operate them.
+The organization must manage these tools' versions, permissions, and incident response.
 
 ---
 
 ## 19.5 Streaming
+
+**Streaming** processes a continuing flow of events. Set acceptable delay, state needs, and replay rules before comparing feature lists.
 
 ### Databricks
 
@@ -270,11 +278,13 @@ Best when requirements include:
 - complex event time,
 - fine-grained streaming control.
 
-The price is operational complexity.
+Low delay and fine control also mean the team must operate state, checkpoints, and recovery.
 
 ---
 
 ## 19.6 SQL / BI
+
+**SQL / BI** is the path from data to analyst questions and dashboards. Compare concurrent users, response time, access rules, and cost together.
 
 ### Snowflake
 
@@ -304,11 +314,13 @@ Trino
 BI
 ```
 
-Very open, but SQL service operations remain the user's responsibility.
+The team can choose another SQL engine, but it must manage query resources, security, and incidents.
 
 ---
 
 ## 19.7 Governance
+
+**Governance** sets rules for finding and using data. Compare the real scope of roles and policies, not just product feature names.
 
 ### Databricks
 
@@ -356,7 +368,7 @@ Open approach gives choice but increases platform work.
 
 ## 19.8 Lineage
 
-Managed platforms benefit from observing their own execution systems.
+**Lineage** shows where data came from and which jobs changed it. When a metric is wrong, check how far each platform can trace its impact.
 
 Example:
 
@@ -381,11 +393,13 @@ BI
 
 which is more flexible but requires standardization/integration.
 
-This is where OpenLineage becomes valuable.
+A shared event format such as OpenLineage helps bring lineage records from several job tools into one view.
 
 ---
 
 ## 19.9 AI Ecosystem
+
+An **AI ecosystem** connects models, search, and evaluation with governed data. Review fit with existing model operations and access policies, not just feature counts.
 
 ### Databricks
 
@@ -451,6 +465,8 @@ Maximum flexibility and portability, but highest integration burden.
 
 ## 19.10 Portability
 
+**Portability** is the work needed to move data, SQL, policies, and operations to another engine or platform.
+
 ### Open Lakehouse
 
 Highest conceptual portability when based on:
@@ -485,6 +501,8 @@ The table data may be portable while the **operational system** is not fully por
 ---
 
 ## 19.11 Operational Complexity
+
+**Operational complexity** includes connecting components and recovering from failures. Open components offer choice, but the team must own their connections.
 
 ### Open Lakehouse
 
@@ -525,7 +543,7 @@ The value is often less about one engine being better and more about:
 
 ## 19.12 Vendor Lock-in
 
-Lock-in is not simply:
+**Vendor lock-in** is the cost of moving data and rewriting code, policies, and operations when changing products. Open files alone do not remove it.
 
 ```text
 "Is the table format open?"
@@ -563,7 +581,7 @@ Therefore think in layers.
 
 ## 19.13 Total Cost
 
-Do not compare only:
+**Total cost** includes service charges, operations staff, migration, incident response, and performance tuning.
 
 ```text
 $/compute-hour
@@ -595,6 +613,8 @@ The right comparison is **TCO**, not sticker price.
 
 ## 19.14 Simplified Comparison Table
 
+The table below is a starting comparison of three approaches, not a score or proven winner. Test it against real data volume, queries, and access needs.
+
 | Area | Databricks | Snowflake | Open Lakehouse |
 |---|---|---|---|
 | Historical center | Spark/Data/AI | SQL/DWH | Open data architecture |
@@ -614,7 +634,7 @@ The right comparison is **TCO**, not sticker price.
 
 ## 19.15 Practical Decision Heuristics
 
-Choose a Databricks-centered approach when:
+Select an approach based on the team's main workloads and operations capacity. Then test performance, cost, and recovery with a small real workload. A Databricks-centered approach is a candidate when these workloads are central:
 
 ```text
 large-scale ETL

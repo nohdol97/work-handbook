@@ -1,8 +1,8 @@
 ---
 id: data-platform-ai-ready-data
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-15-01
   - DPE-15-02
@@ -20,15 +20,13 @@ knowledge_ids:
 
 원문의 Chapter 15를 개념별로 정리했다. `studied`는 개념 학습을 뜻하며 실제 구축·운영 또는 실행 검증을 뜻하지 않는다. 예시의 버전과 숫자는 설명용이다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
-
-**읽기 길잡이:** AI-ready 데이터는 요리 재료처럼 이름표만 붙어 있다고 바로 쓸 수 없다. 출처, 신선도, 버전, 사용 권한을 알아야 같은 평가를 다시 해석할 수 있다. 15.1은 이 조건을, 15.2의 telemetry(실행 중 남기는 관찰 기록)는 어떤 prompt·model·tool이 어떤 결과를 냈는지를 다룬다. 15.3–15.5에서는 데이터셋과 평가 사례를 버전으로 묶어 비교하고, 15.6–15.8에서는 문서 조각의 embedding(의미를 나타내는 숫자 벡터)과 검색 권한·출처를 연결한다. 15.9는 학습 입력과 정답 label이 제때 도착하는지 확인한다.
+**본문 안내:** 아래 본문은 원본의 번호·목차·핵심 기술 내용과 예시를 유지하면서 처음 배우는 독자가 이해하기 쉽게 다시 썼다. 원본의 적용 조건과 보충 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
 
 <!-- SOURCE CORE START -->
 
 ## 15.1 What Makes Data AI-Ready
 
-AI-Ready Data는 특정 File Format이 아니다.
+AI-ready 데이터는 특정 파일 형식이 아니라 AI에 쓰기 전에 확인할 상태다. 요리 재료에 이름표만 있어도 원산지·신선도·사용 가능 여부를 모르면 바로 쓰기 어려운 것과 같다. 데이터의 품질·최신성·버전·발견 가능성·권한을 함께 확인해야 결과를 믿고 다시 평가할 수 있다.
 
 > **AI가 신뢰하고 반복해서 사용할 수 있도록 품질·최신성·버전·Metadata·Governance가 갖춰진 데이터**
 
@@ -54,13 +52,13 @@ Catalog/Metadata로 찾을 수 있음.
 
 Access/Masking/Retention/Audit.
 
-기존 Data Platform 기능이 AI-Ready의 기반이다.
+품질·카탈로그·권한 같은 기존 데이터 플랫폼 기능이 AI 활용의 출발점이다.
 
 ---
 
 ## 15.2 AI Telemetry Model
 
-AI 서비스 실행을 분석하기 위한 Telemetry.
+Telemetry(실행 관찰 기록)는 AI 요청에서 prompt, model, tool, 응답, 비용, 피드백이 어떻게 이어졌는지 남기는 정보다. 예를 들어 답이 틀렸을 때 trace ID로 한 실행의 검색 결과와 tool 호출을 묶어 봐야 검색 문제인지 생성 문제인지 좁힐 수 있다. 수집할 민감정보와 보관 기간도 함께 정한다.
 
 전체 흐름:
 
@@ -84,7 +82,7 @@ Feedback
 
 ### Prompt / Response
 
-평가/개선의 기본.
+무엇을 요청했고 무엇을 답했는지 남겨 평가와 개선에 쓴다.
 
 ### Model
 
@@ -118,7 +116,7 @@ Tool name, input/output, latency, status.
 
 ### Trace / Execution / Session ID
 
-모든 이벤트를 하나의 실행 흐름으로 연결.
+요청과 단계별 이벤트를 ID로 연결해 한 실행의 흐름을 따라간다.
 
 AI Telemetry는 단순 로그가 아니라:
 
@@ -135,13 +133,15 @@ AI Telemetry는 단순 로그가 아니라:
 
 ## 15.2A Langfuse as AI Telemetry / Evaluation Layer
 
+Langfuse는 trace·observation·score 같은 실행·평가 기록을 다루는 도구의 예다. Trace는 한 요청의 흐름, observation은 그 안의 단계, session은 관련 trace의 묶음이다. 이 도구의 기록을 장기 분석용 테이블과 연결할 수 있지만, 그림의 화살표만으로 자동 수집·동기화가 보장되지는 않는다.
+
 세션 중 질문:
 
 > Langfuse를 쓰면 되겠다.
 
 맞다.
 
-Langfuse는 AI Telemetry 영역을 상당 부분 담당할 수 있다.
+Langfuse는 AI 실행 기록과 평가를 다루는 여러 기능을 제공한다.
 
 개념 대응:
 
@@ -204,13 +204,15 @@ Trace / Observation / Score
        BI / Long-term Analysis
 ```
 
-Langfuse가 Data Platform 전체를 대체하는 것은 아니다.
+Langfuse만으로 장기 데이터 통합 분석과 전체 거버넌스를 해결한다고 가정하지 않는다.
 
 ---
 
 ## 15.3 Dataset Versioning
 
-Evaluation Dataset은 시간에 따라 변한다.
+Dataset version(데이터셋 버전)은 어떤 평가 항목과 정답·기준을 사용했는지 묶어 식별한다. 시험지가 달라지면 점수를 그대로 비교하기 어렵듯, `eval_v1`과 `eval_v2`의 점수도 사례 구성이 다를 수 있다.
+
+평가 데이터셋은 실패 사례나 정답이 추가·수정되면서 바뀐다.
 
 예:
 
@@ -224,7 +226,7 @@ eval_v2
 → 정답 수정
 ```
 
-Model Score 비교에서 Dataset Version이 다르면 공정한 비교가 아닐 수 있다.
+서로 다른 평가 데이터셋 버전의 모델 점수를 바로 비교하면 사례 난이도 차이가 섞일 수 있다.
 
 함께 기록:
 
@@ -235,7 +237,7 @@ Model Score 비교에서 Dataset Version이 다르면 공정한 비교가 아닐
 - evaluator_version
 - score
 
-Iceberg Snapshot과 Dataset Version은 동일하지 않다.
+Iceberg snapshot은 테이블 파일 상태이고, 평가 데이터셋 버전은 어떤 사례를 평가에 썼는지 나타낸다.
 
 ```text
 Iceberg Snapshot
@@ -248,6 +250,8 @@ Dataset Version
 ---
 
 ## 15.4 Reproducibility
+
+과거 점수 차이를 조사하려면 당시 입력과 설정을 다시 찾을 수 있어야 한다. 같은 model 이름만 남기면 prompt나 평가자 버전의 차이를 놓친다. 따라서 아래 버전 묶음과 runtime 설정을 함께 기록한다. 생성 모델의 확률적 성질 때문에 조건을 복원해도 문장이 항상 똑같이 나오지는 않는다.
 
 Reproducibility:
 
@@ -273,7 +277,7 @@ judge_v2
 temperature=0
 ```
 
-Lineage와 차이:
+Lineage와 재현성이 답하는 질문은 다르다:
 
 ```text
 Lineage
@@ -283,11 +287,13 @@ Reproducibility
 → 동일한 실험 조건을 다시 구성할 수 있나?
 ```
 
-LLM은 stochastic할 수 있으므로 재현성은 항상 동일 문장을 생성한다는 뜻이 아니라 **조건을 정확히 재구성하는 것**이 핵심이다.
+LLM은 같은 조건에서도 다른 표현을 만들 수 있다. 따라서 재현성의 핵심은 문장까지 똑같이 만드는 것이 아니라 **입력과 설정을 다시 구성하는 것**이다.
 
 ---
 
 ## 15.5 Evaluation Dataset Construction
+
+Evaluation dataset(평가 데이터셋)은 prompt·model·agent의 변경을 같은 사례로 반복 점검할 때 쓴다. 실제 실패를 고친 뒤 그 사례를 회귀(regression) 사례로 추가하면 다음 릴리스에서 같은 문제가 되살아나는지 볼 수 있다.
 
 Evaluation Dataset:
 
@@ -301,7 +307,7 @@ Evaluation Dataset:
 - Edge Case
 - Hard Case
 
-성공 사례만 넣으면 안 된다.
+성공 사례만 모으면 실제 실패를 다시 발견하기 어렵다.
 
 포함 예:
 
@@ -326,9 +332,7 @@ Regression Case 추가
 이후 모든 Version에서 재평가
 ```
 
-Expected Answer가 항상 필요한 것은 아니다.
-
-Expected Behavior / Rubric도 가능.
+정답 문장 하나가 없어도 기대 행동이나 평가 기준표(rubric)로 검사할 수 있다.
 
 예:
 
@@ -341,6 +345,8 @@ Expected Behavior / Rubric도 가능.
 ---
 
 ## 15.6 Embedding Data
+
+Embedding(임베딩)은 문서 조각의 의미를 숫자 벡터로 표현해 비슷한 내용을 검색하도록 돕는다. RAG(Retrieval-Augmented Generation)는 검색한 자료를 답변 생성의 맥락으로 쓰는 방식이다.
 
 RAG Pipeline:
 
@@ -356,7 +362,7 @@ Vector
 Vector DB / Search
 ```
 
-Vector만 저장하면 부족하다.
+숫자 벡터만 남기면 원문과 버전을 추적할 수 없으므로 함께 관리해야 한다.
 
 같이 관리:
 
@@ -381,13 +387,15 @@ Vector만 저장하면 부족하다.
 - embedding_model_version
 - embedding_vector
 
-Embedding Model이 바뀌면 Vector Space가 달라질 수 있으므로 Version 관리가 중요하다.
+임베딩 모델이 바뀌면 벡터의 위치와 검색 결과가 달라질 수 있으므로 모델 버전을 기록한다.
 
-Chunk Strategy가 바뀌어도 검색 결과가 달라진다.
+문서를 자르는 방법이 바뀌어도 검색되는 조각이 달라질 수 있다.
 
 ---
 
 ## 15.7 Retrieval Metadata
+
+Retrieval metadata(검색 메타데이터)는 어떤 문서·조각·버전을 가져왔는지 설명한다. 검색 점수는 관련성 신호이지 열람 허가가 아니다. 사내 문서를 사용할 때는 신뢰할 수 있는 사용자 권한으로 검색 단계에서 허용된 조각만 고르고, 뒤늦게 화면에서 숨기는 방식에 기대지 않는다.
 
 RAG Retrieval 결과에 함께 저장:
 
@@ -426,6 +434,8 @@ Retrieval Trace를 남기면:
 
 ## 15.8 Provenance
 
+Provenance(출처·생성 이력)는 원문에서 문서 조각, 임베딩, 검색, 응답까지 근거의 경로를 설명한다. Lineage가 데이터 이동과 변환을 추적한다면 provenance는 AI 결과의 근거까지 넓혀 볼 수 있다. 출처 문서를 삭제하거나 사용을 중단할 때 어떤 파생 결과를 검토할지 찾는 데 유용하다.
+
 Provenance:
 
 > **데이터/AI 결과의 출처와 생성 과정을 넓게 추적하는 정보**
@@ -461,11 +471,13 @@ Reproducibility
 → 그 조건을 다시 구성
 ```
 
-Governance와 연결하면 특정 Source 사용 금지/삭제 시 파생 데이터 영향 추적에 도움이 된다.
+거버넌스 정책으로 원본 사용을 중단하거나 삭제할 때 연결된 조각·임베딩·응답을 찾는 데 도움이 된다.
 
 ---
 
 ## 15.9 Feature / Label Freshness
+
+Feature는 예측에 넣는 값이고 label은 나중에 확인한 정답이다. 예를 들어 최근 30일 사용량으로 다음 7일의 탈퇴를 예측하면 사용량은 feature, 실제 탈퇴 여부는 label이다. 정답이 확정되기 전에 학습·평가에 넣으면 결과가 왜곡될 수 있으므로 각각의 생성 시각과 사용 시점을 구분한다.
 
 ### Feature
 
@@ -507,7 +519,7 @@ Label은 실제 결과가 확정될 때까지 지연될 수 있다.
 Label 생성
 ```
 
-미확정 Label을 Training/Evaluation에 사용하면 왜곡될 수 있다.
+아직 결과가 확정되지 않은 label을 학습이나 평가에 넣으면 정답을 잘못 기록할 수 있다.
 
 LLM/Agent에서도 유사:
 
@@ -526,8 +538,6 @@ Label-like
 <!-- SOURCE CORE END -->
 
 ## 원문 적용 시 보완 {#source-notes}
-
-15.2의 trace는 한 요청의 실행 단계를 묶는 기록이다. 새 agent의 점수가 달라졌을 때 15.3–15.4의 dataset·prompt·model 버전과 실행 설정을 함께 봐야 비교 가능한지 판단할 수 있다. 검색에서는 15.6의 embedding이 비슷한 조각을 찾도록 돕지만, 15.7의 접근 메타데이터만으로 권한이 강제되지는 않는다. 검색 요청마다 허용 범위를 확인하고 15.8의 provenance(출처와 변환 이력)로 답변 근거를 추적한다.
 
 ### 15.2A Langfuse 데이터 모델
 

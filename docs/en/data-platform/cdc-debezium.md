@@ -1,8 +1,8 @@
 ---
 id: data-platform-cdc-debezium
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-06-01
   - DPE-06-02
@@ -19,7 +19,7 @@ knowledge_ids:
 
 This page records conceptual study. The flows and recovery steps are examples, not records of production work or incident recovery. Product behavior was checked against official documentation on 2026-09-24. Check connector and database versions and settings in the actual environment.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
 
 **CDC (Change Data Capture)** sends database row changes to other systems. **Debezium** reads those changes and emits events. It is like receiving each amendment to a shop ledger instead of copying the whole ledger every time. Sections 6.1–6.9 follow the path from an initial copy to change application and recovery.
 
@@ -27,7 +27,9 @@ This page records conceptual study. The flows and recovery steps are examples, n
 
 ## 6.1 CDC Fundamentals
 
-CDC = Change Data Capture.
+Sending changes instead of rescanning the whole orders table lets downstream systems apply new, updated, and deleted rows in sequence.
+
+CDC means **Change Data Capture**: capturing database changes and sending them to other systems.
 
 Purpose:
 
@@ -48,7 +50,7 @@ Problems:
 - Difficulty managing change order
 - Limited real-time delivery
 
-CDC reads the database transaction log.
+The log-based CDC path here follows the database transaction log. Unlike simple polling, it can track deletes and change order, but log retention must be checked.
 
 PostgreSQL:
 
@@ -73,9 +75,11 @@ Kafka
 
 ## 6.2 Debezium Architecture
 
+A Debezium connector reads source database changes; Kafka Connect runs and manages the connector. Its offset is a bookmark of reading progress and matters when processing restarts.
+
 ### Debezium Connector
 
-A CDC reader for each database type.
+A Debezium connector reads the change log for its source database type.
 
 Example:
 - PostgreSQL
@@ -84,19 +88,21 @@ Example:
 
 ### Kafka Connect
 
-A platform for running and managing connectors.
+Kafka Connect is the platform that runs and manages connectors.
 
 ### Offset
 
-Records how far the database log has been read.
+An offset records how far the database log was read so processing can resume from that position.
 
 ### Snapshot
 
-Initially copies data that existed before CDC started.
+A snapshot initially reads rows that existed before CDC started.
 
 ---
 
 ## 6.3 Initial Snapshot
+
+An initial snapshot captures rows that existed before CDC began. Rows can change during the snapshot, so continue from the recorded log position and check for gaps or duplicate effects.
 
 Data already exists when CDC starts for the first time.
 
@@ -122,13 +128,15 @@ Later changes
 
 Avoid missing any of these.
 
-A full snapshot is not repeated on every connector restart.
+With a completed snapshot and valid offset, a connector restart does not need to repeat the full snapshot.
 
 If an offset exists, reading resumes from it.
 
 ---
 
 ## 6.4 CDC Event Structure
+
+A CDC event describes how a row changed. Fields such as `before`, `after`, operation type, and source position help build current state or retain change history.
 
 Typical information:
 
@@ -183,11 +191,13 @@ Transaction Metadata:
 
 ## 6.5 Ordering
 
+If creation, payment, and shipping changes for one order arrive out of order, its current state can be wrong. Check ordering by key and destination rules rather than assuming one global Kafka order.
+
 Key point:
 
 > **In CDC, the change order for the same entity/key matters more than global ordering.**
 
-Kafka preserves order within a partition but does not guarantee global order across partitions.
+Kafka preserves order within one partition, but does not guarantee one global order across partitions.
 
 Sending the same primary key to the same partition helps preserve order for that entity.
 
@@ -203,6 +213,8 @@ Changes to several tables in one database transaction can become separate Kafka 
 ---
 
 ## 6.6 Deletes
+
+Deletion involves a source DELETE event, a Kafka tombstone in a compacted topic, and physical or logical deletion at the destination. Decide which history to retain and what current state to remove for consistent replay.
 
 ### DELETE Event
 
@@ -240,7 +252,9 @@ Silver Current State
 
 ## 6.7 Schema Changes
 
-The source database schema can change.
+A source table column change affects event shape and downstream consumers. Even a new nullable column may not work automatically at every stage, so check compatibility and rollout order.
+
+When the source database adds a column or changes a type, downstream CDC consumers can also be affected.
 
 Example:
 
@@ -290,6 +304,8 @@ these steps matter.
 ---
 
 ## 6.8 CDC → Iceberg
+
+A table of every change and a table of the latest row per key serve different needs. When building an Iceberg current-state table, handle ordering, duplicates, and deletes together.
 
 Representative structure:
 
@@ -345,6 +361,8 @@ The result must remain correct if replay sends the same CDC event again.
 
 ## 6.9 CDC Failure Recovery
 
+After failure, check both the connector's read position and what the destination already contains. A stored offset may allow a restart, but replay can duplicate effects; lost required logs may require a new snapshot.
+
 Normal recovery:
 
 ```text
@@ -382,12 +400,6 @@ Snapshot Recovery
 ---
 
 <!-- SOURCE CORE END -->
-
-## A beginner's guide to the connections
-
-- **Sections 6.1–6.4, starting and continuing:** An initial snapshot establishes a starting view of current rows; log changes follow it. An offset is a bookmark for how far the connector has read. If order 42 starts as `pending` and an UPDATE changes it to `paid`, the consumer must interpret the records in the right order. Check duplicate-handling rules where snapshots, logs, and retries overlap.
-- **Sections 6.5–6.8, applying changes:** Appending INSERT, UPDATE, and DELETE records alone does not make a current-state table. A history table keeps changes; a current-state table keeps the latest state by key. An Iceberg MERGE must respect keys, change order, delete meaning, and schema changes. Do not assume one global order across partitions.
-- **Section 6.9, recovery:** After a failure, compare the connector offset, retained Kafka range, and state already written to the sink. Moving a bookmark alone can leave gaps or duplicate effects. Compare source and final states for a small set of keys before choosing the replay range.
 
 ## Additional checks before applying these ideas
 

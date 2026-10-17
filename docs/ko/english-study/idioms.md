@@ -1,8 +1,8 @@
 ---
 id: english-study-idioms
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids: []
 ---
 
@@ -46,7 +46,7 @@ get something wrong이라는 관용 표현이다. 보통 목적어를 가운데 
 
 ### instead of {#idioms-instead-of}
 
-**46회 · 31개 문서 · 중립**
+**52회 · 33개 문서 · 중립**
 
 **~ 대신에**
 
@@ -62,7 +62,7 @@ get something wrong이라는 관용 표현이다. 보통 목적어를 가운데 
 
 ### rather than {#idioms-rather-than}
 
-**32회 · 24개 문서 · 중립**
+**35회 · 27개 문서 · 중립**
 
 **~보다는, ~하지 않고**
 
@@ -126,7 +126,7 @@ get something wrong이라는 관용 표현이다. 보통 목적어를 가운데 
 
 ### at a time {#idioms-at-a-time}
 
-**6회 · 5개 문서 · 중립**
+**9회 · 8개 문서 · 중립**
 
 **한 번에**
 
@@ -138,7 +138,7 @@ one이나 수량 뒤에 붙이는 고정 표현·연어다. 동시에 처리하�
 
 집계한 형태: at a time.
 
-본문 예: [data-platform/spark](../data-platform/spark.md), [platform-infrastructure/architecture](../platform-infrastructure/architecture.md), [platform-infrastructure/kafka](../platform-infrastructure/kafka.md).
+본문 예: [data-platform/ai-evaluation](../data-platform/ai-evaluation.md), [data-platform/databricks](../data-platform/databricks.md), [data-platform/lakehouse-iceberg](../data-platform/lakehouse-iceberg.md).
 
 ### as a result {#idioms-as-a-result}
 
@@ -158,7 +158,7 @@ one이나 수량 뒤에 붙이는 고정 표현·연어다. 동시에 처리하�
 
 ### in advance {#idioms-in-advance}
 
-**1회 · 1개 문서 · 중립**
+**2회 · 2개 문서 · 중립**
 
 **미리, 사전에**
 
@@ -170,7 +170,7 @@ one이나 수량 뒤에 붙이는 고정 표현·연어다. 동시에 처리하�
 
 집계한 형태: in advance.
 
-본문 예: [platform-infrastructure/vllm](../platform-infrastructure/vllm.md).
+본문 예: [data-platform/production-operations](../data-platform/production-operations.md), [platform-infrastructure/vllm](../platform-infrastructure/vllm.md).
 
 ### in place {#idioms-in-place}
 

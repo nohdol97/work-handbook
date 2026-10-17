@@ -1,8 +1,8 @@
 ---
 id: data-platform-databricks
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE2-17-01
   - DPE2-17-02
@@ -22,13 +22,13 @@ knowledge_ids:
 
 Page type: Learn. This page records concept study from Chapter 17. `studied` does not mean hands-on implementation or production experience. Examples are hypothetical and were not run. Product scope was checked against official documentation on 2026-09-26. Availability depends on cloud, region, Runtime, access mode, and table features.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
 
 <!-- SOURCE CORE START -->
 
 ## 17.1 Lakehouse Architecture
 
-Databricks can be understood as:
+When storage, processing, SQL, governance, and AI need to work together, review which parts Databricks can manage and which tools still need connecting.
 
 > **A managed Data + AI Platform that combines many components previously studied separately.**
 
@@ -131,7 +131,7 @@ on the same data foundation.
 
 ## 17.2 Databricks Runtime and Photon
 
-Databricks Runtime can be understood as:
+The same Spark job may behave differently across runtime versions, so record and check the version when planning an upgrade.
 
 > **Apache Spark packaged with Databricks optimizations, libraries, connectors, and platform integration.**
 
@@ -218,7 +218,7 @@ Photon
 
 ## 17.3 SQL Warehouses
 
-SQL Warehouse:
+Interactive SQL and dashboards may need compute capacity separate from batch transformations to avoid competing for the same resources.
 
 > **Managed SQL compute for interactive analytics, BI, and dashboard workloads.**
 
@@ -243,7 +243,7 @@ Use cases:
 - Analyst exploration
 - SQL transformation
 
-Important:
+A SQL Warehouse runs queries; it does not store the underlying tables. Separating storage from SQL compute lets teams adjust query resources independently.
 
 ```text
 Storage
@@ -289,7 +289,7 @@ consistent business semantics
 
 ## 17.4 Unity Catalog
 
-Unity Catalog:
+Teams need a shared way to find data and AI assets, see their lineage, and apply the right access permissions.
 
 > **Databricks' unified governance layer for Data and AI assets.**
 
@@ -395,7 +395,7 @@ Hierarchy enables inherited policy.
 
 ## 17.5 Lakeflow Jobs
 
-Lakeflow Jobs:
+Use it to schedule transformations and quality checks after ingestion succeeds, with dependencies and retries across the tasks.
 
 > **Databricks workflow orchestration.**
 
@@ -461,7 +461,7 @@ a general orchestrator can still be useful.
 
 ## 17.6 Lakeflow Pipelines
 
-Lakeflow high-level view:
+**Lakeflow Pipelines** manages ingestion and transformation by defining the resulting datasets. Jobs orders work; Pipelines focuses on how data is updated.
 
 ```text
 Lakeflow
@@ -542,7 +542,7 @@ Lakeflow Pipelines
 
 ## 17.7 Delta / Iceberg Interoperability
 
-Delta and Iceberg solve similar problems:
+**Delta and Iceberg** both make groups of files into reliable tables. For sharing across engines, check read, write, and catalog support rather than a format name alone.
 
 ```text
 Object Storage
@@ -634,7 +634,7 @@ Modern Databricks supports both far more than before.
 
 ## 17.8 Lineage / Governance
 
-Unity Catalog combines:
+**Lineage** shows connections from inputs to results; **governance** applies access and classification rules. Check whether Unity Catalog records the actual pipeline scope.
 
 ```text
 Lineage
@@ -732,7 +732,7 @@ Governance scope increasingly includes:
 
 ## 17.9 MLflow
 
-MLflow now spans:
+**MLflow** records model experiments and versions and also connects to tracing and evaluation for generative AI. Keep input data and prompt versions to explain changing results.
 
 ```text
 Traditional ML
@@ -838,7 +838,7 @@ If Databricks becomes the main enterprise platform, MLflow may cover many functi
 
 ## 17.10 AI / Vector Capabilities
 
-Databricks connects Lakehouse data to AI application capabilities.
+Databricks AI and vector features connect lakehouse data with search, model serving, and agents. Check index freshness and access rules before choosing a service.
 
 High-level:
 
@@ -935,7 +935,7 @@ Model Serving
 
 ## 17.11 Databricks Cost Model
 
-Main idea:
+Databricks cost comes from compute, storage and network, and AI services. Track compute time and size first because teams can often adjust them.
 
 > **Compute is the largest controllable cost dimension, with storage/network and AI services added around it.**
 
@@ -1029,7 +1029,7 @@ Actual cost still depends on workload.
 
 ## 17.12 Which Self-Managed Components Databricks Can Replace
 
-Self-managed architecture:
+Databricks can replace some self-managed components with managed functions. Check replacement and integration one function at a time; an existing system does not disappear automatically. Here is an example self-managed stack to compare:
 
 ```text
 S3

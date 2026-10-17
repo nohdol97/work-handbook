@@ -1,8 +1,8 @@
 ---
 id: data-platform-architecture
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-17-01
   - DPE-17-02
@@ -52,9 +52,9 @@ knowledge_ids:
 
 # Chapter 21 — Final End-to-End Data Platform Architecture
 
-제공된 완성본의 21장을 원문 순서와 형식에 맞춰 번역했다. 예시와 도식은 개념 학습 자료이며 실제 구현·운영·복구 검증 기록이 아니다. 영어 기술 용어·코드는 유지하고 text 도식의 일반 설명은 같은 형식으로 번역했다.
+제공된 완성본의 21장 목차와 기술 내용을 따라 입문자용 문장으로 다듬었다. 예시와 도식은 개념 학습 자료이며 실제 구현·운영·복구 검증 기록이 아니다. 영어 기술 용어·코드는 유지하고 text 도식의 일반 설명은 같은 형식으로 번역했다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 아래 구역은 원문의 목차와 기술 내용을 유지하면서 입문자가 읽기 쉽게 문장을 다듬은 본문이다. 제품별 적용 조건과 추가 설명은 뒤의 보완 구역에서 해당 절 번호와 함께 확인한다.
 
 <!-- SOURCE CORE START -->
 
@@ -63,6 +63,8 @@ knowledge_ids:
 ---
 
 ## 21.1 Core Architecture
+
+이 그림은 애플리케이션 이벤트와 PostgreSQL 변경이 수집·처리·저장·활용으로 이어지는 예시다. 실제 설계에서는 PostgreSQL → Debezium → Kafka 경로로 합류하고, 각 단계의 지연·복구 요구에 따라 구성요소를 고른다.
 
 ```text
                     Applications
@@ -103,7 +105,7 @@ knowledge_ids:
 
 ## 21.2 Why Kafka Exists
 
-Kafka는 분석 데이터베이스가 아니다.
+Kafka는 분석 데이터베이스가 아니라 **이벤트 로그**다. 여러 소비자가 같은 사건을 각자 속도로 읽거나 보존 기간 안에 다시 읽어야 할 때 사용한다.
 
 역할:
 
@@ -122,7 +124,7 @@ Decoupling Producers/Consumers
 - 비동기 처리가 필요할 때,
 - event-driven architecture가 중요할 때.
 
-“데이터 플랫폼은 Kafka를 쓴다”는 이유만으로 Kafka를 추가하지 않는다.
+Kafka는 여러 소비자나 재생 요구가 있을 때 도입한다. 단지 다른 데이터 플랫폼에서 쓴다는 이유로 추가하면 브로커·보존·장애 복구 부담만 늘 수 있다.
 
 작은 규모에서는:
 
@@ -138,7 +140,7 @@ Database / Direct Batch Export
 
 ## 21.3 Why Flink Exists
 
-역할:
+Flink는 끝없이 들어오는 이벤트를 **상태를 기억하며** 처리하는 엔진이다. 예를 들어 5분 창의 주문 금액을 계속 집계해야 할 때 쓴다.
 
 ```text
 Stateful Real-Time Stream Processing
@@ -168,7 +170,7 @@ Iceberg
 
 ## 21.4 Why Bronze Exists
 
-Bronze는 원본 형태에 가까운 데이터를 보존한다.
+Bronze는 원본에 가까운 데이터를 보관하는 첫 저장 계층이다. 변환 규칙이 잘못되어도 이 입력에서 다시 시작할 수 있어 재처리의 안전망이 된다.
 
 목적:
 
@@ -187,7 +189,7 @@ Historical source
 
 ## 21.5 Why Iceberg Exists
 
-Object Storage 자체는 파일을 제공한다.
+객체 저장소는 파일을 보관하지만 테이블의 현재 파일 목록이나 일관된 변경은 스스로 제공하지 않는다. Iceberg가 그 위에 스냅샷과 메타데이터를 더해 여러 엔진이 테이블로 다루게 한다.
 
 Iceberg는 table 추상화를 추가한다.
 
@@ -207,7 +209,7 @@ Update/Delete/Merge support
 
 ## 21.6 Why Spark Exists
 
-Spark는 무거운 데이터 처리용 엔진이다.
+Spark는 큰 데이터 묶음을 분산 처리하는 엔진이다. 대량 정리·조인·재계산처럼 한 컴퓨터로 오래 걸릴 작업에 사용한다.
 
 사용 목적:
 
@@ -227,7 +229,7 @@ Storage가 아니라 compute다.
 
 ## 21.7 Why dbt Exists
 
-dbt는 SQL 변환 로직을 관리한다.
+dbt는 SQL 변환 로직을 버전 관리하고 의존 관계에 맞춰 실행·검증하도록 돕는다. 예를 들어 Silver 주문 데이터를 Gold 매출 지표로 만들 때 사용한다.
 
 사용 목적:
 
@@ -255,7 +257,7 @@ dbt
 
 ## 21.8 Why Gold / Mart Exists
 
-Gold는 데이터를 업무에서 사용할 수 있는 상태로 만드는 계층이다.
+Gold 또는 Mart는 분석가가 바로 쓸 수 있게 정리한 데이터 계층이다. 주문 원본을 제품별 월매출처럼 업무 질문에 맞는 표로 바꾼다.
 
 예시:
 
@@ -273,7 +275,7 @@ BI 사용자가 원시 event의 내부 구조까지 알아야 해서는 안 된�
 
 ## 21.9 Why Trino / SQL Warehouse Exists
 
-분석 사용자에게는 대화형 SQL이 필요하다.
+Trino나 SQL Warehouse는 저장된 테이블에 대화형 SQL 질의를 실행하는 계산 계층이다. 분석가와 BI 대시보드가 반복해서 질문할 때 필요하다.
 
 ```text
 Iceberg Gold
@@ -296,7 +298,7 @@ Snowflake Virtual Warehouse
 
 ## 21.10 Why Airflow / Lakeflow Exists
 
-데이터 처리는 개별 job만으로 이루어지지 않는다.
+Airflow나 Lakeflow는 여러 작업의 순서·재시도·일정을 조정하는 **오케스트레이션** 도구다. 앞 단계가 끝나야 다음 단계가 시작되는 파이프라인에 쓴다.
 
 필요한 것:
 
@@ -324,7 +326,7 @@ Lakeflow Jobs
 
 ## 21.11 Why Data Quality Exists
 
-질문:
+**데이터 품질**은 값과 구조가 기대한 규칙에 맞는지 확인한다. 예를 들어 주문 ID가 비어 있거나 매출 합계가 갑자기 틀어지면 결과를 사용하기 전에 발견해야 한다.
 
 > **데이터를 신뢰할 수 있는가?**
 
@@ -346,7 +348,7 @@ Volume
 
 ## 21.12 Why Data Observability Exists
 
-질문:
+**데이터 관측성(Observability)**은 지금 데이터 흐름이 건강한지 살피고 문제가 난 위치를 찾는 능력이다. 작업 성공 로그뿐 아니라 지연·누락·분포 변화를 본다.
 
 > **지금 데이터는 정상이며, 어디에서 문제가 생기고 있는가?**
 
@@ -373,7 +375,7 @@ Data Healthy
 
 ## 21.13 Why Metadata / Catalog Exists
 
-데이터가 늘어나면 사용자는 다음을 묻는다.
+**메타데이터**는 데이터의 설명, **카탈로그**는 그 설명을 찾는 목록이다. 테이블이 많아질수록 소유자와 의미, 최신 상태를 찾는 데 필요하다.
 
 ```text
 어떤 table이 있는가?
@@ -389,7 +391,7 @@ Catalog는 데이터 발견과 맥락을 한곳에 모은다.
 
 ## 21.14 Why Lineage Exists
 
-Lineage가 답하는 질문:
+**계보(Lineage)**는 입력 데이터가 어떤 작업을 거쳐 결과가 됐는지 잇는 경로다. 원본 열 하나가 바뀌었을 때 영향을 받는 지표를 찾는다.
 
 ```text
 이 데이터는 어디서 왔는가?
@@ -409,7 +411,7 @@ Lineage가 답하는 질문:
 
 ## 21.15 Why Governance Exists
 
-Governance가 답하는 질문:
+**거버넌스(Governance)**는 데이터 접근·분류·사용 책임을 정하고 적용하는 규칙이다. 민감한 열을 누가 볼 수 있는지 결정할 때 필요하다.
 
 ```text
 누가 소유하는가?
@@ -437,7 +439,7 @@ Data Contracts
 
 ## 21.16 Why AI-Ready Data Exists
 
-AI-ready data가 결합하는 요소:
+**AI-ready 데이터**는 AI에 넣을 수 있을 만큼 품질·맥락·권한·버전이 정리된 데이터다. 단순히 파일을 모델에 연결하는 것만으로는 재현하거나 평가하기 어렵다.
 
 ```text
 Trust
@@ -453,6 +455,8 @@ AI가 관리되지 않은 기업 데이터를 무조건 사용해서는 안 된�
 ---
 
 ## 21.17 AI Evaluation Architecture
+
+AI 평가 구조는 프로덕션의 질문·답변·피드백을 평가 데이터와 연결하는 흐름이다. 특정 모델이나 프롬프트를 바꾼 뒤 품질이 좋아졌는지 비교할 때 쓴다.
 
 ```text
 Production Agent
@@ -486,7 +490,7 @@ Enterprise AI Analytics
 
 ## 21.18 Version Chain for Reproducibility
 
-프로덕션/평가 결과는 이상적으로 다음 정보와 연결할 수 있어야 한다.
+같은 결과를 다시 설명하려면 모델·프롬프트·데이터·코드 버전의 연결 고리가 필요하다. 한 결과에 사용된 모든 버전을 기록하면 회귀 원인을 찾기 쉽다.
 
 ```text
 Agent Version
@@ -516,7 +520,7 @@ experiment_id / trace_id
 
 ## 21.19 Failure Behavior
 
-좋은 아키텍처 설명에는 장애가 포함되어야 한다.
+좋은 아키텍처 설명에는 정상 흐름뿐 아니라 실패했을 때 남는 데이터와 다시 시작할 위치가 포함된다.
 
 ### Kafka Failure
 
@@ -562,7 +566,7 @@ Downstream에 게시하기 전에 확산을 차단하고 격리한다.
 
 ## 21.20 Consistency Model
 
-플랫폼의 각 부분은 서로 다른 보장을 제공한다.
+**일관성 모델(Consistency Model)**은 각 단계가 중복·누락·순서에 대해 어떤 보장을 하는지 설명한다. 한 구성요소의 보장을 전체 파이프라인의 보장으로 확대해서는 안 된다.
 
 예시:
 
@@ -583,17 +587,15 @@ dbt / Batch
 → correctness depends heavily on idempotent transformations
 ```
 
-다음과 같이 말해서는 안 된다.
+다음 표현은 Kafka·Flink·Iceberg와 대상 시스템의 보장 범위를 따로 확인하기 전에는 피한다.
 
 > “전체 플랫폼은 exactly-once다.”
-
-보장 범위를 먼저 정의하지 않았다면 말이다.
 
 ---
 
 ## 21.21 Backfill Strategy
 
-권장 우선순위:
+**Backfill**은 과거 입력의 정해진 범위를 다시 처리하는 일이다. 누락된 날짜를 고치려면 보존된 원본과 안전한 결과 교체 방법을 먼저 확인한다.
 
 ```text
 1. 영향받은 partition/범위만 재구축
@@ -615,6 +617,8 @@ lineage awareness
 ---
 
 ## 21.22 Scaling Model
+
+확장은 구성요소마다 단위가 다르다. Kafka 파티션, Flink 병렬도, Spark 작업 자원, 쿼리 엔진 동시성 중 실제 병목부터 늘린다.
 
 ### Kafka
 
@@ -669,13 +673,13 @@ concurrency
 query optimization
 ```
 
-한 구성 요소를 확장한다고 다른 구성 요소의 병목이 자동으로 사라지지는 않는다.
+Kafka 파티션을 늘려도 느린 Gold 변환이나 SQL 조회가 그대로라면 전체 지연은 줄지 않는다. 단계별 지표로 병목을 다시 확인한다.
 
 ---
 
 ## 21.23 Cost Model
 
-비용은 여러 계층에서 발생한다.
+비용은 저장소만이 아니라 이벤트 보존, 스트림·배치 계산, 쿼리, 메타데이터 운영에서 생긴다. 쓰지 않는 구성요소를 빼는 것도 비용 설계다.
 
 ```text
 Kafka
@@ -700,7 +704,7 @@ AI
 → tokens/inference/search
 ```
 
-플랫폼 비용 최적화는 전체 아키텍처를 대상으로 한다.
+한 서비스의 청구액만 줄여도 데이터 복사나 재처리 비용이 늘면 전체 비용은 커질 수 있다. 저장·계산·조회 경로를 함께 본다.
 
 예시:
 
@@ -717,7 +721,7 @@ Right-size compute
 
 ## 21.24 What to Remove at Smaller Scale
 
-원래 교육과정 목표 중 하나였다.
+작은 시스템은 모든 플랫폼 구성요소가 필요하지 않다. 이벤트 재생이나 초저지연 요구가 없다면 단순한 데이터베이스 추출과 배치 작업부터 시작할 수 있다.
 
 > **규모가 작아질 때 무엇을 제거해야 하는지 설명한다.**
 
@@ -812,7 +816,7 @@ Governance
 
 ## 21.25 What Changes if Databricks Is Adopted
 
-직접 운영하는 구성:
+Databricks를 도입하면 일부 처리·SQL·카탈로그·작업 관리 기능을 관리형 서비스로 묶을 수 있다. 기존 Kafka나 외부 시스템까지 자동으로 대체되는지는 별도로 확인한다. 아래는 자체 운영 중인 구성의 예다:
 
 ```text
 Spark
@@ -865,7 +869,7 @@ platform cost
 
 ## 21.26 What Changes if Snowflake Is Adopted
 
-통합 가능한 기능:
+Snowflake를 도입하면 SQL 계산, 수집·변환, 거버넌스의 일부를 한 플랫폼에서 운영할 수 있다. 스트리밍 처리나 외부 원본의 요구는 별도 설계가 필요할 수 있다.
 
 ```text
 Warehouse
@@ -895,7 +899,7 @@ special-purpose operational systems
 
 ## 21.27 Open Lakehouse Final Architecture
 
-Open 중심 구현의 예:
+Open Lakehouse 예시는 객체 저장소와 Iceberg를 중심으로 필요한 처리·조회 도구를 조합한다. 도구 선택의 자유와 연결부 운영 책임을 함께 갖는다.
 
 ```text
 Applications
@@ -962,7 +966,7 @@ on-call complexity
 
 ## 21.28 Managed Platform Final Architecture
 
-Databricks 중심 예:
+관리형 플랫폼 예시는 여러 기능을 한 서비스에 묶어 운영 부담을 줄인다. 데이터 이동, 권한, 비용, 외부 엔진 접근은 실제 요구에 맞게 확인한다. 아래는 Databricks 중심의 예다:
 
 ```text
 Sources
@@ -1025,7 +1029,7 @@ Cortex / Search / Agents
 
 ## 21.29 Final Architecture Decision Checklist
 
-구성 요소를 추가하기 전에 묻는다.
+최종 결정은 도구 목록보다 요구사항에서 시작한다. 지연·복구·정확성·비용 목표를 정하고, 각 구성요소가 그 목표에 기여하는지 묻는다.
 
 ### Kafka
 
@@ -1098,7 +1102,7 @@ workflow가 여러 시스템에 걸쳐 있어 orchestration이 필요한가?
 
 # Final Mental Model
 
-전체 학습 내용을 다음 모델로 압축할 수 있다.
+이 그림은 원본 데이터가 수집·처리되어 분석과 AI에 쓰이기까지의 경로를 한눈에 보여 준다. 실제 설계에서는 PostgreSQL 변경이 Debezium과 Kafka를 통해 이벤트 경로에 합류한다.
 
 ```text
 Sources
@@ -1130,7 +1134,7 @@ SQL Serving
 BI / Analytics / AI
 ```
 
-전체에 걸쳐 적용되는 계층:
+아래 기능은 한 단계에만 붙지 않고 전체 경로를 가로지른다. 예를 들어 품질 검사는 Silver뿐 아니라 Gold 게시 전에도 필요하다:
 
 ```text
 Orchestration
@@ -1164,7 +1168,7 @@ Recovery
 → 장애 뒤 올바른 상태를 어떻게 복구하는가
 ```
 
-기술별 역할 맵:
+도구를 고를 때는 제품 이름보다 맡는 일을 먼저 구분한다. 아래 목록은 각 기술의 대표 역할이다:
 
 ```text
 PostgreSQL
@@ -1225,7 +1229,7 @@ Databricks / Snowflake
 
 ## Principle 1 — Start from the problem, not the tool
 
-좋지 않은 접근:
+문제와 규모를 모른 채 도구부터 고르는 접근은 운영 부담을 늘린다. 예를 들어:
 
 ```text
 “현대적인 플랫폼은 Kafka를 쓰므로 우리도 Kafka를 써야 한다.”
@@ -1242,7 +1246,7 @@ Databricks / Snowflake
 
 ## Principle 2 — Keep roles clear
 
-다음 역할을 혼동하지 않는다.
+아래 역할은 서로 연결되지만 같은 일을 하지는 않는다. 파일을 보관하는 S3와 테이블 상태를 관리하는 Iceberg를 구분한다:
 
 ```text
 Storage
@@ -1283,7 +1287,7 @@ Airflow
 
 ## Principle 3 — Design for reprocessing
 
-프로덕션 파이프라인에는 결국 다음이 필요해진다.
+운영 중에는 실패한 작업을 다시 실행하고, 보존된 입력을 재생하며, 잘못된 결과를 되돌릴 수 있어야 한다:
 
 ```text
 retry
@@ -1310,13 +1314,13 @@ Job Success
 Correct Data
 ```
 
-둘 다 관찰한다.
+작업이 성공했는지와 값이 맞는지를 별도로 측정한다. 성공한 작업도 잘못된 매출을 게시할 수 있다.
 
 ---
 
 ## Principle 5 — Version AI systems as systems
 
-AI 출력은 model만으로 만들어지지 않는다.
+AI 출력은 모델뿐 아니라 입력 데이터·프롬프트·도구·검색 결과로 달라진다. 회귀를 설명하려면 함께 버전을 남긴다.
 
 Version을 관리할 대상:
 
@@ -1351,13 +1355,13 @@ faster delivery
 more vendor dependency
 ```
 
-어느 쪽도 항상 정답은 아니다.
+선택은 팀의 운영 역량과 데이터 이동·권한 요구에 달려 있다.
 
 ---
 
 ## Principle 7 — Remove components when they are not earning their operational cost
 
-성숙한 플랫폼은 가장 많은 기술을 가진 플랫폼이 아니다.
+기술이 많을수록 연결부와 장애 지점도 늘어난다. 실제 요구를 해결하는 구성요소만 남긴다.
 
 성숙한 플랫폼에서는:
 
@@ -1373,7 +1377,7 @@ more vendor dependency
 
 ## 17.1 전체 기술 역할 맵
 
-이 세션에서 반복적으로 연결한 역할은 다음과 같다.
+이 도식은 이벤트와 DB 변경이 Kafka에서 만나 Bronze·Silver·Gold를 거쳐 사용되는 학습용 흐름이다. 원본 경로가 다르면 수집 방식도 바뀐다:
 
 ```text
 Applications
@@ -1458,7 +1462,7 @@ Airflow
 → Orchestration
 ```
 
-이 역할 구분은 전체 Data Platform을 이해하는 핵심이다.
+저장소는 파일을 보관하고, 테이블 형식은 파일을 표로 묶으며, 계산 엔진은 데이터를 처리한다. 이 구분을 알면 같은 요구에 도구를 중복 도입하지 않는다.
 
 ---
 
@@ -1492,7 +1496,7 @@ Airflow
 - anomaly
 - alert
 
-Quality Rule을 Observability가 지속적으로 관찰하는 구조로 연결할 수 있다.
+품질 규칙이 “주문 ID는 비어 있으면 안 된다”를 검사한다면, 관측성은 이 검사 결과와 데이터 지연이 언제부터 나빠졌는지 계속 추적한다.
 
 ---
 
@@ -1500,27 +1504,27 @@ Quality Rule을 Observability가 지속적으로 관찰하는 구조로 연결�
 
 ### Metadata
 
-데이터를 설명하는 정보.
+메타데이터는 스키마·소유자·갱신 시각처럼 데이터를 설명하는 정보다.
 
 ### Catalog
 
-Metadata를 검색/탐색할 수 있는 시스템.
+카탈로그는 메타데이터를 검색해 필요한 테이블을 찾게 하는 목록이다.
 
 ### Business Metadata
 
-데이터의 업무 의미.
+업무 메타데이터는 `revenue`가 환불 전 매출인지 환불 후 매출인지처럼 업무상의 뜻을 설명한다.
 
 ### Semantic Layer
 
-Metric/Dimension 의미와 계산법을 실제 Query에 재사용 가능한 형태로 정의.
+시맨틱 계층은 매출 같은 지표와 날짜 같은 분석 차원의 뜻·계산법을 여러 쿼리에서 일관되게 재사용하도록 정의한다.
 
 ### Lineage
 
-데이터의 생성/변환 관계.
+계보는 원본 열이 어떤 변환을 거쳐 대시보드 지표가 됐는지 보여 주는 관계다.
 
 ### Governance
 
-누가 어떻게 데이터를 사용해야 하는지에 대한 정책.
+거버넌스는 누가 민감한 열을 볼 수 있고 누가 책임지는지 정하는 정책이다.
 
 ---
 
@@ -1540,7 +1544,7 @@ Langfuse 같은 AI Observability/Evaluation Tool은 다음을 잘 처리한다.
 - Dataset
 - Experiment
 
-하지만 장기적인:
+AI 추적 도구만으로는 다음의 장기 저장·전사 분석 역할을 모두 맡기 어렵다:
 
 - Enterprise Analytics
 - Lakehouse Storage

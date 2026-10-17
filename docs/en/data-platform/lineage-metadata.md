@@ -1,8 +1,8 @@
 ---
 id: data-platform-lineage-metadata
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-13-01
   - DPE-13-01A
@@ -18,13 +18,13 @@ knowledge_ids:
 
 This Learn page covers the studied roles of metadata, lineage, and catalogs. The datasets are hypothetical. It does not claim that collectors or platforms were built and tested. Metadata describes data. Lineage describes how data is created and used.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
-
-**Reading guide:** Metadata describes data much like a book's title, author, and category describe a book. Lineage maps where that data came from and where it is used. The technical, operational, and business metadata in 13.1 separate data shape, recent runs, and metric meaning. Before changing the type of `raw_orders.amount`, follow the paths in 13.2–13.5 to transformations and dashboards. The tools and catalog in 13.6–13.7 help find these links, but a missing edge in the graph does not prove that a consumer is safe.
+**Reading note:** The chapter below keeps the source numbering, outline, technical content, and examples while explaining them in simpler language. Check the section-specific conditions and additions in the supplement after the chapter.
 
 <!-- SOURCE CORE START -->
 
 ## 13.1 Metadata Types
+
+Metadata describes data much like a book’s title, author, and category describe a book. Data structure, recent runs, and business meaning are different kinds of metadata. Check them together before use. For `orders.amount`, knowing the type is not enough; also check its last update and whether it contributes to revenue.
 
 Metadata is:
 
@@ -39,7 +39,7 @@ Metadata is:
 - Partition
 - File format
 
-The question it answers:
+Technical metadata answers:
 
 > What is the structure?
 
@@ -51,7 +51,7 @@ The question it answers:
 - Row count
 - Processing time
 
-The question it answers:
+Operational metadata answers:
 
 > Is it running normally now?
 
@@ -63,7 +63,7 @@ The question it answers:
 - Business term
 - Classification
 
-The question it answers:
+Business metadata answers:
 
 > What does this data mean for the business?
 
@@ -71,11 +71,13 @@ The question it answers:
 
 ## 13.1A Business Metadata vs Semantic Layer
 
-A follow-up question from the source:
+Business metadata says what a metric means. A semantic layer helps queries reuse the same calculation definition. It is like the difference between describing “revenue” on a recipe card and specifying the ingredients and calculation steps. The formula below is conceptual, not an accounting rule or ready-to-run SQL.
+
+A question raised during study:
 
 > Business metadata looks similar to a semantic layer.
 
-The answer:
+Both concepts describe meaning, but they serve different uses:
 
 > **They overlap, but they are not the same.**
 
@@ -119,13 +121,15 @@ BI / Dashboard / AI
 → Use the same definition
 ```
 
-A semantic layer makes the **executable analytical definitions** within business metadata concrete.
+A semantic layer turns business meaning into **calculation definitions** that queries can reuse.
 
 ---
 
 ## 13.2 Dataset Lineage
 
-Dataset lineage describes:
+Lineage records the route from source data through jobs to the outputs that use it. If daily user counts look wrong on a dashboard, trace that route backward to source events and transformations. Before a change, follow it forward to likely consumers.
+
+Dataset lineage shows:
 
 > **Source → Job → Target relationships.**
 
@@ -145,11 +149,11 @@ mart_daily_users
 
 ### Upstream
 
-The sources and jobs that produce the current data.
+The source data and jobs that produced this dataset.
 
 ### Downstream
 
-The consumers that use the current data.
+The jobs and users that read or depend on this dataset.
 
 Uses:
 
@@ -160,6 +164,8 @@ Uses:
 ---
 
 ## 13.3 OpenLineage
+
+OpenLineage is a standard for sharing lineage information between tools. A job defines work, a run is one execution, and a dataset is an input or output. Some job and dataset metadata events do not belong to one run. Even with the standard, check what each integration actually collects.
 
 OpenLineage is:
 
@@ -189,13 +195,13 @@ Job: transform_orders
 silver.orders
 ```
 
-OpenLineage is a **lineage event standard**, rather than a UI itself.
+OpenLineage defines a **lineage event format**; it is not the screen used to view results.
 
 ---
 
 ## 13.4 Column-Level Lineage
 
-Column-level lineage shows more detailed relationships than table-level lineage.
+Column-level lineage goes beyond “which table was read?” to “which input columns produced this output column?” If `net_amount` uses `amount` and `discount`, review changes to both source columns. Uncollected SQL or dynamic transformations can leave gaps in the graph.
 
 Example:
 
@@ -215,15 +221,15 @@ Uses:
 
 ## 13.5 Impact Analysis
 
-Use lineage to investigate the effects of changes and failures.
+Impact analysis checks where a change or incident began and which consumers it might reach. Upstream means tracing back toward a cause; downstream means following results to consumers. Before approving a type change, check actual SQL and expected consumer types as well as the graph.
 
 ### Upstream Analysis
 
-Trace backward to investigate the cause of a problem.
+Trace backward through sources and transformations to investigate a cause.
 
 ### Downstream Impact Analysis
 
-Follow a change to find the consumers it can affect.
+Follow changed data through transformations to find likely consumers.
 
 Example:
 
@@ -242,6 +248,8 @@ Dashboard
 ---
 
 ## 13.6 Marquez
+
+Marquez collects OpenLineage information so users can explore the links between runs and datasets. Like a road standard and a map, OpenLineage defines an event format while Marquez is one collection and viewing tool. Installing it does not prove that every run or column link was captured.
 
 Marquez is:
 
@@ -263,7 +271,7 @@ Marquez focuses on lineage and run relationships more than the full scope of a c
 
 ## 13.7 Catalog Integration
 
-A catalog combines information from several sources.
+A catalog is a searchable guide to metadata from several sources. Before using a new metric, check its description, owner, quality, and upstream and downstream paths together. A policy displayed in the catalog is not automatically enforced by every query engine or direct storage path.
 
 ```text
 Iceberg
@@ -311,8 +319,6 @@ It is developing into this combination.
 <!-- SOURCE CORE END -->
 
 ## Details to check in practice
-
-The semantic layer in 13.1A connects a business metric such as “revenue” to a consistent calculation definition. A catalog showing that description does not mean it runs the calculation or enforces access. OpenLineage in 13.3 is a standard for exchanging run and dataset metadata; Marquez in 13.6 is one tool for exploring it. When column-level lineage in 13.4 has been collected, it can narrow an impact review from a whole table to affected columns.
 
 ### Calculation boundaries in a semantic layer
 

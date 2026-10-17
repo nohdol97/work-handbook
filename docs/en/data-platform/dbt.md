@@ -1,8 +1,8 @@
 ---
 id: data-platform-dbt
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-08-01
   - DPE-08-02
@@ -20,13 +20,15 @@ knowledge_ids:
 
 This page records conceptual study of dbt and model layers. It does not claim project execution, performance testing, or production experience. Official documentation was checked on 2026-09-24.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
 
 **dbt** organizes SQL transformations as models and manages their dependencies, tests, and documentation. It is like a recipe that says which ingredient each step produces for the next. Sections 8.1–8.10 follow data from sources to analytical marts.
 
 <!-- SOURCE CORE START -->
 
 ## 8.1 Project Structure
+
+dbt organizes SQL transformations into models and reusable parts. As data moves from source tables to analytical results, visible model dependencies become more important.
 
 dbt:
 
@@ -36,19 +38,19 @@ Core components:
 
 ### Models
 
-A unit of SQL transformation.
+A model defines the result of one SQL transformation.
 
 ### Sources
 
-An input table created outside dbt.
+A source names and describes an input table created outside dbt.
 
 ### Tests
 
-Data quality rules.
+Tests check stated data rules such as nulls, duplicates, or reference relationships.
 
 ### Macros
 
-Reuse repeated SQL logic.
+Macros let models reuse repeated SQL logic.
 
 Typical structure:
 
@@ -65,6 +67,8 @@ macros/
 ---
 
 ## 8.2 ref()
+
+`ref()` points to another dbt model and declares that its result is needed first. If an order mart references `stg_orders`, dbt can track the relationship between them.
 
 `ref()`:
 
@@ -100,6 +104,8 @@ Another dbt model
 
 ## 8.3 Staging Models
 
+Staging is the first step that makes source names and formats consistent. Standardizing several date formats here keeps later models from repeating the same cleanup.
+
 Staging:
 
 > **The first transformation layer that cleans up source data.**
@@ -117,6 +123,8 @@ Keep complex business logic small in this layer.
 ---
 
 ## 8.4 Intermediate Models
+
+An intermediate model holds transformations shared by several marts. Keeping a common order-to-customer join in one place lets later metric models reuse it.
 
 Intermediate:
 
@@ -139,6 +147,8 @@ Small projects may skip the intermediate layer.
 ---
 
 ## 8.5 Marts
+
+A mart is a final data layer shaped for an analysis question or report. Designing fact measurements with dimension attributes makes the intended aggregation clearer.
 
 Mart:
 
@@ -173,7 +183,9 @@ Bronze/Silver
 
 ## 8.6 Incremental Models
 
-Process only changes instead of recalculating the whole table each time.
+Late orders can change an earlier date, so design the filter, key, and lookback range together.
+
+An incremental model processes selected new data or changed ranges instead of rebuilding the whole table each time. Its SQL decides which rows are reread.
 
 ### Append
 
@@ -181,7 +193,7 @@ Only add new data.
 
 ### Merge
 
-INSERT + UPDATE.
+MERGE uses a key to insert new rows and update existing ones. Check adapter and engine support for its exact behavior.
 
 ### Incremental Filter
 
@@ -200,6 +212,8 @@ Rebuild everything when needed, such as after a logic change.
 ---
 
 ## 8.7 dbt Tests
+
+A dbt test checks a stated data rule. It can check non-null order IDs or valid customer references, but business meaning needs its own rules.
 
 Typical tests:
 
@@ -227,7 +241,9 @@ dbt tests are especially suited to checking basic model or table rules, rather t
 
 ## 8.8 Snapshots
 
-dbt Snapshot:
+A snapshot can compare a current table over time and retain earlier value versions. It helps analyze customer-tier changes, but does not automatically capture every change between observations.
+
+A dbt snapshot compares a current table over time to distinguish old and new values.
 
 > **Compare current tables to preserve change history.**
 
@@ -247,7 +263,9 @@ A separate snapshot may be unnecessary when sufficient CDC history already exist
 
 ## 8.9 Documentation / Lineage
 
-Table and column descriptions can be managed as metadata.
+Lineage shows which sources and intermediate models feed a result. When a metric is wrong, `source()` and `ref()` links help locate affected dbt models.
+
+Table and column descriptions help readers understand values when kept as metadata.
 
 Use `source()` and `ref()` relationships to create dbt model lineage.
 
@@ -270,6 +288,8 @@ dbt lineage is part of the overall data platform lineage.
 ---
 
 ## 8.10 dbt + Databricks / Snowflake / Trino
+
+dbt defines and manages SQL while the connected platform executes it. Check adapter behavior and supported SQL when running a model through Databricks, Snowflake, or Trino.
 
 dbt is not a compute engine.
 
@@ -296,12 +316,6 @@ Spark and dbt can work together rather than competing with each other.
 ---
 
 <!-- SOURCE CORE END -->
-
-## A beginner's guide to the connections
-
-- **Sections 8.1–8.5, model flow:** A source points to incoming tables. Staging cleans names and formats, intermediate models hold shared transformations, and marts provide facts and dimensions for analysis. `ref()` links models and records their run dependencies. Think of cleaning dates and currency from raw orders before building a customer-revenue mart.
-- **Sections 8.6–8.8, incremental work and quality:** An incremental model can process only new or changed data to reduce repeated work. Design its filter, unique key, and rerun range so late orders are not missed. Tests check specified conditions; snapshots can keep earlier versions of values. Neither automatically catches every business-meaning error.
-- **Sections 8.9–8.10, connections:** Lineage shows which sources and upstream models a model depends on. dbt organizes SQL, while the connected warehouse or query engine executes it. Check adapter support and engine behavior for Trino, Snowflake, or another target.
 
 ## Additional checks before applying these ideas
 

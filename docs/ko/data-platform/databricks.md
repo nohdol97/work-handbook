@@ -1,8 +1,8 @@
 ---
 id: data-platform-databricks
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE2-17-01
   - DPE2-17-02
@@ -22,13 +22,13 @@ knowledge_ids:
 
 문서 유형: Learn. 제공된 17장의 개념 학습을 정리했다. `studied`는 실제 구축·운영 경험을 뜻하지 않는다. 예시는 가상이며 실행하지 않았다. 제품 범위는 2026-09-26 공식 문서로 확인했으며, 클라우드·리전·Runtime·접근 모드·테이블 기능에 따라 달라진다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 아래 구역은 원문의 목차와 기술 내용을 유지하면서 입문자가 읽기 쉽게 문장을 다듬은 본문이다. 제품별 적용 조건과 추가 설명은 뒤의 보완 구역에서 해당 절 번호와 함께 확인한다.
 
 <!-- SOURCE CORE START -->
 
 ## 17.1 Lakehouse Architecture
 
-Databricks는 다음과 같이 이해할 수 있다:
+저장·처리·SQL·거버넌스·AI 기능을 따로 연결하기보다 관리형 플랫폼으로 묶고 싶을 때 Databricks의 통합 범위를 살펴본다.
 
 > **앞에서 따로 학습한 여러 구성요소를 통합하는 관리형 Data + AI Platform.**
 
@@ -125,13 +125,13 @@ ML
 AI
 ```
 
-이 영역들은 같은 데이터 기반을 사용한다.
+이 영역들은 같은 데이터 기반을 공유하므로, 수집한 데이터를 SQL 분석과 모델 작업에 이어 쓸 수 있다. 권한과 계산 자원은 업무별로 설계한다.
 
 ---
 
 ## 17.2 Databricks Runtime and Photon
 
-Databricks Runtime은 다음과 같이 이해할 수 있다:
+같은 Spark 작업이라도 실행 환경과 버전에 따라 기능·성능이 달라질 수 있어 Runtime 버전을 함께 확인한다.
 
 > **Apache Spark에 Databricks의 최적화, 라이브러리, 커넥터, 플랫폼 통합을 함께 제공하는 실행 환경.**
 
@@ -175,7 +175,7 @@ Runtime 버전에 함께 묶이는 요소:
 - Runtime 기능
 - 동작 변경
 
-운영 환경에서는 Runtime 업그레이드를 계획적으로 관리해야 한다.
+Runtime을 올리면 Spark·JDK·라이브러리 버전도 함께 달라질 수 있다. 운영 작업은 호환성 검사와 재현 시험을 거쳐 업그레이드한다.
 
 ### Photon
 
@@ -204,7 +204,7 @@ Native Execution
 - shuffle,
 - Parquet 처리.
 
-개념적으로 Photon이 Spark를 대체하는 것은 아니다.
+Photon은 지원되는 연산을 빠르게 실행하는 계층이고 Spark API·계획·분산 작업 전체를 대신하지 않는다.
 
 ```text
 Spark
@@ -218,7 +218,7 @@ Photon
 
 ## 17.3 SQL Warehouses
 
-SQL Warehouse:
+분석가의 SQL 조회와 대시보드가 배치 변환과 자원을 두고 경쟁할 때 조회용 계산 자원을 따로 둘 수 있다.
 
 > **대화형 분석, BI, 대시보드 workload를 위한 관리형 SQL compute.**
 
@@ -243,7 +243,7 @@ BI / Analyst / Dashboard
 - 분석가의 데이터 탐색
 - SQL 변환
 
-중요한 구분:
+SQL Warehouse는 데이터를 저장하는 곳이 아니라 저장된 테이블을 조회하는 계산 자원이다. 역할을 나누면 조회용 자원을 배치 작업과 별도로 조절할 수 있다.
 
 ```text
 Storage
@@ -289,7 +289,7 @@ consistent business semantics
 
 ## 17.4 Unity Catalog
 
-Unity Catalog:
+팀이 같은 데이터와 AI 자산을 찾고 역할에 맞게 쓰려면 이름·권한·계보를 함께 관리해야 한다.
 
 > **Data와 AI 자산을 위한 Databricks의 통합 거버넌스 계층.**
 
@@ -395,7 +395,7 @@ Model
 
 ## 17.5 Lakeflow Jobs
 
-Lakeflow Jobs:
+수집이 성공한 뒤 변환과 품질 검사를 실행하는 것처럼 여러 작업의 일정·순서·재시도를 조정할 때 쓴다.
 
 > **Databricks의 workflow orchestration.**
 
@@ -461,7 +461,7 @@ internal systems
 
 ## 17.6 Lakeflow Pipelines
 
-Lakeflow의 전체 구성:
+**Lakeflow Pipelines**는 데이터셋을 정의해 수집과 변환 흐름을 관리하는 기능이다. 작업 순서를 잡는 Jobs와 달리 데이터가 어떻게 갱신될지에 초점을 둔다.
 
 ```text
 Lakeflow
@@ -542,7 +542,7 @@ Lakeflow Pipelines
 
 ## 17.7 Delta / Iceberg Interoperability
 
-Delta와 Iceberg는 비슷한 문제를 해결한다:
+**Delta와 Iceberg**는 모두 파일 묶음을 신뢰할 수 있는 테이블로 관리하는 형식이다. 다른 엔진과 공유하려면 이름만 지원하는지보다 읽기·쓰기·카탈로그 범위를 확인한다.
 
 ```text
 Object Storage
@@ -634,7 +634,7 @@ Multi-engine / open ecosystem
 
 ## 17.8 Lineage / Governance
 
-Unity Catalog는 다음을 통합한다:
+**계보(Lineage)**는 입력과 결과의 연결을 보여 주고, **거버넌스**는 사용 권한과 분류 규칙을 적용한다. Unity Catalog의 기록 범위가 실제 파이프라인과 맞는지 확인한다.
 
 ```text
 Lineage
@@ -732,7 +732,7 @@ Security Admin
 
 ## 17.9 MLflow
 
-MLflow는 이제 다음 영역을 함께 다룬다:
+**MLflow**는 모델 실험과 버전을 기록하고, 생성형 AI에서는 추적·평가와도 연결된다. 결과가 바뀐 이유를 찾으려면 입력 데이터와 프롬프트 버전도 함께 남긴다.
 
 ```text
 Traditional ML
@@ -838,7 +838,7 @@ Databricks가 기업의 중심 플랫폼이 되면, 별도로 Langfuse가 필요
 
 ## 17.10 AI / Vector Capabilities
 
-Databricks는 Lakehouse 데이터를 AI 애플리케이션 기능과 연결한다.
+Databricks의 AI·벡터 기능은 Lakehouse 데이터를 검색·모델 서빙·에이전트로 연결한다. 실제 서비스를 고르기 전에 검색 최신성과 접근 정책을 확인한다.
 
 전체 흐름:
 
@@ -935,7 +935,7 @@ Model Serving
 
 ## 17.11 Databricks Cost Model
 
-핵심 개념:
+Databricks 비용은 계산 자원, 저장·네트워크, AI 서비스에서 생긴다. 특히 작업 시간과 규모를 조절할 수 있는 계산 비용을 먼저 추적한다.
 
 > **Compute는 조절 가능한 비용 중 가장 큰 축이며, 여기에 storage/network와 AI service 비용이 더해진다.**
 
@@ -1029,7 +1029,7 @@ workspace
 
 ## 17.12 Which Self-Managed Components Databricks Can Replace
 
-자체 운영 아키텍처:
+Databricks는 자체 운영하던 일부 구성요소를 관리형 기능으로 대체할 수 있다. 다만 기존 시스템 전체가 자동으로 사라지는 것은 아니므로 기능별로 대체·연동 범위를 확인한다. 아래는 비교할 자체 운영 구성의 예다:
 
 ```text
 S3

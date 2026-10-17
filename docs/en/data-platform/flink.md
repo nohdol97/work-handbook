@@ -1,8 +1,8 @@
 ---
 id: data-platform-flink
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-05-01
   - DPE-05-02
@@ -24,13 +24,15 @@ knowledge_ids:
 
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
 
 **Flink** processes events as they continue to arrive and keeps state between them. Picture a clerk updating a ledger whenever an order comes in. Sections 5.1–5.14 connect event time, late arrivals, state recovery, and writing results to external stores.
 
 <!-- SOURCE CORE START -->
 
 ## 5.1 Why Flink
+
+Flink handles an ongoing stream and can remember earlier results. Updating an order count for the last five minutes as new orders arrive shows why stateful streaming is useful.
 
 Key point:
 
@@ -66,15 +68,17 @@ Key point:
 
 ## 5.2 Flink Architecture
 
+A Flink job separates coordination from data processing. The JobManager coordinates work and TaskManagers run operators, though their execution model is not identical to Spark's.
+
 ### JobManager
 
-Manage the whole job.
+The JobManager coordinates the whole job.
 
 Conceptually similar to a Spark driver.
 
 ### TaskManager
 
-Execute actual tasks.
+TaskManagers run the operators' actual tasks.
 
 Conceptually similar to a Spark executor.
 
@@ -100,6 +104,8 @@ A logical execution space inside a TaskManager.
 
 ## 5.3 DataStream Model
 
+A DataStream reads events from a source, transforms them, and writes to a sink. To aggregate events by customer, `keyBy` redistributes them and supports state for each key.
+
 Basic flow:
 
 ```text
@@ -124,7 +130,7 @@ Iceberg / Kafka / DB / Search Store.
 
 ### KeyBy
 
-Group the same key into the same logical processing unit.
+`keyBy` sends events with the same key to one logical processing unit so later events can be computed together.
 
 ```text
 keyBy(user_id)
@@ -146,13 +152,15 @@ Stateful Processing
 
 ## 5.4 Event Time
 
+Use event time when a late order should count in the interval when it occurred, rather than when it arrived.
+
 Main time concepts:
 
 - Event Time
 - Processing Time
 - Ingestion Time
 
-Event time is when the event actually happened.
+Event time is when an event happened, rather than when the platform received it.
 
 Streaming events can arrive late or in a different order.
 
@@ -163,6 +171,8 @@ Event-time processing supports analysis based on the time events actually happen
 ---
 
 ## 5.5 Watermark
+
+A watermark signals how far event time has likely progressed. It does not rule out late events; it helps decide when to emit results and how long to keep state.
 
 Watermark:
 
@@ -205,7 +215,9 @@ An idle partition can block watermark progress, so idle detection may be needed.
 
 ## 5.6 Window
 
-A stream has no end, so aggregation divides it into defined ranges.
+A window divides an endless stream into time ranges that can be aggregated. Use fixed ranges for orders per minute, or overlapping ranges for a rolling five-minute count updated each minute.
+
+A stream keeps arriving, so a window defines a time range whose events can be aggregated.
 
 ### Tumbling Window
 
@@ -242,6 +254,8 @@ Watermarks and windows work together.
 
 ## 5.7 State
 
+State is information kept from earlier events. A per-customer click count needs keyed state so the next click can update the previous value.
+
 State:
 
 > **Information Flink remembers from earlier processing**
@@ -271,13 +285,15 @@ Key-value entries.
 
 ### State TTL
 
-Automatically clean up state that has not been used for a long time.
+Define when state expires and how it can be cleaned up. Physical removal may happen later, depending on the cleanup mode.
 
 Windows can also be understood as using state internally.
 
 ---
 
 ## 5.8 Checkpoint
+
+A checkpoint records state and input progress so a job can resume after failure. It resembles saving both a ledger page and its bookmark, but it is not an automatic backup of the external sink.
 
 Checkpoint:
 
@@ -311,11 +327,13 @@ Align barriers from multiple inputs before proceeding.
 
 Include in-flight data to take snapshots quickly in situations such as backpressure.
 
-A checkpoint is not a general backup. It is **execution state stored to resume a streaming job**.
+A checkpoint does not back up external stores. It records **job state and input progress for restoring streaming work**.
 
 ---
 
 ## 5.9 Savepoint
+
+A savepoint is a managed state record made before a planned change. It can support a job upgrade or rescaling, but the new code must be able to read the old state.
 
 Savepoint:
 
@@ -348,6 +366,8 @@ When changing the state structure, consider state migration and compatibility.
 
 ## 5.10 Exactly-Once Processing
 
+Exactly-once means an event has one committed effect within a stated boundary. Even if Flink restores state correctly, an external store that accepts duplicate writes needs separate validation.
+
 Exactly-once:
 
 > **Each event's effect appears once in the final result**
@@ -379,6 +399,8 @@ Idempotent Sink
 ---
 
 ## 5.11 Backpressure
+
+Backpressure happens when a slow downstream step holds up upstream processing. Like a blocked checkout line, it calls for finding whether the sink or an intermediate operator is the bottleneck.
 
 Backpressure:
 
@@ -419,11 +441,13 @@ Responses:
 - Scale the external system
 - Reduce skew
 
-Backpressure is also natural flow control that protects the system from overload.
+Backpressure is also natural flow control: a slow downstream step limits upstream input. Find the actual bottleneck before trying to remove it.
 
 ---
 
 ## 5.12 Flink + Kafka
+
+Kafka stores and delivers events; Flink computes over them. Kafka partitions affect source read parallelism, while Flink `keyBy` groups state, so they are not the same partitioning decision.
 
 Roles:
 
@@ -456,7 +480,7 @@ Kafka/event timestamps can be used as event time.
 
 ### Ordering
 
-Kafka preserves order within a partition but does not guarantee global ordering.
+Kafka preserves order inside one partition, but not one global order across several partitions.
 
 ### Kafka Partitioning vs Flink keyBy
 
@@ -473,6 +497,8 @@ Flink keyBy
 ---
 
 ## 5.13 Flink + Iceberg
+
+Flink can keep writing results to Iceberg, but frequent commits can create many small files. Plan ongoing ingestion together with later compaction and large recomputations.
 
 Purpose:
 
@@ -522,6 +548,8 @@ Current-state tables may need UPDATE / DELETE / MERGE.
 
 ## 5.14 Flink vs Spark
 
+Flink and Spark both process data, but latency and state needs change which fits best. Compare complex low-latency event processing with large historical batch work before choosing.
+
 ### When Flink fits well
 
 - Low latency
@@ -557,12 +585,6 @@ Flink
 ---
 
 <!-- SOURCE CORE END -->
-
-## A beginner's guide to the connections
-
-- **Sections 5.3–5.7, time and state:** `keyBy` groups events with the same key, such as one customer. A window defines a range like “orders in ten minutes.” Event time is when an event happened; a watermark is a progress signal about how far event time has likely advanced. Mail can arrive late, and so can events after a watermark. Choose allowed lateness and state retention together.
-- **Sections 5.8–5.11, recovery and bottlenecks:** A checkpoint records processing state with input progress for recovery. A savepoint is a managed state record used for planned changes or moves. These records alone do not establish end-to-end effects; also check how the external sink writes. Backpressure means a slow downstream step holds up upstream input. Measure where the queue begins.
-- **Sections 5.12–5.14, connections:** Kafka can supply events, and Iceberg can store results for analysis. For example, Flink may calculate hourly click counts while Spark handles large historical recomputations. This is a design example based on latency and processing needs.
 
 ## Source qualifications {#source-notes}
 

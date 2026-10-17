@@ -1,8 +1,8 @@
 ---
 id: data-platform-trino
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-10-01
   - DPE-10-02
@@ -18,13 +18,15 @@ knowledge_ids:
 
 This page records conceptual study of Trino. It does not claim verified query performance or production results. Official documentation was checked on 2026-09-24.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
 
 **Trino** is a distributed SQL query engine that can read several data sources. Imagine one desk searching inventory across warehouses while accounting for what must be moved. Sections 10.1–10.8 connect connectors, query execution, pushdown, joins, and memory.
 
 <!-- SOURCE CORE START -->
 
 ## 10.1 Architecture
+
+Trino is a distributed engine for SQL queries over external data. Its coordinator plans a query and workers run its parts, allowing parallel reads of large data.
 
 Trino:
 
@@ -55,7 +57,7 @@ Trino Worker ≈ Spark Executor
 
 ## 10.2 Connector Model
 
-A connector is an adapter between Trino and an external system.
+A connector is Trino's route to a source such as Iceberg or PostgreSQL. One SQL query can join them, but remote reads and data movement still have costs.
 
 Examples:
 
@@ -82,11 +84,13 @@ Trino Catalog:
 
 > Identify which connector and data source to use.
 
-A federated query can join different systems in one SQL statement. It does not guarantee good performance.
+A federated query can join different systems in one SQL statement. Source reads and network movement may still make it slow.
 
 ---
 
 ## 10.3 Query Execution
+
+Trino divides a query into stages and worker tasks. A split is a small scan unit; an exchange moves data between workers and matters when investigating slow joins.
 
 Conceptual structure:
 
@@ -116,7 +120,7 @@ A small unit of scan work.
 
 ### Exchange
 
-Data redistribution between workers.
+An exchange redistributes data between workers for operations such as joins or aggregation.
 
 It is a similar concept to Spark shuffle.
 
@@ -125,6 +129,8 @@ Joins and GROUP BY operations can require many exchanges.
 ---
 
 ## 10.4 Pushdown
+
+Pushdown performs a filter or aggregation near the source when supported. Like selecting only needed boxes at a warehouse, it can reduce movement, but support depends on the connector and SQL shape.
 
 Purpose:
 
@@ -148,9 +154,11 @@ Iceberg partition, file, row group, and column pruning serve a similar purpose.
 
 ## 10.5 Join Strategies
 
+A join strategy chooses whether to copy a small side or redistribute both sides by key. Both depend on size and key skew, so check the plan and measured work.
+
 ### Broadcast Join
 
-Copy a small table to all workers.
+A broadcast join copies a small table to workers participating in the join to reduce movement of the large table. Each worker needs memory for the copy.
 
 ```text
 Huge Fact
@@ -160,7 +168,7 @@ Tiny Dimension
 
 ### Partitioned Join
 
-Redistribute large tables by join key.
+A partitioned join redistributes both large tables by join key so matching keys meet.
 
 This adds exchange costs.
 
@@ -172,7 +180,7 @@ Some keys may concentrate work on a particular worker.
 
 ## 10.6 Memory
 
-Trino keeps intermediate data for joins, aggregations, and sorts in memory.
+Trino may keep intermediate join, aggregation, or sort data in memory. Large or skewed inputs can reach memory limits and slow or fail a query. Spill moves some work to disk, but it does not solve every memory problem.
 
 Key concepts:
 
@@ -188,11 +196,13 @@ Memory pressure
 Use disk
 ```
 
-Spill can help avoid query failure, but it slows the query.
+Where spill is supported, it may relieve some memory pressure, but disk I/O can slow the query and it cannot prevent every failure.
 
 ---
 
 ## 10.7 Trino vs Spark
+
+Trino often serves interactive SQL while Spark often runs large transformations or recomputations. These are common roles, not fixed feature boundaries; compare latency, scale, and operations.
 
 Common roles:
 
@@ -232,6 +242,8 @@ Trino
 
 ## 10.8 Trino + Iceberg
 
+Iceberg describes a table's current files and snapshots; Parquet holds data within files. Trino uses metadata to find files and reads needed columns, so layout and connector support matter.
+
 Structure:
 
 ```text
@@ -246,7 +258,7 @@ Trino
 BI / Analyst
 ```
 
-Trino uses Iceberg metadata to find needed files. It uses Parquet's columnar structure to read the required columns.
+Trino uses Iceberg metadata to choose files. Where supported, it uses Parquet's column layout to read only the needed columns.
 
 Roles:
 
@@ -267,12 +279,6 @@ Trino
 ---
 
 <!-- SOURCE CORE END -->
-
-## A beginner's guide to the connections
-
-- **Sections 10.1–10.3, execution:** The coordinator plans a query; workers run its pieces. A connector is the route to a source such as Iceberg or PostgreSQL. If a query joins a large Iceberg fact with a small PostgreSQL dimension, where it reads and moves data affects both latency and source load.
-- **Sections 10.4–10.6, movement and memory:** Pushdown sends a filter or aggregation closer to the source where supported. It resembles selecting only needed boxes at a warehouse, but support depends on the connector and SQL shape. A broadcast join copies the small side to participating workers. Bad size estimates or skewed keys can create memory pressure. Check EXPLAIN and measured scan and exchange volumes.
-- **Sections 10.7–10.8, tool roles:** Trino can serve interactive analysis, while Spark can handle large transformations. These are common uses, not absolute boundaries. Even when both read Iceberg, metadata pruning, file layout, and connector support affect performance.
 
 ## Appendix: existing application notes
 

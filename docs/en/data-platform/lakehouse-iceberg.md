@@ -1,8 +1,8 @@
 ---
 id: data-platform-lakehouse-iceberg
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-03-01
   - DPE-03-02
@@ -21,13 +21,13 @@ knowledge_ids:
 
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
 
 <!-- SOURCE CORE START -->
 
 ## 3.1 Lakehouse Architecture
 
-A lakehouse aims to combine the open storage of a data lake with the table-management features of a data warehouse.
+A lakehouse combines the open storage of a data lake with the table management of a warehouse. Use it when you want flexible files and reliable table reads and updates.
 
 Big picture:
 
@@ -71,13 +71,13 @@ Control Plane:
 - Governance
 - Table Definition
 
-These are conceptual divisions of responsibility.
+This split clarifies which work reads and writes files and which work manages table definitions and access.
 
 ---
 
 ## 3.2 Iceberg Metadata Internals
 
-The core of Iceberg is **managing table metadata**, not simply storing Parquet files.
+Iceberg does more than store Parquet files: it manages **table metadata**. Think of metadata as an index that lists the files in the current table so multiple engines can read one consistent state.
 
 A simplified structure:
 
@@ -99,7 +99,7 @@ Data Files
 
 ### Metadata JSON
 
-Describes the current state of the table.
+Metadata JSON describes the current schema, partition rules, and snapshots. It acts like an index that an engine checks before reading data files.
 
 Information can include:
 
@@ -113,7 +113,7 @@ Information can include:
 
 ### Current Snapshot
 
-The snapshot that identifies the current table state.
+The current snapshot points to the consistent set of files in the table now.
 
 ---
 
@@ -149,7 +149,7 @@ Manifest
 Data File
 ```
 
-This manages file lists and statistics efficiently for large tables.
+The intermediate lists organize file paths and statistics, so an engine can choose useful files without opening every file in a large table.
 
 ---
 
@@ -165,7 +165,7 @@ Approaches such as merge-on-read can manage deletion information in separate fil
 
 ## 3.3 Snapshot Semantics
 
-A snapshot is the table state at a particular point in time.
+A snapshot records the whole table state at a point in time. Think of an updated book index that still reuses unchanged pages instead of copying the entire book.
 
 Important point:
 
@@ -195,7 +195,7 @@ Return the table to an earlier snapshot state.
 
 ### Consistent Read
 
-A query reads a consistent table state based on a particular snapshot.
+A query reads from a chosen snapshot. This boundary keeps it from seeing a table that is only partly updated while a write is in progress.
 
 ### Snapshot Isolation Intuition
 
@@ -205,9 +205,7 @@ Even when writes happen concurrently, a query reads a consistent snapshot state 
 
 ## 3.4 Atomic Commit Model
 
-Several writers can change a table concurrently.
-
-Iceberg can be understood through **Optimistic Concurrency**.
+Several writers can change a table at once. With **optimistic concurrency control**, Iceberg checks for conflicts at commit time, so concurrent writes do not expose an unfinished table state.
 
 Conceptually:
 
@@ -223,7 +221,7 @@ Writer B
 
 When one writer commits first, the current metadata changes.
 
-The other writer can:
+Before committing, the other writer checks whether the current table state has changed:
 
 - Check for conflicts
 - Retry when needed
@@ -248,7 +246,7 @@ These files can become candidates for later cleanup.
 
 ## 3.5 Partitioning in Iceberg
 
-**Hidden Partitioning** is an important Iceberg concept.
+**Hidden partitioning** keeps file grouping rules out of the query. A user filters a date column, and Iceberg uses its internal transform to find the relevant groups.
 
 Users can filter logical columns without directly handling partition columns in the query.
 
@@ -282,7 +280,7 @@ bucket(32, user_id)
 
 ### Partition Evolution
 
-Change the partition spec without rewriting the entire table.
+Change the partition spec without rewriting every older file. New files can use the new rule while metadata tracks the older one.
 
 Example:
 
@@ -303,7 +301,7 @@ For high-cardinality values such as `user_id`, consider a bucket transform inste
 
 ## 3.6 Query Pruning
 
-The central question for Iceberg query performance is:
+For fast Iceberg queries, **pruning** means skipping files or data ranges that cannot match the filter before reading them.
 
 > **How little data can the query read?**
 
@@ -325,7 +323,7 @@ Column Pruning
 
 ### Scan Amplification
 
-Scan amplification is high when a query reads far more data than it actually needs.
+**Scan amplification** means reading far more data than the result needs. For example, a query might scan every file to find one customer.
 
 Good layout reduces this.
 
@@ -333,7 +331,7 @@ Good layout reduces this.
 
 ## 3.7 Sort Order and Clustering
 
-Some locality of values helps file min/max statistics work well.
+File minimum and maximum statistics work best when frequently queried values stay somewhat close together. For example, grouping nearby `user_id` values can help a range query skip unrelated files.
 
 Example:
 
@@ -357,9 +355,7 @@ Key point:
 
 ## 3.8 UPDATE / DELETE / MERGE
 
-It is difficult to modify small parts of a Parquet object immediately like rows in a regular database.
-
-Iceberg supports updates and deletes at the table-format level.
+A Parquet file in object storage is hard to change one row at a time. Iceberg supports UPDATE, DELETE, and MERGE at the table level, but the right method depends on write volume and read cost.
 
 ---
 
@@ -390,11 +386,11 @@ Disadvantages:
 
 ### Position Delete
 
-Mark a particular row position in a particular file for deletion.
+A position delete marks a row at a specific location in a data file; readers skip that location.
 
 ### Equality Delete
 
-Represent rows matching particular key or value conditions as deleted.
+An equality delete records a key or value condition. Readers can find matching rows without knowing their positions in a file.
 
 ---
 
@@ -418,7 +414,7 @@ MERGE can support CDC upserts, but its cost matters on large tables.
 
 ## 3.9 Maintenance
 
-Maintenance matters because a lakehouse is file-based.
+A file-based lakehouse needs **maintenance**. Too many small files, delete files, or old snapshots can slow reads and writes or increase storage cost.
 
 ### Data File Compaction
 
@@ -448,7 +444,7 @@ Key point:
 
 ## 3.10 Catalogs
 
-Operating an Iceberg table requires finding its current metadata.
+To open an Iceberg table, an engine must find its current metadata. A **catalog** works like a library index: it links a table name to the current metadata location.
 
 Catalog roles:
 
@@ -469,7 +465,7 @@ Representative catalogs:
 
 ## 3.11 Catalog vs Governance
 
-These concepts are related, but they are not the same.
+A catalog helps engines find tables. **Governance** controls their use, such as who may read sensitive columns. A product can provide both roles.
 
 ### Basic catalog role
 

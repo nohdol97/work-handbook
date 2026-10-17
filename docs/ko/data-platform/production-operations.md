@@ -1,8 +1,8 @@
 ---
 id: data-platform-production-operations
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE2-20-01
   - DPE2-20-02
@@ -31,9 +31,9 @@ knowledge_ids:
 
 # Chapter 20 — Production Data Platform Engineering
 
-제공된 완성본의 20장을 원문 순서와 형식에 맞춰 번역했다. 예시와 도식은 개념 학습 자료이며 실제 구현·운영·복구 검증 기록이 아니다. 영어 기술 용어·코드는 유지하고 text 도식의 일반 설명은 같은 형식으로 번역했다.
+제공된 완성본의 20장 목차와 기술 내용을 따라 입문자용 문장으로 다듬었다. 예시와 도식은 개념 학습 자료이며 실제 구현·운영·복구 검증 기록이 아니다. 영어 기술 용어·코드는 유지하고 text 도식의 일반 설명은 같은 형식으로 번역했다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 아래 구역은 원문의 목차와 기술 내용을 유지하면서 입문자가 읽기 쉽게 문장을 다듬은 본문이다. 제품별 적용 조건과 추가 설명은 뒤의 보완 구역에서 해당 절 번호와 함께 확인한다.
 
 <!-- SOURCE CORE START -->
 
@@ -48,7 +48,7 @@ knowledge_ids:
 
 ## 20.1 Backfills
 
-Backfill:
+누락된 3일의 주문 집계나 버그 수정 후의 결과를 복구할 때, 날짜·파티션처럼 재처리 범위를 먼저 정한다.
 
 > **정해진 범위의 과거 데이터를 다시 계산한다.**
 
@@ -93,7 +93,7 @@ event_date partition
 
 ## 20.2 Reprocessing
 
-Backfill은 재처리의 한 형태다.
+**재처리(Reprocessing)**는 과거 입력을 다시 읽어 결과를 만드는 더 넓은 작업이며 backfill도 여기에 속한다. 원본 이벤트·Bronze·스냅샷 중 어디서 다시 시작할지 먼저 정한다.
 
 ### Kafka Replay
 
@@ -143,13 +143,13 @@ Iceberg Snapshot
 external source
 ```
 
-장애가 발생하기 전에 결정해야 한다.
+장애가 난 뒤에 처음 원본을 고르면 보존 기간이 끝났거나 재생 순서를 모를 수 있다. 평소에 데이터셋별 재처리 출발점을 기록한다.
 
 ---
 
 ## 20.3 Incident Drill — Schema Break
 
-예:
+**스키마 변경 장애**는 생산자가 필드 이름이나 타입을 바꾸어 소비자가 더는 데이터를 읽지 못하는 상황이다. 계약을 깨는 변경인지 확인하고 영향받은 구간을 찾는다.
 
 ```text
 원본:
@@ -202,7 +202,7 @@ producer/consumer 수정
 
 ## 20.4 Incident Drill — Bad Data
 
-예시:
+**잘못된 데이터 장애**는 파이프라인이 돌아가도 값이 틀린 상황이다. 예를 들어 결제 금액이 두 번 더해졌다면 실행 성공 여부만으로는 문제를 찾지 못한다.
 
 ```text
 latency_ms = -100
@@ -232,13 +232,13 @@ user_id의 90%가 NULL
 검증
 ```
 
-기술적으로 성공한 파이프라인이 잘못된 업무 데이터를 조용히 게시하도록 두지 않는다.
+작업 상태가 성공이어도 값이 틀리면 게시를 멈추거나 격리한다. 복구 뒤에는 업무 지표까지 다시 확인한다.
 
 ---
 
 ## 20.5 Incident Drill — Data Skew
 
-증상:
+**데이터 쏠림(Data Skew)**은 일부 키나 파티션에 작업량이 몰리는 현상이다. 한 계산 노드만 늦게 끝난다면 키 분포와 분할 방법을 확인한다.
 
 ```text
 대부분의 Spark task는 빠르게 완료
@@ -268,13 +268,13 @@ partition 전략 변경
 AQE
 ```
 
-Streaming에서 re-keying/salting을 검토할 때는 순서 보장 요구를 지킨다.
+스트리밍에서 키를 바꾸거나 salting으로 부하를 나누면 같은 키의 순서가 달라질 수 있다. 순서 보장이 필요한 이벤트인지 먼저 확인한다.
 
 ---
 
 ## 20.6 Incident Drill — Small File Explosion
 
-증상:
+**작은 파일 폭증**은 잦은 쓰기로 파일 수가 지나치게 늘어난 상황이다. 저장량이 같아도 파일 목록을 읽고 여는 일이 많아져 쿼리가 느려질 수 있다.
 
 ```text
 수백만 개의 작은 Parquet 파일
@@ -309,7 +309,7 @@ partition 전략 재검토
 
 ## 20.7 Incident Drill — Stale Table
 
-예:
+**오래된 테이블(Stale Table)**은 작업은 끝났어도 기대한 새 데이터가 보이지 않는 상태다. 마지막 성공 시각과 원본 도착 시각을 비교한다.
 
 ```text
 현재 시각: 10:00
@@ -327,13 +327,13 @@ Gold?
 Dashboard?
 ```
 
-Freshness를 여러 지점에서 측정해야 하는 이유다.
+최신성(Freshness)은 원본 도착, Bronze·Silver·Gold 갱신, 대시보드 반영 시각을 각각 재야 지연이 시작된 곳을 찾을 수 있다.
 
 ---
 
 ## 20.8 Incident Drill — Corrupt Transformation
 
-예:
+**손상된 변환(Corrupt Transformation)**은 코드나 비즈니스 규칙 오류가 잘못된 결과를 만드는 상황이다. 배포 시점과 영향을 받은 결과 범위를 먼저 확인한다.
 
 ```text
 WHERE event_type = 'clik'
@@ -379,7 +379,7 @@ Volume / Quality 이상
 
 ## 20.9 Incident Drill — CDC Failure
 
-발생할 수 있는 장애:
+**CDC 장애**는 데이터베이스 변경을 가져오는 흐름이 멈추거나 누락되는 상황이다. 원본 로그 보존 기간과 마지막 처리 위치가 복구 가능 범위를 정한다.
 
 ```text
 Connector 중지
@@ -414,7 +414,7 @@ Snapshot / Re-bootstrap
 
 ## 20.10 Capacity Planning
 
-용량 계획은 플랫폼이 예상 데이터량과 동시 작업을 감당할 수 있는지 추정하는 일이다.
+**용량 계획(Capacity Planning)**은 예상 데이터량과 동시 작업을 플랫폼이 감당할 수 있는지 미리 따지는 일이다. 현재 평균뿐 아니라 급증 시간대와 복구 작업도 포함한다.
 
 주요 입력:
 
@@ -455,7 +455,7 @@ concurrent dashboards
 
 ## 20.11 Kafka Capacity Questions
 
-유용한 질문:
+Kafka 용량을 볼 때는 초당 입력량뿐 아니라 보존 기간, 복제 수, 소비자 지연을 함께 묻는다. 버퍼가 꽉 차기 전에 어느 지표가 먼저 악화되는지 정한다.
 
 ```text
 초당 event는 몇 개인가?
@@ -481,7 +481,7 @@ Partition이 너무 많으면:
 
 ## 20.12 Lakehouse Capacity Questions
 
-추적할 항목:
+Lakehouse 용량에는 저장 바이트뿐 아니라 파일 수, 메타데이터, 동시 쓰기와 유지보수 작업이 포함된다. 작은 파일이 쌓이면 같은 데이터량에서도 비용이 달라진다.
 
 ```text
 TB/day
@@ -506,7 +506,7 @@ delete file growth
 
 ## 20.13 Spark Capacity Questions
 
-고려할 항목:
+Spark 용량은 입력량, 셔플, 메모리, 병렬 작업 수에 좌우된다. 평균 실행 시간만 보지 말고 가장 느린 파티션을 확인한다.
 
 ```text
 concurrent jobs
@@ -525,7 +525,7 @@ Backfill에는 별도의 용량 정책이 필요하다.
 
 ## 20.14 Query Capacity Questions
 
-Trino / SQL Warehouse / Snowflake의 경우:
+조회 용량은 동시 사용자와 쿼리 복잡도에 따라 달라진다. Trino·SQL Warehouse·Snowflake에서는 응답 지연과 대기열을 함께 본다.
 
 ```text
 concurrent users
@@ -544,7 +544,7 @@ Workload isolation이 유용하다.
 
 ## 20.15 Cost Engineering
 
-주요 비용 요인:
+**비용 엔지니어링(Cost Engineering)**은 필요한 성능과 신뢰성을 유지하면서 계산·저장·조회 비용을 관리하는 일이다. 사용량과 실제 청구 단위를 연결해 본다.
 
 ```text
 Compute
@@ -613,7 +613,7 @@ product
 
 ## 20.16 DR / Recovery
 
-DR = Disaster Recovery(재해 복구).
+**DR(Disaster Recovery, 재해 복구)**은 장애로 서비스나 데이터가 사라졌을 때 다시 운영 가능한 상태로 되돌리는 계획이다. 백업 파일뿐 아니라 메타데이터와 접근 경로도 확인한다.
 
 주요 복구 시나리오:
 
@@ -631,7 +631,7 @@ Credential/policy corruption
 
 ## 20.17 Catalog Recovery
 
-Lakehouse table은 파일만으로 이루어지지 않는다.
+**카탈로그 복구**는 테이블 이름과 현재 메타데이터 위치를 되찾는 일이다. 객체 파일이 남아 있어도 이 연결이 끊기면 테이블을 바로 조회하지 못할 수 있다.
 
 Table metadata/catalog를 잃으면:
 
@@ -654,7 +654,7 @@ table을 즉시 사용하지 못할 수 있음
 
 ## 20.18 Table Recovery
 
-가능한 도구:
+**테이블 복구**는 잘못된 쓰기나 삭제 이후 올바른 상태를 되찾는 일이다. 스냅샷과 백업을 쓸 수 있는 기간을 먼저 확인한다.
 
 ```text
 Iceberg snapshot
@@ -670,7 +670,7 @@ source replay
 
 ## 20.19 Checkpoint Loss
 
-Streaming 시스템은 checkpoint/state에 의존한다.
+**체크포인트(Checkpoint)**는 스트리밍 작업이 어디까지 처리했는지와 필요한 상태를 저장한 복구 지점이다. 이를 잃으면 원본 보존 범위부터 확인해야 한다.
 
 Spark/Flink checkpoint를 잃으면:
 
@@ -697,7 +697,7 @@ Spark/Flink checkpoint를 잃으면:
 
 ## 20.20 Source-of-Truth Decisions
 
-모든 중요 dataset에 다음을 문서화한다.
+각 중요 데이터셋의 **기준 원본(Source of Truth)**을 문서화한다. 재처리할 때 어느 입력을 믿고 어느 결과를 다시 만들지 미리 정해야 중복과 누락을 줄인다.
 
 ```text
 Source of Truth
@@ -729,7 +729,7 @@ fact_llm_call
 
 ## 20.21 Data Platform SLOs
 
-핵심 SLO 범주:
+**SLO(Service Level Objective)**는 데이터 서비스가 목표로 삼는 수준이다. 새로움, 정확성, 가용성, 복구 시간, 조회 지연을 측정 가능한 값으로 정한다.
 
 ### Freshness
 
@@ -800,7 +800,7 @@ Tier 3
 
 ## 20.22 Production Runbook Mental Model
 
-모든 중요 파이프라인에 대해 다음을 알아야 한다.
+**운영 절차서(Runbook)**는 장애 때 누가 무엇을 확인하고 어떻게 복구할지 적은 안내서다. 새벽에도 따라 할 수 있도록 입력·판단·종료 기준을 구체적으로 쓴다.
 
 ```text
 Owner

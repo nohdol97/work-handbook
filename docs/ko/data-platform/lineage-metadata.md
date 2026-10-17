@@ -1,8 +1,8 @@
 ---
 id: data-platform-lineage-metadata
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-13-01
   - DPE-13-01A
@@ -18,13 +18,13 @@ knowledge_ids:
 
 이 Learn 문서는 metadata, lineage, catalog의 역할을 학습한 내용이다. 예시는 가상 데이터셋이며 수집기나 플랫폼을 구축해 검증한 기록이 아니다. Metadata는 데이터를 설명하는 데이터이고, lineage는 데이터가 생성되고 사용되는 경로다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
-
-**읽기 길잡이:** 메타데이터(metadata)는 책의 제목·저자·분류처럼 데이터의 뜻과 상태를 설명한다. Lineage(계보)는 그 책이 어떤 자료에서 만들어져 어디에 쓰였는지 그린 경로다. 13.1의 기술·운영·업무 메타데이터를 함께 보면 데이터의 형태, 최근 실행, 지표의 의미를 구별할 수 있다. 예를 들어 `raw_orders.amount`의 타입을 바꾸려면 13.2–13.5의 경로를 따라 변환 테이블과 대시보드까지 확인한다. 13.6–13.7의 도구와 catalog는 이 정보를 찾도록 돕지만, 그래프에 없는 연결까지 안전하다고 보증하지는 않는다.
+**본문 안내:** 아래 본문은 원본의 번호·목차·핵심 기술 내용과 예시를 유지하면서 처음 배우는 독자가 이해하기 쉽게 다시 썼다. 원본의 적용 조건과 보충 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
 
 <!-- SOURCE CORE START -->
 
 ## 13.1 Metadata Types
+
+메타데이터(metadata)는 책의 제목·저자·분류처럼 데이터 자체를 설명하는 정보다. 데이터의 구조, 최근 실행 상태, 업무상 뜻은 서로 다른 종류이므로 함께 확인해야 안전하게 사용할 수 있다. 예를 들어 `orders.amount`의 타입뿐 아니라 마지막 갱신 시각과 매출 계산에 쓰이는지까지 알아야 한다.
 
 Metadata:
 
@@ -39,7 +39,7 @@ Metadata:
 - Partition
 - File Format
 
-질문:
+기술 메타데이터가 답하는 질문:
 
 > 구조가 어떻게 생겼는가?
 
@@ -51,7 +51,7 @@ Metadata:
 - Row Count
 - Processing Time
 
-질문:
+운영 메타데이터가 답하는 질문:
 
 > 지금 정상적으로 운영되는가?
 
@@ -63,7 +63,7 @@ Metadata:
 - Business Term
 - Classification
 
-질문:
+업무 메타데이터가 답하는 질문:
 
 > 이 데이터는 업무적으로 무엇을 의미하는가?
 
@@ -71,11 +71,13 @@ Metadata:
 
 ## 13.1A Business Metadata vs Semantic Layer
 
-세션 중 보충 질문:
+Business metadata는 지표가 무엇을 뜻하는지 설명하고 semantic layer는 여러 질의가 같은 계산 정의를 재사용하도록 돕는다. 레시피 카드에 “매출”의 의미를 적는 것과 실제 재료·계산 순서를 정하는 차이에 가깝다. 아래 식은 개념 예시이며 실제 회계 규칙이나 바로 실행할 SQL이 아니다.
+
+학습 중 나온 질문:
 
 > Business Metadata는 Semantic Layer와 유사해 보인다.
 
-답:
+두 개념은 의미를 다루지만 쓰임이 다르다:
 
 > **겹치는 부분은 많지만 동일하지 않다.**
 
@@ -119,13 +121,15 @@ BI / Dashboard / AI
 → 동일 정의 사용
 ```
 
-Semantic Layer는 Business Metadata의 **실행 가능한 분석 정의**를 구체화한 계층으로 이해하면 좋다.
+Semantic layer는 business metadata의 뜻을 쿼리에서 재사용할 수 있는 **계산 정의**로 구체화한다.
 
 ---
 
 ## 13.2 Dataset Lineage
 
-Dataset Lineage:
+Lineage(계보)는 데이터가 어떤 원본과 작업을 거쳐 만들어져 어디에 쓰이는지 기록한 경로다. 예를 들어 대시보드의 일별 사용자 수가 틀리면 이 경로를 거슬러 원본 이벤트와 변환 작업을 찾는다. 변경 전에는 반대로 경로를 따라 영향을 받을 소비자를 찾는다.
+
+Dataset lineage는 다음 관계를 보여 준다:
 
 > **Source → Job → Target 관계**
 
@@ -145,11 +149,11 @@ mart_daily_users
 
 ### Upstream
 
-나를 만드는 쪽.
+현재 데이터의 원본과 이를 만든 작업이다.
 
 ### Downstream
 
-나를 사용하는 쪽.
+현재 데이터를 읽거나 그 결과에 의존하는 쪽이다.
 
 활용:
 
@@ -160,6 +164,8 @@ mart_daily_users
 ---
 
 ## 13.3 OpenLineage
+
+OpenLineage는 여러 도구가 계보 정보를 공통 형식으로 내보내고 읽도록 돕는 표준이다. Job은 작업 정의, run은 한 번의 실행, dataset은 입력 또는 출력이다. 다만 job·dataset 메타데이터 이벤트가 항상 run 하나에 속하는 것은 아니다. 표준을 사용해도 실제 수집 범위는 연동별로 확인한다.
 
 OpenLineage:
 
@@ -189,13 +195,13 @@ Job: transform_orders
 silver.orders
 ```
 
-OpenLineage는 UI 자체라기보다 **Lineage Event Standard**다.
+OpenLineage는 결과를 보여 주는 화면이 아니라 계보 이벤트를 표현하는 **표준**이다.
 
 ---
 
 ## 13.4 Column-Level Lineage
 
-Table-Level보다 더 세밀한 Column 관계.
+Column-level lineage는 “어느 테이블을 읽었나”보다 한 단계 더 들어가 “어느 열이 결과 열에 쓰였나”를 보여 준다. `net_amount`에 `amount`와 `discount`가 쓰이면 두 원본 열의 변경을 우선 검토할 수 있다. 수집되지 않은 SQL이나 동적 변환은 그래프에 빠질 수 있다.
 
 예:
 
@@ -215,15 +221,15 @@ raw_orders.discount ──┘
 
 ## 13.5 Impact Analysis
 
-Lineage를 이용해 변경/장애 영향 확인.
+Impact analysis(영향 분석)는 변경이나 장애가 어디에서 시작했고 어디까지 퍼질 수 있는지 확인한다. Upstream은 원인을 거슬러 보는 방향, downstream은 소비자로 내려가는 방향이다. 타입 변경을 승인하기 전에는 그래프뿐 아니라 실제 SQL과 소비자의 기대 타입도 확인한다.
 
 ### Upstream Analysis
 
-문제 원인을 거슬러 올라감.
+문제의 원본과 이전 변환을 거슬러 확인한다.
 
 ### Downstream Impact Analysis
 
-변경이 어디까지 영향을 주는지 확인.
+바뀐 데이터가 어떤 변환과 소비자에게 이어지는지 확인한다.
 
 예:
 
@@ -242,6 +248,8 @@ Dashboard
 ---
 
 ## 13.6 Marquez
+
+Marquez는 OpenLineage 정보를 모아 실행과 데이터셋의 관계를 찾아보는 도구다. 도로 표준과 지도가 다르듯 OpenLineage는 이벤트 형식, Marquez는 수집·조회 화면의 예다. 도구를 설치한 사실만으로 모든 실행·열 관계가 수집됐다고 볼 수 없다.
 
 Marquez:
 
@@ -263,7 +271,7 @@ Marquez는 Catalog 전체보다 Lineage/Run 관계에 초점이 강하다.
 
 ## 13.7 Catalog Integration
 
-Catalog에 여러 정보를 통합.
+Catalog(카탈로그)는 여러 출처의 메타데이터를 한곳에서 찾게 하는 안내 목록이다. 새 지표를 쓰기 전에 설명·소유자·품질·상하류 경로를 함께 볼 수 있다. 다만 정책이 catalog에 표시된다고 모든 쿼리 엔진과 직접 저장소 접근에서 자동으로 강제되는 것은 아니다.
 
 ```text
 Iceberg
@@ -311,8 +319,6 @@ Governance
 <!-- SOURCE CORE END -->
 
 ## 적용 시 보완할 점
-
-13.1A의 semantic layer는 “매출” 같은 업무 지표를 일관된 계산 정의로 연결하는 층이다. Catalog가 지표 설명을 보여 주더라도 그 계산이나 접근 정책을 자동으로 실행한다는 뜻은 아니다. 13.3의 OpenLineage는 실행·데이터셋 관련 메타데이터를 주고받는 표준이며, 13.6의 Marquez는 이를 모아 살펴보는 도구의 예다. 13.4의 column-level lineage가 수집됐을 때는 테이블 전체보다 정확하게 영향받는 열을 좁힐 수 있다.
 
 ### Semantic layer의 계산 경계
 

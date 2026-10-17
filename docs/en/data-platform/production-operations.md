@@ -1,8 +1,8 @@
 ---
 id: data-platform-production-operations
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE2-20-01
   - DPE2-20-02
@@ -31,9 +31,9 @@ knowledge_ids:
 
 # Chapter 20 — Production Data Platform Engineering
 
-This page preserves Chapter 20 of the supplied complete source in its original order and form. Examples and diagrams describe studied concepts, not completed implementation, production recovery, or tests.
+This page follows the outline and technical content of Chapter 20, with prose rewritten for beginners. Examples and diagrams describe studied concepts, not completed implementation, production recovery, or tests.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
 
 <!-- SOURCE CORE START -->
 
@@ -48,7 +48,7 @@ The key shift is:
 
 ## 20.1 Backfills
 
-Backfill:
+For three missing days of order totals or a fixed transformation bug, first define the date or partition range to process again.
 
 > **Recompute historical data for a defined range.**
 
@@ -93,7 +93,7 @@ Requirements:
 
 ## 20.2 Reprocessing
 
-Backfill is one form of reprocessing.
+**Reprocessing** means reading past inputs again to rebuild results; a backfill is one form. First choose whether to restart from events, Bronze data, or a snapshot.
 
 ### Kafka Replay
 
@@ -143,13 +143,13 @@ Iceberg Snapshot
 external source
 ```
 
-This must be decided before incidents.
+Decide the replay starting point for each dataset in advance. During an incident, source retention may have expired or replay order may be unclear.
 
 ---
 
 ## 20.3 Incident Drill — Schema Break
 
-Example:
+A **schema break** happens when a producer changes a field name or type and a consumer can no longer read it. Check the data contract and find the affected range.
 
 ```text
 Source:
@@ -202,7 +202,7 @@ Prevention:
 
 ## 20.4 Incident Drill — Bad Data
 
-Examples:
+A **bad-data incident** means a pipeline runs but its values are wrong. For example, a successful job can still count a payment twice.
 
 ```text
 latency_ms = -100
@@ -232,13 +232,13 @@ Reprocess
 Verify
 ```
 
-Do not allow a technically successful pipeline to silently publish bad business data.
+A successful job can still publish wrong values. Stop or isolate the output, then check business measures after recovery.
 
 ---
 
 ## 20.5 Incident Drill — Data Skew
 
-Symptoms:
+**Data skew** means some keys or partitions carry much more work than others. If one worker finishes last, inspect key distribution and partitioning.
 
 ```text
 Most Spark tasks finish quickly
@@ -268,13 +268,13 @@ partition strategy change
 AQE
 ```
 
-For streaming, preserve ordering requirements when considering re-keying/salting.
+Re-keying or salting can spread stream load but change the order of events for a key. Check whether the use case requires that order first.
 
 ---
 
 ## 20.6 Incident Drill — Small File Explosion
 
-Symptoms:
+A **small-file explosion** occurs when frequent writes create too many files. Even with the same data volume, opening and listing files can slow queries.
 
 ```text
 millions of tiny Parquet files
@@ -309,7 +309,7 @@ reconsider partition strategy
 
 ## 20.7 Incident Drill — Stale Table
 
-Example:
+A **stale table** lacks expected new data even if a job appears to have finished. Compare the last successful update with source arrival time.
 
 ```text
 Current time: 10:00
@@ -327,13 +327,13 @@ Gold?
 Dashboard?
 ```
 
-This is why freshness should be measured at multiple points.
+Measure **freshness** at source arrival, Bronze, Silver, Gold, and dashboard update times to find where delay began.
 
 ---
 
 ## 20.8 Incident Drill — Corrupt Transformation
 
-Example:
+A **corrupt transformation** is a code or business-rule error that produces wrong results. Start with the deployment time and affected output range.
 
 ```text
 WHERE event_type = 'clik'
@@ -379,7 +379,7 @@ Important lesson:
 
 ## 20.9 Incident Drill — CDC Failure
 
-Possible failures:
+A **CDC failure** stops or loses the flow of database changes. Source log retention and the last processed position define what can be recovered.
 
 ```text
 Connector stopped
@@ -414,7 +414,7 @@ Snapshot / Re-bootstrap
 
 ## 20.10 Capacity Planning
 
-Capacity planning means estimating whether the platform can handle expected volume and concurrency.
+**Capacity planning** asks whether the platform can handle expected data and concurrent work. Include peak periods and recovery work, not just averages.
 
 Key inputs:
 
@@ -455,7 +455,7 @@ concurrent dashboards
 
 ## 20.11 Kafka Capacity Questions
 
-Useful questions:
+For Kafka capacity, ask about input rate, retention time, replication, and consumer lag together. Decide which measure warns before the buffer fills.
 
 ```text
 How many events/sec?
@@ -481,7 +481,7 @@ operational overhead increases
 
 ## 20.12 Lakehouse Capacity Questions
 
-Track:
+Lakehouse capacity includes bytes, file counts, metadata, concurrent writes, and maintenance. Many small files can change cost even at the same data volume.
 
 ```text
 TB/day
@@ -506,7 +506,7 @@ Operational characteristics are very different.
 
 ## 20.13 Spark Capacity Questions
 
-Consider:
+Spark capacity depends on input size, shuffle, memory, and concurrent jobs. Check the slowest partition as well as average job time.
 
 ```text
 concurrent jobs
@@ -519,13 +519,13 @@ backfill overlap
 
 A pipeline that works daily may fail when a 90-day backfill starts at the same time.
 
-Backfill needs its own capacity policy.
+Backfills compete with normal work for resources, so set a separate schedule, parallelism limit, and stop condition.
 
 ---
 
 ## 20.14 Query Capacity Questions
 
-For Trino / SQL Warehouse / Snowflake:
+Query capacity depends on concurrent users and query complexity. For Trino, SQL Warehouse, or Snowflake, watch both response time and queueing.
 
 ```text
 concurrent users
@@ -544,7 +544,7 @@ Workload isolation is useful.
 
 ## 20.15 Cost Engineering
 
-Major cost drivers:
+**Cost engineering** controls compute, storage, and query cost while meeting needed performance and reliability. Connect usage to the actual billing units.
 
 ```text
 Compute
@@ -613,7 +613,7 @@ so cost ownership is clear.
 
 ## 20.16 DR / Recovery
 
-DR = Disaster Recovery.
+**DR (disaster recovery)** is a plan to restore service or data after a major failure. Check metadata and access paths as well as backup files.
 
 Important recovery scenarios:
 
@@ -631,7 +631,7 @@ Credential/policy corruption
 
 ## 20.17 Catalog Recovery
 
-A Lakehouse table is more than files.
+**Catalog recovery** restores the link from a table name to current metadata. Data files may exist, yet the table may be unreadable without that link.
 
 If table metadata/catalog is lost:
 
@@ -654,7 +654,7 @@ Protect it using:
 
 ## 20.18 Table Recovery
 
-Possible tools:
+**Table recovery** restores a correct table state after a bad write or deletion. First check how long snapshots and backups remain available.
 
 ```text
 Iceberg snapshot
@@ -670,7 +670,7 @@ The fastest recovery depends on the failure type.
 
 ## 20.19 Checkpoint Loss
 
-Streaming systems depend on checkpoint/state.
+A **checkpoint** records a stream job's progress and needed state for recovery. If it is lost, start by checking how much source history remains.
 
 If Spark/Flink checkpoint is lost:
 
@@ -697,7 +697,7 @@ Plan it before an outage.
 
 ## 20.20 Source-of-Truth Decisions
 
-For every critical dataset, document:
+Document the **source of truth** for each critical dataset. Decide which input to trust and which output to rebuild so replay avoids gaps and duplicates.
 
 ```text
 Source of Truth
@@ -729,7 +729,7 @@ This turns recovery from improvisation into procedure.
 
 ## 20.21 Data Platform SLOs
 
-Core SLO categories:
+An **SLO (service level objective)** states a measurable target for a data service, such as freshness, correctness, availability, recovery time, or query latency.
 
 ### Freshness
 
@@ -800,7 +800,7 @@ Tier 3
 
 ## 20.22 Production Runbook Mental Model
 
-For each critical pipeline know:
+A **runbook** tells an operator what to check, how to recover, and when recovery is complete. Write steps clearly enough to follow during an overnight incident.
 
 ```text
 Owner

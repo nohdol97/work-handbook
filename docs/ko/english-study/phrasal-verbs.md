@@ -1,8 +1,8 @@
 ---
 id: english-study-phrasal-verbs
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids: []
 ---
 
@@ -12,9 +12,25 @@ knowledge_ids: []
 
 ## 문서에 나온 표현 — 빈도순
 
+### rule out {#phrasal-verbs-rule-out}
+
+**5회 · 4개 문서 · 중립**
+
+**가능성에서 제외하다**
+
+원인이나 선택지를 배제하는 타동사 구동사다. 분리할 수 있어 rule it out으로 쓴다. 증거 없이 배제했다고 단정하지 않는다.
+
+> Can we rule out a network timeout?
+>
+> 네트워크 시간 초과 가능성을 배제할 수 있나요?
+
+집계한 형태: rule out, rules out, ruled out, ruling out.
+
+본문 예: [data-platform/data-quality](../data-platform/data-quality.md), [data-platform/flink](../data-platform/flink.md), [data-platform/lakehouse-iceberg](../data-platform/lakehouse-iceberg.md).
+
 ### narrow down {#phrasal-verbs-narrow-down}
 
-**3회 · 2개 문서 · 중립**
+**4회 · 3개 문서 · 중립**
 
 **후보나 범위를 줄이다**
 
@@ -26,7 +42,7 @@ knowledge_ids: []
 
 집계한 형태: narrow down, narrows down, narrowed down, narrowing down.
 
-본문 예: [platform-infrastructure/architecture](../platform-infrastructure/architecture.md), [platform-infrastructure/kubernetes-operations](../platform-infrastructure/kubernetes-operations.md).
+본문 예: [data-platform/data-observability](../data-platform/data-observability.md), [platform-infrastructure/architecture](../platform-infrastructure/architecture.md), [platform-infrastructure/kubernetes-operations](../platform-infrastructure/kubernetes-operations.md).
 
 용법 참고: [1](https://dictionary.cambridge.org/dictionary/english/narrow-down).
 
@@ -47,22 +63,6 @@ knowledge_ids: []
 본문 예: [data-platform/production-operations](../data-platform/production-operations.md), [platform-infrastructure/terraform-iac](../platform-infrastructure/terraform-iac.md).
 
 용법 참고: [1](https://dictionary.cambridge.org/dictionary/english/roll-back).
-
-### rule out {#phrasal-verbs-rule-out}
-
-**2회 · 1개 문서 · 중립**
-
-**가능성에서 제외하다**
-
-원인이나 선택지를 배제하는 타동사 구동사다. 분리할 수 있어 rule it out으로 쓴다. 증거 없이 배제했다고 단정하지 않는다.
-
-> Can we rule out a network timeout?
->
-> 네트워크 시간 초과 가능성을 배제할 수 있나요?
-
-집계한 형태: rule out, rules out, ruled out, ruling out.
-
-본문 예: [platform-infrastructure/linux-containers](../platform-infrastructure/linux-containers.md).
 
 ### scale out {#phrasal-verbs-scale-out}
 

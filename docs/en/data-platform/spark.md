@@ -1,8 +1,8 @@
 ---
 id: data-platform-spark
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-04-01
   - DPE-04-02
@@ -24,7 +24,7 @@ knowledge_ids:
 
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
 
 **Spark** divides large data work among many workers. Imagine several people reading different parts of a ledger, then combining their results. Sections 4.1–4.14 connect task allocation, data movement, storage formats, batch work, and streaming.
 
@@ -32,7 +32,9 @@ Page type: Learn. This page records concepts and design examples from the suppli
 
 ## 4.1 Spark Architecture
 
-Basic parts of a Spark application:
+Spark uses a driver to plan large jobs and executors to process data in parallel. Like readers sharing parts of a ledger, they divide the work while a cluster manager provides execution resources.
+
+The following parts plan and run a Spark application.
 
 ```text
 Application
@@ -71,7 +73,9 @@ With Spark on Kubernetes, Kubernetes manages execution resources for driver/exec
 
 ## 4.2 Execution Model
 
-Spark execution units:
+An action starts a job, which is divided into stages and tasks. These units help identify whether a whole query is slow or only a stage or partition task is lagging.
+
+Read a running application as jobs, stages, and tasks when locating slow work.
 
 ```text
 Application
@@ -107,7 +111,9 @@ Represent transformation dependencies as a graph.
 
 ## 4.3 Lazy Evaluation
 
-Spark transformations do not run as soon as they are called.
+Lazy evaluation means Spark waits to compute declared transformations until an action needs a result. This lets Spark plan several steps together; inspect `explain()` and runtime metrics to see what it actually does.
+
+Defining a transformation such as `filter` does not compute the data immediately.
 
 Example:
 
@@ -159,6 +165,8 @@ Use `explain()` to inspect the plan.
 
 ## 4.4 Narrow vs Wide Dependencies
 
+A dependency tells which input partitions an output partition needs. Work that stays within partitions has different costs from work that redistributes data across workers.
+
 ### Narrow Dependency
 
 Each output partition depends on only a few input partitions.
@@ -190,7 +198,9 @@ This causes a shuffle.
 
 ## 4.5 Shuffle
 
-Shuffle is a very important concept for Spark performance.
+Regrouping scattered orders by customer shows why a shuffle can be costly.
+
+A shuffle moves data between workers to bring the same keys together. Large movements can be costly.
 
 ```text
 Worker A ─┐
@@ -216,6 +226,8 @@ Key point:
 
 ## 4.6 Join Strategies
 
+A join matches two datasets by key. Whether Spark copies a small dimension or redistributes both sides depends on size and distribution, so inspect the physical plan.
+
 ### Broadcast Hash Join
 
 Large fact + small dimension.
@@ -226,7 +238,7 @@ Large Fact
 Small Dimension
 ```
 
-Broadcast the small table to all executors.
+Copy the small table to executors participating in the join. This can avoid moving the whole large table, but each executor needs enough memory for the copy.
 
 Benefit:
 - Reduce shuffling of the large table
@@ -278,9 +290,11 @@ Many duplicate join keys can produce far more result rows than expected.
 
 ## 4.7 Partition Management
 
+A Spark partition is a data slice processed by a task. Too few slices limit parallel work; too many add task overhead. Consider input size and output file count together.
+
 ### repartition
 
-Redistribute partitions.
+`repartition` redistributes data to change task parallelism or layout by key.
 
 A shuffle may occur.
 
@@ -318,6 +332,8 @@ These are connected.
 
 ## 4.8 Cache / Persist
 
+A cache holds intermediate results for reuse. Keeping a result used only once can waste memory, so compare recomputation cost with how often it will be reused.
+
 Spark can keep intermediate results in memory or on disk.
 
 ### Why use it?
@@ -352,7 +368,9 @@ For results reused over a long period or across jobs, durable storage such as an
 
 ## 4.9 Data Skew
 
-Data skew means data concentrates in particular partitions.
+Skew means a few keys or partitions receive much more work. If most tasks finish but one remains, check its input volume and join output rows.
+
+For example, if one customer key holds most orders, its task may run much longer than the others.
 
 Example:
 
@@ -398,7 +416,9 @@ Adaptive Query Execution can use runtime statistics for some skew optimizations.
 
 ## 4.10 Spark Performance Engineering
 
-Common bottlenecks:
+Before adding CPU, find which stage consumes time and resources. Task duration, shuffle, spill, and GC in the Spark UI help narrow the bottleneck.
+
+Use the Spark UI to identify which of these resources slows the work.
 
 - CPU
 - Executor Memory
@@ -437,7 +457,7 @@ Important for finding which stage/task is the bottleneck.
 
 ## 4.11 Spark + Iceberg
 
-Spark is one of the main compute engines for batch processing of Iceberg data.
+Spark is a compute engine that can read Iceberg table files, transform large batches, and publish results through a new snapshot. File layout and commits affect both scan and write cost.
 
 ```text
 Iceberg
@@ -493,7 +513,9 @@ Streaming writes, MERGE operations, and small files can build up and require mai
 
 ## 4.12 Structured Streaming
 
-Spark Structured Streaming provides a model for treating streaming data as a table.
+Structured Streaming can handle continuing input in small processing intervals. Frequent Kafka-to-Iceberg writes may create small files, while stateful work needs checkpoints and a late-event policy.
+
+Spark Structured Streaming treats continuing input like a growing table and repeatedly computes results from it.
 
 It can mainly be understood as a **micro-batch** model.
 
@@ -567,6 +589,8 @@ Streaming fits ongoing processing; batch Spark fits large historical reprocessin
 
 ## 4.13 Spark's Role
 
+Spark runs large transformations; it is not the place that stores the data. For historical recomputation or large joins, it works with storage such as Iceberg and S3.
+
 Question:
 
 > What is Spark's role?
@@ -600,6 +624,8 @@ Spark
 
 ## 4.14 Do You Need dbt When Using Spark?
 
+A Spark pipeline may still need SQL model dependencies, documentation, and tests. dbt can manage these definitions while a connected engine runs the SQL, so the tools can work together when needed.
+
 Their roles differ.
 
 ```text
@@ -631,12 +657,6 @@ For simple SQL transformations, dbt with Trino or a warehouse may work without S
 ---
 
 <!-- SOURCE CORE END -->
-
-## A beginner's guide to the connections
-
-- **Sections 4.1–4.5, execution:** The driver plans work; executors run pieces of it. An operation such as `groupBy` may need a shuffle, which moves rows with the same key between workers. It is like dividing papers among readers and then regrouping them by topic. When a stage is slow, check data movement as well as computation.
-- **Sections 4.6–4.10, performance choices:** A broadcast join copies a small dimension to participating workers and can avoid reshuffling a large fact, but each copy must fit in memory. Skew means a few keys give some workers far more work than others. Use the Spark UI to compare partitions, spill, and slow tasks before choosing a fix.
-- **Sections 4.11–4.14, tool roles:** How Spark reads and writes Iceberg depends on file layout and commits. Structured Streaming processes continuing input but must manage state and checkpoints. dbt can manage SQL model dependencies and tests alongside Spark's large-scale computation. Choose a combination from data volume, latency needs, and model-management requirements.
 
 ## Source qualifications {#source-notes}
 

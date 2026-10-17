@@ -1,8 +1,8 @@
 ---
 id: english-study-phrasal-verbs
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids: []
 ---
 
@@ -12,9 +12,25 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ## Expressions in the corpus — by frequency
 
+### rule out {#phrasal-verbs-rule-out}
+
+**5 occurrences · 4 documents · neutral**
+
+**가능성에서 제외하다**
+
+Use this transitive phrasal verb to exclude a cause or option. It is separable: rule it out. Do not claim a cause is excluded without evidence.
+
+> Can we rule out a network timeout?
+>
+> 네트워크 시간 초과 가능성을 배제할 수 있나요?
+
+Counted forms: rule out, rules out, ruled out, ruling out.
+
+Example source pages: [data-platform/data-quality](../data-platform/data-quality.md), [data-platform/flink](../data-platform/flink.md), [data-platform/lakehouse-iceberg](../data-platform/lakehouse-iceberg.md).
+
 ### narrow down {#phrasal-verbs-narrow-down}
 
-**3 occurrences · 2 documents · neutral**
+**4 occurrences · 3 documents · neutral**
 
 **후보나 범위를 줄이다**
 
@@ -26,7 +42,7 @@ Use this transitive phrasal verb to reduce a set of options or possible causes. 
 
 Counted forms: narrow down, narrows down, narrowed down, narrowing down.
 
-Example source pages: [platform-infrastructure/architecture](../platform-infrastructure/architecture.md), [platform-infrastructure/kubernetes-operations](../platform-infrastructure/kubernetes-operations.md).
+Example source pages: [data-platform/data-observability](../data-platform/data-observability.md), [platform-infrastructure/architecture](../platform-infrastructure/architecture.md), [platform-infrastructure/kubernetes-operations](../platform-infrastructure/kubernetes-operations.md).
 
 Usage references: [1](https://dictionary.cambridge.org/dictionary/english/narrow-down).
 
@@ -47,22 +63,6 @@ Counted forms: roll back, rolls back, rolled back, rolling back.
 Example source pages: [data-platform/production-operations](../data-platform/production-operations.md), [platform-infrastructure/terraform-iac](../platform-infrastructure/terraform-iac.md).
 
 Usage references: [1](https://dictionary.cambridge.org/dictionary/english/roll-back).
-
-### rule out {#phrasal-verbs-rule-out}
-
-**2 occurrences · 1 document · neutral**
-
-**가능성에서 제외하다**
-
-Use this transitive phrasal verb to exclude a cause or option. It is separable: rule it out. Do not claim a cause is excluded without evidence.
-
-> Can we rule out a network timeout?
->
-> 네트워크 시간 초과 가능성을 배제할 수 있나요?
-
-Counted forms: rule out, rules out, ruled out, ruling out.
-
-Example source pages: [platform-infrastructure/linux-containers](../platform-infrastructure/linux-containers.md).
 
 ### scale out {#phrasal-verbs-scale-out}
 

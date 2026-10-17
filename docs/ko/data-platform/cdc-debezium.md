@@ -1,8 +1,8 @@
 ---
 id: data-platform-cdc-debezium
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-06-01
   - DPE-06-02
@@ -19,14 +19,16 @@ knowledge_ids:
 
 이 문서는 개념 학습 기록이다. 아래 경로와 복구 절차는 설명용이며 실제 운영·장애 복구를 수행한 기록이 아니다. 제품 동작은 2026-09-24에 공식 문서와 대조했다. 실행 환경에서는 connector와 DB 버전 및 설정을 다시 확인한다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 원본의 목차·절 번호·핵심 기술 내용을 유지하면서 본문 문장을 입문자가 읽기 쉽게 다듬었다. 원본 자료는 출처에 보존되어 있다. 버전·운영 조건과 추가 설명은 뒤의 보완 구역을 확인한다.
 
 **CDC(Change Data Capture)**는 데이터베이스의 행 변경을 다른 시스템에 전달하는 방식이고, **Debezium**은 그 변경을 읽어 이벤트로 내보내는 도구다. 가게 장부를 매번 통째로 복사하는 대신 수정 내역을 이어서 받는 것에 가깝다. 아래 6.1~6.9는 초기 사본부터 변경 적용과 복구까지의 흐름이다.
 
 <!-- SOURCE CORE START -->
 ## 6.1 CDC Fundamentals
 
-CDC = Change Data Capture.
+주문 테이블을 매번 통째로 읽지 않고 변경된 행만 보내면 downstream은 새 주문·수정·삭제를 이어 반영할 수 있다.
+
+CDC는 **Change Data Capture**, 즉 데이터베이스의 변경을 포착해 다른 시스템으로 보내는 방식이다.
 
 목적:
 
@@ -47,7 +49,7 @@ WHERE updated_at > last_time
 - 변경 순서 관리 어려움
 - 실시간성 제한
 
-CDC는 DB Transaction Log를 읽는다.
+여기서 다루는 로그 기반 CDC는 DB transaction log를 이어 읽는다. Polling과 달리 삭제와 변경 순서를 추적할 수 있지만 로그 보존 조건을 확인해야 한다.
 
 PostgreSQL:
 
@@ -72,9 +74,11 @@ Kafka
 
 ## 6.2 Debezium Architecture
 
+Debezium connector는 원본 DB의 변경을 읽고 Kafka Connect는 connector를 실행·관리한다. Offset은 어디까지 읽었는지를 남기는 책갈피여서 재시작할 때 중요하다.
+
 ### Debezium Connector
 
-DB별 CDC Reader.
+Debezium connector는 원본 DB 종류에 맞는 변경 로그를 읽는 구성 요소다.
 
 예:
 - PostgreSQL
@@ -83,19 +87,21 @@ DB별 CDC Reader.
 
 ### Kafka Connect
 
-Connector 실행/관리 Platform.
+Kafka Connect는 connector의 실행과 관리를 맡는 플랫폼이다.
 
 ### Offset
 
-DB Log를 어디까지 읽었는지 기억.
+Offset은 DB 로그를 어디까지 읽었는지 남긴 위치다. 재시작할 때 이 위치부터 이어 읽는다.
 
 ### Snapshot
 
-CDC 시작 전에 이미 존재하던 데이터를 초기 복제.
+Snapshot은 CDC 시작 전에 이미 존재하던 행을 처음 가져오는 과정이다.
 
 ---
 
 ## 6.3 Initial Snapshot
+
+Initial snapshot은 CDC 시작 전에 이미 있던 행을 가져오는 출발점이다. Snapshot 중에도 행이 바뀔 수 있으므로 로그 위치를 이어 붙여 누락이나 중복 효과가 없는지 확인한다.
 
 처음 CDC를 시작하면 기존 데이터가 이미 존재한다.
 
@@ -121,13 +127,15 @@ Snapshot 중 변경
 
 을 모두 놓치지 않는 것.
 
-Connector Restart 때마다 전체 Snapshot을 다시 하는 것은 아니다.
+완료된 snapshot과 유효한 offset이 있다면 connector를 다시 시작할 때마다 전체 snapshot을 반복하지는 않는다.
 
 Offset이 있으면 이어서 읽는다.
 
 ---
 
 ## 6.4 CDC Event Structure
+
+CDC 이벤트는 어떤 행이 어떻게 바뀌었는지를 전한다. `before`, `after`, 연산 종류와 원본 위치를 함께 보면 현재 상태를 만들거나 변경 이력을 추적할 수 있다.
 
 대표 정보:
 
@@ -182,11 +190,13 @@ Transaction Metadata:
 
 ## 6.5 Ordering
 
+같은 주문의 생성·결제·배송 변경은 순서가 뒤집히면 현재 상태도 틀릴 수 있다. Kafka 전체에 하나의 순서가 있다고 가정하지 말고 key별 순서와 목적지 적용 규칙을 확인한다.
+
 핵심:
 
 > **CDC에서는 global ordering보다 같은 entity/key의 변경 순서가 중요하다.**
 
-Kafka는 Partition 내부 Ordering은 유지하지만 Partition 간 global order는 보장하지 않는다.
+Kafka는 한 partition 안의 순서는 유지하지만 여러 partition의 변경을 하나의 전역 순서로 보장하지는 않는다.
 
 같은 Primary Key를 같은 Partition으로 보내면 같은 entity의 순서를 유지하기 쉽다.
 
@@ -202,6 +212,8 @@ DB Transaction 하나에서 여러 Table 변경이 발생하더라도 Kafka에�
 ---
 
 ## 6.6 Deletes
+
+삭제에는 원본의 DELETE 이벤트, Kafka compacted topic의 tombstone, 목적지의 물리·논리 삭제가 각각 있다. 어느 기록을 남기고 현재 상태에서 무엇을 지울지 정해야 재처리 결과가 일관된다.
 
 ### DELETE Event
 
@@ -239,7 +251,9 @@ Silver Current State
 
 ## 6.7 Schema Changes
 
-Source DB Schema는 바뀔 수 있다.
+원본 테이블의 column이 바뀌면 이벤트 형식뿐 아니라 뒤쪽 소비자도 영향을 받는다. 새 nullable column도 모든 단계에서 자동 수용되는 것은 아니므로 호환성과 배포 순서를 확인한다.
+
+원본 DB에 column이 추가되거나 타입이 바뀌면 CDC 이벤트를 읽는 downstream도 영향을 받을 수 있다.
 
 예:
 
@@ -289,6 +303,8 @@ Source
 ---
 
 ## 6.8 CDC → Iceberg
+
+변경 이력을 모두 보관하는 테이블과 key별 최신 행을 보여 주는 테이블은 목적이 다르다. Iceberg current-state table을 만들 때는 변경 순서, 중복, 삭제를 함께 처리한다.
 
 대표 구조:
 
@@ -344,6 +360,8 @@ Replay로 같은 CDC Event가 다시 와도 결과가 깨지지 않아야 한다
 
 ## 6.9 CDC Failure Recovery
 
+장애 뒤에는 connector의 읽기 위치와 목적지에 이미 반영된 상태를 함께 확인한다. 저장된 offset으로 재개할 수 있어도 replay 중복이 생길 수 있고, 필요한 로그가 사라졌다면 snapshot 재초기화가 필요할 수 있다.
+
 정상적인 복구:
 
 ```text
@@ -381,12 +399,6 @@ Snapshot Recovery
 ---
 
 <!-- SOURCE CORE END -->
-
-## 처음 읽는 독자를 위한 연결 설명
-
-- **6.1~6.4 처음부터 이어 읽기:** Initial snapshot은 현재 행의 출발점을 만들고, 이후 로그의 변경을 이어 받는다. Offset은 어디까지 읽었는지 표시하는 책갈피다. 주문 42의 초기 상태가 `pending`이고 다음 UPDATE가 `paid`라면 소비자는 둘을 올바른 순서로 해석해야 한다. Snapshot과 로그가 겹치거나 재시도되는 구간은 중복 처리 규칙을 확인한다.
-- **6.5~6.8 목적지 적용:** INSERT, UPDATE, DELETE를 단순히 추가하기만 하면 현재 상태를 나타내기 어렵다. History table은 변경 기록을 남기고 current-state table은 key별 최신 상태를 나타낸다. Iceberg에 MERGE할 때는 key, 변경 순서, delete 의미, schema 변화가 일치해야 한다. 여러 partition 사이의 전역 순서를 당연하게 가정하지 않는다.
-- **6.9 복구:** 장애 뒤에는 connector offset, Kafka에 남은 범위, sink에 반영된 위치를 비교한다. 책갈피만 옮기면 빠진 변경이나 중복 효과가 생길 수 있으므로 작은 key 집합에서 원본과 최종 상태를 대조한 뒤 재처리 범위를 정한다.
 
 ## 적용 시 보완할 점
 

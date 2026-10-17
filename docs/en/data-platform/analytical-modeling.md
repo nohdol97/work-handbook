@@ -1,8 +1,8 @@
 ---
 id: data-platform-analytical-modeling
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-09-01
   - DPE-09-02
@@ -18,7 +18,7 @@ knowledge_ids:
 
 This page records study of grain, facts, dimensions, and metrics. The AI platform schema is a hypothetical design. It contains no real user or company data and does not claim implementation experience.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
 
 **Analytical data modeling** defines what rows mean and how they relate so a question can be answered correctly. Before adding a receipt total, decide whether one row means one item or one whole order. Sections 9.1–9.8 move from this row unit, or grain, to facts, dimensions, and metrics.
 
@@ -26,7 +26,7 @@ This page records study of grain, facts, dimensions, and metrics. The AI platfor
 
 ## 9.1 Grain
 
-Grain:
+Grain states what one table row means. One order and one order item have different grains, so write down which rows a total counts before building it.
 
 > **What one row in a table means.**
 
@@ -43,7 +43,7 @@ fact_llm_call
 → 1 row = 1 LLM call
 ```
 
-A wrong understanding of grain can cause double counting after a join.
+Joining one order to several item rows without checking grain can count the order amount several times.
 
 Modeling order:
 
@@ -58,7 +58,7 @@ Modeling order:
 
 ## 9.2 Fact Tables
 
-Fact table:
+A fact table records a measurable event or state at a defined time. One payment and a daily inventory balance can both be facts, but their grains and update patterns differ.
 
 > **Events or measurements.**
 
@@ -91,7 +91,7 @@ delivered_at
 
 ## 9.3 Dimension Tables
 
-Dimension:
+A dimension describes the who, what, or when around a fact. If a customer's region changes, keys and history rules determine which region past orders belong to.
 
 > **Attributes that describe a fact.**
 
@@ -118,7 +118,7 @@ It helps distinguish SCD Type 2 versions.
 
 ## 9.4 Star Schema
 
-A star schema has a central fact table and surrounding dimensions.
+A star schema connects a central fact with surrounding dimensions. It makes totals by date or product easier to understand, but each join still needs correct keys and grain.
 
 ```text
              dim_agent
@@ -138,7 +138,7 @@ Benefits:
 
 ## 9.5 SCD
 
-SCD means Slowly Changing Dimension.
+SCD (Slowly Changing Dimension) handles descriptive values that change over time. Choose Type 1 or Type 2 based on whether you need only the current customer tier or also the tier at an order's time.
 
 ### Type 1
 
@@ -162,7 +162,9 @@ This supports analysis of past states.
 
 ## 9.6 Denormalization
 
-Allow some duplication to simplify analytical queries and reduce joins.
+Denormalization stores some information together to simplify reads. It can reduce joins, but mixing amounts from different grains can count the same value more than once.
+
+Repeatedly stored values must be kept consistent when they change.
 
 OLTP:
 
@@ -182,7 +184,9 @@ Putting too much information in one table also creates problems.
 
 ## 9.7 AI Platform Modeling
 
-Do not mix grains.
+In an AI platform, one agent execution and one LLM call are different row units. If an execution has several calls, a join can repeat execution cost when totals are calculated.
+
+User events also have a different grain from executions and calls. Joining across these grains can inflate costs or counts.
 
 ### fact_agent_execution
 
@@ -250,6 +254,8 @@ Agent Execution
 
 ## 9.8 Metrics Modeling
 
+A metric needs a calculation rule and scope, not just a name. For an error rate, match the period, population, and exclusions for failed and total counts so dashboards use the same meaning.
+
 Purpose:
 
 > **Manage KPI definitions consistently.**
@@ -275,7 +281,7 @@ failed execution count / total execution count
 
 ### Semantic Layer
 
-Centrally define the business meaning and calculation of metrics.
+A semantic layer defines metric meaning and rules, such as numerators, denominators, filters, and periods, so tools can calculate them consistently.
 
 Examples:
 
@@ -291,12 +297,6 @@ Dashboards, analysts, and AI agents can use the same definitions.
 ---
 
 <!-- SOURCE CORE END -->
-
-## A beginner's guide to the connections
-
-- **Sections 9.1–9.4, row meaning:** Grain states what one table row represents. A fact can record a measurable event such as an order amount or a state at a set time such as daily inventory. A dimension describes the fact, such as customer or date. Joining one order fact to several item rows can repeat the order amount. Write down each table's grain and key relationship before designing a star schema.
-- **Sections 9.5–9.6, changes and convenient reads:** SCD handles dimension values that change over time. If Type 2 keeps past customer tiers, join an order to the tier valid when it happened. Denormalization combines data for convenient reads, but mixing measures from different grains can make totals wrong.
-- **Sections 9.7–9.8, a practical question:** If one agent execution has several LLM calls, execution cost and call cost have different grains. Fix the numerator, denominator, period, and exclusions for a metric such as “average cost per call.” dbt can organize these models, and Trino can query their results.
 
 ## Appendix: existing application notes
 

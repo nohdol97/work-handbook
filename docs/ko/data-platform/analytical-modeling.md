@@ -1,8 +1,8 @@
 ---
 id: data-platform-analytical-modeling
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-09-01
   - DPE-09-02
@@ -18,7 +18,7 @@ knowledge_ids:
 
 이 문서는 grain, fact, dimension, metric을 학습한 기록이다. AI platform schema는 가상의 설계 예시이며 실제 사용자·조직 데이터나 구현 경험을 담지 않는다.
 
-**본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+**본문 안내:** 원본의 목차·절 번호·핵심 기술 내용을 유지하면서 본문 문장을 입문자가 읽기 쉽게 다듬었다. 원본 자료는 출처에 보존되어 있다. 버전·운영 조건과 추가 설명은 뒤의 보완 구역을 확인한다.
 
 **분석 데이터 모델링**은 질문에 답할 수 있도록 데이터의 행 의미와 관계를 정하는 일이다. 영수증 한 줄이 상품 한 개를 뜻하는지 주문 한 건을 뜻하는지 먼저 정해야 합계를 맞출 수 있다. 아래 9.1~9.8은 그 행 단위인 grain에서 fact·dimension·metric으로 이어진다.
 
@@ -26,7 +26,7 @@ knowledge_ids:
 
 ## 9.1 Grain
 
-Grain:
+Grain은 테이블의 한 행이 무엇을 뜻하는지 정한 약속이다. 주문 한 건과 주문 상품 한 건은 다른 grain이므로, 합계를 만들기 전에 어느 행을 세는지 먼저 적는다.
 
 > **Table 한 row가 무엇을 의미하는가**
 
@@ -43,7 +43,7 @@ fact_llm_call
 → 1 row = 1 LLM call
 ```
 
-Grain을 잘못 이해하면 Join 후 중복 집계가 발생한다.
+Grain을 확인하지 않고 1건 주문을 여러 상품 행과 join하면 주문 금액을 여러 번 더할 수 있다.
 
 Data Modeling 순서:
 
@@ -58,7 +58,7 @@ Data Modeling 순서:
 
 ## 9.2 Fact Tables
 
-Fact Table:
+Fact table은 측정할 사건이나 정해진 시점의 상태를 담는다. 결제 한 건과 매일의 재고 잔량은 모두 fact가 될 수 있지만 행의 grain과 갱신 방식이 다르다.
 
 > **발생한 사건이나 측정값**
 
@@ -91,7 +91,7 @@ delivered_at
 
 ## 9.3 Dimension Tables
 
-Dimension:
+Dimension은 fact를 누구·무엇·언제로 나눠 볼지 설명한다. 고객 지역이 바뀌는 경우 과거 주문을 어느 지역에 집계할지 정하려면 key와 이력 규칙이 필요하다.
 
 > **Fact를 설명하는 속성 정보**
 
@@ -118,7 +118,7 @@ SCD Type 2 버전을 구분할 때 유용하다.
 
 ## 9.4 Star Schema
 
-중앙 Fact Table + 주변 Dimension.
+Star schema는 중앙 fact와 주변 dimension을 연결한다. 분석자가 주문 금액을 날짜와 상품별로 집계할 때 관계를 이해하기 쉽지만 각 join의 key와 grain을 확인해야 한다.
 
 ```text
              dim_agent
@@ -138,7 +138,7 @@ dim_team — fact_llm_call — dim_model
 
 ## 9.5 SCD
 
-SCD = Slowly Changing Dimension.
+SCD(Slowly Changing Dimension)는 시간이 지나며 바뀌는 설명 속성을 다룬다. 고객 등급의 현재 값만 필요한지, 주문 당시의 등급도 필요한지에 따라 Type 1과 Type 2를 고른다.
 
 ### Type 1
 
@@ -162,7 +162,9 @@ customer_sk | customer_id | region | valid_from | valid_to
 
 ## 9.6 Denormalization
 
-분석 Query를 단순화하고 Join을 줄이기 위해 일부 중복을 허용.
+Denormalization은 조회를 단순하게 하려고 일부 정보를 함께 저장하는 설계다. Join을 줄일 수 있지만 서로 다른 grain의 금액을 섞으면 같은 값을 여러 번 합산할 수 있다.
+
+중복 저장된 값은 갱신 시 일관성을 맞춰야 한다.
 
 OLTP:
 
@@ -182,7 +184,9 @@ OLAP:
 
 ## 9.7 AI Platform Modeling
 
-Grain을 섞지 않는 것이 중요하다.
+AI 플랫폼에서도 실행 한 번과 LLM 호출 한 번은 같은 행 단위가 아니다. 한 실행에 호출이 여러 번이면 비용을 join한 뒤 다시 합산할 때 실행 비용이 반복되지 않도록 한다.
+
+사용자 이벤트 역시 실행이나 호출과 grain이 다르다. 이 grain을 섞어 join하면 비용이나 건수가 부풀 수 있다.
 
 ### fact_agent_execution
 
@@ -250,6 +254,8 @@ Agent Execution
 
 ## 9.8 Metrics Modeling
 
+Metric은 숫자 이름뿐 아니라 계산 범위와 규칙까지 포함한다. 오류율이라면 실패 건수와 전체 건수의 기간·대상·제외 조건을 맞춰야 서로 다른 dashboard에서도 같은 뜻이 된다.
+
 목적:
 
 > **KPI 정의를 일관되게 관리**
@@ -275,7 +281,7 @@ failed execution count / total execution count
 
 ### Semantic Layer
 
-비즈니스 Metric 의미와 계산법을 중앙 정의.
+Semantic layer는 여러 도구가 같은 metric을 계산하도록 분자·분모·필터·기간 같은 뜻과 규칙을 한곳에 정의한다.
 
 예:
 
@@ -291,12 +297,6 @@ Dashboard, Analyst, AI Agent가 동일한 정의를 사용하게 한다.
 ---
 
 <!-- SOURCE CORE END -->
-
-## 처음 읽는 독자를 위한 연결 설명
-
-- **9.1~9.4 행의 의미:** Grain은 table의 한 행이 무엇을 나타내는지 정한 약속이다. Fact는 주문 금액처럼 측정할 사건이나 일별 재고처럼 특정 시점의 상태를 담고, dimension은 고객이나 날짜처럼 fact를 설명하는 축이다. 주문 한 건 fact를 주문 상품 여러 행과 바로 join하면 주문 금액이 상품 수만큼 반복될 수 있다. Star schema를 설계할 때 먼저 각 table의 grain과 key 관계를 적는다.
-- **9.5~9.6 변경과 읽기 편의:** SCD는 시간이 지나며 바뀌는 dimension 값을 다루는 방식이다. Type 2가 고객 등급의 과거 버전을 보관한다면 주문 당시 유효했던 버전과 연결해야 한다. Denormalization은 읽기 편의를 위해 정보를 합치지만 grain이 다른 측정값을 무심코 섞으면 합계가 틀릴 수 있다.
-- **9.7~9.8 실제 질문:** 한 agent 실행에 LLM 호출이 여러 번 있다면 실행 비용과 호출 비용은 서로 다른 grain이다. “호출당 평균 비용”의 분자·분모·기간·제외 조건을 고정해야 metric을 비교할 수 있다. dbt는 이런 모델을 구성하고 Trino는 그 결과를 질의하는 데 쓸 수 있다.
 
 ## 부록: 기존 보완 설명
 

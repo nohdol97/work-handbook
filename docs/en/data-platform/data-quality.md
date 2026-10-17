@@ -1,8 +1,8 @@
 ---
 id: data-platform-data-quality
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-11-01
   - DPE-11-02
@@ -17,41 +17,41 @@ knowledge_ids:
 
 This Learn page covers studied concepts and hypothetical operations. It does not claim hands-on implementation or incident response. Data quality asks, “Can we trust and use this data?” A service can respond while its data is wrong. That is still a data incident.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
-
-**Reading guide:** Data quality is like checking goods before shipment. An intact package does not prove that the contents are correct: a valid `email` format does not prove that an order amount is right. Section 11.1 names what to check; 11.2 shows when to check it. Section 11.3 separates failed records in quarantine, a holding area for investigation. Sections 11.6–11.7 use an SLO (Service Level Objective, an agreed quality target) and an incident process to judge impact and recovery. Use this flow when adding an ingestion path or investigating a changing metric.
+**Reading note:** The chapter below keeps the source numbering, outline, technical content, and examples while explaining them in simpler language. Check the section-specific conditions and additions in the supplement after the chapter.
 
 <!-- SOURCE CORE START -->
 
 ## 11.1 Quality Dimensions
 
+Quality dimensions split “Can we use this data?” into separate questions. Checking a shipment means checking both its count and its contents. For `fact_llm_call`, check missing values, duplicates, valid formats, and agreement with actual billing separately. Passing one check does not rule out another error.
+
 ### Completeness
 
-Are required values present?
+Are all required values present?
 
 ### Uniqueness
 
-Are values that must be unique free of duplicates?
+Does a value that must be unique appear only once?
 
 ### Validity
 
-Do values follow the allowed format and range?
+Does each value fit the agreed format and range?
 
 ### Consistency
 
-Do related data agree?
+Do values agree with related tables and records?
 
 ### Freshness
 
-Did data arrive on time?
+Did data arrive by the time it was needed?
 
 ### Accuracy
 
-Do values match the real world?
+Do recorded values match actual events or bills?
 
 ### Volume
 
-Is the amount of data within the expected range?
+Is the row count close to the expected range?
 
 AI example:
 
@@ -83,6 +83,8 @@ Volume
 ---
 
 ## 11.2 Validation Layers
+
+Validation layers check what can be known as data moves through the platform. At ingestion, check parsing and required fields. In Silver, check duplicates and relationships. In Gold, check business metrics and aggregates. Passing an earlier layer does not remove the need for later checks.
 
 ### Ingestion Validation
 
@@ -122,7 +124,9 @@ Final
 
 ## 11.3 Quarantine Patterns
 
-Keep invalid data separately instead of dropping it.
+Quarantine is a separate holding area for records that fail a rule. It supports investigation and reprocessing. Silently dropping a bad order makes its absence hard to explain later. Keep the source record and error reason, while limiting access and retention for sensitive data.
+
+Keep records that fail a rule in a separate area instead of silently dropping them.
 
 ```text
 Incoming
@@ -134,7 +138,7 @@ Valid   Invalid
 Silver   Quarantine
 ```
 
-In quarantine:
+Keep information needed for investigation in quarantine:
 
 - Raw payload
 - Error type
@@ -143,15 +147,17 @@ In quarantine:
 
 Store these details, among others.
 
-Reprocess the data after fixing the cause.
+After fixing the cause, reprocess only the affected data.
 
-Do not let quarantine only grow. Monitor its volume and error reasons.
+Do not let quarantine grow without review. Track its record count and error reasons.
 
 ---
 
 ## 11.4 dbt Tests
 
-Basic dbt tests for data quality:
+A dbt data test runs a SQL check on real table data to find rule violations such as `not_null` or `unique`. For example, check duplicate `llm_call_id` values before and after a release. Here, “static” means the rule is predefined; it does not mean inspecting code without running a data query.
+
+Common dbt tests that check data quality:
 
 - not_null
 - unique
@@ -170,6 +176,8 @@ Areas that may need more checks:
 
 ## 11.5 Soda / Great Expectations / Deequ
 
+Soda, Great Expectations, and Deequ can automate data quality checks. They help when many datasets need repeated checks. First define the rule and execution environment, then choose a tool. Their capabilities overlap, so a feature name alone does not establish which one is better.
+
 Common role:
 
 > **Tools that check data quality rules automatically.**
@@ -186,11 +194,13 @@ Validation based on expectations.
 
 Large-scale data quality checks suited to Spark environments.
 
-These tools overlap. The study goal was to understand the category, not implement each tool.
+These tools overlap. This study explains the role of automated quality checks rather than each tool’s implementation.
 
 ---
 
 ## 11.6 Data Quality SLOs
+
+Keep the measured value and agreed target separate when judging data health. If the latest event is three minutes old, three minutes is the SLI; “within five minutes” could be this dataset’s SLO. The numbers below are teaching examples. Set real targets for consumer needs and a defined measurement window.
 
 SLI:
 
@@ -208,13 +218,15 @@ Completeness > 99.9%
 Duplicate Rate < 0.01%
 ```
 
-SLOs should differ by dataset.
+Set each dataset’s SLO for how people use that data.
 
-A live dashboard and a monthly report need different freshness targets.
+A live dashboard may need fresher data than a monthly report.
 
 ---
 
 ## 11.7 Incident Handling
+
+Judge a data incident by the result users receive, not only by job status. A batch can succeed while duplicate orders corrupt an aggregate. Stop the spread, fix the cause, reprocess the affected range, and verify the result before resuming. Each step needs evidence so recovery is clear.
 
 Flow:
 
@@ -250,7 +262,7 @@ Backfill or replay the affected data.
 
 Run quality checks before resuming use.
 
-Remember:
+Keep this in mind:
 
 > **Incorrect data is a data incident even when the service is available.**
 
@@ -259,8 +271,6 @@ Remember:
 <!-- SOURCE CORE END -->
 
 ## Appendix: existing application notes
-
-Section 11.1 treats completeness, uniqueness, and validity as different questions. Every row can have an `order_id` while two rows still share the same ID. In 11.2, ingestion checks input shape, Silver checks cleaned records, and Gold checks aggregates used in reports. The tools in 11.4–11.5 can run these checks, but the data use determines which rules and denominators matter.
 
 ### Quality dimensions and validation layers
 

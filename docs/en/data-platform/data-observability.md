@@ -1,8 +1,8 @@
 ---
 id: data-platform-data-observability
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-12-01
   - DPE-12-02
@@ -17,33 +17,35 @@ knowledge_ids:
 
 This Learn page covers continuous measurement of data health. The numbers and incidents are learning examples, not measurements or hands-on experience. Data quality defines expected conditions. Observability helps show the current state and locate where a problem starts.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
-
-**Reading guide:** Data observability is like parcel tracking: it shows how far data has traveled and where a delay began. Freshness in 12.1 asks whether data is current. Volume in 12.2 asks whether the count is expected. Sections 12.3–12.4 check changes in structure and value distribution. For example, an ingestion job can succeed while today's partition is empty and a dashboard shows zero rows. Sections 12.5–12.7 therefore separate job health from data health and connect measurements and alerts to business impact.
+**Reading note:** The chapter below keeps the source numbering, outline, technical content, and examples while explaining them in simpler language. Check the section-specific conditions and additions in the supplement after the chapter.
 
 <!-- SOURCE CORE START -->
 
 ## 12.1 Data Freshness
 
+Freshness asks whether data arrived by the time it is needed. A parcel has pickup, sorting, and delivery times. Data likewise has event, collection, processing, and dashboard refresh times. Define which clock makes data “late” before locating the delay.
+
 ### Source Freshness
 
-Is source data created and collected on time?
+Were source events created and collected by the needed time?
 
 ### Pipeline Freshness
 
-Measure processing delay across Kafka → Bronze → Silver → Gold.
+Compare processing times from Kafka through Bronze, Silver, and Gold to locate a delay.
 
 ### Downstream Freshness
 
-Do dashboards and BI show current data?
+Do dashboards and BI actually show the newly processed data?
 
-Freshness at each stage helps locate where delay starts.
+Comparing update times at each stage helps narrow down where delay began.
 
 ---
 
 ## 12.2 Volume Monitoring
 
-Detect sharp decreases or increases in row counts compared with normal levels.
+Volume monitoring checks whether counts are unusually low or high. A total order count can look normal while today’s partition is empty. Compare with baselines such as the same weekday or season to avoid treating a normal weekend drop as an incident.
+
+Look for row counts that suddenly fall or rise compared with normal levels.
 
 Possible causes of a decrease:
 
@@ -58,9 +60,9 @@ Possible causes of an increase:
 - Retry storm
 - Traffic spike
 
-A missing partition is another important signal.
+A missing partition is another sign of a count problem.
 
-Rather than using only an absolute value:
+Do not rely on one fixed number. Compare counts with:
 
 - Recent averages
 - The same weekday
@@ -72,6 +74,8 @@ Compare counts with baselines such as these.
 
 ## 12.3 Schema Monitoring
 
+A schema is the agreement about columns, types, and required values. If a producer changes the type of `amount`, transformation SQL or dashboards may fail. After detecting the change, use [lineage](lineage-metadata.md) to find likely consumers.
+
 Watch for these changes:
 
 - Column addition
@@ -80,17 +84,19 @@ Watch for these changes:
 - Type change
 - Nullable change
 
-A breaking change can break downstream consumers.
+A change that violates the expected structure can make downstream queries fail.
 
-Connecting schema monitoring with lineage helps find the affected consumers.
+After detecting a schema change, use lineage to find likely datasets and consumers.
 
 ---
 
 ## 12.4 Distribution Drift
 
-Volume can remain normal while value distributions change.
+Distribution drift means the mix or range of values changes even when the row count does not. If the `FAILED` rate rises from 5% to 45%, investigate both real failures and changes in status recording. The change is a signal, not proof of its cause.
 
-Common signals:
+The total row count can stay normal while the mix or range of values changes.
+
+Common signs of change:
 
 - Null rate drift
 - Cardinality drift
@@ -104,11 +110,13 @@ Usual FAILED rate = 5%
 Today's FAILED rate = 45%
 ```
 
-Normal volume does not prove that data is healthy.
+A normal total count does not prove that the data contents are healthy.
 
 ---
 
 ## 12.5 Pipeline Health vs Data Health
+
+Pipeline health asks whether a job ran; data health asks whether its output is usable. A delivery truck can arrive with an empty box. If a successful Gold job produces zero rows, check filters, source data, and partitions.
 
 Pipeline health:
 
@@ -137,7 +145,9 @@ A successful job can return zero rows because its query logic is wrong.
 
 ## 12.6 Data SLIs / SLOs
 
-Observability measures data state over time.
+Compare the measured value and target over the same window. `Volume = 98M` alone cannot show whether a target is met. Define the period, partitions, and normal baseline. Use the same definitions when continuously measuring [quality rules](data-quality.md).
+
+Data observability measures data health repeatedly over time.
 
 Example SLIs:
 
@@ -155,11 +165,13 @@ NULL rate < 1%
 Volume deviation < 20%
 ```
 
-Use several signals together.
+Check several signals together because one may look healthy while another does not.
 
 ---
 
 ## 12.7 Alert Design
+
+A useful alert says what failed, for how long, and where to look first. For example, “today’s `gold_orders` partition has been empty for 20 minutes” gives more direction than “low count.” Alerts that repeat near a threshold add work, so include duration and impact in the design.
 
 The goal:
 
@@ -189,15 +201,13 @@ Warning and Critical can use different levels.
 
 Alert policies can also vary by dataset importance tier.
 
-Avoid alert fatigue.
+Keep repeated or low-value alerts from hiding important problems.
 
 ---
 
 <!-- SOURCE CORE END -->
 
 ## Details to check in practice
-
-The timestamps in 12.1 resemble pickup, sorting, and delivery times: each marks a different stage. Check whether `event_time` is old or only processing finished late before choosing an investigation path. In 12.6, an SLI (Service Level Indicator) is a measured value; an SLO (Service Level Objective) is an agreed target for it. [Quality checks](data-quality.md) define expected conditions, and observability shows whether those conditions hold over time. An alert in 12.7 is more useful when it includes the duration and affected dataset, not just a number.
 
 ### Freshness timestamps
 

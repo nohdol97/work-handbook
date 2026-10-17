@@ -1,8 +1,8 @@
 ---
 id: data-platform-architecture
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-17-01
   - DPE-17-02
@@ -52,9 +52,9 @@ knowledge_ids:
 
 # Chapter 21 — Final End-to-End Data Platform Architecture
 
-This page preserves Chapter 21 of the supplied complete source in its original order and form. Examples and diagrams describe studied concepts, not completed implementation, production recovery, or tests.
+This page follows the outline and technical content of Chapter 21, with prose rewritten for beginners. Examples and diagrams describe studied concepts, not completed implementation, production recovery, or tests.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
 
 <!-- SOURCE CORE START -->
 
@@ -63,6 +63,8 @@ This is the final integration of the entire curriculum.
 ---
 
 ## 21.1 Core Architecture
+
+This diagram follows application events and PostgreSQL changes through ingestion, processing, storage, and use. In a real design, PostgreSQL changes join through Debezium and Kafka; choose components for the needed delay and recovery behavior.
 
 ```text
                     Applications
@@ -103,7 +105,7 @@ This is the final integration of the entire curriculum.
 
 ## 21.2 Why Kafka Exists
 
-Kafka is not the analytical database.
+Kafka is an **event log**, not an analytical database. Use it when several consumers need the same events at their own pace or must replay them within retention.
 
 Role:
 
@@ -122,7 +124,7 @@ Use when:
 - asynchronous processing is required,
 - event-driven architecture matters.
 
-Do not add Kafka only because "data platforms use Kafka."
+Add Kafka for real multi-consumer or replay needs. Adding it only because other platforms use it creates broker, retention, and recovery work.
 
 At low scale:
 
@@ -138,7 +140,7 @@ may be enough.
 
 ## 21.3 Why Flink Exists
 
-Role:
+Flink processes a continuing stream while keeping **state**. Use it, for example, to update a five-minute order total as events arrive.
 
 ```text
 Stateful Real-Time Stream Processing
@@ -168,7 +170,7 @@ may be simpler.
 
 ## 21.4 Why Bronze Exists
 
-Bronze preserves data near its source form.
+Bronze stores data close to its source form. If a transformation rule is wrong, this saved input gives the team a place to restart.
 
 Purpose:
 
@@ -187,7 +189,7 @@ Without durable raw history, transformation bugs can be harder to recover from.
 
 ## 21.5 Why Iceberg Exists
 
-Object Storage alone provides files.
+Object storage keeps files, but does not itself provide a table's current file list or consistent changes. Iceberg adds snapshots and metadata so engines can use the files as a table.
 
 Iceberg adds the table abstraction:
 
@@ -207,7 +209,7 @@ It allows multiple engines to work with a shared analytical table.
 
 ## 21.6 Why Spark Exists
 
-Spark is the heavy data processing engine.
+Spark distributes work across machines for large data sets. Use it for large cleanup, joins, or recomputation that would take too long on one machine.
 
 Use for:
 
@@ -227,7 +229,7 @@ It is compute, not storage.
 
 ## 21.7 Why dbt Exists
 
-dbt manages SQL transformation logic.
+dbt helps version, order, and test SQL transformations. For example, it can turn Silver orders into Gold revenue metrics.
 
 Use for:
 
@@ -255,7 +257,7 @@ dbt
 
 ## 21.8 Why Gold / Mart Exists
 
-Gold is where data becomes business-consumption ready.
+Gold or Mart is a data layer ready for business questions. It can turn raw orders into a table of monthly revenue by product.
 
 Examples:
 
@@ -273,7 +275,7 @@ BI users should not need to understand raw event internals.
 
 ## 21.9 Why Trino / SQL Warehouse Exists
 
-Analytics users need interactive SQL.
+Trino or a SQL Warehouse runs interactive SQL against stored tables. Analysts and BI dashboards need it to ask repeated questions.
 
 ```text
 Iceberg Gold
@@ -296,7 +298,7 @@ can fill this role.
 
 ## 21.10 Why Airflow / Lakeflow Exists
 
-Data processing is more than individual jobs.
+Airflow or Lakeflow **orchestrates** jobs: it schedules them, orders dependencies, and handles retries. Use it when one pipeline step must finish before another starts.
 
 Need:
 
@@ -324,7 +326,7 @@ Lakeflow Jobs
 
 ## 21.11 Why Data Quality Exists
 
-Question:
+**Data quality** checks whether values and structure meet expected rules. For example, catch missing order IDs or an incorrect revenue total before people use the result.
 
 > **Can we trust the data?**
 
@@ -346,7 +348,7 @@ Use quarantine for invalid data rather than silently dropping it.
 
 ## 21.12 Why Data Observability Exists
 
-Question:
+**Data observability** shows whether data is healthy now and where a problem began. Watch delays, missing data, and changing distributions as well as job success.
 
 > **Is the data healthy right now, and where is it becoming unhealthy?**
 
@@ -373,7 +375,7 @@ Data Healthy
 
 ## 21.13 Why Metadata / Catalog Exists
 
-As data grows, users ask:
+**Metadata** describes data; a **catalog** helps people find those descriptions. As tables grow, teams need to locate owners, meaning, and current status.
 
 ```text
 What tables exist?
@@ -389,7 +391,7 @@ Catalog unifies discovery and context.
 
 ## 21.14 Why Lineage Exists
 
-Lineage answers:
+**Lineage** links an input to the jobs and results it produces. Use it to find which metrics might change when a source column changes.
 
 ```text
 Where did this data come from?
@@ -409,7 +411,7 @@ Useful for:
 
 ## 21.15 Why Governance Exists
 
-Governance answers:
+**Governance** sets and applies rules for access, classification, and responsibility. It matters when deciding who may view a sensitive column.
 
 ```text
 Who owns it?
@@ -437,7 +439,7 @@ Data Contracts
 
 ## 21.16 Why AI-Ready Data Exists
 
-AI-ready data combines:
+**AI-ready data** has the quality, context, permissions, and versions needed for AI work. Connecting a file to a model alone does not make results reproducible or easy to evaluate.
 
 ```text
 Trust
@@ -453,6 +455,8 @@ AI should not consume unmanaged enterprise data blindly.
 ---
 
 ## 21.17 AI Evaluation Architecture
+
+An AI evaluation architecture connects production questions, answers, and feedback with evaluation data. Use it to compare quality after a model or prompt change.
 
 ```text
 Production Agent
@@ -486,7 +490,7 @@ Enterprise AI Analytics
 
 ## 21.18 Version Chain for Reproducibility
 
-A production/evaluation result should ideally be linkable to:
+To explain a result again, link the model, prompt, data, and code versions used. That chain helps locate the cause of a regression.
 
 ```text
 Agent Version
@@ -516,7 +520,7 @@ This is the basis of reproducibility.
 
 ## 21.19 Failure Behavior
 
-A good architecture explanation must include failures.
+A useful architecture describes failures as well as normal flow: what data remains and where processing can restart.
 
 ### Kafka Failure
 
@@ -562,7 +566,7 @@ Contain and quarantine before publishing downstream.
 
 ## 21.20 Consistency Model
 
-Different parts of the platform have different guarantees.
+A **consistency model** states what each stage guarantees about duplicates, gaps, and order. A guarantee from one component does not automatically cover the whole pipeline.
 
 Examples:
 
@@ -593,7 +597,7 @@ without defining the boundary.
 
 ## 21.21 Backfill Strategy
 
-Preferred hierarchy:
+A **backfill** reprocesses a bounded range of past input. Before fixing missing dates, check saved source data and a safe way to replace results.
 
 ```text
 1. Rebuild only affected partition/range
@@ -615,6 +619,8 @@ lineage awareness
 ---
 
 ## 21.22 Scaling Model
+
+Each component scales in a different unit. Expand the actual bottleneck, such as Kafka partitions, Flink parallelism, Spark workers, or query concurrency.
 
 ### Kafka
 
@@ -669,13 +675,13 @@ concurrency
 query optimization
 ```
 
-Scaling one component does not automatically remove bottlenecks in another.
+More Kafka partitions will not reduce total delay if Gold transformation or SQL queries remain slow. Measure each stage again.
 
 ---
 
 ## 21.23 Cost Model
 
-Cost appears at different layers:
+Cost comes from event retention, streaming and batch compute, queries, metadata operations, and storage. Removing unused components is part of cost design.
 
 ```text
 Kafka
@@ -700,7 +706,7 @@ AI
 → tokens/inference/search
 ```
 
-Platform cost optimization is architecture-wide.
+Lower charges in one service can be offset by copying or replay costs elsewhere. Review storage, compute, and query paths together.
 
 Examples:
 
@@ -717,7 +723,7 @@ Right-size compute
 
 ## 21.24 What to Remove at Smaller Scale
 
-This was one of the original curriculum goals:
+A small system may not need every platform component. Without replay or very low delay requirements, start with database export and a batch job.
 
 > **Explain what should be removed when scale is smaller.**
 
@@ -812,7 +818,7 @@ when organizational/data complexity justifies them.
 
 ## 21.25 What Changes if Databricks Is Adopted
 
-Self-managed:
+Databricks can combine some processing, SQL, catalog, and job management in managed services. Check separately whether it replaces any existing Kafka or external system. The following is an example of self-managed components:
 
 ```text
 Spark
@@ -865,7 +871,7 @@ platform cost
 
 ## 21.26 What Changes if Snowflake Is Adopted
 
-Possible consolidation:
+Snowflake can manage parts of SQL compute, ingestion, transformation, and governance together. Streaming or external-source needs may still need separate design.
 
 ```text
 Warehouse
@@ -895,7 +901,7 @@ Snowflake is especially natural when the organization is SQL/analytics-centered.
 
 ## 21.27 Open Lakehouse Final Architecture
 
-A fully open-oriented implementation could be:
+An open lakehouse combines object storage and Iceberg with chosen processing and query tools. It gives choice while leaving the team responsible for the connections.
 
 ```text
 Applications
@@ -962,7 +968,7 @@ on-call complexity
 
 ## 21.28 Managed Platform Final Architecture
 
-Databricks-centered example:
+A managed platform combines functions in one service to reduce operations work. Check data movement, access, cost, and external-engine support against real requirements. The following example centers on Databricks:
 
 ```text
 Sources
@@ -1025,7 +1031,7 @@ Cortex / Search / Agents
 
 ## 21.29 Final Architecture Decision Checklist
 
-Before adding any component ask:
+Start the final decision with requirements, not a list of tools. Set delay, recovery, correctness, and cost goals, then ask what each component contributes.
 
 ### Kafka
 
@@ -1098,7 +1104,7 @@ Is reducing operations/integration work worth the vendor cost/dependency?
 
 # Final Mental Model
 
-The entire study session can be compressed into this model:
+This diagram follows raw inputs through processing into analytics and AI. In a real design, PostgreSQL changes join the event path through Debezium and Kafka:
 
 ```text
 Sources
@@ -1130,7 +1136,7 @@ SQL Serving
 BI / Analytics / AI
 ```
 
-Cross-cutting planes:
+The following functions span the whole path. For example, quality checks matter before Gold is published as well as during Silver processing:
 
 ```text
 Orchestration
@@ -1164,7 +1170,7 @@ Recovery
 → how do we restore correct state after failure
 ```
 
-Technology role map:
+Choose a tool by its job before choosing a product. These are the main roles of the technologies:
 
 ```text
 PostgreSQL
@@ -1225,7 +1231,7 @@ Databricks / Snowflake
 
 ## Principle 1 — Start from the problem, not the tool
 
-Bad:
+Choosing a tool before checking the problem and scale adds operating work. For example:
 
 ```text
 "We should use Kafka because modern platforms use Kafka."
@@ -1242,7 +1248,7 @@ Better:
 
 ## Principle 2 — Keep roles clear
 
-Avoid confusing:
+These roles connect but do different jobs. S3 stores files, while Iceberg manages their table state:
 
 ```text
 Storage
@@ -1283,7 +1289,7 @@ Airflow
 
 ## Principle 3 — Design for reprocessing
 
-Production pipelines will eventually need:
+In production, teams need to rerun failed work, replay saved inputs, and undo bad results:
 
 ```text
 retry
@@ -1310,13 +1316,13 @@ Job Success
 Correct Data
 ```
 
-Observe both.
+Measure job success and data correctness separately. A successful job can still publish wrong revenue.
 
 ---
 
 ## Principle 5 — Version AI systems as systems
 
-An AI output is produced by more than a model.
+An AI output also depends on data, prompts, tools, and retrieved content. Version them together to explain regressions.
 
 Version:
 
@@ -1351,13 +1357,13 @@ faster delivery
 more vendor dependency
 ```
 
-Neither is universally correct.
+Choose based on the team's operating capacity, data movement, and access needs.
 
 ---
 
 ## Principle 7 — Remove components when they are not earning their operational cost
 
-A mature platform is not one with the most technologies.
+More technologies add connections and failure points. Keep the components that solve real requirements.
 
 A mature platform is one where:
 
@@ -1373,7 +1379,7 @@ A mature platform is one where:
 
 ## 17.1 Overall Technology Role Map
 
-The roles connected throughout this study session are as follows.
+This study diagram joins application events and database changes in Kafka before Bronze, Silver, and Gold. A different source may need a different ingestion path:
 
 ```text
 Applications
@@ -1458,7 +1464,7 @@ Airflow
 → Orchestration
 ```
 
-These role boundaries are key to understanding the whole data platform.
+Storage keeps files, a table format organizes them as a table, and compute processes them. These roles help teams avoid adding two tools for one need.
 
 ---
 
@@ -1492,7 +1498,7 @@ Examples:
 - anomaly
 - alert
 
-Observability can continuously monitor quality rules.
+A quality rule might check that order IDs are present; observability tracks when that check or data freshness begins to worsen.
 
 ---
 
@@ -1500,27 +1506,27 @@ Observability can continuously monitor quality rules.
 
 ### Metadata
 
-Information that describes data.
+Metadata describes data, such as its schema, owner, and last update time.
 
 ### Catalog
 
-A system for searching and exploring metadata.
+A catalog lets people search metadata to find the table they need.
 
 ### Business Metadata
 
-The business meaning of data.
+Business metadata explains, for example, whether `revenue` means sales before or after refunds.
 
 ### Semantic Layer
 
-Define metric/dimension meanings and calculations in a form that queries can reuse.
+A semantic layer defines metrics such as revenue and dimensions such as date so many queries use the same meaning and calculation.
 
 ### Lineage
 
-Relationships that describe how data is created and transformed.
+Lineage links a source column through transformations to a dashboard measure.
 
 ### Governance
 
-Policies that define who should use data and how.
+Governance sets rules for who may view sensitive columns and who owns them.
 
 ---
 
@@ -1540,7 +1546,7 @@ AI observability/evaluation tools such as Langfuse handle the following well.
 - Dataset
 - Experiment
 
-But they do not fully replace long-term:
+AI tracing tools do not cover all of these long-term storage and enterprise analytics roles:
 
 - Enterprise Analytics
 - Lakehouse Storage

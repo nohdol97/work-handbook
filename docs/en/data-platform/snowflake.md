@@ -1,8 +1,8 @@
 ---
 id: data-platform-snowflake
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE2-18-01
   - DPE2-18-02
@@ -23,7 +23,7 @@ knowledge_ids:
 
 Page type: Learn. Chapter 18 was intentionally summarized once and then skipped in the source study. `studied` refers to these condensed concepts. It does not mean detailed implementation, production experience, or completed deep-dive exercises. Examples were not run. Product behavior was checked against official documentation on 2026-09-26. It depends on edition, cloud, region, table type, and feature status.
 
-**Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
 
 <!-- SOURCE CORE START -->
 
@@ -37,7 +37,7 @@ Snowflake can be summarized as:
 
 ## 18.1 Architecture
 
-High-level layers:
+Snowflake separates storage, compute in virtual warehouses, and coordination in Cloud Services. This matters when several workloads need the same data but separate compute resources.
 
 ```text
 Cloud Services
@@ -49,11 +49,11 @@ Storage
 
 ### Storage
 
-Snowflake-managed or Iceberg-related storage.
+The storage layer holds Snowflake-managed data or data in Iceberg-related object storage. Data remains separate when compute pauses.
 
 ### Virtual Warehouse
 
-Independent compute cluster for queries/DML.
+A virtual warehouse is independent compute for queries and DML (data changes). Like separate workbenches, warehouses can reduce resource interference between teams.
 
 Different warehouses provide workload isolation.
 
@@ -71,7 +71,7 @@ Handles:
 
 ## 18.2 Micro-partitions
 
-Snowflake automatically organizes table data into **micro-partitions**.
+Snowflake automatically divides table data into physical groups called **micro-partitions**. Like books placed on different shelves, their recorded value ranges help a query read only useful groups.
 
 ```text
 Table
@@ -83,13 +83,13 @@ Table
 
 Snowflake tracks metadata such as value ranges.
 
-This helps pruning.
+A query can use these value ranges to skip a group whose values cannot match its filter. That skip is called pruning.
 
 ---
 
 ## 18.3 Pruning
 
-Query:
+**Pruning** skips data groups that cannot match a query filter. For example, a query for September 26 can skip groups that contain only other dates.
 
 ```sql
 WHERE event_date = '2026-09-26'
@@ -108,7 +108,7 @@ Parquet Row Group Pruning
 
 ## 18.4 Clustering
 
-When data layout becomes poor for frequent filters, clustering can improve pruning efficiency.
+When data layout no longer matches common filters, **clustering** can place similar values closer together and improve pruning. For large tables, compare query gains with maintenance cost.
 
 Large tables may use clustering keys.
 
@@ -118,7 +118,7 @@ The goal is not to manually partition everything, but to improve physical distri
 
 ## 18.5 Streams
 
-Streams track row-level changes to tables.
+A **Stream** tracks row changes in a table. It helps an incremental job process new changes instead of rereading the entire table.
 
 ```text
 Table
@@ -128,13 +128,13 @@ Stream
 Change Data
 ```
 
-Useful for incremental processing.
+For example, an order summary can process Stream changes instead of rereading every order.
 
 ---
 
 ## 18.6 Tasks
 
-Tasks schedule or trigger SQL work.
+A **Task** runs SQL work on a schedule or trigger. For example, it can read new Stream changes and MERGE them into a target table.
 
 Common combination:
 
@@ -150,7 +150,7 @@ MERGE / SQL Transform
 
 ## 18.7 Dynamic Tables
 
-Dynamic Table:
+A **Dynamic Table** declares a query result and a freshness target. Snowflake manages refresh, which can help maintain Silver and Gold tables from source data.
 
 > **Declare the query result and desired freshness; Snowflake manages refresh.**
 
@@ -174,13 +174,13 @@ Use a target lag:
 TARGET_LAG = 10 minutes
 ```
 
-This is conceptually similar to declarative data pipelines.
+This is a **declarative pipeline**: describe the result and refresh target instead of scheduling every step by hand. Actual delay depends on work and settings.
 
 ---
 
 ## 18.8 Snowpipe / Snowpipe Streaming
 
-Snowpipe:
+**Snowpipe** loads files that arrive in object storage. Consider **Snowpipe Streaming** when continuous ingestion needs lower delay without relying only on staged files.
 
 ```text
 Object Storage File
@@ -196,7 +196,7 @@ Snowpipe Streaming allows lower-latency continuous ingestion without relying onl
 
 ## 18.9 Iceberg Tables
 
-Snowflake supports Apache Iceberg tables and multi-engine interoperability.
+Snowflake can use Apache Iceberg tables to connect object-storage data with multiple engines. Check the table type, catalog setup, and supported features before assuming they can share every operation.
 
 ```text
 Snowflake
@@ -206,7 +206,7 @@ Iceberg Table
 Object Storage
 ```
 
-Snowflake/Horizon can participate in Iceberg catalog workflows.
+Snowflake and Horizon can take part in Iceberg catalog workflows. The catalog helps tools locate a table and its current state.
 
 External engines such as Spark/Trino can participate in open Iceberg workflows.
 
@@ -214,7 +214,7 @@ External engines such as Spark/Trino can participate in open Iceberg workflows.
 
 ## 18.10 Governance — Horizon Catalog
 
-Conceptual counterpart to Unity Catalog:
+**Horizon Catalog** brings together discovery, metadata, and governance such as access rules. It helps teams find the same data while limiting what each role may view.
 
 ```text
 Databricks
@@ -240,7 +240,7 @@ Horizon provides:
 
 ## 18.11 Cortex / AI
 
-Snowflake increasingly integrates AI capabilities:
+**Cortex** and related AI features aim to bring search, analysis, and agents close to governed enterprise data. Check the selected service for actual support and cost.
 
 ```text
 Cortex AI
@@ -258,7 +258,7 @@ The overall product direction is similar to the rest of the industry:
 
 ## 18.12 Cost Model
 
-Compute unit:
+Snowflake cost includes virtual warehouse compute, serverless features, Cloud Services, and storage. Query frequency and automatic suspension help control idle compute time.
 
 ```text
 Virtual Warehouse
@@ -289,7 +289,7 @@ Use incremental refresh where possible
 
 ## 18.13 Snowflake Mental Model
 
-Remember:
+To remember Snowflake, connect storage, virtual warehouse compute, micro-partition layout, pruning, ingestion, transformation, governance, and billing in one flow.
 
 ```text
 Storage

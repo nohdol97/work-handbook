@@ -1,8 +1,8 @@
 ---
 id: data-platform-foundations
 status: studied
-last_updated: 2026-10-17
-last_reviewed: 2026-10-17
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - DPE-01-01
   - DPE-01-02
@@ -17,7 +17,7 @@ knowledge_ids:
 
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. SQL and numbers are illustrative and were not run.
 
-**Reading note:** The source core below keeps the original order and form. At the user’s request, added compression explanations appear within the source material. Read other section-specific corrections and conditions in the supplement after the source material; some original statements are simplified.
+**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
 
 Think of a checkout that records each sale and a ledger used to study a month of sales. **OLTP** handles individual transactions; **OLAP** analyzes many records together. Read Sections 1.1–1.7 as a path from the question you need to answer to the storage format and file layout that support it.
 
@@ -25,11 +25,13 @@ Think of a checkout that records each sale and a ledger used to study a month of
 
 ## 1.1 OLTP vs OLAP
 
+A service must save one order quickly, while an analyst may examine months of orders at once. That difference gives transaction processing (OLTP) and analytical processing (OLAP) different storage and performance goals.
+
 ### OLTP
 
 OLTP stands for **Online Transaction Processing**.
 
-Its main purpose is to process live service transactions.
+Use OLTP when a service must save a small change, such as a sign-up or payment, quickly and accurately.
 
 Example:
 
@@ -67,7 +69,7 @@ Service applications commonly use these OLTP databases.
 
 OLAP stands for **Online Analytical Processing**.
 
-Its purpose is to analyze large amounts of data.
+Use OLAP to find totals or trends across many records.
 
 Example:
 
@@ -130,9 +132,11 @@ Key point:
 
 ## 1.2 Row-Oriented vs Column-Oriented Storage
 
+Row storage keeps one record's values together; column storage groups values of the same field. The distinction matters because reading one customer's full record and summing the amount from every order need different access patterns.
+
 ### Row-Oriented
 
-Row-oriented storage keeps the values of one row together.
+Row storage keeps one record's values close together, such as a person's name, age, and team.
 
 Conceptually:
 
@@ -149,7 +153,7 @@ For example, row-oriented storage is a natural fit when reading all the informat
 
 ### Column-Oriented
 
-Column-oriented storage keeps values from the same column together.
+Column storage groups the same field from many records, making that field easier to read for analysis.
 
 Conceptually:
 
@@ -240,13 +244,13 @@ Key point:
 
 ## 1.3 Parquet
 
-Parquet is a widely used **Columnar File Format**.
+The amount of data read strongly affects large analytical queries. Parquet helps a reader choose needed columns and storage units to reduce I/O.
+
+Parquet is a common analytical file format that groups values by column. It does not run queries itself like a database.
 
 Role:
 
 > **A file format for efficiently storing large analytical datasets.**
-
-Parquet itself is not a database.
 
 ```text
 S3
@@ -318,7 +322,7 @@ These can be compressed efficiently.
 
 ### Statistics
 
-Parquet can store statistics for row groups or pages.
+Parquet may store statistics such as minimum and maximum values for row groups or pages. A reader can use them to skip storage units that cannot match a filter.
 
 Example:
 
@@ -371,6 +375,8 @@ the ability to limit reading in this way.
 ---
 
 ## 1.4 Object Storage
+
+Object storage keeps data as durable, file-like objects. Because storage can remain separate from compute, engines such as Spark and Trino can read the same analytical files.
 
 Typical object storage systems:
 
@@ -443,7 +449,7 @@ these practices become important.
 
 ## 1.5 File Layout Engineering
 
-The size of an individual file can affect lakehouse performance.
+The same amount of data can cost more to read or rewrite when files are too numerous or too large. File layout therefore affects query planning, parallel work, and maintenance as well as storage.
 
 ---
 
@@ -513,6 +519,8 @@ Account for this cost when designing file layout and choosing a table format.
 ---
 
 ## 1.6 Partitioning Fundamentals
+
+A partition groups data by a field that queries often filter, such as a date. It can narrow a read, but too many small partitions may add files and metadata, so choose it from actual query patterns.
 
 Partitioning divides data physically or logically according to a rule.
 
@@ -609,6 +617,8 @@ date=2026-09-24
 
 ## 1.7 Bucketing / Sorting / Indexing
 
+Even after partitions narrow a search, scattered values can still force broad reads. Bucketing, sorting, and clustering arrange values to help reads or joins; check their effect for the engine and query at hand.
+
 ### Bucketing
 
 Use a hash to divide data into a fixed number of buckets.
@@ -660,12 +670,6 @@ these techniques are often used to reduce the amount read.
 ---
 
 <!-- SOURCE CORE END -->
-
-## A beginner's guide to the connections
-
-- **Sections 1.2–1.3, storage formats:** Row storage fits reads that need an entire order. Column storage and Parquet can help a query such as “sum last month's order amounts” that reads only a few columns. Parquet statistics act like a table of contents: they can help a reader skip storage units that cannot match. The actual skip depends on file statistics and reader support.
-- **Sections 1.4–1.6, file layout:** Object storage is like a warehouse for files; compute such as Spark is the worker that reads them. A date partition resembles a dated shelf and can narrow a search. Too many tiny shelves can create small files and metadata overhead, raising planning and request costs. Measure file counts and scan bytes before choosing compaction.
-- **Section 1.7, read optimization:** After partitions narrow the broad search, sorting or bucketing can shape data within it. Their value depends on real filters, joins, and the engine's reading behavior. Check how Iceberg metadata and Spark scan planning use the chosen layout.
 
 ## Qualifications for real use
 
