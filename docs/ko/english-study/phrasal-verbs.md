@@ -64,24 +64,6 @@ knowledge_ids: []
 
 용법 참고: [1](https://dictionary.cambridge.org/dictionary/english/roll-back).
 
-### scale out {#phrasal-verbs-scale-out}
-
-**2회 · 2개 문서 · 중립**
-
-**인스턴스나 복제본 수를 늘려 확장하다**
-
-기술 표현이다. 수평·수직 확장을 구분할 때 scale out은 보통 인스턴스 수 증가, scale up은 개별 자원 증설을 뜻한다. Kubernetes처럼 replica 수 증가에도 scale up을 쓰는 문맥이 있으므로 대상을 확인한다.
-
-> When should the service scale out?
->
-> 서비스는 언제 인스턴스 수를 늘려야 하나요?
-
-집계한 형태: scale out, scales out, scaled out, scaling out.
-
-본문 예: [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [platform-infrastructure/postgresql](../platform-infrastructure/postgresql.md).
-
-용법 참고: [1](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-lifecycle.html), [2](https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/).
-
 ### hand over {#phrasal-verbs-hand-over}
 
 **1회 · 1개 문서 · 중립**
@@ -291,6 +273,22 @@ knowledge_ids: []
 집계한 형태: scale down, scales down, scaled down, scaling down.
 
 용법 참고: [1](https://dictionary.cambridge.org/dictionary/english/scale-down).
+
+### scale out {#phrasal-verbs-scale-out}
+
+**0회 · 0개 문서 · 중립**
+
+**인스턴스나 복제본 수를 늘려 확장하다**
+
+기술 표현이다. 수평·수직 확장을 구분할 때 scale out은 보통 인스턴스 수 증가, scale up은 개별 자원 증설을 뜻한다. Kubernetes처럼 replica 수 증가에도 scale up을 쓰는 문맥이 있으므로 대상을 확인한다.
+
+> When should the service scale out?
+>
+> 서비스는 언제 인스턴스 수를 늘려야 하나요?
+
+집계한 형태: scale out, scales out, scaled out, scaling out.
+
+용법 참고: [1](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-lifecycle.html), [2](https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/).
 
 ### shut down {#phrasal-verbs-shut-down}
 

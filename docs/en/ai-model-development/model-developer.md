@@ -1,8 +1,8 @@
 ---
 id: ai-model-development-model-developer
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - AIMFT-08-01
   - AIMFT-08-02
@@ -17,8 +17,6 @@ knowledge_ids:
 # Chapter 8. The AI Model Developer's Role
 
 These notes preserve AI Model / QLoRA Training Basic Chapter 8. They do not claim real model-training or deployment experience.
-
-**Reading guide:** The source headings, numbers, paragraphs, lists, and text diagrams are preserved in translation. Read **Supplements and Conditions by Source Section** for training-method categories in 8.4, evaluation independence in 8.3, 8.5, and 8.7–8.8, and quantization effects in 8.6–8.7. Code and commands were not run.
 
 <!-- SOURCE CORE START -->
 

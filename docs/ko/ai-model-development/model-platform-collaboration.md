@@ -1,8 +1,8 @@
 ---
 id: ai-model-development-model-platform-collaboration
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - AIMFT-09-01
   - AIMFT-09-02
@@ -12,8 +12,6 @@ knowledge_ids:
 # Chapter 9. AI Model Developer와 AI Platform Engineer
 
 제공된 AI Model / QLoRA Training Basic Chapter 9의 학습 기록이다. 실제 모델 학습·배포 경험을 뜻하지 않는다.
-
-**본문 안내:** 원문 제목·번호·문단·목록·text 도식을 그대로 보존했다. 9.2의 요청·평가·배포 판단 경계와 9.2–9.3의 adapter 전달 조건은 뒤의 **원문 절별 보완과 적용 조건**을 함께 읽는다. 코드·명령은 실행하지 않았다.
 
 <!-- SOURCE CORE START -->
 

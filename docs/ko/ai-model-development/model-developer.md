@@ -1,8 +1,8 @@
 ---
 id: ai-model-development-model-developer
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - AIMFT-08-01
   - AIMFT-08-02
@@ -17,8 +17,6 @@ knowledge_ids:
 # Chapter 8. AI Model Developer의 역할
 
 제공된 AI Model / QLoRA Training Basic Chapter 8의 학습 기록이다. 실제 모델 학습·배포 경험을 뜻하지 않는다.
-
-**본문 안내:** 원문 제목·번호·문단·목록·text 도식을 그대로 보존했다. 8.4의 학습 방법 분류, 8.3·8.5·8.7–8.8의 평가 데이터 독립성, 8.6–8.7의 quantization 효과는 뒤의 **원문 절별 보완과 적용 조건**을 함께 읽는다. 코드·명령은 실행하지 않았다.
 
 <!-- SOURCE CORE START -->
 

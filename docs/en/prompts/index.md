@@ -1,8 +1,8 @@
 ---
 id: prompt-library
 status: overview
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids: []
 ---
 
@@ -24,9 +24,8 @@ Use these templates for SQL, schema, and configuration reviews, incident investi
 
 ## How to use
 
-1. Read **Input preparation** and collect sanitized SQL, settings, logs, and samples for the same run or period. Label synthetic samples when real evidence is unavailable.
-2. Copy the prompt from the `한국어` or `English` tab and fill the brackets. Add line numbers, timestamps, or sample IDs to inputs. Mark unknown values as `unknown`.
-3. Compare each finding with its cited input. Use **What the LLM can get wrong** and **Expected result / validation** to accept or hold findings. Answer requests for missing evidence before relying on a conclusion.
+1. Choose a case, copy the request from the `한국어` or `English` tab, and attach sanitized SQL, settings, logs, or samples from the same run or period. Mark unavailable values as `unknown`.
+2. Compare the answer with the actual input. Use the case's **Key point** to check the decision conditions and hold conclusions when evidence is missing.
 
 Each prompt can be copied on its own. The answer is a review draft and does not authorize execution or changes. After use, record accepted findings, incorrect findings, and review time to judge usefulness for your own work.
 

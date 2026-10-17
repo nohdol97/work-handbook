@@ -12,22 +12,6 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ## Expressions in the corpus — by frequency
 
-### get wrong {#idioms-get-wrong}
-
-**134 occurrences · 54 documents · neutral**
-
-**잘못 이해하거나 판단하다**
-
-The usual pattern is get something wrong. In a question, the object can move to the front: What did we get wrong? Counts include only the listed forms.
-
-> What could we get wrong about this requirement?
->
-> 이 요구사항에서 우리가 잘못 이해할 수 있는 부분은 무엇인가요?
-
-Counted forms: get wrong, gets wrong, got wrong, gotten wrong, getting wrong, get it wrong, gets it wrong, got it wrong, gotten it wrong, getting it wrong.
-
-Example source pages: [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md).
-
 ### in practice {#idioms-in-practice}
 
 **53 occurrences · 44 documents · neutral**
@@ -219,6 +203,20 @@ This idiom means starting without reusing existing work. If you lack that experi
 > 이 도구를 처음부터 만들어야 하나요?
 
 Counted forms: from scratch.
+
+### get wrong {#idioms-get-wrong}
+
+**0 occurrences · 0 documents · neutral**
+
+**잘못 이해하거나 판단하다**
+
+The usual pattern is get something wrong. In a question, the object can move to the front: What did we get wrong? Counts include only the listed forms.
+
+> What could we get wrong about this requirement?
+>
+> 이 요구사항에서 우리가 잘못 이해할 수 있는 부분은 무엇인가요?
+
+Counted forms: get wrong, gets wrong, got wrong, gotten wrong, getting wrong, get it wrong, gets it wrong, got it wrong, gotten it wrong, getting it wrong.
 
 ### in contrast {#idioms-in-contrast}
 

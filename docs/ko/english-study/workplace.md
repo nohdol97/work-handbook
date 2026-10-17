@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### X depends on Y {#workplace-depends-on}
 
-**60회 · 27개 문서 · 중립**
+**61회 · 28개 문서 · 중립**
 
 **X는 Y에 따라 달라진다**
 
@@ -60,22 +60,6 @@ knowledge_ids: []
 
 본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md).
 
-### Check that ... {#workplace-check-that}
-
-**34회 · 30개 문서 · 중립**
-
-**...인지 점검하다**
-
-충족돼야 하는 조건을 점검하라는 작업 지시에 쓴다. Check whether가 불확실한 선택지를 조사하는 데 흔히 쓰인다면 check that은 기대한 조건의 확인에 잘 맞는다.
-
-> Check that the artifact checksum matches the checksum recorded during evaluation.
->
-> Artifact checksum이 평가 때 기록한 checksum과 일치하는지 점검한다.
-
-집계한 형태: check that.
-
-본문 예: [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md), [aws-cloud/foundations](../aws-cloud/foundations.md).
-
 ### X does not guarantee Y {#workplace-does-not-guarantee}
 
 **33회 · 25개 문서 · 중립**
@@ -92,9 +76,25 @@ knowledge_ids: []
 
 본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md).
 
+### Check that ... {#workplace-check-that}
+
+**18회 · 15개 문서 · 중립**
+
+**...인지 점검하다**
+
+충족돼야 하는 조건을 점검하라는 작업 지시에 쓴다. Check whether가 불확실한 선택지를 조사하는 데 흔히 쓰인다면 check that은 기대한 조건의 확인에 잘 맞는다.
+
+> Check that the artifact checksum matches the checksum recorded during evaluation.
+>
+> Artifact checksum이 평가 때 기록한 checksum과 일치하는지 점검한다.
+
+집계한 형태: check that.
+
+본문 예: [data-platform/ai-ready-data](../data-platform/ai-ready-data.md), [data-platform/analytical-modeling](../data-platform/analytical-modeling.md), [data-platform/architecture](../data-platform/architecture.md).
+
 ### Check whether ... {#workplace-check-whether}
 
-**17회 · 14개 문서 · 중립**
+**15회 · 12개 문서 · 중립**
 
 **...인지 확인하다**
 

@@ -12,22 +12,6 @@ knowledge_ids: []
 
 ## 문서에 나온 표현 — 빈도순
 
-### get wrong {#idioms-get-wrong}
-
-**134회 · 54개 문서 · 중립**
-
-**잘못 이해하거나 판단하다**
-
-get something wrong이라는 관용 표현이다. 보통 목적어를 가운데 두지만 What did we get wrong?처럼 의문사 목적어는 앞으로 간다. 집계는 명시한 형태만 센다.
-
-> What could we get wrong about this requirement?
->
-> 이 요구사항에서 우리가 잘못 이해할 수 있는 부분은 무엇인가요?
-
-집계한 형태: get wrong, gets wrong, got wrong, gotten wrong, getting wrong, get it wrong, gets it wrong, got it wrong, gotten it wrong, getting it wrong.
-
-본문 예: [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md).
-
 ### in practice {#idioms-in-practice}
 
 **53회 · 44개 문서 · 중립**
@@ -219,6 +203,20 @@ one이나 수량 뒤에 붙이는 고정 표현·연어다. 동시에 처리하�
 > 이 도구를 처음부터 만들어야 하나요?
 
 집계한 형태: from scratch.
+
+### get wrong {#idioms-get-wrong}
+
+**0회 · 0개 문서 · 중립**
+
+**잘못 이해하거나 판단하다**
+
+get something wrong이라는 관용 표현이다. 보통 목적어를 가운데 두지만 What did we get wrong?처럼 의문사 목적어는 앞으로 간다. 집계는 명시한 형태만 센다.
+
+> What could we get wrong about this requirement?
+>
+> 이 요구사항에서 우리가 잘못 이해할 수 있는 부분은 무엇인가요?
+
+집계한 형태: get wrong, gets wrong, got wrong, gotten wrong, getting wrong, get it wrong, gets it wrong, got it wrong, gotten it wrong, getting it wrong.
 
 ### in contrast {#idioms-in-contrast}
 

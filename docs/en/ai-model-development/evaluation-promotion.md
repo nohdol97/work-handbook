@@ -1,8 +1,8 @@
 ---
 id: ai-model-development-evaluation-promotion
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - AIMFT-05-01
   - AIMFT-05-02
@@ -13,8 +13,6 @@ knowledge_ids:
 ---
 
 # Chapter 5. Evaluation and Model Promotion
-
-**Reading guide:** Source headings, numbers, tables, examples, and text diagrams are preserved in translation. Read **Supplements and Conditions by Source Section** after the source for conditions that affect real use. Values and settings are study examples. Training, deployment, and performance tests were not run for this page.
 
 <!-- SOURCE CORE START -->
 

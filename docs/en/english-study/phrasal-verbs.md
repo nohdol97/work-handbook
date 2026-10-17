@@ -64,24 +64,6 @@ Example source pages: [data-platform/production-operations](../data-platform/pro
 
 Usage references: [1](https://dictionary.cambridge.org/dictionary/english/roll-back).
 
-### scale out {#phrasal-verbs-scale-out}
-
-**2 occurrences · 2 documents · neutral**
-
-**인스턴스나 복제본 수를 늘려 확장하다**
-
-This is a technical expression. When contrasting horizontal and vertical scaling, scale out usually adds instances and scale up adds resources per instance. Some contexts, including Kubernetes, also use scale up for adding replicas, so check what is being scaled.
-
-> When should the service scale out?
->
-> 서비스는 언제 인스턴스 수를 늘려야 하나요?
-
-Counted forms: scale out, scales out, scaled out, scaling out.
-
-Example source pages: [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [platform-infrastructure/postgresql](../platform-infrastructure/postgresql.md).
-
-Usage references: [1](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-lifecycle.html), [2](https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/).
-
 ### hand over {#phrasal-verbs-hand-over}
 
 **1 occurrence · 1 document · neutral**
@@ -291,6 +273,22 @@ This phrasal verb means reducing size, resources, or workload. With an object it
 Counted forms: scale down, scales down, scaled down, scaling down.
 
 Usage references: [1](https://dictionary.cambridge.org/dictionary/english/scale-down).
+
+### scale out {#phrasal-verbs-scale-out}
+
+**0 occurrences · 0 documents · neutral**
+
+**인스턴스나 복제본 수를 늘려 확장하다**
+
+This is a technical expression. When contrasting horizontal and vertical scaling, scale out usually adds instances and scale up adds resources per instance. Some contexts, including Kubernetes, also use scale up for adding replicas, so check what is being scaled.
+
+> When should the service scale out?
+>
+> 서비스는 언제 인스턴스 수를 늘려야 하나요?
+
+Counted forms: scale out, scales out, scaled out, scaling out.
+
+Usage references: [1](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-lifecycle.html), [2](https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/).
 
 ### shut down {#phrasal-verbs-shut-down}
 

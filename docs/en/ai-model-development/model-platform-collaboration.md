@@ -1,8 +1,8 @@
 ---
 id: ai-model-development-model-platform-collaboration
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - AIMFT-09-01
   - AIMFT-09-02
@@ -12,8 +12,6 @@ knowledge_ids:
 # Chapter 9. AI Model Developers and AI Platform Engineers
 
 These notes preserve AI Model / QLoRA Training Basic Chapter 9. They do not claim real model-training or deployment experience.
-
-**Reading guide:** The source headings, numbers, paragraphs, lists, and text diagrams are preserved in translation. Read **Supplements and Conditions by Source Section** for request/evaluation/deployment decision boundaries in 9.2 and adapter handoff conditions in 9.2–9.3. Code and commands were not run.
 
 <!-- SOURCE CORE START -->
 

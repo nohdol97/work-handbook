@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### X depends on Y {#workplace-depends-on}
 
-**60 occurrences · 27 documents · neutral**
+**61 occurrences · 28 documents · neutral**
 
 **X는 Y에 따라 달라진다**
 
@@ -60,22 +60,6 @@ Counted forms: for example.
 
 Example source pages: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md).
 
-### Check that ... {#workplace-check-that}
-
-**34 occurrences · 30 documents · neutral**
-
-**...인지 점검하다**
-
-Ask someone to verify an expected condition. Check whether often investigates an open possibility; check that fits a condition that should hold.
-
-> Check that the artifact checksum matches the checksum recorded during evaluation.
->
-> Artifact checksum이 평가 때 기록한 checksum과 일치하는지 점검한다.
-
-Counted forms: check that.
-
-Example source pages: [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md), [aws-cloud/foundations](../aws-cloud/foundations.md).
-
 ### X does not guarantee Y {#workplace-does-not-guarantee}
 
 **33 occurrences · 25 documents · neutral**
@@ -92,9 +76,25 @@ Counted forms: does not guarantee, doesn't guarantee.
 
 Example source pages: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md).
 
+### Check that ... {#workplace-check-that}
+
+**18 occurrences · 15 documents · neutral**
+
+**...인지 점검하다**
+
+Ask someone to verify an expected condition. Check whether often investigates an open possibility; check that fits a condition that should hold.
+
+> Check that the artifact checksum matches the checksum recorded during evaluation.
+>
+> Artifact checksum이 평가 때 기록한 checksum과 일치하는지 점검한다.
+
+Counted forms: check that.
+
+Example source pages: [data-platform/ai-ready-data](../data-platform/ai-ready-data.md), [data-platform/analytical-modeling](../data-platform/analytical-modeling.md), [data-platform/architecture](../data-platform/architecture.md).
+
 ### Check whether ... {#workplace-check-whether}
 
-**17 occurrences · 14 documents · neutral**
+**15 occurrences · 12 documents · neutral**
 
 **...인지 확인하다**
 

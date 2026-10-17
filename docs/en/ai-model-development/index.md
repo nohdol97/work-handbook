@@ -20,8 +20,6 @@ knowledge_ids:
 
 This section preserves Chapters 1–10 and the final summary of the supplied basic study material. It connects QLoRA, dataset design, training, evaluation, model changes, artifact tracking, and model/platform roles. It is not a record of GPU training, measured model quality, or deployment.
 
-**Reading note:** Original numbering, examples, and diagrams are preserved. See the supplements for the LoRA matrix-dimension correction in 1.2, adapter compatibility, golden-dataset independence, and limits of reproducibility. Read the source summary below with those conditions.
-
 | Chapter | Study page |
 |---|---|
 | 1 | [QLoRA and training artifacts](qlora-artifacts.md) |
