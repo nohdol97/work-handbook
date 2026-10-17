@@ -47,6 +47,15 @@ def structure(text):
     return result
 
 
+def outline(text):
+    """Keep the source's non-prose Markdown form during a prose rewrite."""
+    tokens = structure(text)
+    headings = [item for item in tokens if item[0] == 'heading']
+    fences = [item for item in tokens if item[0] in ('fence', 'fence-end')]
+    form = [item for item in tokens if item[0] in ('list', 'table', 'quote', 'separator')]
+    return headings, fences, form
+
+
 def _file(root, relative, parent):
     if not isinstance(relative, str) or not relative.endswith('.md'):
         raise ValueError('expected Markdown path')
@@ -136,6 +145,13 @@ def audit(root):
             original_language = record['verbatim_language']
             if original_language not in ('ko', 'en'):
                 raise ValueError('verbatim_language must be ko or en')
+            mode = record.get('preservation_mode', 'verbatim')
+            if mode not in ('verbatim', 'editable'):
+                raise ValueError('invalid preservation mode')
+            if mode == 'editable' and not isinstance(record.get('user_request'), str):
+                raise ValueError('editable source requires explicit user request evidence')
+            if mode == 'editable' and not record['user_request'].strip():
+                raise ValueError('editable source requires explicit user request evidence')
             marker = record.get('marker', 'SOURCE CORE')
             if not isinstance(marker, str) or not re.fullmatch(r'[A-Z][A-Z ]+', marker):
                 raise ValueError('invalid marker')
@@ -160,10 +176,22 @@ def audit(root):
                 # Keep the existing source comparison's universal-newline behavior
                 # after checking addition hashes against their exact stored bytes.
                 core = core.replace('\r\n', '\n').replace('\r', '\n').strip('\n')
-                if lang == original_language and core != original:
-                    errors.append(f'{label}: {lang} verbatim source mismatch')
-                if structure(core) != expected_structure:
-                    errors.append(f'{label}: {lang} source structure mismatch')
+                if mode == 'verbatim':
+                    if lang == original_language and core != original:
+                        errors.append(f'{label}: {lang} verbatim source mismatch')
+                    if structure(core) != expected_structure:
+                        errors.append(f'{label}: {lang} source structure mismatch')
+                else:
+                    if not core.strip():
+                        errors.append(f'{label}: {lang} editable source is empty')
+                    expected_headings, expected_fences, expected_form = outline(original)
+                    headings, fences, form = outline(core)
+                    if headings != expected_headings:
+                        errors.append(f'{label}: {lang} source outline mismatch')
+                    if fences != expected_fences:
+                        errors.append(f'{label}: {lang} source fence mismatch')
+                    if form != expected_form:
+                        errors.append(f'{label}: {lang} source form mismatch')
         except (OSError, UnicodeError, ValueError, KeyError, TypeError) as exc:
             errors.append(f'{label}: source preservation: {exc}')
     return errors

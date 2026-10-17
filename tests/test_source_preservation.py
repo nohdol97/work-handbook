@@ -37,6 +37,41 @@ class PreservationTests(unittest.TestCase):
         self.pair(self.core.replace('Original paragraph.', 'Translated paragraph.'), 'en')
         self.assertEqual(checker.audit(self.root), [])
 
+    def test_explicit_editable_source_accepts_rewritten_prose(self):
+        self.record['preservation_mode'] = 'editable'
+        self.record['user_request'] = 'User requested rewriting this registered page.'
+        self.config()
+        self.pair(self.core.replace('Original paragraph.', 'A clear explanation with an example.'))
+        self.assertEqual(checker.audit(self.root), [])
+
+    def test_editable_source_rejects_missing_request_and_outline_loss(self):
+        self.record['preservation_mode'] = 'editable'
+        self.config()
+        self.assertTrue(checker.audit(self.root))
+        self.record['user_request'] = 'User requested rewriting this registered page.'
+        self.config()
+        self.pair(self.core.replace('## 6.2 Ordering', '## 6.3 Ordering'), 'en')
+        self.assertTrue(any('outline' in x for x in checker.audit(self.root)))
+
+    def test_editable_source_rejects_fence_loss_and_unknown_mode(self):
+        self.record['preservation_mode'] = 'editable'
+        self.record['user_request'] = 'User requested rewriting this registered page.'
+        self.config()
+        self.pair(self.core.replace('```text', '```mermaid'), 'ko')
+        self.assertTrue(any('fence' in x for x in checker.audit(self.root)))
+        self.record['preservation_mode'] = 'unknown'
+        self.config()
+        self.assertTrue(checker.audit(self.root))
+
+    def test_editable_source_keeps_lists_and_separators(self):
+        self.record['preservation_mode'] = 'editable'
+        self.record['user_request'] = 'Standing instruction and selected task scope.'
+        self.config()
+        self.pair(self.core.replace('- one\n- two', 'one and two'), 'ko')
+        self.assertTrue(any('form' in x for x in checker.audit(self.root)))
+        self.pair(self.core.replace('\n---', ''), 'ko')
+        self.assertTrue(any('form' in x for x in checker.audit(self.root)))
+
     def inline_addition(self):
         block = '<!-- INLINE ADDITION EXAMPLE START -->\n\nAdditional explanation.\n\n<!-- INLINE ADDITION EXAMPLE END -->\n\n'
         self.record['inline_additions'] = [{

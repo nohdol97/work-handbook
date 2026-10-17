@@ -24,9 +24,9 @@
 
 ## 설계 원칙
 
-- 지정 목차·순서와 핵심 기술 지식은 유지한다. 이미 등록됐거나 명시적으로 원문 그대로 요청한 구역은 원래 언어를 그대로 보존하고 번역도 같은 구조로 작성하며, 보완·정정·실무 예시는 원문 밖에 구분한다. 새 미등록 문서는 원문 증거와 ID를 추적하면서 어려운 표현을 쉽게 고쳐 쓴다. 자료 없이 기술 내용을 꾸며내지 않는다.
+- 지정 목차·순서와 핵심 기술 지식은 유지한다. 원문 추적 스킬로 문서를 작성·개정하면 선택된 등록 구역만 사용자 상시 지시와 작업 범위의 증거·`editable` 모드로 기록하고, 원본은 `sources/`에 둔 채 공개 본문의 어려운 표현을 직접 고친다. 선택하지 않은 구역은 기존 보존을 유지하고, 명시적으로 원문 그대로 요청한 구역은 예외로 둔다. 자료 없이 기술 내용을 꾸며내지 않는다.
 - 앞으로 새로 쓰거나 개정하는 설명은 전문 용어를 처음에 풀고 적절한 일상 비유·구체적 예시를 사용한다. 개념의 정의·필요성·사용 시점과 관련 기술의 실제 연결을 설명하며, 기존 각 장 끝에 짧은 핵심 정리를 둔다. 반복과 과도한 설명은 줄이고 한영 전문을 직접 검토한다. [작성 스펙 009](docs/specs/009-beginner-friendly-writing.md)을 따른다.
-- 사용자가 명시적으로 원문 사이 추가를 요청하면 [등록된 추가 블록](docs/adr/009-explicit-inline-additions.md)으로 구분한다. 요청 증거·한영 hash를 확인한 블록만 원문 비교에서 제외하며, 원문 자체를 고치거나 요약하지 않는다.
+- 원문 자체의 개정 없이 사이에 설명만 추가하라는 요청은 [등록된 추가 블록](docs/adr/009-explicit-inline-additions.md)으로 처리한다. 본문 개정 요청은 [범위 한정 개정 결정](docs/adr/012-scoped-source-rewrite.md)을 따른다.
 - 의미 있는 지식은 안정적인 ID와 반영표로 추적한다. 보류와 제외도 이유를 남긴다.
 - 한국어와 쉬운 영어는 같은 지식을 담는다. 내용이 바뀌면 의미·영어·개인정보 검토 기록을 갱신한다.
 - Git Markdown이 원본이다. HTML은 생성물이고 vault는 충돌 보호가 있는 사본이다.
@@ -49,8 +49,8 @@ make validate
 
 1. `sources/<batch>/source.md`에 민감 정보를 제거한 원문 전체를 보존한다. 커리큘럼이 있으면 `curriculum.md`도 둔다. 접근 불가 부분은 명시한다.
 2. [입력 스키마](configs/source-model.md)에 맞춰 `content-manifest.md`, `mapping.md`, `coverage-matrix.md`를 만든다. 문서 작성 전에 모든 의미 있는 지식을 먼저 추출한다.
-3. [원문 보존 스킬](.agents/skills/preserve-study-source/SKILL.md)을 적용한다. 기존 등록 구역과 명시적으로 원문 그대로 요청한 구역은 `reviews/source-preservation.json`에 등록하고 원문·번역 구조를 보존한다. 새 미등록 문서는 목차·핵심 내용을 유지하면서 입문자용 설명으로 작성하고, 원본은 `sources/`와 ID 매핑으로 추적한다.
-4. 등록된 구역은 `.venv/bin/python scripts/check_source_preservation.py`로 원문 동일성과 번역 구조를 검사한다. 작성 방식과 관계없이 전체 한영 쌍을 직접 읽어 원문 대비 누락·정확성·가독성·쉬운 영어·개인정보를 검토한다. `reviews/bilingual.json`에 실제 검토자, 결과, 현재 SHA-256을 기록한다. 해시만 갱신해서 검토를 대신하면 안 된다.
+3. [원문 추적 스킬](.agents/skills/preserve-study-source/SKILL.md)을 적용한다. 해당 작업에서 선택된 등록 구역은 `reviews/source-preservation.json`에 상시 지시·작업 범위 증거와 `editable` 모드를 기록하고 원본·ID 추적을 유지하며 본문을 고친다. 선택하지 않은 구역과 명시적 verbatim 요청의 보존 규칙은 유지한다.
+4. 등록된 구역은 `.venv/bin/python scripts/check_source_preservation.py`로 모드별 동일성 또는 목차·코드·목록·표·인용 형태를 검사한다. 작성 방식과 관계없이 전체 한영 쌍을 직접 읽어 원문 대비 누락·정확성·가독성·쉬운 영어·개인정보를 검토한다. `reviews/bilingual.json`에 실제 검토자, 결과, 현재 SHA-256을 기록한다. 해시만 갱신해서 검토를 대신하면 안 된다.
 5. 영어 빈도 후보를 먼저 확인하고 실전 영어 원고·생성물·검토 기록을 갱신한다. `.venv/bin/python scripts/check_handbook.py --write-reports`로 반영 보고서를 만든다. `make finalize`로 전체 검증과 vault 저장을 실행한다.
 6. 검증된 지정 파일을 커밋하고 공개 원격에 push한다. 자료·커리큘럼·페이지 쌍·coverage·검증·미해결 사항을 간단히 보고한다.
 
