@@ -206,6 +206,8 @@ Example:
 - An incompatible type change
 - A semantic change
 
+The owner in the example is fictional. Distinguish plain JSON from validation through JSON Schema. A registry cannot catch every semantic change, such as a unit change. Allowed changes depend on the format, field defaults, and compatibility mode. For full historical replay, check whether compatibility covers only the previous schema or all prior schemas through a transitive mode. [Confluent schema compatibility](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)
+
 ---
 
 ## 2.4 Delivery Semantics
@@ -276,6 +278,10 @@ event_id
 ```
 
 This can be used to find duplicates.
+
+The source's at-most-once phrase “fewer duplicates” is simplified. Within the guarantee's boundary, delivery happens at most once, so it does not duplicate delivery, but loss is possible. Exactly-once means one committed effect within a defined boundary. Distinguish Kafka transactions, processor state, and an external sink.
+
+At-least-once guarantees rely on the system's retention and recovery assumptions. Deduplication needs an identity rule and a state-retention period. A longer replay needs separate verification. Kafka replay is limited to retained history. Check historical schema support and each serving or lakehouse path's lag, recovery, and result consistency.
 
 ---
 
@@ -403,23 +409,3 @@ Replay a small range twice and compare final results by event ID and missing-eve
 [See six more practical prompts for this topic](../prompts/event-architecture.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.
-
-## Qualifications for real use
-
-The owner in the example is fictional. Distinguish plain JSON from validation through JSON Schema. A registry cannot catch every semantic change, such as a unit change. Allowed changes depend on the format, field defaults, and compatibility mode. For full historical replay, check whether compatibility covers only the previous schema or all prior schemas through a transitive mode. [Confluent schema compatibility](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)
-
-At-least-once guarantees rely on the system's retention and recovery assumptions. Deduplication needs an identity rule and a state-retention period. A longer replay needs separate verification. Kafka replay is limited to retained history. Check historical schema support and each serving or lakehouse path's lag, recovery, and result consistency.
-
-### Section 2.4: the boundary of delivery guarantees
-
-The source's at-most-once phrase “fewer duplicates” is simplified. Within the guarantee's boundary, delivery happens at most once, so it does not duplicate delivery, but loss is possible. Exactly-once means one committed effect within a defined boundary. Distinguish Kafka transactions, processor state, and an external sink.
-
-### Existing supplementary flow diagram
-
-```mermaid
-flowchart TD
-    A[Application] --> K[Kafka]
-    K --> S[Search Store]
-    K --> O[Operational Serving Store]
-    K --> L[Lakehouse / Iceberg]
-```

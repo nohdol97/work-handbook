@@ -204,6 +204,8 @@ Trace / Observation / Score
 
 Do not assume Langfuse alone provides long-term joined analytics and full governance.
 
+Actual coverage depends on instrumentation and integrations. The diagram is a learning model, not a storage design or a tested automatic integration. [Langfuse data model](https://langfuse.com/docs/observability/data-model).
+
 ---
 
 ## 15.3 Dataset Versioning
@@ -244,6 +246,8 @@ Iceberg Snapshot
 Dataset Version
 → Logical dataset version for AI/business use
 ```
+
+Changes to Langfuse dataset items create timestamp-based versions; schema changes are outside that versioning scope. Preserve the schema and evaluation settings as well as the input version. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
 
 ---
 
@@ -428,6 +432,8 @@ Correct document was retrieved, but the answer is wrong
 
 These failures can be distinguished.
 
+Access metadata alone does not enforce access. Derive permissions from a trusted identity and check every search request. Prompts, responses, and tool inputs/outputs can also contain sensitive data, so define collection, masking, and retention rules. Hiding a result only in the UI after sending it to an LLM does not prevent disclosure. [Azure AI Search security filters](https://learn.microsoft.com/en-us/azure/search/search-security-trimming-for-azure-search).
+
 ---
 
 ## 15.8 Provenance
@@ -575,23 +581,3 @@ Label-like
 
 ** Changed conditions, missing evidence, and a controlled comparison plan.
 ** Inspect actual dataset items, settings, and traces. Repeat evaluations under the same conditions. No experiment was run for this page.
-
-## Source qualifications {#source-notes}
-
-### 15.2A Langfuse data model
-
-A trace groups a request or operation. An observation is a step such as an LLM call, tool call, or retrieval. A session groups traces. Do not infer physical storage from this conceptual diagram. [Langfuse data model](https://langfuse.com/docs/observability/data-model).
-
-### 15.3–15.4 Dataset version scope
-
-Changes to Langfuse dataset items create timestamp-based versions; schema changes are outside that versioning scope. Preserve the schema and evaluation settings as well as the input version. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
-
-### 15.2 and 15.7 Collection and access control
-
-Access metadata alone does not enforce access. Derive permissions from a trusted identity and check every search request. Prompts, responses, and tool inputs/outputs can also contain sensitive data, so define collection, masking, and retention rules. Hiding a result only in the UI after sending it to an LLM does not prevent disclosure. [Azure AI Search security filters](https://learn.microsoft.com/en-us/azure/search/search-security-trimming-for-azure-search).
-
-### 15.2A Collection scope and 15.3 Snapshot meaning
-
-Actual Langfuse coverage depends on instrumentation and integrations. The source diagram is a learning design, not a tested integration.
-
-Read the “physical table state version” in 15.3 as a consistent set of files referenced by table metadata. An Iceberg snapshot and an AI/business dataset version are not the same identifier or boundary.

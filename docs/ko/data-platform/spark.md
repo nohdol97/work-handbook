@@ -157,6 +157,10 @@ Spark SQL/DataFrame에서는 Catalyst Optimizer가 Query Plan을 최적화한다
 
 `explain()`을 통해 계획을 확인할 수 있다.
 
+계획을 읽었다고 성능이 빠름을 입증한 것은 아니다. 물리 계획과 실제 shuffle량을 먼저 확인한다. Sort-merge join은 network와 sort 비용을, shuffle hash join은 partition별 memory 압박을 고려한다. Shuffle hash join은 입력을 분할한 뒤 hash table을 만들고 조회한다. Join 전략을 바꾸어도 잘못 가정한 key 유일성은 해결되지 않는다.
+
+Semi/anti join은 상대 table의 column이 필요 없고 존재 여부만 확인할 때 의도를 명확히 표현할 수 있다. Target partition size와 target file size는 관련이 있지만 같은 설정은 아니다. Task를 줄이면 overhead와 병렬성이 함께 줄어들 수 있다.
+
 ---
 
 ## 4.4 Narrow vs Wide Dependencies
@@ -189,6 +193,8 @@ repartition
 ```
 
 이때 Shuffle이 발생한다.
+
+논리적 join이라고 양쪽 입력이 반드시 shuffle되지는 않는다. Broadcast나 기존 partition 배치가 물리 계획을 바꿀 수 있다. `explain()`과 Spark UI에서 실제 계획, shuffle bytes, task별 시간·spill·GC·입력 크기를 확인한다. AQE는 runtime statistics로 지원되는 계획만 바꾸며 모든 skew를 해결하지 않는다. Join 결과 폭증은 key 중복과 grain부터 확인한다. Semi join은 존재하는 행, anti join은 일치하지 않는 행을 선택한다. [Spark 성능 가이드](https://spark.apache.org/docs/latest/sql-performance-tuning.html)
 
 ---
 
@@ -324,6 +330,8 @@ Partition 수는:
 
 와 연결된다.
 
+Speculation은 느린 task를 다시 실행할 뿐 원래 skew를 없애지 않는다. Cache와 durable table은 보존 수명이 다르다. `repartition`은 보통 shuffle을 만들며, partition을 지나치게 줄이면 병렬성도 줄어든다. Spark→dbt 경로는 예시이지 반드시 지켜야 하는 계층 경계가 아니다.
+
 ---
 
 ## 4.8 Cache / Persist
@@ -449,6 +457,10 @@ Skew 등이 원인이 될 수 있다.
 
 어느 Stage/Task가 병목인지 진단하는 데 중요하다.
 
+Spark UI에서 task 지표를 비교하고 여러 설정을 동시에 바꾸기 전에 병목을 진단한다. Iceberg 읽기에서는 filter뿐 아니라 필요한 column 선택도 읽기량을 줄인다. File split 계획과 layout 모두 parallelism에 영향을 준다. Compaction은 쓰기 workload와 함께 계획한다.
+
+Structured Streaming은 증가하는 table 모델로 이해할 수 있다. Late event는 더 새로운 event-time 데이터보다 늦게 도착한 경우를 포함한다. Deduplication이 반복 논리 event를 제거하는 범위는 설정에 달려 있다.
+
 ---
 
 ## 4.11 Spark + Iceberg
@@ -504,6 +516,8 @@ Spark Task가 File을 만들고 Iceberg Commit을 통해 새 Snapshot을 Table�
 ### Maintenance Debt
 
 Streaming Write, MERGE, 작은 File 등이 쌓이면 Compaction 등 Maintenance가 필요해진다.
+
+Iceberg 목표 파일 크기는 보장되는 출력 크기가 아니다. 하나의 파일은 task와 Iceberg partition 경계를 넘지 못하며, 압축된 파일 크기와 Spark 메모리 내 크기도 다르다. [Iceberg Spark 쓰기](https://iceberg.apache.org/docs/latest/spark-writes/)
 
 ---
 
@@ -580,6 +594,8 @@ Aggregation 결과를 어떤 방식으로 출력할지 결정.
 ### Streaming vs Batch Backfill
 
 실시간 처리는 Streaming, 과거 대규모 재처리는 Batch Spark가 자연스럽다.
+
+Watermark는 단순한 대기 타이머가 아니라 event-time 진행 및 state 정리 기준이다. Output mode는 append/update/complete 등 연산·sink 조합에 제약이 있다. `foreachBatch`의 기본 write 보장은 at-least-once다. `batchId` 등을 활용한 멱등 sink와 재시도 검증 없이 end-to-end exactly-once를 주장하지 않는다. [Spark Structured Streaming](https://spark.apache.org/docs/latest/streaming/apis-on-dataframes-and-datasets.html)
 
 ---
 
@@ -689,33 +705,3 @@ Spark 성능은 작업 분할과 shuffle, 데이터 쏠림, 저장 파일 배치
 [이 주제의 실무 프롬프트 6개 더 보기](../prompts/spark.md)
 
 LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.
-
-## 원문 적용 시 보완 {#source-notes}
-
-### 4.4~4.6·4.9 Join 계획과 skew
-
-논리적 join이라고 양쪽 입력이 반드시 shuffle되지는 않는다. Broadcast나 기존 partition 배치가 물리 계획을 바꿀 수 있다. `explain()`과 Spark UI에서 실제 계획, shuffle bytes, task별 시간·spill·GC·입력 크기를 확인한다. AQE는 runtime statistics로 지원되는 계획만 바꾸며 모든 skew를 해결하지 않는다. Join 결과 폭증은 key 중복과 grain부터 확인한다. Semi join은 존재하는 행, anti join은 일치하지 않는 행을 선택한다. [Spark 성능 가이드](https://spark.apache.org/docs/latest/sql-performance-tuning.html)
-
-### 4.7~4.10·4.14 실행과 역할 경계
-
-Speculation은 느린 task를 다시 실행할 뿐 원래 skew를 없애지 않는다. Cache와 durable table은 보존 수명이 다르다. `repartition`은 보통 shuffle을 만들며, partition을 지나치게 줄이면 병렬성도 줄어든다. Spark→dbt 경로는 예시이지 반드시 지켜야 하는 계층 경계가 아니다.
-
-### 4.11 Iceberg 파일 크기
-
-Iceberg 목표 파일 크기는 보장되는 출력 크기가 아니다. 하나의 파일은 task와 Iceberg partition 경계를 넘지 못하며, 압축된 파일 크기와 Spark 메모리 내 크기도 다르다. [Iceberg Spark 쓰기](https://iceberg.apache.org/docs/latest/spark-writes/)
-
-### 4.12 Watermark와 출력 보장
-
-Watermark는 단순한 대기 타이머가 아니라 event-time 진행 및 state 정리 기준이다. Output mode는 append/update/complete 등 연산·sink 조합에 제약이 있다. `foreachBatch`의 기본 write 보장은 at-least-once다. `batchId` 등을 활용한 멱등 sink와 재시도 검증 없이 end-to-end exactly-once를 주장하지 않는다. [Spark Structured Streaming](https://spark.apache.org/docs/latest/streaming/apis-on-dataframes-and-datasets.html)
-
-### 4.3~4.7 계획·join·partition의 추가 구분
-
-계획을 읽었다고 성능이 빠름을 입증한 것은 아니다. 물리 계획과 실제 shuffle량을 먼저 확인한다. Sort-merge join은 network와 sort 비용을, shuffle hash join은 partition별 memory 압박을 고려한다. Shuffle hash join은 입력을 분할한 뒤 hash table을 만들고 조회한다. Join 전략을 바꾸어도 잘못 가정한 key 유일성은 해결되지 않는다.
-
-Semi/anti join은 상대 table의 column이 필요 없고 존재 여부만 확인할 때 의도를 명확히 표현할 수 있다. Target partition size와 target file size는 관련이 있지만 같은 설정은 아니다. Task를 줄이면 overhead와 병렬성이 함께 줄어들 수 있다.
-
-### 4.10~4.12 처리·읽기·상태의 추가 구분
-
-Spark UI에서 task 지표를 비교하고 여러 설정을 동시에 바꾸기 전에 병목을 진단한다. Iceberg 읽기에서는 filter뿐 아니라 필요한 column 선택도 읽기량을 줄인다. File split 계획과 layout 모두 parallelism에 영향을 준다. Compaction은 쓰기 workload와 함께 계획한다.
-
-Structured Streaming은 증가하는 table 모델로 이해할 수 있다. Late event는 더 새로운 event-time 데이터보다 늦게 도착한 경우를 포함한다. Deduplication이 반복 논리 event를 제거하는 범위는 설정에 달려 있다.

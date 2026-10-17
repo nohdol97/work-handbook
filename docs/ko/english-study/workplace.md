@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### X depends on Y {#workplace-depends-on}
 
-**63회 · 29개 문서 · 중립**
+**64회 · 29개 문서 · 중립**
 
 **X는 Y에 따라 달라진다**
 
@@ -30,7 +30,7 @@ knowledge_ids: []
 
 ### X does not mean Y {#workplace-does-not-mean}
 
-**47회 · 32개 문서 · 중립**
+**46회 · 32개 문서 · 중립**
 
 **X라고 해서 Y라는 뜻은 아니다**
 

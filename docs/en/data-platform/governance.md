@@ -65,6 +65,8 @@ team_id → Internal
 
 Use these classifications when setting access, masking, and retention policies.
 
+Public, Internal, Confidential, PII, and Sensitive are not a single ordered scale shared by every organization. PII describes the kind of data and can be used alongside an importance level.
+
 ---
 
 ## 14.3 Retention Policies
@@ -134,6 +136,14 @@ In Iceberg, an older snapshot may still reference files absent from the current 
 
 Consider older snapshots and file cleanup too.
 
+Distinguish snapshot retention from source-data retention requirements. Data absent from the current snapshot may still be referenced by older snapshots.
+
+- Snapshot expiration relates to cleanup of files no longer needed by retained snapshots.
+- Orphan cleanup handles files that metadata does not reference.
+- Choose a retention interval that avoids mistaking files from active writes for orphans.
+
+Current query results alone do not prove physical deletion. [Iceberg maintenance](https://iceberg.apache.org/docs/latest/maintenance/)
+
 ---
 
 ## 14.5 Masking
@@ -188,6 +198,10 @@ Masking
 
 Group privileges by role instead of granting each user permission one by one.
 
+A policy shown in a catalog does not prove protection across every external engine and storage path.
+
+Databricks row filters and column masks have runtime, compute, and API limits. The checked documentation describes unsupported path-based and certain REST API access to tables with these policies. [Databricks filters and masks](https://docs.databricks.com/aws/en/data-governance/unity-catalog/filters-and-masks)
+
 ---
 
 ## 14.7 Auditability
@@ -220,6 +234,8 @@ Observability
 Audit
 → Who did what?
 ```
+
+Real users and queries in audit logs can be sensitive. Do not copy them directly into public learning material.
 
 ---
 
@@ -255,6 +271,11 @@ Owner
 ```
 
 It covers business meaning and quality responsibility as well as schema shape.
+
+`email` and `team_id` are example field names, with no real organizational identifiers. The data contract's owner is a hypothetical team. Five minutes is not an approved operational SLO.
+
+An integer type alone does not define a unit. The contract also states milliseconds and the non-negative rule.
+
 
 ---
 
@@ -311,6 +332,14 @@ Who accessed it?
 Is it healthy?
 ```
 
+Product descriptions are a category-level comparison checked against official docs on 2026-09-24. No platform was deployed, and not every feature was tested.
+
+- **Unity Catalog:** Separate broad capabilities from detailed runtime and access-path limits. [Official overview](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
+- **Lake Formation:** Check data-filter support by integrated engine and service. [Data filtering](https://docs.aws.amazon.com/lake-formation/latest/dg/data-filtering.html)
+- **Horizon Catalog:** Check edition and individual feature requirements. For example, Access History requires Enterprise Edition or higher. [Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon), [Access History](https://docs.snowflake.com/en/user-guide/access-history)
+
+The three products do not enforce every policy in the same way or scope.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -352,58 +381,3 @@ Is it healthy?
 [Lineage and metadata](lineage-metadata.md) · [Data quality](data-quality.md) · [Data observability](data-observability.md) · [Handbook home](../index.md)
 
 [More practical prompts](../prompts/governance.md)
-
-## Details to check in practice
-
-### Examples and actual policy
-
-Public, Internal, Confidential, PII, and Sensitive are not a single ordered scale shared by every organization. PII describes the kind of data and can be used alongside an importance level.
-
-Retention durations are learning examples, not legal rules or recommended defaults.
-
-`email` and `team_id` are example field names, with no real organizational identifiers. The data contract's owner is a hypothetical team. Five minutes is not an approved operational SLO.
-
-An integer type alone does not define a unit. The contract also states milliseconds and the non-negative rule.
-
-### Iceberg retention and physical deletion
-
-Distinguish snapshot retention from source-data retention requirements. Data absent from the current snapshot may still be referenced by older snapshots.
-
-- Snapshot expiration relates to cleanup of files no longer needed by retained snapshots.
-- Orphan cleanup handles files that metadata does not reference.
-- Choose a retention interval that avoids mistaking files from active writes for orphans.
-
-Current query results alone do not prove physical deletion. [Iceberg maintenance](https://iceberg.apache.org/docs/latest/maintenance/)
-
-### Policy enforcement on actual access paths
-
-A policy shown in a catalog does not prove protection across every external engine and storage path.
-
-Databricks row filters and column masks have runtime, compute, and API limits. The checked documentation describes unsupported path-based and certain REST API access to tables with these policies. [Databricks filters and masks](https://docs.databricks.com/aws/en/data-governance/unity-catalog/filters-and-masks)
-
-### Scope of the product comparison
-
-Product descriptions are a category-level comparison checked against official docs on 2026-09-24. No platform was deployed, and not every feature was tested.
-
-- **Unity Catalog:** Separate broad capabilities from detailed runtime and access-path limits. [Official overview](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
-- **Lake Formation:** Check data-filter support by integrated engine and service. [Data filtering](https://docs.aws.amazon.com/lake-formation/latest/dg/data-filtering.html)
-- **Horizon Catalog:** Check edition and individual feature requirements. For example, Access History requires Enterprise Edition or higher. [Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon), [Access History](https://docs.snowflake.com/en/user-guide/access-history)
-
-The three products do not enforce every policy in the same way or scope.
-
-### Sensitive data in audit logs
-
-Real users and queries in audit logs can be sensitive. Do not copy them directly into public learning material.
-
-### Supplemental diagram of deletion scope
-
-```mermaid
-flowchart LR
-    PostgreSQL --> Kafka
-    Kafka --> Bronze
-    Bronze --> Silver
-    Silver --> Gold
-    Gold --> Backup
-```
-
-The source flow is an example of copies and derived data to trace. Real backups can exist at several stages.

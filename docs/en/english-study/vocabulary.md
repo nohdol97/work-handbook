@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### check {#vocab-check}
 
-**699 occurrences · 74 documents · neutral**
+**670 occurrences · 74 documents · neutral**
 
 **확인하다; 점검**
 
@@ -30,7 +30,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### use {#vocab-use}
 
-**538 occurrences · 75 documents · neutral**
+**530 occurrences · 75 documents · neutral**
 
 **사용하다; 사용**
 
@@ -46,7 +46,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### change {#vocab-change}
 
-**412 occurrences · 66 documents · neutral**
+**410 occurrences · 66 documents · neutral**
 
 **변경하다; 변경 사항**
 
@@ -78,7 +78,7 @@ Example source pages: [ai-model-development/artifact-lineage](../ai-model-develo
 
 ### manage {#vocab-manage}
 
-**230 occurrences · 46 documents · neutral**
+**226 occurrences · 46 documents · neutral**
 
 **관리하다; 해내다**
 
@@ -94,7 +94,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### result {#vocab-result}
 
-**227 occurrences · 73 documents · neutral**
+**225 occurrences · 73 documents · neutral**
 
 **결과**
 
@@ -110,7 +110,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### failure {#vocab-failure}
 
-**220 occurrences · 50 documents · neutral**
+**215 occurrences · 50 documents · neutral**
 
 **실패; 고장**
 
@@ -126,7 +126,7 @@ Example source pages: [ai-model-development/evaluation-promotion](../ai-model-de
 
 ### request {#vocab-request}
 
-**210 occurrences · 30 documents · neutral**
+**209 occurrences · 30 documents · neutral**
 
 **요청하다; 요청**
 
@@ -142,7 +142,7 @@ Example source pages: [ai-model-development/model-platform-collaboration](../ai-
 
 ### actual {#vocab-actual}
 
-**209 occurrences · 65 documents · neutral**
+**203 occurrences · 65 documents · neutral**
 
 **실제의**
 
@@ -158,7 +158,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### evidence {#vocab-evidence}
 
-**204 occurrences · 48 documents · neutral**
+**203 occurrences · 48 documents · neutral**
 
 **근거; 증거**
 
@@ -174,25 +174,9 @@ Example source pages: [ai-model-development/model-platform-collaboration](../ai-
 
 Usage references: [1](https://dictionaryblog.cambridge.org/2018/03/21/countable-or-uncountable-and-why-it-matters/).
 
-### review {#vocab-review}
-
-**196 occurrences · 58 documents · neutral**
-
-**검토하다; 검토**
-
-Use review for examining a design or change before making a judgment. Reviewing something does not itself mean approving it.
-
-> We should review the migration plan before scheduling downtime.
->
-> 서비스 중단 일정을 잡기 전에 마이그레이션 계획을 검토해야 합니다.
-
-Counted forms: review, reviews, reviewed, reviewing.
-
-Example source pages: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/model-platform-collaboration](../ai-model-development/model-platform-collaboration.md).
-
 ### access {#vocab-access}
 
-**194 occurrences · 40 documents · neutral**
+**191 occurrences · 40 documents · neutral**
 
 **접근하다; 접근 권한**
 
@@ -206,9 +190,25 @@ Counted forms: access, accesses, accessed, accessing.
 
 Example source pages: [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md).
 
+### review {#vocab-review}
+
+**190 occurrences · 58 documents · neutral**
+
+**검토하다; 검토**
+
+Use review for examining a design or change before making a judgment. Reviewing something does not itself mean approving it.
+
+> We should review the migration plan before scheduling downtime.
+>
+> 서비스 중단 일정을 잡기 전에 마이그레이션 계획을 검토해야 합니다.
+
+Counted forms: review, reviews, reviewed, reviewing.
+
+Example source pages: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/model-platform-collaboration](../ai-model-development/model-platform-collaboration.md).
+
 ### record {#vocab-record}
 
-**158 occurrences · 54 documents · neutral**
+**157 occurrences · 54 documents · neutral**
 
 **기록하다; 기록**
 
@@ -240,7 +240,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### require {#vocab-require}
 
-**146 occurrences · 53 documents · neutral**
+**145 occurrences · 53 documents · neutral**
 
 **필요로 하다; 요구하다**
 
@@ -256,7 +256,7 @@ Example source pages: [ai-model-development/evaluation-promotion](../ai-model-de
 
 ### compare {#vocab-compare}
 
-**130 occurrences · 48 documents · neutral**
+**128 occurrences · 48 documents · neutral**
 
 **비교하다**
 
@@ -272,7 +272,7 @@ Example source pages: [ai-model-development/evaluation-promotion](../ai-model-de
 
 ### capacity {#vocab-capacity}
 
-**116 occurrences · 30 documents · neutral**
+**115 occurrences · 30 documents · neutral**
 
 **수용 능력; 처리 여력**
 
@@ -285,22 +285,6 @@ Use capacity for how much a system can hold or handle. At capacity means it has 
 Counted forms: capacity, capacities.
 
 Example source pages: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/model-platform-collaboration](../ai-model-development/model-platform-collaboration.md).
-
-### scope {#vocab-scope}
-
-**106 occurrences · 46 documents · neutral**
-
-**범위**
-
-Use scope for the boundaries of a task, change, or investigation. Within the scope and outside the scope show whether something is included.
-
-> Data cleanup is outside the scope of this release.
->
-> 데이터 정리는 이번 릴리스 범위에 포함되지 않습니다.
-
-Counted forms: scope, scopes.
-
-Example source pages: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
 
 ### assume {#vocab-assume}
 
@@ -317,6 +301,22 @@ Use assume to distinguish an assumption from a confirmed fact. Assume that can i
 Counted forms: assume, assumes, assumed, assuming.
 
 Example source pages: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
+
+### scope {#vocab-scope}
+
+**95 occurrences · 45 documents · neutral**
+
+**범위**
+
+Use scope for the boundaries of a task, change, or investigation. Within the scope and outside the scope show whether something is included.
+
+> Data cleanup is outside the scope of this release.
+>
+> 데이터 정리는 이번 릴리스 범위에 포함되지 않습니다.
+
+Counted forms: scope, scopes.
+
+Example source pages: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
 
 ### workload {#vocab-workload}
 
@@ -352,7 +352,7 @@ Example source pages: [ai-model-development/qlora-artifacts](../ai-model-develop
 
 ### provide {#vocab-provide}
 
-**77 occurrences · 35 documents · neutral**
+**76 occurrences · 35 documents · neutral**
 
 **제공하다**
 
@@ -368,7 +368,7 @@ Example source pages: [ai-model-development/artifact-lineage](../ai-model-develo
 
 ### handle {#vocab-handle}
 
-**70 occurrences · 31 documents · neutral**
+**69 occurrences · 31 documents · neutral**
 
 **처리하다; 대응하다**
 
@@ -416,38 +416,6 @@ Counted forms: available.
 
 Example source pages: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md).
 
-### consider {#vocab-consider}
-
-**40 occurrences · 26 documents · neutral**
-
-**검토하다; 고려하다**
-
-Use consider doing when thinking about an action. Avoid consider to do for this meaning.
-
-> We should consider adding a timeout before increasing the worker count.
->
-> 워커 수를 늘리기 전에 시간 제한 추가를 고려해야 합니다.
-
-Counted forms: consider, considers, considered, considering.
-
-Example source pages: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md).
-
-### specific {#vocab-specific}
-
-**39 occurrences · 21 documents · neutral**
-
-**구체적인; 특정한**
-
-Specific requirements are detailed requirements; a specific version identifies one particular version.
-
-> Could you give a specific example of the failure you observed?
->
-> 관측한 실패 사례를 구체적으로 하나 설명해 주시겠어요?
-
-Counted forms: specific.
-
-Example source pages: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md).
-
 ### impact {#vocab-impact}
 
 **38 occurrences · 18 documents · neutral**
@@ -463,6 +431,38 @@ Use the noun pattern impact on. The verb also occurs in workplace English; affec
 Counted forms: impact, impacts, impacted, impacting.
 
 Example source pages: [aws-cloud/managed-services](../aws-cloud/managed-services.md), [data-platform/architecture](../data-platform/architecture.md), [data-platform/data-observability](../data-platform/data-observability.md).
+
+### specific {#vocab-specific}
+
+**38 occurrences · 20 documents · neutral**
+
+**구체적인; 특정한**
+
+Specific requirements are detailed requirements; a specific version identifies one particular version.
+
+> Could you give a specific example of the failure you observed?
+>
+> 관측한 실패 사례를 구체적으로 하나 설명해 주시겠어요?
+
+Counted forms: specific.
+
+Example source pages: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md).
+
+### consider {#vocab-consider}
+
+**37 occurrences · 25 documents · neutral**
+
+**검토하다; 고려하다**
+
+Use consider doing when thinking about an action. Avoid consider to do for this meaning.
+
+> We should consider adding a timeout before increasing the worker count.
+>
+> 워커 수를 늘리기 전에 시간 제한 추가를 고려해야 합니다.
+
+Counted forms: consider, considers, considered, considering.
+
+Example source pages: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md).
 
 ### expected {#vocab-expected}
 
@@ -482,7 +482,7 @@ Example source pages: [aws-cloud/foundations](../aws-cloud/foundations.md), [dat
 
 ### verify {#vocab-verify}
 
-**33 occurrences · 21 documents · neutral**
+**32 occurrences · 21 documents · neutral**
 
 **사실이나 정확성을 확인하다**
 
@@ -530,7 +530,7 @@ Example source pages: [ai-model-development/training-datasets](../ai-model-devel
 
 ### consistent {#vocab-consistent}
 
-**25 occurrences · 16 documents · neutral**
+**23 occurrences · 15 documents · neutral**
 
 **일관된; 서로 모순되지 않는**
 
@@ -542,25 +542,9 @@ Use consistent for stable patterns. Consistent with means agreeing with other in
 
 Counted forms: consistent.
 
-Example source pages: [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/storage-databases](../aws-cloud/storage-databases.md), [data-platform/ai-ready-data](../data-platform/ai-ready-data.md).
+Example source pages: [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/storage-databases](../aws-cloud/storage-databases.md), [data-platform/analytical-modeling](../data-platform/analytical-modeling.md).
 
 Usage references: [1](https://dictionary.cambridge.org/us/dictionary/english/consistent).
-
-### preserve {#vocab-preserve}
-
-**23 occurrences · 19 documents · neutral**
-
-**보존하다; 유지하다**
-
-Use preserve when important content or properties should remain intact through a change.
-
-> The migration must preserve the original event timestamps.
->
-> 마이그레이션은 원래 이벤트 시각을 보존해야 합니다.
-
-Counted forms: preserve, preserves, preserved, preserving.
-
-Example source pages: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
 
 ### approach {#vocab-approach}
 
@@ -626,9 +610,25 @@ Counted forms: improve, improves, improved, improving.
 
 Example source pages: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
 
+### preserve {#vocab-preserve}
+
+**22 occurrences · 19 documents · neutral**
+
+**보존하다; 유지하다**
+
+Use preserve when important content or properties should remain intact through a change.
+
+> The migration must preserve the original event timestamps.
+>
+> 마이그레이션은 원래 이벤트 시각을 보존해야 합니다.
+
+Counted forms: preserve, preserves, preserved, preserving.
+
+Example source pages: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
+
 ### constraint {#vocab-constraint}
 
-**21 occurrences · 13 documents · neutral**
+**20 occurrences · 13 documents · neutral**
 
 **제약 조건**
 

@@ -97,6 +97,10 @@ dbt 외부 원본
 다른 dbt model
 ```
 
+`ref()` 예시는 dbt template SQL이며 standalone SQL로 실행하는 문장이 아니다. `ref()`는 relation을 참조하면서 dependency를 선언한다. [dbt ref](https://docs.getdbt.com/reference/dbt-jinja-functions/ref)
+
+Staging/Intermediate/Mart와 Bronze/Silver/Gold는 일대일 대응하는 표준이 아니다. 원본 형태와 품질 책임에 따라 경계를 정한다. Fact와 dimension은 [분석 데이터 모델링](analytical-modeling.md)에서 설명한다.
+
 ---
 
 ## 8.3 Staging Models
@@ -206,6 +210,16 @@ Late Arrival을 고려해 최근 며칠을 다시 읽고 MERGE할 수도 있다.
 
 Logic 변경 등 필요 시 전체 재생성.
 
+`event_time > last_processed_time`은 누락 위험을 생각하기 위한 의사 SQL이다. 이벤트 시간이 오래된 late arrival은 이 조건에서 빠질 수 있다. Lookback과 MERGE를 조합해도 lookback 밖의 지연은 별도 backfill 대상으로 남는다.
+
+- 데이터 grain에 맞는 `unique_key`를 정의하고 null·중복 여부를 검증한다. Key 설정 자체가 uniqueness 검증을 실행하지는 않는다.
+- Incremental SQL은 최초 전체 실행과 이후 incremental 실행 모두에서 유효해야 한다.
+- Strategy 지원과 update 방식은 adapter·engine에 따라 다르다.
+
+[dbt incremental models](https://docs.getdbt.com/docs/build/incremental-models)
+
+Incremental은 선택한 새 데이터나 변경분을 처리한다. MERGE는 key를 기준으로 INSERT와 UPDATE를 수행하는 방식이다.
+
 ---
 
 ## 8.7 dbt Tests
@@ -233,6 +247,21 @@ Publish
 ```
 
 dbt Test는 Data Quality 전체가 아니라 기본적인 Model/Table 규칙 검증에 특히 적합하다.
+
+Test 실패가 실제로 publish를 막도록 orchestration 조건을 연결해야 한다. 의미상 잘못된 값이 모든 기본 test를 통과할 수도 있다. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
+
+Snapshot은 관측 시점 사이의 모든 중간 변경을 CDC처럼 자동 보존하지 않는다. 실행 간격과 변경 감지 기준을 설계해야 한다. [dbt snapshots](https://docs.getdbt.com/docs/build/snapshots)
+
+dbt lineage가 수집 서비스, dbt 외부 job, BI 소비까지 자동으로 모두 추적한다고 가정하지 않는다. 연결 engine에서 쓸 수 있는 기능도 adapter와 engine 조합마다 다르다.
+
+| Test | 확인하는 규칙 |
+| --- | --- |
+| `not_null` | 필수 값이 비어 있지 않음 |
+| `unique` | 지정 key가 중복되지 않음 |
+| `relationships` | 참조 key가 대상에 존재함 |
+| `accepted_values` | 값이 허용 집합에 속함 |
+| Custom test | 업무별 규칙 |
+
 
 ---
 
@@ -350,41 +379,3 @@ dbt는 SQL 변환의 의존성과 품질 기준을 드러낸다. 증분 처리�
 [오케스트레이션](orchestration.md) · [분석 데이터 모델링](analytical-modeling.md) · [Trino](trino.md) · [핸드북 홈](../index.md)
 
 [관련 실무 프롬프트 6개](../prompts/dbt.md)
-
-## 적용 시 보완할 점
-
-### 원문 8.6·8.7의 설명 범위
-
-Incremental은 선택한 새 데이터나 변경분을 처리한다. MERGE는 key를 기준으로 INSERT와 UPDATE를 수행하는 방식이다.
-
-| Test | 확인하는 규칙 |
-| --- | --- |
-| `not_null` | 필수 값이 비어 있지 않음 |
-| `unique` | 지정 key가 중복되지 않음 |
-| `relationships` | 참조 key가 대상에 존재함 |
-| `accepted_values` | 값이 허용 집합에 속함 |
-| Custom test | 업무별 규칙 |
-
-### Relation과 모델 계층
-
-`ref()` 예시는 dbt template SQL이며 standalone SQL로 실행하는 문장이 아니다. `ref()`는 relation을 참조하면서 dependency를 선언한다. [dbt ref](https://docs.getdbt.com/reference/dbt-jinja-functions/ref)
-
-Staging/Intermediate/Mart와 Bronze/Silver/Gold는 일대일 대응하는 표준이 아니다. 원본 형태와 품질 책임에 따라 경계를 정한다. Fact와 dimension은 [분석 데이터 모델링](analytical-modeling.md)에서 설명한다.
-
-### Incremental 처리의 경계
-
-`event_time > last_processed_time`은 누락 위험을 생각하기 위한 의사 SQL이다. 이벤트 시간이 오래된 late arrival은 이 조건에서 빠질 수 있다. Lookback과 MERGE를 조합해도 lookback 밖의 지연은 별도 backfill 대상으로 남는다.
-
-- 데이터 grain에 맞는 `unique_key`를 정의하고 null·중복 여부를 검증한다. Key 설정 자체가 uniqueness 검증을 실행하지는 않는다.
-- Incremental SQL은 최초 전체 실행과 이후 incremental 실행 모두에서 유효해야 한다.
-- Strategy 지원과 update 방식은 adapter·engine에 따라 다르다.
-
-[dbt incremental models](https://docs.getdbt.com/docs/build/incremental-models)
-
-### 품질 gate, snapshot, lineage
-
-Test 실패가 실제로 publish를 막도록 orchestration 조건을 연결해야 한다. 의미상 잘못된 값이 모든 기본 test를 통과할 수도 있다. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
-
-Snapshot은 관측 시점 사이의 모든 중간 변경을 CDC처럼 자동 보존하지 않는다. 실행 간격과 변경 감지 기준을 설계해야 한다. [dbt snapshots](https://docs.getdbt.com/docs/build/snapshots)
-
-dbt lineage가 수집 서비스, dbt 외부 job, BI 소비까지 자동으로 모두 추적한다고 가정하지 않는다. 연결 engine에서 쓸 수 있는 기능도 adapter와 engine 조합마다 다르다.

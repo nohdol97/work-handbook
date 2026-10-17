@@ -63,6 +63,8 @@ Publish
 
 Airflow는 데이터를 직접 대규모로 처리하기보다 다른 시스템을 지휘한다.
 
+Dependency는 task 간 선행 조건을 뜻하며, schedule은 실행 시점이나 주기를 정한다. 일시적 실패도 retry로 반드시 해결되는 것은 아니다. 무조건 append하면 retry 때 중복 행이 생길 수 있다.
+
 ---
 
 ## 7.2 Operators / Tasks
@@ -139,6 +141,10 @@ MERGE
 replace
 ```
 
+Partition overwrite, MERGE, replace라는 명령 이름 자체가 멱등성을 보장하지 않는다. 입력 구간, key, transaction 경계를 올바르게 설계해야 한다. 공식 지침도 retry 중 중복을 피하고 특정 partition을 읽고 쓰도록 권한다. [Airflow best practices](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+
+구간 경계와 timezone도 명확히 한다. 실행 시각의 `now()`나 최신 데이터에 의존하면 같은 과거 작업을 다시 돌려도 다른 결과가 나올 수 있다. [특정 partition과 data interval 사용](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+
 ---
 
 ## 7.4 Backfills
@@ -192,6 +198,12 @@ Schedule과 Dependency는 다르다.
 ```
 
 Polling 방식도 있고 Event-driven 방식도 있다.
+
+사용 가능한 sensor·event 기능은 Airflow와 provider 버전에 따라 확인한다. 실패한 task부터 재실행하기 전에 기존 upstream 결과가 유효한지, 동일 구간인지 확인한다.
+
+일반적인 `all_success` dependency는 upstream 성공을 기다린다. `all_done` 같은 다른 trigger rule은 실패·skip 뒤에도 실행될 수 있다. Publish gate의 실제 trigger rule을 확인한다. [Airflow trigger rules](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html#trigger-rules)
+
+실패 알림에는 실행 식별자와 데이터 구간도 함께 넣으면 조사에 도움이 된다.
 
 ---
 
@@ -287,6 +299,10 @@ Iceberg
 → Storage/Table
 ```
 
+Airflow worker 안에서 대규모 compute를 수행하면 orchestration 자원이 계산 부하에 묶인다. XCom에는 작은 상태·경로를 전달하고 실제 대용량 데이터는 외부 공유 저장소에 둔다. [작업 간 통신](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+
+DAG 간 의존성이 과도하면 장애 전파와 재실행 범위를 이해하기 어렵다. 지속적 event 처리는 적합한 streaming engine에 맡긴다. 본문의 제품 역할 구분은 설계 예시이며 고정된 제품 조합은 아니다.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -328,39 +344,3 @@ Iceberg
 [dbt](dbt.md) · [CDC와 Debezium](cdc-debezium.md) · [핸드북 홈](../index.md)
 
 [관련 실무 프롬프트 6개](../prompts/orchestration.md)
-
-## 적용 시 보완할 점
-
-### 기존 흐름도
-
-```mermaid
-flowchart LR
-  E[Extract] --> S[Spark transform]
-  S --> D[dbt]
-  D --> Q[Quality check]
-  Q --> P[Publish]
-```
-
-### 원문 7.1·7.3·7.7의 설명 범위
-
-Dependency는 task 간 선행 조건을 뜻하며, schedule은 실행 시점이나 주기를 정한다. 일시적 실패도 retry로 반드시 해결되는 것은 아니다. 무조건 append하면 retry 때 중복 행이 생길 수 있다.
-
-### Retry와 구간 재현성
-
-Partition overwrite, MERGE, replace라는 명령 이름 자체가 멱등성을 보장하지 않는다. 입력 구간, key, transaction 경계를 올바르게 설계해야 한다. 공식 지침도 retry 중 중복을 피하고 특정 partition을 읽고 쓰도록 권한다. [Airflow best practices](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
-
-구간 경계와 timezone도 명확히 한다. 실행 시각의 `now()`나 최신 데이터에 의존하면 같은 과거 작업을 다시 돌려도 다른 결과가 나올 수 있다. [특정 partition과 data interval 사용](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
-
-### 준비 상태와 실패 전파
-
-사용 가능한 sensor·event 기능은 Airflow와 provider 버전에 따라 확인한다. 실패한 task부터 재실행하기 전에 기존 upstream 결과가 유효한지, 동일 구간인지 확인한다.
-
-일반적인 `all_success` dependency는 upstream 성공을 기다린다. `all_done` 같은 다른 trigger rule은 실패·skip 뒤에도 실행될 수 있다. Publish gate의 실제 trigger rule을 확인한다. [Airflow trigger rules](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html#trigger-rules)
-
-실패 알림에는 실행 식별자와 데이터 구간도 함께 넣으면 조사에 도움이 된다.
-
-### 계산·데이터 전달의 책임
-
-Airflow worker 안에서 대규모 compute를 수행하면 orchestration 자원이 계산 부하에 묶인다. XCom에는 작은 상태·경로를 전달하고 실제 대용량 데이터는 외부 공유 저장소에 둔다. [작업 간 통신](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
-
-DAG 간 의존성이 과도하면 장애 전파와 재실행 범위를 이해하기 어렵다. 지속적 event 처리는 적합한 streaming engine에 맡긴다. 본문의 제품 역할 구분은 설계 예시이며 고정된 제품 조합은 아니다.

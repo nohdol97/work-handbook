@@ -121,6 +121,10 @@ BI / Dashboard / AI
 
 Semantic layer는 business metadata의 뜻을 쿼리에서 재사용할 수 있는 **계산 정의**로 구체화한다.
 
+Revenue 식은 개념 예시이며 실제 회계 규칙이나 특정 제품의 실행 문법이 아니다.
+
+실제로 적용하려면 grain, 기간, 통화, 중복 차감 여부를 합의해야 한다. 설명만으로 실행 계산식을 확정하지 않는다.
+
 ---
 
 ## 13.2 Dataset Lineage
@@ -195,6 +199,10 @@ silver.orders
 
 OpenLineage는 결과를 보여 주는 화면이 아니라 계보 이벤트를 표현하는 **표준**이다.
 
+OpenLineage는 실행 이벤트와 metadata 표현을 정의한다. 공식 문서에서 확인한 object model은 run에 연결되지 않는 job/dataset metadata event도 지원한다. 모든 lineage event가 실행 1회만을 표현한다고 한정하면 안 된다. [OpenLineage object model](https://openlineage.io/docs/spec/object-model/)
+
+OpenLineage와 [Marquez](https://marquezproject.ai/)의 설명은 2026-09-24에 공식 문서로 확인했다. 연결 도구를 설치했다는 사실만으로 모든 실행과 column lineage가 수집된다고 가정하지 않는다. 실제 수집 범위를 별도로 확인한다.
+
 ---
 
 ## 13.4 Column-Level Lineage
@@ -242,6 +250,10 @@ mart_daily_sales
  ↓
 Dashboard
 ```
+
+연결이 존재한다는 사실만으로 특정 실행이 정확했음을 증명하지는 않는다. Lineage에 누락이 있을 수 있으므로 그래프에 없다는 이유만으로 영향이 없다고 확정하지 않는다.
+
+`raw_orders.amount` type 변경 예에서는 각 downstream 변환과 소비자의 기대 타입을 확인한다.
 
 ---
 
@@ -312,6 +324,10 @@ Governance
 
 로 발전한다.
 
+13.7의 통합 흐름은 정보 출처의 역할을 설명한다. 자동 연결을 보장하는 제품 구성도가 아니다.
+
+정책을 표시하는 것과 실제 데이터 접근을 강제하는 것은 별개다. [거버넌스](governance.md)에서는 실행 엔진과 storage 접근 경로까지 확인한다.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -350,45 +366,3 @@ Governance
 [데이터 관측성](data-observability.md) · [거버넌스](governance.md) · [핸드북 홈](../index.md)
 
 [더 많은 실무 프롬프트](../prompts/lineage-metadata.md)
-
-## 적용 시 보완할 점
-
-### Semantic layer의 계산 경계
-
-Revenue 식은 개념 예시이며 실제 회계 규칙이나 특정 제품의 실행 문법이 아니다.
-
-실제로 적용하려면 grain, 기간, 통화, 중복 차감 여부를 합의해야 한다. 설명만으로 실행 계산식을 확정하지 않는다.
-
-### OpenLineage와 수집 범위
-
-OpenLineage는 실행 이벤트와 metadata 표현을 정의한다. 공식 문서에서 확인한 object model은 run에 연결되지 않는 job/dataset metadata event도 지원한다. 모든 lineage event가 실행 1회만을 표현한다고 한정하면 안 된다. [OpenLineage object model](https://openlineage.io/docs/spec/object-model/)
-
-OpenLineage와 [Marquez](https://marquezproject.ai/)의 설명은 2026-09-24에 공식 문서로 확인했다. 연결 도구를 설치했다는 사실만으로 모든 실행과 column lineage가 수집된다고 가정하지 않는다. 실제 수집 범위를 별도로 확인한다.
-
-### Lineage로 입증할 수 있는 범위
-
-연결이 존재한다는 사실만으로 특정 실행이 정확했음을 증명하지는 않는다. Lineage에 누락이 있을 수 있으므로 그래프에 없다는 이유만으로 영향이 없다고 확정하지 않는다.
-
-`raw_orders.amount` type 변경 예에서는 각 downstream 변환과 소비자의 기대 타입을 확인한다.
-
-### Catalog 표시와 정책 적용
-
-13.7의 통합 흐름은 정보 출처의 역할을 설명한다. 자동 연결을 보장하는 제품 구성도가 아니다.
-
-정책을 표시하는 것과 실제 데이터 접근을 강제하는 것은 별개다. [거버넌스](governance.md)에서는 실행 엔진과 storage 접근 경로까지 확인한다.
-
-### 원문 흐름을 시각화한 보조 그림
-
-```mermaid
-flowchart LR
-    Raw[raw_user_events] --> Spark[Spark Job]
-    Spark --> Silver[silver_user_events]
-    Silver --> Dbt[dbt]
-    Dbt --> Mart[mart_daily_users]
-```
-
-```mermaid
-flowchart LR
-    Amount[raw_orders.amount] --> Net[silver_orders.net_amount]
-    Discount[raw_orders.discount] --> Net
-```

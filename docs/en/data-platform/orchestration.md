@@ -64,6 +64,8 @@ Publish
 
 Airflow directs other systems rather than processing large datasets itself.
 
+A dependency is a condition between tasks. A schedule defines when or how often they run. A retry does not always resolve a transient failure. Blind append can add duplicate rows during a retry.
+
 ---
 
 ## 7.2 Operators / Tasks
@@ -140,6 +142,10 @@ MERGE
 replace
 ```
 
+Partition overwrite, MERGE, and replace do not guarantee idempotency by name alone. Design the input intervals, keys, and transaction boundaries correctly. Official guidance recommends avoiding duplicates on retries and reading and writing specific partitions. [Airflow best practices](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+
+Define interval boundaries and the timezone. Using `now()` or the latest data can change the result of a rerun for the same past interval. [Specific partitions and data intervals](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+
 ---
 
 ## 7.4 Backfills
@@ -193,6 +199,12 @@ Check that the actual data is ready
 ```
 
 Both polling and event-driven approaches exist.
+
+Check sensor and event support for the Airflow and provider versions in use. Before rerunning a failed task, check that prior upstream results are valid and belong to the same interval.
+
+The usual `all_success` rule waits for successful upstream tasks. Other rules, such as `all_done`, may run after failures or skips. Check the publish gate's actual trigger rule. [Airflow trigger rules](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html#trigger-rules)
+
+Including the run identifier and data interval in an alert also helps investigation.
 
 ---
 
@@ -288,6 +300,10 @@ Iceberg
 → Storage/Table
 ```
 
+Large compute jobs inside an Airflow worker tie up orchestration resources. Pass small states or paths through XCom and keep large datasets in external shared storage. [Communication between tasks](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
+
+Too many dependencies between DAGs make failure impact and rerun scope hard to understand. Use a suitable streaming engine for continuous event processing. The product roles above are a design example, not a required product stack.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -329,39 +345,3 @@ A useful result is a rerun scope and validation list. The LLM may assume MERGE i
 [dbt](dbt.md) · [CDC and Debezium](cdc-debezium.md) · [Handbook home](../index.md)
 
 [Six related practical prompts](../prompts/orchestration.md)
-
-## Additional checks before applying these ideas
-
-### Existing flow diagram
-
-```mermaid
-flowchart LR
-  E[Extract] --> S[Spark transform]
-  S --> D[dbt]
-  D --> Q[Quality check]
-  Q --> P[Publish]
-```
-
-### Scope of sections 7.1, 7.3, and 7.7
-
-A dependency is a condition between tasks. A schedule defines when or how often they run. A retry does not always resolve a transient failure. Blind append can add duplicate rows during a retry.
-
-### Retries and repeatable intervals
-
-Partition overwrite, MERGE, and replace do not guarantee idempotency by name alone. Design the input intervals, keys, and transaction boundaries correctly. Official guidance recommends avoiding duplicates on retries and reading and writing specific partitions. [Airflow best practices](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
-
-Define interval boundaries and the timezone. Using `now()` or the latest data can change the result of a rerun for the same past interval. [Specific partitions and data intervals](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
-
-### Readiness and failure propagation
-
-Check sensor and event support for the Airflow and provider versions in use. Before rerunning a failed task, check that prior upstream results are valid and belong to the same interval.
-
-The usual `all_success` rule waits for successful upstream tasks. Other rules, such as `all_done`, may run after failures or skips. Check the publish gate's actual trigger rule. [Airflow trigger rules](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html#trigger-rules)
-
-Including the run identifier and data interval in an alert also helps investigation.
-
-### Compute and data transfer responsibilities
-
-Large compute jobs inside an Airflow worker tie up orchestration resources. Pass small states or paths through XCom and keep large datasets in external shared storage. [Communication between tasks](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
-
-Too many dependencies between DAGs make failure impact and rerun scope hard to understand. Use a suitable streaming engine for continuous event processing. The product roles above are a design example, not a required product stack.

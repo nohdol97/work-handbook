@@ -147,6 +147,13 @@ Offline Test에서 놓칠 수 있는 것:
 - 권한,
 - Production에서만 발생하는 Edge Case.
 
+
+**Tool 평가 조건:** 예상 schema 준수와 tool 권한 준수는 별도 검사다. 선택한 tool이 적절한지와 그 사용이 허용됐는지를 각각 확인한다. 점수만으로 근본 원인을 증명할 수는 없다.
+
+Online 평가는 실제 traffic에 평가를 붙이고, offline 평가는 고정한 입력으로 변경을 비교한다. 사람의 feedback, 규칙, LLM judge는 서로 다른 신호이며 점수 하나를 절대적인 정답으로 취급하지 않는다. [Langfuse evaluation concepts](https://langfuse.com/docs/evaluation/core-concepts).
+
+평가 실행은 응답 직후뿐 아니라 비동기로 끝날 수 있다. 평가 정의와 evaluator 버전, 평가 시각, 실패·미평가 상태도 구분하면 점수 누락을 성공으로 오해하지 않을 수 있다. 이는 원문의 trace 연결 원칙을 확장한 설계 권고이며 여기서 구현·측정한 결과는 아니다. SQL 실행 가능성 확인은 별도 격리 환경에서 수행하고, citation 존재 여부와 내용의 정확성을 구분한다.
+
 ---
 
 ## 16.2 Offline Evaluation Datasets
@@ -279,6 +286,8 @@ Production
 중요한 패턴:
 
 > **운영 실패 → Offline 회귀 사례**
+
+핵심은 **운영 실패 → offline regression case**다. 고정 입력은 공정한 비교를 돕지만 evaluator·데이터 권한·검색 상태까지 자동으로 고정하지는 않는다. 이는 재현성을 위한 추가 설계 주의사항이다.
 
 ---
 
@@ -480,6 +489,8 @@ Model-as-Judge는 대규모 평가를 가능하게 한다.
 
 사람 검토는 더 높은 신뢰도로 평가를 보정하는 역할을 한다.
 
+표본의 Human Score와 Judge Score를 비교하여 보정한다. 지속적인 불일치가 있으면 judge 모델이나 prompt를 검토한다. 설명용 규모 예시는 `100,000 traces → Model-as-Judge`, `중요한 1,000 traces → Human Review`다. Judge는 규모를 확보하고, 사람 검토는 보정의 신뢰도를 높이는 역할이다. 사람도 오류가 있으므로 완전한 정답 보장은 아니다.
+
 ---
 
 ## 16.5 Prompt Versions
@@ -582,6 +593,8 @@ judge_prompt
 summarization_prompt
 ```
 
+유용한 필드는 `prompt_id`, `prompt_version`, `prompt_text`, `created_at`, `created_by`, `change_description`이다. 예를 들어 `prompt_id=agent_system_prompt`, `prompt_version=12`, 변경 내용 “tool 사용 규칙 명확화”를 기록한다. 실제 작성자 정보는 내부 권한과 개인정보 기준에 따라 관리하며 공개 예시에는 넣지 않는다.
+
 ---
 
 ## 16.6 Model Versions
@@ -673,6 +686,8 @@ Base Model   → M1
 Training Set → train_v4
 Fine-tune    → ft_v7
 ```
+
+결과를 생성한 정확한 모델 버전을 기록한다. `model=model-X`만으로는 부족할 수 있다. 제공자가 serving snapshot을 바꾼 경우 같은 이름의 6월과 9월 모델이 다를 수 있다. `provider`, `model_name`, `model_version`, `deployment_id`, `endpoint`를 기록하되 내부 endpoint와 credential은 공개 문서에 넣지 않는다.
 
 ---
 
@@ -854,6 +869,8 @@ Offline은 배포 전 테스트에 더 안전하다.
 
 Online은 실제 환경의 근거를 제공한다.
 
+가능하면 한 변수를 바꾼다. Prompt v10과 v11을 비교할 때 dataset·model·agent logic을 고정한다. Prompt·model·agent·dataset을 동시에 바꾸면 결과 차이를 해석하기 어렵다. Offline 실험은 고정 평가 데이터로 Agent A/B를 비교하여 배포 전 위험을 줄인다. Online 실험은 실제 traffic의 A/B 분할로 현실 조건의 근거를 얻는다. Online 결과는 traffic 구성과 실험 조건도 함께 검토한다.
+
 ---
 
 ## 16.9 Regression Datasets
@@ -924,6 +941,10 @@ regression_v3
 중요한 패턴:
 
 > **운영 실패 → 회귀 사례 → 릴리스 테스트**
+
+범주는 `tool_selection_regression`, `rag_regression`, `security_regression`, `format_regression` 등이 있다. 설명용 release gate는 Critical Security Regression `100%` 통과, General Regression `>=98%`다. 이 값은 보편적 안전 기준이 아니며 실제 위험과 요구사항에 맞춰 정한다. 데이터셋도 `regression_v1 → v2 → v3`으로 버전 관리한다.
+
+**Production Failure → Regression Case → Release Test**가 반복 구조다. 통과율에는 실패와 미평가를 구분하는 분모 정의가 필요하다.
 
 ---
 
@@ -1044,6 +1065,10 @@ Smaller context
 목표:
 
 > **품질을 유지하거나 개선하면서 가능한 범위에서 비용과 latency를 줄이는 것.**
+
+`cost_per_success`는 요청당 원가보다 유용할 수 있다. 예를 들어 순차 실행 `LLM 2s + Tool 5s + LLM 2s = Total 9s`는 tool이 큰 지연 원인임을 보여 준다. 평균뿐 아니라 percentile을 본다.
+
+큰 모델은 품질·비용·지연이 함께 증가할 수 있다. Tool 호출을 늘리면 품질을 개선할 가능성이 있지만 비용과 latency도 늘 수 있다. Context를 줄이면 비용·latency가 감소할 수 있지만 품질도 떨어질 수 있다. 이들은 경향과 가설이며 항상 성립하는 법칙이 아니다. 목표는 품질을 유지·개선하면서 가능한 비용과 latency를 줄이는 것이다.
 
 ---
 
@@ -1176,6 +1201,14 @@ Iceberg
 → Long-term Analytical History
 ```
 
+역할 분리는 제안 아키텍처이며 배포 사실이나 자동 연동 보장이 아니다. Langfuse는 traces, LLM/tool calls, prompt/response, scores, feedback, experiments, evaluation datasets의 운영에 쓴다. Iceberg는 장기 이력, 대규모 분석, 도메인 간 join, governance, BI, 과거 버전 분석을 위한 테이블 계층이다.
+
+Object storage의 export 파일이 자동으로 Iceberg 테이블이 되는 것은 아니다. 수집·변환·commit 경로가 필요하다. Langfuse는 blob storage export와 public API를 제공한다. 지원 형식·필드·버전·호스팅 옵션은 도입 시 확인한다. [Export 문서](https://langfuse.com/docs/api-and-data-platform/features/export-to-blob-storage), [Public API](https://langfuse.com/docs/api-and-data-platform/features/public-api).
+
+Langfuse만으로 충분하지 않은 경우는 trace에 HR 조직 데이터, 재무 비용, 제품 사용량, business KPI를 결합해야 할 때다. 이런 통합 분석은 데이터 플랫폼의 역할이다. 실제 민감 데이터 결합은 목적과 접근 범위에 맞게 제한한다.
+
+Source of truth의 설명용 분리는 Git의 agent code/workflow/config, Langfuse의 AI trace/prompt/evaluation 운영, Iceberg의 장기 분석 이력이다. [Iceberg](lakehouse-iceberg.md), [분석 모델링](analytical-modeling.md), [AI-ready 데이터](ai-ready-data.md)와 연결된다.
+
 ---
 
 ## 16.12 Where Are All These Versions Usually Managed?
@@ -1252,6 +1285,16 @@ cost_per_execution  = $0.08
 
 버전 기록은 평가 조건을 다시 구성하고 점수 차이를 설명할 근거가 된다.
 
+한 시스템에 몰아넣기보다 자산별 관리 시스템을 정하고 experiment/release ID로 연결한다. 다음은 일반적인 선택지이며 제품마다 동일한 버전 의미나 기능을 보장하지 않는다.
+
+통합 기록 예시에서 commit과 모델명 등은 설명용 가상 값이다.
+
+이 연결은 재현·설명에 필요한 근거다. ID만으로 동일 실행이 자동 보장되지는 않으므로 실제 artifact·입력·runtime과 외부 상태도 보존해야 한다.
+
+공식 문서 확인일은 2026-09-26이며 설치·실행 검증은 하지 않았다. Langfuse dataset item 변경은 timestamp 기반 버전을 만들지만 dataset schema 변경은 같은 버전 관리에 포함되지 않는다. 평가에 사용한 item 버전과 schema 정의를 구분하여 기록한다. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
+
+MLflow prompt version은 변경 불가능한 버전이며 alias는 가리키는 버전이 바뀔 수 있다. Model Registry도 alias로 모델 버전을 참조할 수 있다. 따라서 재현 기록에는 움직이는 alias만 남기지 말고 실제 사용한 버전을 저장한다. [Prompt Registry](https://mlflow.org/docs/latest/genai/prompt-registry/), [Model Registry workflow](https://mlflow.org/docs/latest/ml/model-registry/workflow/).
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -1319,128 +1362,3 @@ cost_per_execution  = $0.08
 **핵심 사항:** 비교 가능성 표, 누락 근거, 범주별 회귀 위험, 조건부 릴리스 검토안. judge 변경을 agent 개선으로 해석하거나 평균 점수로 보안 실패를 가리고, 예시 게이트를 보편적 기준으로 사용할 수 있다. 사람이 원본 experiment·trace·버전 artifact와 분모를 대조한다. 승인된 격리 평가로 필요한 비교를 실행하고 결과를 다시 검토한다. 이 문서에서는 실행하지 않았다.
 
 [온라인 평가](ai-evaluation.md#161-online-evaluation-events) · [AI-ready 데이터](ai-ready-data.md) · [학습 범위](curriculum.md)
-
-## 보완 설명: 16.1 Langfuse 연결과 평가 조건
-
-### 기존 자료의 Langfuse 연결
-
-개념:
-
-```text
-Langfuse Trace
- ├─ Prompt
- ├─ LLM Call
- ├─ Tool Call
- ├─ Response
- └─ Score / Feedback
-```
-
-활용:
-
-- 낮은 Score Trace 검색
-- Thumbs-down 사례 분석
-- 특정 Agent Version 비교
-- Production Failure → Eval Dataset 추가
-
-Online Evaluation의 목적:
-
-> **실제 사용자 환경의 품질을 지속 관찰**
-
-Offline Test에서 드러나지 않는:
-
-- 새로운 사용자 질문
-- Tool 장애
-- 긴 Context
-- 실제 Permission
-- Production Data 변화
-
-를 관찰할 수 있다.
-
----
-
-**Tool 평가 조건:** 예상 schema 준수와 tool 권한 준수는 별도 검사다. 선택한 tool이 적절한지와 그 사용이 허용됐는지를 각각 확인한다. 점수만으로 근본 원인을 증명할 수는 없다.
-
-Online 평가는 실제 traffic에 평가를 붙이고, offline 평가는 고정한 입력으로 변경을 비교한다. 사람의 feedback, 규칙, LLM judge는 서로 다른 신호이며 점수 하나를 절대적인 정답으로 취급하지 않는다. [Langfuse evaluation concepts](https://langfuse.com/docs/evaluation/core-concepts).
-
-평가 실행은 응답 직후뿐 아니라 비동기로 끝날 수 있다. 평가 정의와 evaluator 버전, 평가 시각, 실패·미평가 상태도 구분하면 점수 누락을 성공으로 오해하지 않을 수 있다. 이는 원문의 trace 연결 원칙을 확장한 설계 권고이며 여기서 구현·측정한 결과는 아니다. SQL 실행 가능성 확인은 별도 격리 환경에서 수행하고, citation 존재 여부와 내용의 정확성을 구분한다.
-
-## 적용 시 보완할 점
-
-아래는 기존 문서에서 제공한 추가 설명과 조건이다. 본문 원문의 표현과 구분하여 읽는다. 공식 문서 확인일은 기존 2026-09-26을 유지하며 새 실행 검증을 뜻하지 않는다.
-
-### 16.2 Offline 평가 데이터셋 — 보완
-
-핵심은 **운영 실패 → offline regression case**다. 고정 입력은 공정한 비교를 돕지만 evaluator·데이터 권한·검색 상태까지 자동으로 고정하지는 않는다. 이는 재현성을 위한 추가 설계 주의사항이다.
-
-### 16.4 Model-as-Judge — 보완
-
-표본의 Human Score와 Judge Score를 비교하여 보정한다. 지속적인 불일치가 있으면 judge 모델이나 prompt를 검토한다. 설명용 규모 예시는 `100,000 traces → Model-as-Judge`, `중요한 1,000 traces → Human Review`다. Judge는 규모를 확보하고, 사람 검토는 보정의 신뢰도를 높이는 역할이다. 사람도 오류가 있으므로 완전한 정답 보장은 아니다.
-
-### 16.5 Prompt 버전 — 보완
-
-유용한 필드는 `prompt_id`, `prompt_version`, `prompt_text`, `created_at`, `created_by`, `change_description`이다. 예를 들어 `prompt_id=agent_system_prompt`, `prompt_version=12`, 변경 내용 “tool 사용 규칙 명확화”를 기록한다. 실제 작성자 정보는 내부 권한과 개인정보 기준에 따라 관리하며 공개 예시에는 넣지 않는다.
-
-### 16.6 Model 버전 — 보완
-
-결과를 생성한 정확한 모델 버전을 기록한다. `model=model-X`만으로는 부족할 수 있다. 제공자가 serving snapshot을 바꾼 경우 같은 이름의 6월과 9월 모델이 다를 수 있다. `provider`, `model_name`, `model_version`, `deployment_id`, `endpoint`를 기록하되 내부 endpoint와 credential은 공개 문서에 넣지 않는다.
-
-### 16.8 Experiment tracking — 보완
-
-가능하면 한 변수를 바꾼다. Prompt v10과 v11을 비교할 때 dataset·model·agent logic을 고정한다. Prompt·model·agent·dataset을 동시에 바꾸면 결과 차이를 해석하기 어렵다. Offline 실험은 고정 평가 데이터로 Agent A/B를 비교하여 배포 전 위험을 줄인다. Online 실험은 실제 traffic의 A/B 분할로 현실 조건의 근거를 얻는다. Online 결과는 traffic 구성과 실험 조건도 함께 검토한다.
-
-### 16.9 Regression 데이터셋 — 보완
-
-범주는 `tool_selection_regression`, `rag_regression`, `security_regression`, `format_regression` 등이 있다. 설명용 release gate는 Critical Security Regression `100%` 통과, General Regression `>=98%`다. 이 값은 보편적 안전 기준이 아니며 실제 위험과 요구사항에 맞춰 정한다. 데이터셋도 `regression_v1 → v2 → v3`으로 버전 관리한다.
-
-**Production Failure → Regression Case → Release Test**가 반복 구조다. 통과율에는 실패와 미평가를 구분하는 분모 정의가 필요하다.
-
-### 16.10 Cost / Quality / Latency — 보완
-
-`cost_per_success`는 요청당 원가보다 유용할 수 있다. 예를 들어 순차 실행 `LLM 2s + Tool 5s + LLM 2s = Total 9s`는 tool이 큰 지연 원인임을 보여 준다. 평균뿐 아니라 percentile을 본다.
-
-큰 모델은 품질·비용·지연이 함께 증가할 수 있다. Tool 호출을 늘리면 품질을 개선할 가능성이 있지만 비용과 latency도 늘 수 있다. Context를 줄이면 비용·latency가 감소할 수 있지만 품질도 떨어질 수 있다. 이들은 경향과 가설이며 항상 성립하는 법칙이 아니다. 목표는 품질을 유지·개선하면서 가능한 비용과 latency를 줄이는 것이다.
-
-### 16.11 Langfuse + Iceberg — 보완
-
-역할 분리는 제안 아키텍처이며 배포 사실이나 자동 연동 보장이 아니다. Langfuse는 traces, LLM/tool calls, prompt/response, scores, feedback, experiments, evaluation datasets의 운영에 쓴다. Iceberg는 장기 이력, 대규모 분석, 도메인 간 join, governance, BI, 과거 버전 분석을 위한 테이블 계층이다.
-
-Object storage의 export 파일이 자동으로 Iceberg 테이블이 되는 것은 아니다. 수집·변환·commit 경로가 필요하다. Langfuse는 blob storage export와 public API를 제공한다. 지원 형식·필드·버전·호스팅 옵션은 도입 시 확인한다. [Export 문서](https://langfuse.com/docs/api-and-data-platform/features/export-to-blob-storage), [Public API](https://langfuse.com/docs/api-and-data-platform/features/public-api).
-
-Langfuse만으로 충분하지 않은 경우는 trace에 HR 조직 데이터, 재무 비용, 제품 사용량, business KPI를 결합해야 할 때다. 이런 통합 분석은 데이터 플랫폼의 역할이다. 실제 민감 데이터 결합은 목적과 접근 범위에 맞게 제한한다.
-
-Source of truth의 설명용 분리는 Git의 agent code/workflow/config, Langfuse의 AI trace/prompt/evaluation 운영, Iceberg의 장기 분석 이력이다. [Iceberg](lakehouse-iceberg.md), [분석 모델링](analytical-modeling.md), [AI-ready 데이터](ai-ready-data.md)와 연결된다.
-
-### 16.12 모든 버전은 어디에서 관리하는가? — 보완
-
-한 시스템에 몰아넣기보다 자산별 관리 시스템을 정하고 experiment/release ID로 연결한다. 다음은 일반적인 선택지이며 제품마다 동일한 버전 의미나 기능을 보장하지 않는다.
-
-통합 기록 예시에서 commit과 모델명 등은 설명용 가상 값이다.
-
-이 연결은 재현·설명에 필요한 근거다. ID만으로 동일 실행이 자동 보장되지는 않으므로 실제 artifact·입력·runtime과 외부 상태도 보존해야 한다.
-
-공식 문서 확인일은 2026-09-26이며 설치·실행 검증은 하지 않았다. Langfuse dataset item 변경은 timestamp 기반 버전을 만들지만 dataset schema 변경은 같은 버전 관리에 포함되지 않는다. 평가에 사용한 item 버전과 schema 정의를 구분하여 기록한다. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
-
-MLflow prompt version은 변경 불가능한 버전이며 alias는 가리키는 버전이 바뀔 수 있다. Model Registry도 alias로 모델 버전을 참조할 수 있다. 따라서 재현 기록에는 움직이는 alias만 남기지 말고 실제 사용한 버전을 저장한다. [Prompt Registry](https://mlflow.org/docs/latest/genai/prompt-registry/), [Model Registry workflow](https://mlflow.org/docs/latest/ml/model-registry/workflow/).
-
-### 보완 흐름도
-
-```mermaid
-flowchart LR
-    P[Production] --> O[Online evaluation]
-    O --> F[Failure found]
-    F --> D[Offline regression dataset]
-    D --> E[Evaluate new version]
-    E --> R[Release]
-    R --> P
-```
-
-```mermaid
-flowchart TD
-    A[Application or Agent] --> L[Langfuse]
-    L --> T[Trace / Observation / Score]
-    T --> E[Export or API]
-    E --> O[Object storage]
-    O --> I[Iceberg tables]
-    I --> C[Spark / dbt / Trino]
-    C --> B[BI / Cost / Evaluation analytics]
-```

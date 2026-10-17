@@ -78,6 +78,9 @@ Volume
 → Sharp rise or fall in call volume?
 ```
 
+One healthy metric does not prove that every dimension is healthy. A valid format does not prove that a billed amount is accurate. Five-minute freshness is an example, not a default target for every dataset.
+
+
 ---
 
 ## 11.2 Validation Layers
@@ -149,6 +152,9 @@ After fixing the cause, reprocess only the affected data.
 
 Do not let quarantine grow without review. Track its record count and error reasons.
 
+Raw payloads and error messages may contain sensitive information. Define storage scope and access with the [governance policy](governance.md). This page contains no real payloads.
+
+
 ---
 
 ## 11.4 dbt Tests
@@ -169,6 +175,19 @@ Areas that may need more checks:
 - Volume anomalies
 - Distribution drift
 - Freshness anomalies
+
+The source’s “static validation” means fixed rules. A dbt data test runs SQL against actual data; it is not just static code analysis. Custom SQL tests can express business rules. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
+
+The limits of the four basic tests do not mean dbt cannot check freshness. Source freshness is a separate feature. Statistical anomaly detection also needs historical measurements and a baseline. [dbt source freshness](https://docs.getdbt.com/docs/deploy/source-freshness)
+
+Check these boundaries when applying each tool:
+
+- Soda: support for the rule and connected data source.
+- Great Expectations: execution environment and data connections.
+- Deequ: compatibility with Spark and library versions.
+
+Product descriptions retain the scope checked against official documentation on 2026-09-24. This edit did not recheck them, test implementations, or rank the tools. [SodaCL v3](https://docs.soda.io/soda-documentation/soda-v3/sodacl-reference/metrics-and-checks), [GX Core](https://docs.greatexpectations.io/docs/core/define_expectations/), [Deequ](https://github.com/awslabs/deequ)
+
 
 ---
 
@@ -219,6 +238,13 @@ Duplicate Rate < 0.01%
 Set each dataset’s SLO for how people use that data.
 
 A live dashboard may need fresher data than a monthly report.
+
+The SLO values in the main text are learning examples, not measured results or approved production targets.
+
+For operational SLOs, define the clock, measurement window, denominator, and dataset scope.
+
+Do not close recovery just because a job succeeded. Check the reprocessing scope, duplicate risk, and downstream results. [Data observability](data-observability.md) helps measure ongoing health. [Lineage](lineage-metadata.md) helps find affected paths.
+
 
 ---
 
@@ -299,49 +325,3 @@ Keep this in mind:
 [Handbook home](../index.md)
 
 [More practical prompts](../prompts/data-quality.md)
-
-## Appendix: existing application notes
-
-### Quality dimensions and validation layers
-
-One healthy metric does not prove that every dimension is healthy. A valid format does not prove that a billed amount is accurate. Five-minute freshness is an example, not a default target for every dataset.
-
-Passing an earlier validation layer does not remove the need for later checks.
-
-### Quarantine storage and access
-
-Raw payloads and error messages may contain sensitive information. Define storage scope and access with the [governance policy](governance.md). This page contains no real payloads.
-
-### Scope of dbt and quality tools
-
-The source’s “static validation” means fixed rules. A dbt data test runs SQL against actual data; it is not just static code analysis. Custom SQL tests can express business rules. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
-
-The limits of the four basic tests do not mean dbt cannot check freshness. Source freshness is a separate feature. Statistical anomaly detection also needs historical measurements and a baseline. [dbt source freshness](https://docs.getdbt.com/docs/deploy/source-freshness)
-
-Check these boundaries when applying each tool:
-
-- Soda: support for the rule and connected data source.
-- Great Expectations: execution environment and data connections.
-- Deequ: compatibility with Spark and library versions.
-
-Product descriptions retain the scope checked against official documentation on 2026-09-24. This edit did not recheck them, test implementations, or rank the tools. [SodaCL v3](https://docs.soda.io/soda-documentation/soda-v3/sodacl-reference/metrics-and-checks), [GX Core](https://docs.greatexpectations.io/docs/core/define_expectations/), [Deequ](https://github.com/awslabs/deequ)
-
-### SLOs and recovery checks
-
-The SLO values in the main text are learning examples, not measured results or approved production targets.
-
-For operational SLOs, define the clock, measurement window, denominator, and dataset scope.
-
-Do not close recovery just because a job succeeded. Check the reprocessing scope, duplicate risk, and downstream results. [Data observability](data-observability.md) helps measure ongoing health. [Lineage](lineage-metadata.md) helps find affected paths.
-
-### Existing conceptual diagram
-
-```mermaid
-flowchart TD
-    Incoming --> Validation
-    Validation -->|Valid| Silver
-    Validation -->|Invalid| Quarantine
-    Quarantine --> Repair[Fix the cause]
-    Repair --> Reprocess
-    Reprocess --> Validation
-```

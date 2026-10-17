@@ -60,6 +60,8 @@ Flink가 강한 영역:
 
 > **Flink = Stateful Stream Processing Engine**
 
+Spark/Flink의 역사적 출발점은 선택을 돕는 모델이며 현재 실행 모드의 전체 목록은 아니다. Task slot은 논리적 자원 할당 단위로 CPU core와 단순히 같지 않다. Source parallelism과 downstream operator parallelism도 구분한다.
+
 ---
 
 ## 5.2 Flink Architecture
@@ -164,6 +166,8 @@ Streaming에서는 Event가 늦거나 순서가 바뀔 수 있다.
 
 Event Time 기준 처리 덕분에 실제 발생 시간에 맞는 분석이 가능하다.
 
+Processing time은 operator가 event를 처리하는 시각이고 ingestion time은 시스템에 들어온 시각이다. Event time과 구분한다.
+
 ---
 
 ## 5.5 Watermark
@@ -206,6 +210,8 @@ Watermark 빠름
 ```
 
 Idle Partition 때문에 Watermark 진행이 막힐 수 있어 idle detection 같은 처리가 필요할 수 있다.
+
+Watermark 예시의 5초는 out-of-order 허용 가정이지 정확한 모든 구현의 수식이 아니다. 여러 입력의 watermark는 보통 가장 느린 입력의 진행에 묶인다. Idleness 설정과 late-event 정책을 같이 점검한다. 느리게 진행시켜도 정확도가 자동 보장되지 않으며 state 비용도 늘 수 있다. Event-time session 종료는 단순 wall-clock 대기만으로 결정되지 않는다. [Flink watermark](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/event-time/generating_watermarks/)
 
 ---
 
@@ -285,6 +291,8 @@ Key-Value 형태.
 
 Window도 내부적으로 State를 사용한다고 이해할 수 있다.
 
+State TTL은 단순한 즉시 자동 삭제가 아니다. 확인한 DataStream state 문서는 processing-time TTL을 설명한다. 갱신 기준·만료값 가시성·cleanup 방식을 확인해야 한다. [Flink state](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/fault-tolerance/state/)
+
 ---
 
 ## 5.8 Checkpoint
@@ -324,6 +332,8 @@ Stream에 Barrier가 흐르며 어느 지점까지 Snapshot에 포함할지 맞�
 Backpressure 상황 등에서 in-flight data까지 포함해 빠르게 Snapshot할 수 있다.
 
 Checkpoint는 외부 저장소까지 복사하는 일반 백업이 아니라 **streaming job의 상태와 입력 위치를 복원하기 위한 기록**이다.
+
+Checkpoint는 외부 시스템 전체의 backup이 아니다. Unaligned checkpoint는 in-flight data를 함께 기록하는 방식이며 단순히 alignment를 건너뛰는 at-least-once 모드와 같지 않다. 복구 시 원본 replay와 state 복원이 가능해도 sink의 transaction/idempotency는 별도로 필요하다. Savepoint 복원에서는 operator identity와 state schema 호환성도 확인한다. [Flink stateful processing](https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/)
 
 ---
 
@@ -392,6 +402,9 @@ At-Least-Once
 Idempotent Sink
 ```
 
+Exactly-once는 약속한 범위 안에서 확정된 효과를 한 번 반영한다는 의미다. 지원되는 transactional sink나 idempotent sink가 전체 경계를 연결하는 데 도움이 되며, at-least-once + idempotent sink도 자체 전제조건을 가진 설계다.
+
+
 ---
 
 ## 5.11 Backpressure
@@ -438,6 +451,8 @@ Database 느림
 - Skew 해소
 
 Backpressure는 느린 뒷단이 앞단 입력 속도를 제한하는 자연스러운 흐름 제어이기도 하다. 이를 없애기 전에 어느 단계가 실제 병목인지 확인한다.
+
+느린 외부 sink가 이미 포화 상태라면 parallelism 증가가 악화시킬 수도 있다. Flink Iceberg upsert는 connector·format·key 제약을 따른다. 확인한 문서는 v2와 primary key/identifier fields 및 partition 원본 열의 equality fields 포함을 요구한다. Spark SQL MERGE를 Flink sink에 그대로 대입하지 않는다. [Iceberg Flink 쓰기](https://iceberg.apache.org/docs/latest/flink-writes/)
 
 ---
 
@@ -578,6 +593,8 @@ Flink
 → Stateful real-time streaming
 ```
 
+Batch/streaming 비교는 독점적인 기능 경계가 아니다. Latency·state·workload·운영 요구를 함께 보고 선택한다.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -617,35 +634,3 @@ Flink에서는 시간·상태·복구·sink 쓰기를 하나의 흐름으로 본
 [이 주제의 실무 프롬프트 6개 더 보기](../prompts/flink.md)
 
 LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.
-
-## 원문 적용 시 보완 {#source-notes}
-
-### 5.1~5.2·5.12 실행 모델과 자원 단위
-
-Spark/Flink의 역사적 출발점은 선택을 돕는 모델이며 현재 실행 모드의 전체 목록은 아니다. Task slot은 논리적 자원 할당 단위로 CPU core와 단순히 같지 않다. Source parallelism과 downstream operator parallelism도 구분한다.
-
-### 5.5~5.6 Watermark와 window 조건
-
-Watermark 예시의 5초는 out-of-order 허용 가정이지 정확한 모든 구현의 수식이 아니다. 여러 입력의 watermark는 보통 가장 느린 입력의 진행에 묶인다. Idleness 설정과 late-event 정책을 같이 점검한다. 느리게 진행시켜도 정확도가 자동 보장되지 않으며 state 비용도 늘 수 있다. Event-time session 종료는 단순 wall-clock 대기만으로 결정되지 않는다. [Flink watermark](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/event-time/generating_watermarks/)
-
-### 5.7 State TTL 조건
-
-State TTL은 단순한 즉시 자동 삭제가 아니다. 확인한 DataStream state 문서는 processing-time TTL을 설명한다. 갱신 기준·만료값 가시성·cleanup 방식을 확인해야 한다. [Flink state](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/fault-tolerance/state/)
-
-### 5.8~5.10 복원과 일관성 조건
-
-Checkpoint는 외부 시스템 전체의 backup이 아니다. Unaligned checkpoint는 in-flight data를 함께 기록하는 방식이며 단순히 alignment를 건너뛰는 at-least-once 모드와 같지 않다. 복구 시 원본 replay와 state 복원이 가능해도 sink의 transaction/idempotency는 별도로 필요하다. Savepoint 복원에서는 operator identity와 state schema 호환성도 확인한다. [Flink stateful processing](https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/)
-
-### 5.11·5.13 Sink 병목과 upsert 조건
-
-느린 외부 sink가 이미 포화 상태라면 parallelism 증가가 악화시킬 수도 있다. Flink Iceberg upsert는 connector·format·key 제약을 따른다. 확인한 문서는 v2와 primary key/identifier fields 및 partition 원본 열의 equality fields 포함을 요구한다. Spark SQL MERGE를 Flink sink에 그대로 대입하지 않는다. [Iceberg Flink 쓰기](https://iceberg.apache.org/docs/latest/flink-writes/)
-
-### 5.4 시간 기준과 5.10 보장 범위의 추가 구분
-
-Processing time은 operator가 event를 처리하는 시각이고 ingestion time은 시스템에 들어온 시각이다. Event time과 구분한다.
-
-Exactly-once는 약속한 범위 안에서 확정된 효과를 한 번 반영한다는 의미다. 지원되는 transactional sink나 idempotent sink가 전체 경계를 연결하는 데 도움이 되며, at-least-once + idempotent sink도 자체 전제조건을 가진 설계다.
-
-### 5.14 도구 선택 조건
-
-Batch/streaming 비교는 독점적인 기능 경계가 아니다. Latency·state·workload·운영 요구를 함께 보고 선택한다.

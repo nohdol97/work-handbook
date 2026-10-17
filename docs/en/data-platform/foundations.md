@@ -124,6 +124,8 @@ Key point:
 
 > **OLTP quickly handles the service's current state; OLAP analyzes large histories.**
 
+Choose whether to separate PostgreSQL analytics by measured workload impact, cost, and response time, not a row-count threshold.
+
 ---
 
 ## 1.2 Row-Oriented vs Column-Oriented Storage
@@ -368,6 +370,10 @@ Only the required columns
 
 the ability to limit reading in this way.
 
+The phrase “only the required row range” in [1.3](#13-parquet) refers to the storage-unit pruning described above.
+
+Parquet column chunks live inside row groups. Pruning depends on available statistics or indexes and reader support. Pushdown sends a filter to a lower layer; pruning skips storage units that cannot match. Neither is arbitrary row lookup. Encoding and compression are distinct steps. [Apache Parquet file format](https://parquet.apache.org/docs/file-format/)
+
 ---
 
 ## 1.4 Object Storage
@@ -441,6 +447,8 @@ Therefore:
 
 these practices become important.
 
+Object storage costs also include requests and data transfer; the amount depends on the provider and workload.
+
 ---
 
 ## 1.5 File Layout Engineering
@@ -511,6 +519,8 @@ This is especially important for streaming into a lakehouse.
 Rewriting an entire large file to change a small amount of data can cause far more physical writing than the logical change.
 
 Account for this cost when designing file layout and choosing a table format.
+
+A large Parquet file can have several scan splits. One file is not always one task. Balance parallelism, rewrite cost, and request cost when setting file-size targets. Bucket notation is conceptual; check the engine's argument order and syntax.
 
 ---
 
@@ -609,6 +619,9 @@ date=2026-09-24
 └─ file3.parquet
 ```
 
+Cardinality is the number of distinct values. Choose day or hour partition granularity based on actual data volume and query patterns. The Iceberg transform notation is conceptually `bucket(32, user_id)`.
+
+
 ---
 
 ## 1.7 Bucketing / Sorting / Indexing
@@ -704,17 +717,3 @@ Compare planning time, scan bytes, and task distribution for the same query and 
 [See six more practical prompts for this topic](../prompts/foundations.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.
-
-## Qualifications for real use
-
-These sections are starting models. Choose whether to separate PostgreSQL analytics by measured workload impact, cost, and response time, not a row-count threshold. Include request and transfer costs when comparing object storage.
-
-Parquet column chunks live inside row groups. Pruning depends on available statistics or indexes and reader support. Pushdown sends a filter to a lower layer; pruning skips storage units that cannot match. Neither is arbitrary row lookup. Encoding and compression are distinct steps. [Apache Parquet file format](https://parquet.apache.org/docs/file-format/)
-
-A large Parquet file can have several scan splits. One file is not always one task. Balance parallelism, rewrite cost, and request cost when setting file-size targets. Bucket notation is conceptual; check the engine's argument order and syntax.
-
-### Sections 1.3 and 1.6: statistics and cardinality
-
-The phrase “only the required row range” in [1.3](#13-parquet) refers to the storage-unit pruning described above.
-
-Cardinality is the number of distinct values. Choose day or hour partition granularity based on actual data volume and query patterns. The Iceberg transform notation is conceptually `bucket(32, user_id)`.

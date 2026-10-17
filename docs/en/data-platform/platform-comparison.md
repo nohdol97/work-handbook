@@ -115,6 +115,8 @@ Managed Platforms
 → more operational responsibilities moved to vendor
 ```
 
+“Files are in my bucket” differs from “I control lifecycle, catalog, policies, and commits.” Open designs favor direct control. Managed platforms move more operational responsibility to a vendor. Check account, retention, deletion, and external access boundaries in contracts and settings. [Databricks](databricks.md), [Snowflake](snowflake.md).
+
 ---
 
 ## 19.2 Iceberg Openness
@@ -145,6 +147,10 @@ Therefore the useful question is no longer:
 Instead ask:
 
 > **How native is Iceberg in the platform, and how much functionality remains available when external engines access the same tables?**
+
+Engines such as Spark, Flink, Trino, Snowflake, and Databricks can connect to Iceberg tables. The REST Catalog specification defines a catalog interface across languages and engines. [Apache Iceberg REST specification](https://iceberg.apache.org/rest-catalog-spec/).
+
+Move from “Does it support Iceberg?” to **“Which format versions, native features, external readers/writers, and policies remain available?”** Managed Iceberg, Iceberg reads of Delta, and external catalog registration are different configurations. Separate catalog credentials from direct object storage access. [Databricks external access](https://docs.databricks.com/aws/en/external-access), [Snowflake Iceberg](https://docs.snowflake.com/en/user-guide/tables-iceberg).
 
 ---
 
@@ -196,6 +202,8 @@ vLLM
 
 The team can choose engines by workload but must connect authentication, catalog, monitoring, and recovery.
 
+Set workload isolation, latency, throughput, and team requirements before adding engines.
+
 ---
 
 ## 19.4 Batch
@@ -234,6 +242,8 @@ other engines
 ```
 
 The organization must manage these tools' versions, permissions, and incident response.
+
+Databricks is a natural candidate for Spark ETL, backfills, large joins, ML dataset creation, and Lakehouse transformation. Snowflake combines warehouse processing around SQL and Dynamic Tables. An open stack can choose Spark, Trino, dbt, and other tools, but must operate them. Treat “strong fit” as a hypothesis. Test actual data size, skew, and reprocessing.
 
 ---
 
@@ -276,6 +286,10 @@ Best when requirements include:
 
 Low delay and fine control also mean the team must operate state, checkpoints, and recovery.
 
+Databricks connects Structured Streaming, Lakeflow Pipelines, and Connect to the Lakehouse. Snowflake connects Snowpipe Streaming ingestion, Streams change tracking, and Dynamic Tables refresh. These are not interchangeable stateful streaming engines.
+
+Flink in an open stack is a candidate for low latency, large state, complex event time, and detailed control. This adds checkpoint, state, scaling, and recovery work. Compare ingestion freshness separately from event-time correctness. [Flink](flink.md), [Spark](spark.md).
+
 ---
 
 ## 19.6 SQL / BI
@@ -311,6 +325,8 @@ BI
 ```
 
 The team can choose another SQL engine, but it must manage query resources, security, and incidents.
+
+Snowflake grew around `BI/Analyst → Virtual Warehouse → Data`. Databricks SQL Warehouse + Photon also serves interactive SQL and BI. An open stack can use `Iceberg → Trino → BI`, with SQL service operations owned by the organization. Compare concurrency, queues, p95 query latency, connectors, and semantic definitions under the same conditions.
 
 ---
 
@@ -360,6 +376,10 @@ Audit
 
 Open approach gives choice but increases platform work.
 
+Unity Catalog and Horizon Catalog integrate access, lineage, classification, audit, and Data/AI governance. An open stack can combine Catalog + IAM + OpenLineage + DataHub/OpenMetadata + Policy Engine + Audit. Choice increases, but policy enforcement and authentication integration become platform work.
+
+A product's presence is not proof of security. Test allowed and denied access through queries, file paths, external engines, and AI retrieval. See the [AI Search boundary](databricks.md#1710-ai-vector-capabilities) for its row/column permission limitation.
+
 ---
 
 ## 19.8 Lineage
@@ -390,6 +410,8 @@ BI
 which is more flexible but requires standardization/integration.
 
 A shared event format such as OpenLineage helps bring lineage records from several job tools into one view.
+
+Managed platforms observe their own execution systems. This can help capture `Job → Table → Dashboard` lineage automatically. An open `Kafka → Flink → Spark → dbt → Trino → BI` flow needs standards and connector integration. [OpenLineage](lineage-metadata.md) helps connect these systems. Internal automatic capture does not promise complete coverage of external tools, every column, or all dynamic SQL.
 
 ---
 
@@ -457,6 +479,8 @@ Agent Framework
 
 Maximum flexibility and portability, but highest integration burden.
 
+More freedom adds integration and operations work. Check migration of prompt, agent, retrieval, and evaluation versions, not only model replacement. [AI-ready data](ai-ready-data.md), [Online evaluation](ai-evaluation.md#161-online-evaluation-events).
+
 ---
 
 ## 19.10 Portability
@@ -493,6 +517,10 @@ proprietary optimization
 ```
 
 The table data may be portable while the **operational system** is not fully portable.
+
+Parquet, Iceberg, OpenLineage, and open APIs can make engine replacement easier. Managed platforms also offer open interfaces, especially around Iceberg. Managed workflow definitions, vendor-specific governance policies, serverless behavior, AI services, and proprietary optimizations remain separate dependencies.
+
+**Portable data does not imply a portable operational system.** Separate file-read tests from migration tests for workflows, permissions, recovery, and evaluation history.
 
 ---
 
@@ -535,6 +563,10 @@ The value is often less about one engine being better and more about:
 
 > **reducing integration and operations work.**
 
+An open team may operate Kafka, Flink, Spark, Trino, Airflow, Catalog, Lineage, MLflow, Observability, and Security Integration. This needs strong platform skills.
+
+Managed platforms reduce some installation, scaling, upgrades, compatibility management, cross-component authentication, monitoring, and governance integration. Incident response, correctness, and cost management remain. Their value often comes from less integration and operations work rather than one superior engine.
+
 ---
 
 ## 19.12 Vendor Lock-in
@@ -573,6 +605,10 @@ vendor-specific pipeline + governance + AI stack
 
 Therefore think in layers.
 
+Do not judge lock-in by table format alone. Review **Data Format → Catalog → Pipeline Definitions → Orchestration → Security Policies → ML Registry → AI Evaluation → Serving → Operational Knowledge** separately.
+
+An Iceberg table may move while vendor pipelines, governance, and AI features need rebuilding. For each layer, record export format, replacement, change cost, and validation. Open systems can also depend on engine-specific behavior and team knowledge.
+
 ---
 
 ## 19.13 Total Cost
@@ -605,6 +641,10 @@ Managed platforms may have higher service cost but reduce engineering overhead.
 
 The right comparison is **TCO**, not sticker price.
 
+TCO includes Compute + Storage + Network + Licenses + Platform Engineering Labor + Operations + Upgrades + Incident Response + Security Integration + Governance + Developer Productivity. Do not compare compute-hour prices alone.
+
+Open software can have low direct cost and high labor cost. Managed services can charge more while reducing engineering work. Compare the same workload, SLO, recovery level, retention, and staff time. This page assumes no prices or savings rates.
+
 ---
 
 ## 19.14 Simplified Comparison Table
@@ -625,6 +665,8 @@ The table below is a starting comparison of three approaches, not a score or pro
 | Ops burden | Low–Medium | Low–Medium | High |
 | Vendor dependency | Medium–High | Medium–High | Low–Medium |
 | Platform engineering freedom | Medium | Medium | Highest |
+
+The [source table](#1914-simplified-comparison-table) contains conditional design hypotheses, not benchmark rankings. Matching feature names do not prove equal support. Portability, vendor dependency, and engineering freedom depend on features used and managed-service boundaries. Open systems still have operating responsibilities and dependencies.
 
 ---
 
@@ -693,6 +735,8 @@ The goal is:
 
 > **Use the minimum number of components required to satisfy real workloads and organizational constraints.**
 
+For a hybrid, validate catalog, writer, and policy compatibility separately.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -736,85 +780,3 @@ Start with a real workload: the jobs, data volume, and concurrent use the platfo
     ```
 
 **Key point:** A requirement fit/uncertainty table, lock-in by layer, a comparable TCO measurement plan, minimal proofs of concept, and exit criteria. It may name a universal winner or claim full portability from an open table format alone. Check official support tables and real reader/writer and access tests. Measure cost and staff time using the same data, SLOs, and recovery level. Have stakeholders review weights, trade-offs, and unknowns.
-
-## Additional checks before applying these ideas
-
-The source’s strength and ranking labels are teaching comparisons, not benchmark results. Below are the previous page’s conditional interpretations and checks. They do not claim new feature, price, or performance verification. The official-documentation review date remains 2026-09-26.
-
-### 19.1 Storage Ownership
-
-“Files are in my bucket” differs from “I control lifecycle, catalog, policies, and commits.” Open designs favor direct control. Managed platforms move more operational responsibility to a vendor. Check account, retention, deletion, and external access boundaries in contracts and settings. [Databricks](databricks.md), [Snowflake](snowflake.md).
-
-### 19.2 Iceberg Openness
-
-Engines such as Spark, Flink, Trino, Snowflake, and Databricks can connect to Iceberg tables. The REST Catalog specification defines a catalog interface across languages and engines. [Apache Iceberg REST specification](https://iceberg.apache.org/rest-catalog-spec/).
-
-Move from “Does it support Iceberg?” to **“Which format versions, native features, external readers/writers, and policies remain available?”** Managed Iceberg, Iceberg reads of Delta, and external catalog registration are different configurations. Separate catalog credentials from direct object storage access. [Databricks external access](https://docs.databricks.com/aws/en/external-access), [Snowflake Iceberg](https://docs.snowflake.com/en/user-guide/tables-iceberg).
-
-### 19.3 Compute Model
-
-Set workload isolation, latency, throughput, and team requirements before adding engines.
-
-### 19.4 Batch
-
-Databricks is a natural candidate for Spark ETL, backfills, large joins, ML dataset creation, and Lakehouse transformation. Snowflake combines warehouse processing around SQL and Dynamic Tables. An open stack can choose Spark, Trino, dbt, and other tools, but must operate them. Treat “strong fit” as a hypothesis. Test actual data size, skew, and reprocessing.
-
-### 19.5 Streaming
-
-Databricks connects Structured Streaming, Lakeflow Pipelines, and Connect to the Lakehouse. Snowflake connects Snowpipe Streaming ingestion, Streams change tracking, and Dynamic Tables refresh. These are not interchangeable stateful streaming engines.
-
-Flink in an open stack is a candidate for low latency, large state, complex event time, and detailed control. This adds checkpoint, state, scaling, and recovery work. Compare ingestion freshness separately from event-time correctness. [Flink](flink.md), [Spark](spark.md).
-
-### 19.6 SQL / BI
-
-Snowflake grew around `BI/Analyst → Virtual Warehouse → Data`. Databricks SQL Warehouse + Photon also serves interactive SQL and BI. An open stack can use `Iceberg → Trino → BI`, with SQL service operations owned by the organization. Compare concurrency, queues, p95 query latency, connectors, and semantic definitions under the same conditions.
-
-### 19.7 Governance
-
-Unity Catalog and Horizon Catalog integrate access, lineage, classification, audit, and Data/AI governance. An open stack can combine Catalog + IAM + OpenLineage + DataHub/OpenMetadata + Policy Engine + Audit. Choice increases, but policy enforcement and authentication integration become platform work.
-
-A product's presence is not proof of security. Test allowed and denied access through queries, file paths, external engines, and AI retrieval. See the [AI Search boundary](databricks.md#1710-ai-vector-capabilities) for its row/column permission limitation.
-
-### 19.8 Lineage
-
-Managed platforms observe their own execution systems. This can help capture `Job → Table → Dashboard` lineage automatically. An open `Kafka → Flink → Spark → dbt → Trino → BI` flow needs standards and connector integration. [OpenLineage](lineage-metadata.md) helps connect these systems. Internal automatic capture does not promise complete coverage of external tools, every column, or all dynamic SQL.
-
-### 19.9 AI Ecosystem
-
-More freedom adds integration and operations work. Check migration of prompt, agent, retrieval, and evaluation versions, not only model replacement. [AI-ready data](ai-ready-data.md), [Online evaluation](ai-evaluation.md#161-online-evaluation-events).
-
-### 19.10 Portability
-
-Parquet, Iceberg, OpenLineage, and open APIs can make engine replacement easier. Managed platforms also offer open interfaces, especially around Iceberg. Managed workflow definitions, vendor-specific governance policies, serverless behavior, AI services, and proprietary optimizations remain separate dependencies.
-
-**Portable data does not imply a portable operational system.** Separate file-read tests from migration tests for workflows, permissions, recovery, and evaluation history.
-
-### 19.11 Operational Complexity
-
-An open team may operate Kafka, Flink, Spark, Trino, Airflow, Catalog, Lineage, MLflow, Observability, and Security Integration. This needs strong platform skills.
-
-Managed platforms reduce some installation, scaling, upgrades, compatibility management, cross-component authentication, monitoring, and governance integration. Incident response, correctness, and cost management remain. Their value often comes from less integration and operations work rather than one superior engine.
-
-### 19.12 Vendor Lock-in
-
-Do not judge lock-in by table format alone. Review **Data Format → Catalog → Pipeline Definitions → Orchestration → Security Policies → ML Registry → AI Evaluation → Serving → Operational Knowledge** separately.
-
-An Iceberg table may move while vendor pipelines, governance, and AI features need rebuilding. For each layer, record export format, replacement, change cost, and validation. Open systems can also depend on engine-specific behavior and team knowledge.
-
-### 19.13 Total Cost
-
-TCO includes Compute + Storage + Network + Licenses + Platform Engineering Labor + Operations + Upgrades + Incident Response + Security Integration + Governance + Developer Productivity. Do not compare compute-hour prices alone.
-
-Open software can have low direct cost and high labor cost. Managed services can charge more while reducing engineering work. Compare the same workload, SLO, recovery level, retention, and staff time. This page assumes no prices or savings rates.
-
-### 19.14 Interpreting the comparison table
-
-The [source table](#1914-simplified-comparison-table) contains conditional design hypotheses, not benchmark rankings. Matching feature names do not prove equal support. Portability, vendor dependency, and engineering freedom depend on features used and managed-service boundaries. Open systems still have operating responsibilities and dependencies.
-
-### 19.15 Practical decision heuristics
-
-- Consider Databricks when large ETL, Spark skills, ML/AI, Lakehouse design, and data engineering/AI integration are central.
-- Consider Snowflake when SQL analytics, an enterprise warehouse, BI, managed simplicity, and warehouse-centered teams are central.
-- Consider Open when multiple engines, infrastructure control, open standards, portability, and custom platform skills matter strategically and the team can handle operations.
-
-Hybrids are normal. Examples are `Kafka/Flink → Iceberg → Databricks + Trino`, or one Iceberg foundation used by Snowflake, Spark, and Trino. Validate catalogs, writers, and policies separately. Aim for **the fewest components that meet real workloads and organizational constraints**, not architectural purity.

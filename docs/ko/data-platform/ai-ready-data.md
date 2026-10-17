@@ -204,6 +204,8 @@ Trace / Observation / Score
 
 Langfuse만으로 장기 데이터 통합 분석과 전체 거버넌스를 해결한다고 가정하지 않는다.
 
+실제 수집 범위는 계측과 연동에 달려 있다. 위 그림은 학습용 개념 구조이며 저장 구현이나 검증된 자동 연동을 뜻하지 않는다. [Langfuse data model](https://langfuse.com/docs/observability/data-model).
+
 ---
 
 ## 15.3 Dataset Versioning
@@ -244,6 +246,8 @@ Iceberg Snapshot
 Dataset Version
 → AI/업무 관점의 논리적 Dataset 버전
 ```
+
+Langfuse dataset item 변경에는 시각 기반 버전이 생기지만 dataset schema 변경은 같은 버전 관리 범위가 아니다. 실험을 재구성하려면 입력 버전 외에 schema와 평가 설정도 보존한다. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
 
 ---
 
@@ -428,6 +432,8 @@ Retrieval Trace를 남기면:
 
 으로 구분할 수 있다.
 
+권한 metadata를 넣는 것만으로 접근 통제가 생기지는 않는다. 신뢰할 수 있는 사용자 identity에서 권한을 계산하고 검색 요청마다 검사해야 한다. 프롬프트·응답·tool input/output에도 민감 정보가 들어갈 수 있으므로 수집 범위·마스킹·보존 기간을 정한다. 검색 결과를 LLM에 넘긴 뒤 UI에서만 숨기는 방식은 유출 방지 경계가 아니다. [Azure AI Search security filters](https://learn.microsoft.com/en-us/azure/search/search-security-trimming-for-azure-search).
+
 ---
 
 ## 15.8 Provenance
@@ -574,23 +580,3 @@ Label-like
     ```
 
 **핵심 사항:** 바뀐 조건·누락 정보와 통제 비교 계획. 점수 차이를 model 성능 차이로 단정하거나 temperature=0을 완전한 결정성으로 오해할 수 있다. 실제 dataset 항목·설정·trace를 확인하고 같은 조건으로 반복 평가한다. 이 문서에서는 실험을 실행하지 않았다.
-
-## 원문 적용 시 보완 {#source-notes}
-
-### 15.2A Langfuse 데이터 모델
-
-Trace는 요청·작업의 논리적 묶음, observation은 LLM·tool·retrieval 같은 개별 단계, session은 여러 trace를 묶는 단위다. 실제 저장 구현을 이 개념 그림에서 추론하지 않는다. [Langfuse data model](https://langfuse.com/docs/observability/data-model).
-
-### 15.3~15.4 Dataset version 범위
-
-Langfuse dataset item 변경에는 시각 기반 버전이 생기지만 dataset schema 변경은 같은 버전 관리 범위가 아니다. 실험을 재구성하려면 입력 버전 외에 schema와 평가 설정도 보존한다. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
-
-### 15.2·15.7 수집과 권한 통제
-
-권한 metadata를 넣는 것만으로 접근 통제가 생기지는 않는다. 신뢰할 수 있는 사용자 identity에서 권한을 계산하고 검색 요청마다 검사해야 한다. 프롬프트·응답·tool input/output에도 민감 정보가 들어갈 수 있으므로 수집 범위·마스킹·보존 기간을 정한다. 검색 결과를 LLM에 넘긴 뒤 UI에서만 숨기는 방식은 유출 방지 경계가 아니다. [Azure AI Search security filters](https://learn.microsoft.com/en-us/azure/search/search-security-trimming-for-azure-search).
-
-### 15.2A 수집 범위와 15.3 snapshot 설명
-
-Langfuse의 실제 수집 범위는 계측과 연동에 달려 있다. 원문 그림은 학습용 개념 구조이며 검증된 연동 구현이 아니다.
-
-15.3의 “물리적 Table 상태 버전”은 table metadata가 참조하는 파일 집합의 일관된 상태로 구체화해 이해한다. Iceberg snapshot과 AI/업무 dataset version은 같은 식별자나 같은 경계가 아니다.

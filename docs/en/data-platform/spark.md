@@ -157,6 +157,10 @@ For Spark SQL/DataFrames, the Catalyst Optimizer optimizes the query plan.
 
 Use `explain()` to inspect the plan.
 
+Reading a plan does not prove good performance. Check the physical plan and measured shuffle volume first. Sort-merge joins have network and sort costs. Shuffled hash joins partition the inputs, then build and probe a hash table. They can create memory pressure per partition. Changing join strategy does not fix a wrong assumption about key uniqueness.
+
+A semi join selects matching rows; an anti join selects nonmatches. They express existence checks clearly when columns from the other table are not needed. Target partition size and target file size are related but are not the same setting. Fewer tasks can reduce both overhead and parallelism.
+
 ---
 
 ## 4.4 Narrow vs Wide Dependencies
@@ -189,6 +193,8 @@ repartition
 ```
 
 This causes a shuffle.
+
+A logical join does not always shuffle both inputs. Broadcast or existing partition layout can change the physical plan. Use `explain()` and the Spark UI to inspect shuffle bytes, task time, spill, GC, and input size. AQE supports specific runtime plan changes; it does not fix all skew. For join explosion, check key duplication and grain first. [Spark performance guide](https://spark.apache.org/docs/latest/sql-performance-tuning.html)
 
 ---
 
@@ -324,6 +330,8 @@ Partition count relates to:
 
 These are connected.
 
+Speculation repeats a slow task but does not remove skew. Cache and durable tables have different lifetimes. Repartition normally shuffles, and too much partition reduction lowers parallelism. The Spark-to-dbt path is an example, not a required architecture.
+
 ---
 
 ## 4.8 Cache / Persist
@@ -449,6 +457,10 @@ Run another copy of an unusually slow task on a different executor and use the f
 
 Important for finding which stage/task is the bottleneck.
 
+Compare task metrics in the Spark UI and diagnose the bottleneck before changing several settings at once. For Iceberg reads, column selection as well as filters can reduce data read. File split planning and layout both affect parallelism. Plan compaction with the write workload.
+
+Structured Streaming can be understood as a growing-table model. A late event can arrive after newer event-time data. Deduplication suppresses repeated logical events within its configured scope.
+
 ---
 
 ## 4.11 Spark + Iceberg
@@ -504,6 +516,8 @@ Spark tasks create files, and an Iceberg commit publishes a new snapshot to the 
 ### Maintenance Debt
 
 Streaming writes, MERGE operations, and small files can build up and require maintenance such as compaction.
+
+An Iceberg target file size is not a promised output size. A file cannot exceed its writing task or cross an Iceberg partition boundary. Compressed file size differs from Spark's in-memory size. [Iceberg Spark writes](https://iceberg.apache.org/docs/latest/spark-writes/)
 
 ---
 
@@ -580,6 +594,8 @@ Frequent writes
 ### Streaming vs Batch Backfill
 
 Streaming fits ongoing processing; batch Spark fits large historical reprocessing.
+
+A watermark tracks event-time progress and supports state cleanup; it is not just a waiting timer. Append, update, and complete output modes have operator and sink constraints. `foreachBatch` writes are at-least-once by default. Use an idempotent sink design, such as deduplication by `batchId`, and test retries before claiming end-to-end exactly-once. [Spark Structured Streaming](https://spark.apache.org/docs/latest/streaming/apis-on-dataframes-and-datasets.html)
 
 ---
 
@@ -692,33 +708,3 @@ Compare the Spark UI and plan, then change one setting at a time with the same i
 [See six more practical prompts for this topic](../prompts/spark.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.
-
-## Source qualifications {#source-notes}
-
-### 4.4–4.6 and 4.9 Join plans and skew
-
-A logical join does not always shuffle both inputs. Broadcast or existing partition layout can change the physical plan. Use `explain()` and the Spark UI to inspect shuffle bytes, task time, spill, GC, and input size. AQE supports specific runtime plan changes; it does not fix all skew. For join explosion, check key duplication and grain first. [Spark performance guide](https://spark.apache.org/docs/latest/sql-performance-tuning.html)
-
-### 4.7–4.10 and 4.14 Execution and role boundaries
-
-Speculation repeats a slow task but does not remove skew. Cache and durable tables have different lifetimes. Repartition normally shuffles, and too much partition reduction lowers parallelism. The Spark-to-dbt path is an example, not a required architecture.
-
-### 4.11 Iceberg file size
-
-An Iceberg target file size is not a promised output size. A file cannot exceed its writing task or cross an Iceberg partition boundary. Compressed file size differs from Spark's in-memory size. [Iceberg Spark writes](https://iceberg.apache.org/docs/latest/spark-writes/)
-
-### 4.12 Watermarks and output guarantees
-
-A watermark tracks event-time progress and supports state cleanup; it is not just a waiting timer. Append, update, and complete output modes have operator and sink constraints. `foreachBatch` writes are at-least-once by default. Use an idempotent sink design, such as deduplication by `batchId`, and test retries before claiming end-to-end exactly-once. [Spark Structured Streaming](https://spark.apache.org/docs/latest/streaming/apis-on-dataframes-and-datasets.html)
-
-### 4.3–4.7 Additional plan, join, and partition distinctions
-
-Reading a plan does not prove good performance. Check the physical plan and measured shuffle volume first. Sort-merge joins have network and sort costs. Shuffled hash joins partition the inputs, then build and probe a hash table. They can create memory pressure per partition. Changing join strategy does not fix a wrong assumption about key uniqueness.
-
-A semi join selects matching rows; an anti join selects nonmatches. They express existence checks clearly when columns from the other table are not needed. Target partition size and target file size are related but are not the same setting. Fewer tasks can reduce both overhead and parallelism.
-
-### 4.10–4.12 Additional processing, reading, and state distinctions
-
-Compare task metrics in the Spark UI and diagnose the bottleneck before changing several settings at once. For Iceberg reads, column selection as well as filters can reduce data read. File split planning and layout both affect parallelism. Plan compaction with the write workload.
-
-Structured Streaming can be understood as a growing-table model. A late event can arrive after newer event-time data. Deduplication suppresses repeated logical events within its configured scope.

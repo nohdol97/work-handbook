@@ -78,6 +78,9 @@ Volume
 → 호출량 급증/급감?
 ```
 
+하나의 정상 지표가 다른 모든 차원을 보장하지 않는다. 형식이 유효하다고 실제 청구 금액까지 정확한 것은 아니다. 5분 freshness는 예시이며 모든 dataset의 기본 목표가 아니다.
+
+
 ---
 
 ## 11.2 Validation Layers
@@ -149,6 +152,9 @@ Silver   Quarantine
 
 격리 구역이 쌓이기만 해서는 안 된다. 건수와 오류 이유를 계속 확인한다.
 
+Raw payload와 오류 메시지도 민감정보를 포함할 수 있다. 보관 범위와 접근 권한은 [거버넌스 정책](governance.md)과 함께 정한다. 이 문서에는 실제 payload가 없다.
+
+
 ---
 
 ## 11.4 dbt Tests
@@ -169,6 +175,19 @@ dbt의 데이터 테스트는 실제 테이블에 SQL 검사를 실행해 `not_n
 - Volume anomaly
 - Distribution drift
 - Freshness anomaly
+
+원문의 “정적 검증”은 규칙이 고정되어 있다는 뜻이다. dbt data test는 실제 데이터에 SQL을 실행하며 단순한 코드 정적 분석이 아니다. 사용자 정의 SQL 검사로 비즈니스 규칙도 표현할 수 있다. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
+
+기본 네 가지 검사만으로 모든 이상 탐지를 해결하지 못한다는 설명이 dbt의 freshness 검사 불가를 뜻하지는 않는다. Source freshness는 별도 기능이다. 통계적 이상 탐지에는 이력과 기준선 설계도 필요하다. [dbt source freshness](https://docs.getdbt.com/docs/deploy/source-freshness)
+
+도구를 적용할 때 확인할 범위:
+
+- Soda: 규칙과 연결된 데이터 source의 지원 범위.
+- Great Expectations: 실행 환경과 데이터 연결 방식.
+- Deequ: Spark와 해당 library version의 호환성.
+
+제품 설명은 2026-09-24에 공식 문서로 확인한 범위를 유지했다. 이번 편집에서 새로 확인하거나 구현·우열을 시험하지 않았다. [SodaCL v3](https://docs.soda.io/soda-documentation/soda-v3/sodacl-reference/metrics-and-checks), [GX Core](https://docs.greatexpectations.io/docs/core/define_expectations/), [Deequ](https://github.com/awslabs/deequ)
+
 
 ---
 
@@ -219,6 +238,13 @@ Duplicate Rate < 0.01%
 데이터셋이 쓰이는 목적에 맞춰 SLO를 따로 정한다.
 
 실시간 대시보드는 월간 보고서보다 더 빠른 갱신이 필요할 수 있다.
+
+본문의 SLO 수치는 학습용 목표 예시이며 실측 결과나 승인된 운영 기준이 아니다.
+
+운영 SLO에는 시간 기준, 측정 구간, 분모, 대상 dataset을 명시한다.
+
+Job 성공만으로 복구를 종료하지 않는다. 재처리 범위, 중복 가능성, downstream 결과를 확인한다. [데이터 관측성](data-observability.md)은 지속적인 상태 측정을, [lineage](lineage-metadata.md)는 영향 경로 확인을 돕는다.
+
 
 ---
 
@@ -299,49 +325,3 @@ Quality Check 후 재개.
 [핸드북 홈](../index.md)
 
 [더 많은 실무 프롬프트](../prompts/data-quality.md)
-
-## 부록: 기존 보완 설명
-
-### 품질 차원과 검증 계층
-
-하나의 정상 지표가 다른 모든 차원을 보장하지 않는다. 형식이 유효하다고 실제 청구 금액까지 정확한 것은 아니다. 5분 freshness는 예시이며 모든 dataset의 기본 목표가 아니다.
-
-앞 검증 계층을 통과했다고 뒤 계층의 검사를 생략하지 않는다.
-
-### Quarantine의 보관과 접근
-
-Raw payload와 오류 메시지도 민감정보를 포함할 수 있다. 보관 범위와 접근 권한은 [거버넌스 정책](governance.md)과 함께 정한다. 이 문서에는 실제 payload가 없다.
-
-### dbt와 품질 도구의 범위
-
-원문의 “정적 검증”은 규칙이 고정되어 있다는 뜻이다. dbt data test는 실제 데이터에 SQL을 실행하며 단순한 코드 정적 분석이 아니다. 사용자 정의 SQL 검사로 비즈니스 규칙도 표현할 수 있다. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
-
-기본 네 가지 검사만으로 모든 이상 탐지를 해결하지 못한다는 설명이 dbt의 freshness 검사 불가를 뜻하지는 않는다. Source freshness는 별도 기능이다. 통계적 이상 탐지에는 이력과 기준선 설계도 필요하다. [dbt source freshness](https://docs.getdbt.com/docs/deploy/source-freshness)
-
-도구를 적용할 때 확인할 범위:
-
-- Soda: 규칙과 연결된 데이터 source의 지원 범위.
-- Great Expectations: 실행 환경과 데이터 연결 방식.
-- Deequ: Spark와 해당 library version의 호환성.
-
-제품 설명은 2026-09-24에 공식 문서로 확인한 범위를 유지했다. 이번 편집에서 새로 확인하거나 구현·우열을 시험하지 않았다. [SodaCL v3](https://docs.soda.io/soda-documentation/soda-v3/sodacl-reference/metrics-and-checks), [GX Core](https://docs.greatexpectations.io/docs/core/define_expectations/), [Deequ](https://github.com/awslabs/deequ)
-
-### SLO와 복구 확인
-
-본문의 SLO 수치는 학습용 목표 예시이며 실측 결과나 승인된 운영 기준이 아니다.
-
-운영 SLO에는 시간 기준, 측정 구간, 분모, 대상 dataset을 명시한다.
-
-Job 성공만으로 복구를 종료하지 않는다. 재처리 범위, 중복 가능성, downstream 결과를 확인한다. [데이터 관측성](data-observability.md)은 지속적인 상태 측정을, [lineage](lineage-metadata.md)는 영향 경로 확인을 돕는다.
-
-### 기존 개념도
-
-```mermaid
-flowchart TD
-    Incoming --> Validation
-    Validation -->|Valid| Silver
-    Validation -->|Invalid| Quarantine
-    Quarantine --> Repair[Fix the cause]
-    Repair --> Reprocess
-    Reprocess --> Validation
-```

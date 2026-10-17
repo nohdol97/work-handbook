@@ -121,6 +121,10 @@ BI / Dashboard / AI
 
 A semantic layer turns business meaning into **calculation definitions** that queries can reuse.
 
+The Revenue formula is conceptual. It is not an accounting rule or runnable syntax for a specific product.
+
+Before using it, agree on grain, time period, currency, and whether any amount would be subtracted twice. Do not infer an executable calculation from a description alone.
+
 ---
 
 ## 13.2 Dataset Lineage
@@ -195,6 +199,10 @@ silver.orders
 
 OpenLineage defines a **lineage event format**; it is not the screen used to view results.
 
+OpenLineage defines events and metadata. The object model checked in the official docs also supports job and dataset metadata events that are not tied to a run. Do not assume every lineage event represents one execution. [OpenLineage object model](https://openlineage.io/docs/spec/object-model/)
+
+OpenLineage and [Marquez](https://marquezproject.ai/) descriptions were checked against official docs on 2026-09-24. Installing an integration does not prove that all runs and column lineage are collected. Check actual coverage separately.
+
 ---
 
 ## 13.4 Column-Level Lineage
@@ -242,6 +250,10 @@ mart_daily_sales
  ↓
 Dashboard
 ```
+
+An edge in a graph does not prove that a specific run was correct. Lineage can have gaps. Absence from the graph is not proof of no impact.
+
+In the `raw_orders.amount` type-change example, check the expected types in each downstream transformation and consumer.
 
 ---
 
@@ -312,6 +324,10 @@ Governance
 
 It is developing into this combination.
 
+The integration flow in 13.7 explains the roles of information sources. It is not a product configuration that guarantees automatic connections.
+
+Displaying a policy and enforcing data access are different capabilities. [Governance](governance.md) also requires checking query engines and storage access paths.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -350,45 +366,3 @@ It is developing into this combination.
 [Data observability](data-observability.md) · [Governance](governance.md) · [Handbook home](../index.md)
 
 [More practical prompts](../prompts/lineage-metadata.md)
-
-## Details to check in practice
-
-### Calculation boundaries in a semantic layer
-
-The Revenue formula is conceptual. It is not an accounting rule or runnable syntax for a specific product.
-
-Before using it, agree on grain, time period, currency, and whether any amount would be subtracted twice. Do not infer an executable calculation from a description alone.
-
-### OpenLineage and collection coverage
-
-OpenLineage defines events and metadata. The object model checked in the official docs also supports job and dataset metadata events that are not tied to a run. Do not assume every lineage event represents one execution. [OpenLineage object model](https://openlineage.io/docs/spec/object-model/)
-
-OpenLineage and [Marquez](https://marquezproject.ai/) descriptions were checked against official docs on 2026-09-24. Installing an integration does not prove that all runs and column lineage are collected. Check actual coverage separately.
-
-### What lineage can prove
-
-An edge in a graph does not prove that a specific run was correct. Lineage can have gaps. Absence from the graph is not proof of no impact.
-
-In the `raw_orders.amount` type-change example, check the expected types in each downstream transformation and consumer.
-
-### Catalog display and policy enforcement
-
-The integration flow in 13.7 explains the roles of information sources. It is not a product configuration that guarantees automatic connections.
-
-Displaying a policy and enforcing data access are different capabilities. [Governance](governance.md) also requires checking query engines and storage access paths.
-
-### Supplemental diagrams of the source flows
-
-```mermaid
-flowchart LR
-    Raw[raw_user_events] --> Spark[Spark Job]
-    Spark --> Silver[silver_user_events]
-    Silver --> Dbt[dbt]
-    Dbt --> Mart[mart_daily_users]
-```
-
-```mermaid
-flowchart LR
-    Amount[raw_orders.amount] --> Net[silver_orders.net_amount]
-    Discount[raw_orders.discount] --> Net
-```

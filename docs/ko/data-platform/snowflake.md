@@ -63,6 +63,20 @@ Virtual Warehouse는 쿼리와 DML(데이터 변경 명령)을 실행하는 독�
 - 접근 제어,
 - 작업 조정.
 
+[18.1](#181-architecture)의 storage·compute·Cloud Services 분리를 아래 그림으로 연결한다.
+
+```mermaid
+flowchart TD
+    C[Cloud Services: metadata, auth, optimization, coordination]
+    C --> W1[Virtual Warehouse: BI]
+    C --> W2[Virtual Warehouse: transformation]
+    W1 --> S[Storage: native tables or Iceberg]
+    W2 --> S
+```
+
+별도 warehouse로 workload를 격리할 수 있다. Native storage와 Iceberg 구성을 구분한다. [공식 아키텍처](https://docs.snowflake.com/en/user-guide/intro-key-concepts).
+
+
 ---
 
 ## 18.2 Micro-partitions
@@ -80,6 +94,9 @@ Table
 Snowflake는 값 범위 등의 metadata를 추적한다.
 
 쿼리 조건이 기록된 값 범위와 겹치지 않으면 해당 묶음을 읽지 않는 프루닝에 이 정보를 쓴다.
+
+[18.2](#182-micro-partitions)의 micro-partition 설명은 native table 기준이다. 외부 Iceberg 파일의 물리 구조에 그대로 적용하지 않는다.
+
 
 ---
 
@@ -100,6 +117,9 @@ Iceberg File Pruning
 Parquet Row Group Pruning
 ```
 
+설명용 필터 `WHERE event_date = '2026-09-26'`가 있으면 일치할 수 없는 micro-partition을 읽지 않을 수 있다. [Iceberg file pruning](lakehouse-iceberg.md), Parquet row group pruning과 “불필요한 읽기 제거”라는 목적은 비슷하지만 metadata와 실행 방식은 다르다. 효과는 실제 query profile의 scan으로 확인한다.
+
+
 ---
 
 ## 18.4 Clustering
@@ -109,6 +129,9 @@ Parquet Row Group Pruning
 큰 table에서는 clustering key를 사용할 수 있다.
 
 목적은 모든 것을 수동 partition하는 것이 아니라 query pattern에 맞게 물리 배치를 개선하는 것이다.
+
+빈번한 filter에 맞지 않는 물리 배치에서는 clustering이 pruning을 도울 수 있다. 큰 테이블은 clustering key를 검토할 수 있다. 모든 테이블을 수동 partition하라는 뜻이 아니다. 쿼리 패턴에 맞는 값 분포를 만드는 것이 목적이며 유지 비용도 비교한다. [Micro-partitions와 clustering](https://docs.snowflake.com/en/user-guide/tables-clustering-micropartitions).
+
 
 ---
 
@@ -126,6 +149,9 @@ Change Data
 
 예를 들어 새 주문만 집계한다면 전체 주문 테이블을 다시 읽는 대신 Stream이 가리키는 변경을 처리할 수 있다.
 
+Stream은 source table의 row 변화 정보를 증분 처리에 제공한다. Kafka 같은 독립 event log로 보면 안 된다. Stream 자체는 데이터 복사본 대신 source object의 offset을 보관하고 table history를 통해 변경을 계산한다. 단순 SELECT는 offset을 진행시키지 않는다. 변경을 소비하는 DML transaction의 commit이 기준이다. 보존 범위를 벗어난 stale stream을 감시한다. [Streams](https://docs.snowflake.com/en/user-guide/streams-intro).
+
+
 ---
 
 ## 18.6 Tasks
@@ -141,6 +167,9 @@ Task
  ↓
 MERGE / SQL Transform
 ```
+
+Task는 SQL 작업을 스케줄하거나 트리거한다. 대표 흐름은 `Table → Stream → Task → MERGE / SQL transform`이다. 무엇이 변경됐는지는 Stream, 언제 처리할지는 Task, 결과를 어떻게 만들지는 SQL의 역할이다. [Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
+
 
 ---
 
@@ -172,6 +201,11 @@ TARGET_LAG = 10 minutes
 
 작업 순서를 하나씩 짜기보다 원하는 결과와 갱신 목표를 적는 **선언형 파이프라인**에 가깝다. 실제 지연은 작업량과 설정에 따라 달라진다.
 
+Dynamic Table은 결과 쿼리와 원하는 신선도를 선언하고 Snowflake가 refresh를 관리한다. `Raw → Dynamic Table(Silver) → Dynamic Table(Gold)`처럼 데이터셋 의존성을 표현한다.
+
+설명용 설정은 `TARGET_LAG = '10 minutes'`다. **10분마다 실행하라는 스케줄도, 지연을 반드시 10분 이하로 보장하는 계약도 아니다.** 신선도 목표이며 실제 지연은 warehouse, 데이터 양, 쿼리 복잡도, 의존성 깊이의 영향을 받는다. 실제 lag와 refresh history를 확인한다. 모든 SQL이 incremental refresh에 적합하다고 가정하지 않는다. [Target lag](https://docs.snowflake.com/en/user-guide/dynamic-tables/target-lag).
+
+
 ---
 
 ## 18.8 Snowpipe / Snowpipe Streaming
@@ -187,6 +221,9 @@ Snowflake
 ```
 
 Snowpipe Streaming은 staged file에만 의존하지 않고 더 낮은 지연으로 지속적인 수집을 가능하게 한다.
+
+Snowpipe는 `Object storage file → Snowpipe → Snowflake`처럼 staged file을 수집한다. Snowpipe Streaming은 파일 staging에만 의존하지 않고 지속적으로 낮은 지연의 데이터를 수집하는 방식이다. 수집 지연, 처리 지연, 최종 mart 신선도는 별도로 측정한다. 스트리밍 수집이 [Flink](flink.md)의 복잡한 event-time/state 처리와 같은 기능을 뜻하지 않는다. [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro), [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview).
+
 
 ---
 
@@ -205,6 +242,11 @@ Object Storage
 Snowflake와 Horizon은 Iceberg 카탈로그 흐름에 참여할 수 있다. 테이블이 있는 위치와 현재 상태를 여러 도구가 찾게 하는 연결 지점이다.
 
 Spark와 Trino 같은 외부 엔진도 열린 Iceberg workflow에 참여할 수 있다.
+
+`Snowflake → Iceberg table → Object storage`로 표 형식, compute, storage를 구분한다. Snowflake-managed catalog와 external catalog 구성을 구별하고 누가 metadata commit과 maintenance를 책임지는지 정한다. Spark/Trino 같은 외부 엔진의 읽기·쓰기·인증·table feature 지원을 각각 확인한다. [Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg).
+
+Horizon의 Iceberg REST endpoint는 다중 엔진 접근에 참여할 수 있다. 이것이 모든 Snowflake 기능이나 모든 외부 엔진 조합에서 동일한 동작을 보장하지는 않는다. [Horizon을 통한 외부 엔진 접근](https://docs.snowflake.com/en/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon).
+
 
 ---
 
@@ -232,6 +274,9 @@ Horizon이 제공하는 영역:
 - Iceberg 가시성,
 - Semantic/business 맥락.
 
+Databricks Unity Catalog와 Snowflake Horizon Catalog는 “통합 거버넌스”라는 개념 영역에서 비교할 수 있다. Horizon은 discovery, metadata, lineage, classification, masking, row access, governance, Iceberg visibility, semantic/business context를 다룬다. 기능 이름 대응을 정책·권한·외부 엔진의 완전한 동등성으로 해석하지 않는다. [Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon).
+
+
 ---
 
 ## 18.11 Cortex / AI
@@ -249,6 +294,9 @@ AI interfaces
 제품의 전체 방향은 다른 업계 흐름과 비슷하다:
 
 > 거버넌스가 적용된 기업 데이터 가까이에서 AI를 사용하도록 한다.
+
+Cortex AI, Search, Analyst, Agents, AI 인터페이스는 관리되는 기업 데이터 가까이에서 AI를 쓰려는 기능 영역이다. 검색, 구조화 데이터 분석, agent 도구 사용을 구분한다. 모델·리전·권한·데이터 접근 범위는 실제 기능 문서에서 확인한다. [Snowflake AI와 ML](https://docs.snowflake.com/en/guides-overview-ai-features).
+
 
 ---
 
@@ -280,6 +328,11 @@ Reduce Scan
 Efficient Queries
 Use incremental refresh where possible
 ```
+
+Compute 사용은 credit 기반으로 과금하며 Virtual Warehouse, serverless compute, Cloud Services와 storage를 함께 계산한다. credit을 고정 CPU 개수나 모든 기능에 동일한 금액으로 해석하지 않는다.
+
+Auto Suspend, 적절한 warehouse 크기, scan 감소, 효율적인 query, 가능한 incremental refresh가 검토 대상이다. 크기를 줄이는 것만으로 총비용이 낮아진다고 가정하지 않는다. 실행시간·대기·신선도와 함께 실제 사용량으로 비교한다. [Snowflake 비용](https://docs.snowflake.com/en/user-guide/cost-understanding-overall).
+
 
 ---
 
@@ -331,6 +384,9 @@ Snowflake
 
 현재 두 플랫폼은 SQL·데이터 엔지니어링·AI 영역에서 기능이 겹친다. 출발점이 달랐다는 사실만으로 현재의 성능이나 적합성을 판단하지 않는다.
 
+[18.13](#1813-snowflake-mental-model)의 역할 맵으로 복습한다. Databricks와 Snowflake는 현재 기능이 겹치므로 역사적 출발점만으로 선택하지 않는다. [플랫폼 비교](platform-comparison.md), [Databricks](databricks.md), [분석 모델링](analytical-modeling.md)에서 실제 workload와 운영 조건을 대조한다.
+
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -339,7 +395,7 @@ Snowflake
 
 [18.1](#181-architecture)의 저장소와 virtual warehouse를 창고의 선반과 작업대처럼 구분해 보자. 데이터는 저장 계층에 있고 warehouse는 쿼리 계산을 수행한다. 여러 작업대가 같은 데이터에 접근할 수 있지만, 실제 성능과 비용은 작업량·warehouse 설정·데이터 배치에 따라 달라진다.
 
-예를 들어 새 주문이 들어오면 Snowpipe 계열로 수집하고 Streams로 테이블의 변경 범위를 추적하며 Tasks(예약 작업) 또는 Dynamic Tables(정의한 결과의 갱신 관리)로 파생 결과를 갱신할 수 있다. 이들은 같은 기능의 다른 이름이 아니다. [18.2](#182-micro-partitions)의 micro-partition과 [18.3](#183-pruning)의 pruning은 쿼리가 읽을 범위를 줄이는 데 도움을 주고, [18.12](#1812-cost-model)의 비용 검토는 수집·변환·조회 계산을 모두 포함해야 한다. 제품 기능의 실제 지원 조건은 보완부의 공식 문서 범위를 확인한다.
+예를 들어 새 주문이 들어오면 Snowpipe 계열로 수집하고 Streams로 테이블의 변경 범위를 추적하며 Tasks(예약 작업) 또는 Dynamic Tables(정의한 결과의 갱신 관리)로 파생 결과를 갱신할 수 있다. 이들은 같은 기능의 다른 이름이 아니다. [18.2](#182-micro-partitions)의 micro-partition과 [18.3](#183-pruning)의 pruning은 쿼리가 읽을 범위를 줄이는 데 도움을 주고, [18.12](#1812-cost-model)의 비용 검토는 수집·변환·조회 계산을 모두 포함해야 한다. 제품 기능의 실제 지원 조건은 각 절의 공식 문서에서 확인한다.
 
 ## 핵심 정리
 
@@ -374,76 +430,3 @@ Snowflake
     ```
 
 **핵심 사항:** 지연 구간별 가설, 확인 쿼리의 목적, 작은 실험, 비용·정확성·신선도 판단 기준. target lag를 실행 주기나 보장으로 착각하고 증거 없이 warehouse 증설을 권할 수 있다. 공식 target lag 정의와 refresh mode 조건을 확인한다. refresh history와 query profile로 가설을 반박하고 제한된 실험 전후의 actual lag·비용·결과 일치를 비교한다. 실행 승인은 사람이 한다.
-
-## 운영 검토와 공식 문서 보완
-
-제품 지원 조건은 2026-09-26 공식 문서 검토 범위다. 실제 환경의 버전·설정으로 확인한다.
-
-### Architecture
-
-[18.1](#181-architecture)의 storage·compute·Cloud Services 분리를 아래 그림으로 연결한다.
-
-```mermaid
-flowchart TD
-    C[Cloud Services: metadata, auth, optimization, coordination]
-    C --> W1[Virtual Warehouse: BI]
-    C --> W2[Virtual Warehouse: transformation]
-    W1 --> S[Storage: native tables or Iceberg]
-    W2 --> S
-```
-
-별도 warehouse로 workload를 격리할 수 있다. Native storage와 Iceberg 구성을 구분한다. [공식 아키텍처](https://docs.snowflake.com/en/user-guide/intro-key-concepts).
-
-### Micro-partitions
-
-[18.2](#182-micro-partitions)의 micro-partition 설명은 native table 기준이다. 외부 Iceberg 파일의 물리 구조에 그대로 적용하지 않는다.
-
-### Pruning
-
-설명용 필터 `WHERE event_date = '2026-09-26'`가 있으면 일치할 수 없는 micro-partition을 읽지 않을 수 있다. [Iceberg file pruning](lakehouse-iceberg.md), Parquet row group pruning과 “불필요한 읽기 제거”라는 목적은 비슷하지만 metadata와 실행 방식은 다르다. 효과는 실제 query profile의 scan으로 확인한다.
-
-### Clustering
-
-빈번한 filter에 맞지 않는 물리 배치에서는 clustering이 pruning을 도울 수 있다. 큰 테이블은 clustering key를 검토할 수 있다. 모든 테이블을 수동 partition하라는 뜻이 아니다. 쿼리 패턴에 맞는 값 분포를 만드는 것이 목적이며 유지 비용도 비교한다. [Micro-partitions와 clustering](https://docs.snowflake.com/en/user-guide/tables-clustering-micropartitions).
-
-### Streams
-
-Stream은 source table의 row 변화 정보를 증분 처리에 제공한다. Kafka 같은 독립 event log로 보면 안 된다. Stream 자체는 데이터 복사본 대신 source object의 offset을 보관하고 table history를 통해 변경을 계산한다. 단순 SELECT는 offset을 진행시키지 않는다. 변경을 소비하는 DML transaction의 commit이 기준이다. 보존 범위를 벗어난 stale stream을 감시한다. [Streams](https://docs.snowflake.com/en/user-guide/streams-intro).
-
-### Tasks
-
-Task는 SQL 작업을 스케줄하거나 트리거한다. 대표 흐름은 `Table → Stream → Task → MERGE / SQL transform`이다. 무엇이 변경됐는지는 Stream, 언제 처리할지는 Task, 결과를 어떻게 만들지는 SQL의 역할이다. [Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
-
-### Dynamic Tables
-
-Dynamic Table은 결과 쿼리와 원하는 신선도를 선언하고 Snowflake가 refresh를 관리한다. `Raw → Dynamic Table(Silver) → Dynamic Table(Gold)`처럼 데이터셋 의존성을 표현한다.
-
-설명용 설정은 `TARGET_LAG = '10 minutes'`다. **10분마다 실행하라는 스케줄도, 지연을 반드시 10분 이하로 보장하는 계약도 아니다.** 신선도 목표이며 실제 지연은 warehouse, 데이터 양, 쿼리 복잡도, 의존성 깊이의 영향을 받는다. 실제 lag와 refresh history를 확인한다. 모든 SQL이 incremental refresh에 적합하다고 가정하지 않는다. [Target lag](https://docs.snowflake.com/en/user-guide/dynamic-tables/target-lag).
-
-### Snowpipe / Snowpipe Streaming
-
-Snowpipe는 `Object storage file → Snowpipe → Snowflake`처럼 staged file을 수집한다. Snowpipe Streaming은 파일 staging에만 의존하지 않고 지속적으로 낮은 지연의 데이터를 수집하는 방식이다. 수집 지연, 처리 지연, 최종 mart 신선도는 별도로 측정한다. 스트리밍 수집이 [Flink](flink.md)의 복잡한 event-time/state 처리와 같은 기능을 뜻하지 않는다. [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro), [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview).
-
-### Iceberg Tables
-
-`Snowflake → Iceberg table → Object storage`로 표 형식, compute, storage를 구분한다. Snowflake-managed catalog와 external catalog 구성을 구별하고 누가 metadata commit과 maintenance를 책임지는지 정한다. Spark/Trino 같은 외부 엔진의 읽기·쓰기·인증·table feature 지원을 각각 확인한다. [Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg).
-
-Horizon의 Iceberg REST endpoint는 다중 엔진 접근에 참여할 수 있다. 이것이 모든 Snowflake 기능이나 모든 외부 엔진 조합에서 동일한 동작을 보장하지는 않는다. [Horizon을 통한 외부 엔진 접근](https://docs.snowflake.com/en/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon).
-
-### Governance: Horizon Catalog
-
-Databricks Unity Catalog와 Snowflake Horizon Catalog는 “통합 거버넌스”라는 개념 영역에서 비교할 수 있다. Horizon은 discovery, metadata, lineage, classification, masking, row access, governance, Iceberg visibility, semantic/business context를 다룬다. 기능 이름 대응을 정책·권한·외부 엔진의 완전한 동등성으로 해석하지 않는다. [Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon).
-
-### Cortex / AI
-
-Cortex AI, Search, Analyst, Agents, AI 인터페이스는 관리되는 기업 데이터 가까이에서 AI를 쓰려는 기능 영역이다. 검색, 구조화 데이터 분석, agent 도구 사용을 구분한다. 모델·리전·권한·데이터 접근 범위는 실제 기능 문서에서 확인한다. [Snowflake AI와 ML](https://docs.snowflake.com/en/guides-overview-ai-features).
-
-### 비용 모델
-
-Compute 사용은 credit 기반으로 과금하며 Virtual Warehouse, serverless compute, Cloud Services와 storage를 함께 계산한다. credit을 고정 CPU 개수나 모든 기능에 동일한 금액으로 해석하지 않는다.
-
-Auto Suspend, 적절한 warehouse 크기, scan 감소, 효율적인 query, 가능한 incremental refresh가 검토 대상이다. 크기를 줄이는 것만으로 총비용이 낮아진다고 가정하지 않는다. 실행시간·대기·신선도와 함께 실제 사용량으로 비교한다. [Snowflake 비용](https://docs.snowflake.com/en/user-guide/cost-understanding-overall).
-
-### 멘탈모델
-
-[18.13](#1813-snowflake-mental-model)의 역할 맵으로 복습한다. Databricks와 Snowflake는 현재 기능이 겹치므로 역사적 출발점만으로 선택하지 않는다. [플랫폼 비교](platform-comparison.md), [Databricks](databricks.md), [분석 모델링](analytical-modeling.md)에서 실제 workload와 운영 조건을 대조한다.

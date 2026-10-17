@@ -52,6 +52,11 @@ Modeling order:
 4. Metric
 ```
 
+Joining one order to several items repeats its order amount. Summing that amount again can overcount. Agree on the business meaning of a row before choosing physical columns. [Kimball: Grain](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/grain/)
+
+The event/transaction distinction explains business events. It does not mean that every modeling method treats them as separate, exclusive fact types.
+
+
 ---
 
 ## 9.2 Fact Tables
@@ -156,6 +161,13 @@ customer_sk | customer_id | region | valid_from | valid_to
 
 This supports analysis of past states.
 
+Type 2 keeps old rows and adds new versions. Join to the version valid at the analysis time. Overlapping validity periods for one natural key can multiply rows. Define the meaning of the end boundary.
+
+OLTP often uses normalization to manage consistent changes.
+
+Mixing grains and update schedules during denormalization can cause repeated values and wrong totals. Compare query convenience with history and maintenance costs.
+
+
 ---
 
 ## 9.6 Denormalization
@@ -248,6 +260,11 @@ Agent Execution
 ≠ User Event
 ```
 
+One agent execution can include several LLM calls. When joining execution costs to calls, check whether the execution row repeats once per call before summing.
+
+Conformed dimensions need consistent meanings and key rules. Define `fact_user_event` fields separately for the business event schema. Names such as `user_id` are schema examples and contain no real personal identifiers.
+
+
 ---
 
 ## 9.8 Metrics Modeling
@@ -292,6 +309,9 @@ Average Latency
 
 Dashboards, analysts, and AI agents can use the same definitions.
 
+Use the same period, filters, and population for the numerator and denominator. Define the result when the denominator is zero. Matching names do not make metrics equivalent if their grain or exclusions differ.
+
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -333,39 +353,3 @@ The review should identify where a join repeats measures and provides a validati
 [dbt](dbt.md) · [Trino](trino.md) · [Handbook home](../index.md)
 
 [Six related practical prompts](../prompts/analytical-modeling.md)
-
-## Appendix: existing application notes
-
-### Grain and double counting
-
-Joining one order to several items repeats its order amount. Summing that amount again can overcount. Agree on the business meaning of a row before choosing physical columns. [Kimball: Grain](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/grain/)
-
-The event/transaction distinction explains business events. It does not mean that every modeling method treats them as separate, exclusive fact types.
-
-### SCD and denormalization
-
-Type 2 keeps old rows and adds new versions. Join to the version valid at the analysis time. Overlapping validity periods for one natural key can multiply rows. Define the meaning of the end boundary.
-
-OLTP often uses normalization to manage consistent changes.
-
-Mixing grains and update schedules during denormalization can cause repeated values and wrong totals. Compare query convenience with history and maintenance costs.
-
-### Shared dimensions and AI platform costs
-
-One agent execution can include several LLM calls. When joining execution costs to calls, check whether the execution row repeats once per call before summing.
-
-Conformed dimensions need consistent meanings and key rules. Define `fact_user_event` fields separately for the business event schema. Names such as `user_id` are schema examples and contain no real personal identifiers.
-
-### Metric calculation conditions
-
-Use the same period, filters, and population for the numerator and denominator. Define the result when the denominator is zero. Matching names do not make metrics equivalent if their grain or exclusions differ.
-
-### Existing conceptual diagram
-
-```mermaid
-flowchart TD
-  A[dim_agent] --- F[fact_llm_call]
-  T[dim_team] --- F
-  M[dim_model] --- F
-  D[dim_date] --- F
-```

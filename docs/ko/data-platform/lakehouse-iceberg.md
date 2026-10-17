@@ -69,6 +69,8 @@ Control Plane:
 
 이렇게 구분하면 파일을 실제로 읽고 쓰는 작업과, 테이블 정의·권한을 관리하는 작업의 책임이 분명해진다.
 
+계층 그림은 책임을 나눈 개념 모델이다. Compute 다음에만 Catalog가 실행된다는 직렬 처리 순서가 아니다. Catalog가 현재 metadata를 찾게 하고 엔진이 metadata와 실제 파일을 읽는다. Pruning 목록도 여러 최적화 계층을 보여 주며 반드시 같은 순서로 실행되는 것은 아니다.
+
 ---
 
 ## 3.2 Iceberg Metadata Internals
@@ -157,6 +159,8 @@ Data File
 
 Merge-on-Read 같은 방식에서 삭제 정보를 별도 파일로 관리할 수 있다.
 
+과거 metadata 파일이 남아 있어도 그 파일이 현재 table 상태를 가리킨다는 뜻은 아니다. Manifest는 data file 또는 delete file과 그 metadata를 설명한다.
+
 ---
 
 ## 3.3 Snapshot Semantics
@@ -238,6 +242,8 @@ File은 만들어졌는데 Commit에 실패하면 Table Metadata에서 참조되
 
 이런 File은 나중에 cleanup 대상이 된다.
 
+원자적 commit의 구현은 catalog에 달려 있다. 모든 충돌이 retry로 성공하지는 않는다. Update에서 새 값은 data file에도 기록해야 한다. Position/equality delete 설명은 주로 v2 모델이다. 새로운 format version에는 deletion vector 등 다른 표현도 있으므로 엔진과 테이블 버전의 지원 범위를 확인한다. Partition spec 변경만으로 옛 파일이 자동 재배치되지는 않는다. [Iceberg 사양](https://iceberg.apache.org/spec/)
+
 ---
 
 ## 3.5 Partitioning in Iceberg
@@ -293,6 +299,9 @@ bucket(32, user_id)
 
 `user_id`처럼 cardinality가 높은 값은 직접 Partition하지 않고 bucket transform 등을 고려할 수 있다.
 
+Partition transform의 실제 SQL 표기는 engine에 따라 다르다.
+
+
 ---
 
 ## 3.6 Query Pruning
@@ -346,6 +355,9 @@ user_id 순으로 어느 정도 정렬
 핵심:
 
 > **Sort / Clustering은 Query Pattern을 기준으로 설계해야 한다.**
+
+User ID가 모든 파일에 무작위로 분포하면 넓은 min/max 범위가 겹칠 수 있다. 정렬은 그 범위를 좁혀 특정 사용자나 사용자 범위를 읽을 때 도움이 될 수 있다.
+
 
 ---
 
@@ -406,6 +418,9 @@ Equality Delete는 키나 값 조건에 맞는 행을 삭제 대상으로 기록
 
 CDC Upsert 등에 사용 가능하지만 큰 Table에서는 비용을 고려해야 한다.
 
+큰 테이블의 MERGE는 상당한 scan·shuffle·rewrite를 일으킬 수 있다. 지원 연산과 물리적 delete 표현은 table format 버전과 engine에 따라 확인한다.
+
+
 ---
 
 ## 3.9 Maintenance
@@ -435,6 +450,8 @@ Metadata에서 더 이상 참조되지 않는 File을 제거한다.
 핵심:
 
 > **Iceberg를 도입했다고 Maintenance가 사라지는 것은 아니다.**
+
+현재 snapshot에 없는 파일도 유지 중인 과거 snapshot이 참조할 수 있다. Orphan 정리는 진행 중인 write보다 충분히 긴 보존 여유와 경로 일치 검증이 필요하다. 너무 이른 삭제는 데이터 손상을 일으킬 수 있다. Snapshot expiration은 time travel/rollback 가능 범위도 줄인다. [Iceberg 유지보수](https://iceberg.apache.org/docs/latest/maintenance/)
 
 ---
 
@@ -505,6 +522,8 @@ Unity Catalog
 
 즉 Unity Catalog는 훨씬 넓은 Governance Layer로 이해하는 것이 맞다.
 
+Unity Catalog는 data/AI 자산의 접근 제어·lineage·audit 등을 포함하는 governance 계층이다. Iceberg 연동 가능 여부와 지원 방식은 실제 환경에서 따로 확인한다. [Databricks Unity Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -553,46 +572,3 @@ Unity Catalog
 [이 주제의 실무 프롬프트 6개 더 보기](../prompts/lakehouse-iceberg.md)
 
 LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.
-
-## 적용 시 보완할 점
-
-계층 그림은 책임을 나눈 개념 모델이다. Compute 다음에만 Catalog가 실행된다는 직렬 처리 순서가 아니다. Catalog가 현재 metadata를 찾게 하고 엔진이 metadata와 실제 파일을 읽는다. Pruning 목록도 여러 최적화 계층을 보여 주며 반드시 같은 순서로 실행되는 것은 아니다.
-
-원자적 commit의 구현은 catalog에 달려 있다. 모든 충돌이 retry로 성공하지는 않는다. Update에서 새 값은 data file에도 기록해야 한다. Position/equality delete 설명은 주로 v2 모델이다. 새로운 format version에는 deletion vector 등 다른 표현도 있으므로 엔진과 테이블 버전의 지원 범위를 확인한다. Partition spec 변경만으로 옛 파일이 자동 재배치되지는 않는다. [Iceberg 사양](https://iceberg.apache.org/spec/)
-
-현재 snapshot에 없는 파일도 유지 중인 과거 snapshot이 참조할 수 있다. Orphan 정리는 진행 중인 write보다 충분히 긴 보존 여유와 경로 일치 검증이 필요하다. 너무 이른 삭제는 데이터 손상을 일으킬 수 있다. Snapshot expiration은 time travel/rollback 가능 범위도 줄인다. [Iceberg 유지보수](https://iceberg.apache.org/docs/latest/maintenance/)
-
-Unity Catalog는 data/AI 자산의 접근 제어·lineage·audit 등을 포함하는 governance 계층이다. Iceberg 연동 가능 여부와 지원 방식은 실제 환경에서 따로 확인한다. [Databricks Unity Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
-
-### 3.1 보완: 계층별 책임
-
-| 계층 | 역할 |
-| --- | --- |
-| Object storage | 지속 보관할 object 저장 |
-| Parquet 같은 file format | 파일 안의 데이터 표현 |
-| Iceberg 같은 table format | 여러 파일에 걸친 일관된 table 설명 |
-| Spark·Trino·Flink 같은 compute | 데이터 읽기·변환·쓰기 |
-| Catalog | Table과 metadata 찾기 |
-| Governance | 정책과 책임 관리 |
-
-Data/control plane 구분은 개념적인 책임 분리이며 모든 제품의 배포 구조가 같다는 뜻은 아니다.
-
-### 3.2·3.5·3.7·3.8 보완: metadata, 배치, 변경 비용
-
-과거 metadata 파일이 남아 있어도 그 파일이 현재 table 상태를 가리킨다는 뜻은 아니다. Manifest는 data file 또는 delete file과 그 metadata를 설명한다.
-
-Partition transform의 실제 SQL 표기는 engine에 따라 다르다. User ID가 모든 파일에 무작위로 분포하면 넓은 min/max 범위가 겹칠 수 있다. 정렬은 그 범위를 좁혀 특정 사용자나 사용자 범위를 읽을 때 도움이 될 수 있다.
-
-큰 테이블의 MERGE는 상당한 scan·shuffle·rewrite를 일으킬 수 있다. 지원 연산과 물리적 delete 표현은 table format 버전과 engine에 따라 확인한다.
-
-### 기존 보완 흐름도
-
-```mermaid
-flowchart TD
-    C[Catalog] --> M[Metadata JSON]
-    M --> S[Snapshot]
-    S --> L[Manifest List]
-    L --> F[Manifest Files]
-    F --> D[Data Files]
-    F --> X[Delete Files where applicable]
-```

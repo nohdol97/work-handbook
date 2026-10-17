@@ -69,6 +69,8 @@ Control Plane:
 
 This split clarifies which work reads and writes files and which work manages table definitions and access.
 
+The layer model describes responsibilities, not a sequence where the catalog runs after compute. The catalog helps locate metadata; engines use it to read files. The pruning list also describes cooperating layers, not one required execution order.
+
 ---
 
 ## 3.2 Iceberg Metadata Internals
@@ -157,6 +159,8 @@ Parquet, ORC, or Avro files that hold the actual data.
 
 Approaches such as merge-on-read can manage deletion information in separate files.
 
+An older metadata file does not automatically describe the current table. Manifests describe data or delete files and their metadata.
+
 ---
 
 ## 3.3 Snapshot Semantics
@@ -238,6 +242,8 @@ If files are created but the commit fails, files not referenced by table metadat
 
 These files can become candidates for later cleanup.
 
+The catalog supplies the atomic commit operation. Not every conflict can be retried successfully. Updates must store new values in data files. Position and equality deletes mainly describe the v2 model. Newer format versions include other representations, such as deletion vectors. Check engine and format support. A partition-spec change does not rearrange old files. [Iceberg specification](https://iceberg.apache.org/spec/)
+
 ---
 
 ## 3.5 Partitioning in Iceberg
@@ -293,6 +299,9 @@ Metadata can manage old and new data even when they use different partition spec
 
 For high-cardinality values such as `user_id`, consider a bucket transform instead of direct partitioning.
 
+Exact SQL spelling for partition transforms depends on the engine.
+
+
 ---
 
 ## 3.6 Query Pruning
@@ -346,6 +355,9 @@ this arrangement can improve file pruning when looking for a particular user ran
 Key point:
 
 > **Design sorting and clustering around query patterns.**
+
+Randomly spreading user IDs across all files can leave broad, overlapping min/max ranges. Sorting can narrow those ranges and help queries for one user or a user range.
+
 
 ---
 
@@ -406,6 +418,9 @@ This is a useful conceptual model.
 
 MERGE can support CDC upserts, but its cost matters on large tables.
 
+On large tables, MERGE may scan, shuffle, and rewrite significant data. Check supported operations and physical delete representations for the table format version and engine.
+
+
 ---
 
 ## 3.9 Maintenance
@@ -435,6 +450,8 @@ Remove files that metadata no longer references.
 Key point:
 
 > **Adopting Iceberg does not remove the need for maintenance.**
+
+A retained old snapshot can still reference a file absent from the current snapshot. Orphan cleanup needs a retention margin longer than in-flight writes and correct path matching. Early cleanup can damage data. Snapshot expiration also limits time travel and rollback. [Iceberg maintenance](https://iceberg.apache.org/docs/latest/maintenance/)
 
 ---
 
@@ -505,6 +522,8 @@ Unity Catalog
 
 Unity Catalog is better understood as a much broader governance layer.
 
+Unity Catalog governs data and AI assets, including access, lineage, and audit. Check the actual Iceberg integration in the target environment. [Databricks Unity Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -556,46 +575,3 @@ Check all retained snapshots and in-flight writes, then compare catalog behavior
 [See six more practical prompts for this topic](../prompts/lakehouse-iceberg.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.
-
-## Qualifications for real use
-
-The layer model describes responsibilities, not a sequence where the catalog runs after compute. The catalog helps locate metadata; engines use it to read files. The pruning list also describes cooperating layers, not one required execution order.
-
-The catalog supplies the atomic commit operation. Not every conflict can be retried successfully. Updates must store new values in data files. Position and equality deletes mainly describe the v2 model. Newer format versions include other representations, such as deletion vectors. Check engine and format support. A partition-spec change does not rearrange old files. [Iceberg specification](https://iceberg.apache.org/spec/)
-
-A retained old snapshot can still reference a file absent from the current snapshot. Orphan cleanup needs a retention margin longer than in-flight writes and correct path matching. Early cleanup can damage data. Snapshot expiration also limits time travel and rollback. [Iceberg maintenance](https://iceberg.apache.org/docs/latest/maintenance/)
-
-Unity Catalog governs data and AI assets, including access, lineage, and audit. Check the actual Iceberg integration in the target environment. [Databricks Unity Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
-
-### Section 3.1: responsibilities by layer
-
-| Layer | Role |
-| --- | --- |
-| Object storage | Holds persistent objects |
-| File format, such as Parquet | Encodes the data within files |
-| Table format, such as Iceberg | Describes a consistent table across files |
-| Compute, such as Spark, Trino, or Flink | Reads, transforms, and writes data |
-| Catalog | Finds tables and their metadata |
-| Governance | Manages policies and accountability |
-
-The data/control plane distinction is a conceptual separation of responsibilities. It does not mean every product has the same deployment layout.
-
-### Sections 3.2, 3.5, 3.7, and 3.8: metadata, layout, and change costs
-
-An older metadata file does not automatically describe the current table. Manifests describe data or delete files and their metadata.
-
-Exact SQL spelling for partition transforms depends on the engine. Randomly spreading user IDs across all files can leave broad, overlapping min/max ranges. Sorting can narrow those ranges and help queries for one user or a user range.
-
-On large tables, MERGE may scan, shuffle, and rewrite significant data. Check supported operations and physical delete representations for the table format version and engine.
-
-### Existing supplementary flow diagram
-
-```mermaid
-flowchart TD
-    C[Catalog] --> M[Metadata JSON]
-    M --> S[Snapshot]
-    S --> L[Manifest List]
-    L --> F[Manifest Files]
-    F --> D[Data Files]
-    F --> X[Delete Files where applicable]
-```

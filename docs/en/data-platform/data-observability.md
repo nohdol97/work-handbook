@@ -37,6 +37,8 @@ Do dashboards and BI actually show the newly processed data?
 
 Comparing update times at each stage helps narrow down where delay began.
 
+Event time, collection time, processing completion time, and screen refresh time are different measurements. Define which timestamps to compare before using them in operations.
+
 ---
 
 ## 12.2 Volume Monitoring
@@ -67,6 +69,12 @@ Do not rely on one fixed number. Compare counts with:
 - Seasonal patterns
 
 Compare counts with baselines such as these.
+
+An absolute threshold alone can flag a normal weekend decline. A total count can hide a missing partition.
+
+The listed causes of decreases and increases are hypotheses. A volume change alone does not prove one. When the FAILED rate changes, check whether failures really increased or the way status is recorded changed.
+
+Connect schema changes to [lineage](lineage-metadata.md) to help find affected consumers. If a job is late, check data health too. Find which datasets and users are affected.
 
 ---
 
@@ -165,6 +173,10 @@ Volume deviation < 20%
 
 Check several signals together because one may look healthy while another does not.
 
+Volume = 98M alone cannot show whether the deviation target is met. You need a baseline and a measurement window.
+
+Define several signals for the dataset's business purpose. Share definitions with [quality SLOs](data-quality.md) so that measurement and response agree.
+
 ---
 
 ## 12.7 Alert Design
@@ -200,6 +212,13 @@ Warning and Critical can use different levels.
 Alert policies can also vary by dataset importance tier.
 
 Keep repeated or low-value alerts from hiding important problems.
+
+- **Threshold:** Which condition failed?
+- **Duration:** How long has it lasted?
+- **Severity:** How large is the impact?
+- **Context:** Which dataset, partition, stage, owner, and related run should be checked?
+
+Define duration and context to reduce alert fatigue. Check that this does not hide important signals.
 
 ---
 
@@ -239,32 +258,3 @@ Keep repeated or low-value alerts from hiding important problems.
 [Data quality](data-quality.md) · [Lineage and metadata](lineage-metadata.md) · [Handbook home](../index.md)
 
 [More practical prompts](../prompts/data-observability.md)
-
-## Details to check in practice
-
-### Freshness timestamps
-
-Event time, collection time, processing completion time, and screen refresh time are different measurements. Define which timestamps to compare before using them in operations.
-
-### Investigating volume and drift
-
-An absolute threshold alone can flag a normal weekend decline. A total count can hide a missing partition.
-
-The listed causes of decreases and increases are hypotheses. A volume change alone does not prove one. When the FAILED rate changes, check whether failures really increased or the way status is recorded changed.
-
-Connect schema changes to [lineage](lineage-metadata.md) to help find affected consumers. If a job is late, check data health too. Find which datasets and users are affected.
-
-### Interpreting SLIs and SLOs
-
-Volume = 98M alone cannot show whether the deviation target is met. You need a baseline and a measurement window.
-
-Define several signals for the dataset's business purpose. Share definitions with [quality SLOs](data-quality.md) so that measurement and response agree.
-
-### Concrete alert context
-
-- **Threshold:** Which condition failed?
-- **Duration:** How long has it lasted?
-- **Severity:** How large is the impact?
-- **Context:** Which dataset, partition, stage, owner, and related run should be checked?
-
-Define duration and context to reduce alert fatigue. Check that this does not hide important signals.

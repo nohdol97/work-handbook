@@ -12,25 +12,9 @@ knowledge_ids: []
 
 ## 문서에 나온 표현 — 빈도순
 
-### in practice {#idioms-in-practice}
-
-**53회 · 44개 문서 · 중립**
-
-**실제로, 실제 운영에서는**
-
-이론과 실제 적용을 비교하는 고정 표현이다. 연어로 배우며, 실습한다는 뜻의 practice와 구별한다.
-
-> In practice, the deployment may take longer.
->
-> 실제로는 배포가 더 오래 걸릴 수 있다.
-
-집계한 형태: in practice.
-
-본문 예: [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md).
-
 ### instead of {#idioms-instead-of}
 
-**53회 · 34개 문서 · 중립**
+**52회 · 34개 문서 · 중립**
 
 **~ 대신에**
 
@@ -43,6 +27,22 @@ knowledge_ids: []
 집계한 형태: instead of.
 
 본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/qlora-artifacts](../ai-model-development/qlora-artifacts.md).
+
+### in practice {#idioms-in-practice}
+
+**50회 · 44개 문서 · 중립**
+
+**실제로, 실제 운영에서는**
+
+이론과 실제 적용을 비교하는 고정 표현이다. 연어로 배우며, 실습한다는 뜻의 practice와 구별한다.
+
+> In practice, the deployment may take longer.
+>
+> 실제로는 배포가 더 오래 걸릴 수 있다.
+
+집계한 형태: in practice.
+
+본문 예: [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md).
 
 ### rather than {#idioms-rather-than}
 

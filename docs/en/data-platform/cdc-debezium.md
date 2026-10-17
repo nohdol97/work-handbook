@@ -69,6 +69,12 @@ Debezium
 Kafka
 ```
 
+CDC has several approaches. The source’s transaction-log explanation describes log-based CDC. PostgreSQL uses WAL and logical decoding. Log retention and a stored read position are required.
+
+In the polling SQL, `last_time` is a pseudo-variable for the stored processing time. A deleted row cannot appear in this query. The polling interval also adds delay.
+
+A snapshot read (`r`) carries the row read. Check the actual event format for fields such as `before`.
+
 ---
 
 ## 6.2 Debezium Architecture
@@ -129,6 +135,10 @@ Avoid missing any of these.
 With a completed snapshot and valid offset, a connector restart does not need to repeat the full snapshot.
 
 If an offset exists, reading resumes from it.
+
+With a completed initial snapshot and a valid offset, a restart can usually resume streaming. A failure during a snapshot or a different snapshot mode can cause another snapshot. [Debezium PostgreSQL connector](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
+
+The event label `before = old row` is a conceptual example. For PostgreSQL UPDATE and DELETE, available previous values depend on `REPLICA IDENTITY` and decoding conditions. Do not assume every event contains a complete old row. Check support and configuration for transaction metadata too. [Replica identity](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-replica-identity)
 
 ---
 
@@ -299,6 +309,10 @@ Detect
 
 these steps matter.
 
+Consumers may reject even a new nullable column. PostgreSQL logical decoding does not directly emit DDL change events. Include schema comparison and deployment controls. [PostgreSQL connector limits](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
+
+Separate delete handling from the INSERT and UPDATE behavior of MERGE/upsert. A logical-delete model also needs a rule for filtering deleted rows. Define the scope of source sequence/position comparisons used for late changes. Positions from different sources are not one global order.
+
 ---
 
 ## 6.8 CDC → Iceberg
@@ -395,6 +409,13 @@ Snapshot Recovery
 → Reinitialize when recovery is unavailable
 ```
 
+A snapshot can restore current state, but it cannot recover every intermediate change from a lost log.
+
+- Before recovery: check the offset, replication slot, required WAL, and snapshot mode.
+- After recovery: check event order, duplicates, deletes, and source/current-state agreement for sample keys.
+
+[Failure behavior](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-when-things-go-wrong)
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -436,46 +457,3 @@ A useful result is a set of possible causes and checks. The LLM may order events
 [Orchestration](orchestration.md) · [dbt](dbt.md) · [Handbook home](../index.md)
 
 [Six related practical prompts](../prompts/cdc-debezium.md)
-
-## Additional checks before applying these ideas
-
-### Existing flow diagram
-
-```mermaid
-flowchart LR
-  P[PostgreSQL] --> W[WAL]
-  W --> D[Debezium]
-  D --> K[Kafka]
-  K --> C[Flink or Spark]
-  C --> H[Iceberg history]
-  C --> S[Iceberg current state]
-```
-
-### Scope of sections 6.1–6.4
-
-CDC has several approaches. The source’s transaction-log explanation describes log-based CDC. PostgreSQL uses WAL and logical decoding. Log retention and a stored read position are required.
-
-In the polling SQL, `last_time` is a pseudo-variable for the stored processing time. A deleted row cannot appear in this query. The polling interval also adds delay.
-
-A snapshot read (`r`) carries the row read. Check the actual event format for fields such as `before`.
-
-### Snapshot and previous-row conditions
-
-With a completed initial snapshot and a valid offset, a restart can usually resume streaming. A failure during a snapshot or a different snapshot mode can cause another snapshot. [Debezium PostgreSQL connector](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
-
-The event label `before = old row` is a conceptual example. For PostgreSQL UPDATE and DELETE, available previous values depend on `REPLICA IDENTITY` and decoding conditions. Do not assume every event contains a complete old row. Check support and configuration for transaction metadata too. [Replica identity](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-replica-identity)
-
-### Schema and current-state writes
-
-Consumers may reject even a new nullable column. PostgreSQL logical decoding does not directly emit DDL change events. Include schema comparison and deployment controls. [PostgreSQL connector limits](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
-
-Separate delete handling from the INSERT and UPDATE behavior of MERGE/upsert. A logical-delete model also needs a rule for filtering deleted rows. Define the scope of source sequence/position comparisons used for late changes. Positions from different sources are not one global order.
-
-### Checks before and after recovery
-
-A snapshot can restore current state, but it cannot recover every intermediate change from a lost log.
-
-- Before recovery: check the offset, replication slot, required WAL, and snapshot mode.
-- After recovery: check event order, duplicates, deletes, and source/current-state agreement for sample keys.
-
-[Failure behavior](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-when-things-go-wrong)

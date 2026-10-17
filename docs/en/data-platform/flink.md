@@ -60,6 +60,8 @@ Key point:
 
 > **Flink = Stateful Stream Processing Engine**
 
+Spark and Flink's historical starting points help explain their strengths; they are not full lists of current execution modes. A task slot is a logical resource unit, not simply one CPU core. Source and downstream parallelism can differ.
+
 ---
 
 ## 5.2 Flink Architecture
@@ -164,6 +166,8 @@ This is called **out-of-order arrival**.
 
 Event-time processing supports analysis based on the time events actually happened.
 
+Processing time is when the operator processes an event. Ingestion time is when it enters the system. Distinguish both from event time.
+
 ---
 
 ## 5.5 Watermark
@@ -206,6 +210,8 @@ Fast watermark
 ```
 
 An idle partition can block watermark progress, so idle detection may be needed.
+
+The five-second watermark example is an out-of-order assumption, not a universal formula. Progress across inputs is generally limited by the slowest active input. Check idleness and late-event policy together. Waiting longer costs state and does not guarantee accuracy. Event-time session completion is not just wall-clock waiting. [Flink watermarks](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/event-time/generating_watermarks/)
 
 ---
 
@@ -285,6 +291,8 @@ Define when state expires and how it can be cleaned up. Physical removal may hap
 
 Windows can also be understood as using state internally.
 
+State TTL is not immediate automatic deletion. The reviewed DataStream documentation describes processing-time TTL. Check update rules, expired-value visibility, and cleanup behavior. [Flink state](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/fault-tolerance/state/)
+
 ---
 
 ## 5.8 Checkpoint
@@ -324,6 +332,8 @@ Align barriers from multiple inputs before proceeding.
 Include in-flight data to take snapshots quickly in situations such as backpressure.
 
 A checkpoint does not back up external stores. It records **job state and input progress for restoring streaming work**.
+
+Checkpoints do not back up all external systems. Unaligned checkpoints include in-flight data; they are not the same as simply skipping alignment in at-least-once mode. Source replay and restored state still need sink transaction or idempotency support. Savepoint restores also need compatible state schemas and operator identity. [Flink stateful processing](https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/)
 
 ---
 
@@ -392,6 +402,9 @@ At-Least-Once
 Idempotent Sink
 ```
 
+Exactly-once means one committed effect within the promised scope. A supported transactional or idempotent sink can help close the full boundary. At-least-once processing with an idempotent sink is another design with its own assumptions.
+
+
 ---
 
 ## 5.11 Backpressure
@@ -438,6 +451,8 @@ Responses:
 - Reduce skew
 
 Backpressure is also natural flow control: a slow downstream step limits upstream input. Find the actual bottleneck before trying to remove it.
+
+More parallelism may worsen an overloaded external sink. The reviewed Iceberg Flink upsert documentation requires v2, primary-key or identifier fields, and partition source columns in equality fields. Do not assume Spark SQL MERGE behavior applies to a Flink sink. [Iceberg Flink writes](https://iceberg.apache.org/docs/latest/flink-writes/)
 
 ---
 
@@ -578,6 +593,8 @@ Flink
 → Stateful real-time streaming
 ```
 
+The batch/streaming comparison is not an exclusive feature boundary. Choose based on latency, state, workload, and operational requirements.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -620,35 +637,3 @@ Inspect the minimum input watermark and late-event output, then compare state an
 [See six more practical prompts for this topic](../prompts/flink.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.
-
-## Source qualifications {#source-notes}
-
-### 5.1–5.2 and 5.12 Execution models and resource units
-
-Spark and Flink's historical starting points help explain their strengths; they are not full lists of current execution modes. A task slot is a logical resource unit, not simply one CPU core. Source and downstream parallelism can differ.
-
-### 5.5–5.6 Watermark and window conditions
-
-The five-second watermark example is an out-of-order assumption, not a universal formula. Progress across inputs is generally limited by the slowest active input. Check idleness and late-event policy together. Waiting longer costs state and does not guarantee accuracy. Event-time session completion is not just wall-clock waiting. [Flink watermarks](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/event-time/generating_watermarks/)
-
-### 5.7 State TTL conditions
-
-State TTL is not immediate automatic deletion. The reviewed DataStream documentation describes processing-time TTL. Check update rules, expired-value visibility, and cleanup behavior. [Flink state](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/fault-tolerance/state/)
-
-### 5.8–5.10 Restore and consistency conditions
-
-Checkpoints do not back up all external systems. Unaligned checkpoints include in-flight data; they are not the same as simply skipping alignment in at-least-once mode. Source replay and restored state still need sink transaction or idempotency support. Savepoint restores also need compatible state schemas and operator identity. [Flink stateful processing](https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/)
-
-### 5.11 and 5.13 Sink bottlenecks and upsert conditions
-
-More parallelism may worsen an overloaded external sink. The reviewed Iceberg Flink upsert documentation requires v2, primary-key or identifier fields, and partition source columns in equality fields. Do not assume Spark SQL MERGE behavior applies to a Flink sink. [Iceberg Flink writes](https://iceberg.apache.org/docs/latest/flink-writes/)
-
-### 5.4 Time definitions and 5.10 Guarantee boundaries
-
-Processing time is when the operator processes an event. Ingestion time is when it enters the system. Distinguish both from event time.
-
-Exactly-once means one committed effect within the promised scope. A supported transactional or idempotent sink can help close the full boundary. At-least-once processing with an idempotent sink is another design with its own assumptions.
-
-### 5.14 Tool selection conditions
-
-The batch/streaming comparison is not an exclusive feature boundary. Choose based on latency, state, workload, and operational requirements.

@@ -51,6 +51,11 @@ Trino Coordinator ≈ Spark Driver
 Trino Worker ≈ Spark Executor
 ```
 
+The Coordinator/Worker and Spark Driver/Executor comparison explains roles. It does not mean their execution models are identical. `SQL → Query Plan → Stage → Task → Split` is also a learning model, not a complete list of execution elements. [Trino concepts](https://trino.io/docs/current/overview/concepts.html)
+
+A Trino catalog selects a configured connector and data source. An Iceberg catalog locates and manages table metadata. Assess remote scans, data movement, and source load for federated query performance.
+
+
 ---
 
 ## 10.2 Connector Model
@@ -148,6 +153,13 @@ Run operations such as COUNT and SUM at the source when possible.
 
 Iceberg partition, file, row group, and column pruning serve a similar purpose.
 
+Pushdown support depends on the connector and query shape. A SQL filter does not guarantee pushdown. Check EXPLAIN and actual data read.
+
+Iceberg pruning and aggregation pushdown to a remote database both aim to reduce reading and movement. They are not the same operation. [Trino pushdown](https://trino.io/docs/current/optimizer/pushdown.html)
+
+Interpret the source’s “all workers” as workers participating in the join. Check that the small broadcast table fits each worker's memory. Skew can concentrate work and memory use on a few workers and make them finish later.
+
+
 ---
 
 ## 10.5 Join Strategies
@@ -195,6 +207,15 @@ Use disk
 ```
 
 Where spill is supported, it may relieve some memory pressure, but disk I/O can slow the query and it cannot prevent every failure.
+
+Spill can reduce memory pressure, but it does not solve every out-of-memory failure. Disk I/O can slow the query.
+
+The Trino documentation checked on 2026-09-24 called spill legacy functionality. It suggested considering fault-tolerant execution with an appropriate task retry policy and exchange manager. Check applicability against the workload, connectors, and settings. This edit did not recheck official documentation or run performance experiments. [Trino spill](https://trino.io/docs/current/admin/spill.html)
+
+The Trino/Spark comparison describes common roles. It does not define absolute feature boundaries or guarantee performance.
+
+Iceberg pruning also depends on layout, metadata, filters, and connector behavior. [Trino Iceberg connector](https://trino.io/docs/current/connector/iceberg.html)
+
 
 ---
 
@@ -315,39 +336,3 @@ The review should link possible bottlenecks to evidence and next checks. The LLM
 [Analytical modeling](analytical-modeling.md) · [dbt](dbt.md) · [Handbook home](../index.md)
 
 [Six related practical prompts](../prompts/trino.md)
-
-## Appendix: existing application notes
-
-### Architecture and execution model
-
-The Coordinator/Worker and Spark Driver/Executor comparison explains roles. It does not mean their execution models are identical. `SQL → Query Plan → Stage → Task → Split` is also a learning model, not a complete list of execution elements. [Trino concepts](https://trino.io/docs/current/overview/concepts.html)
-
-A Trino catalog selects a configured connector and data source. An Iceberg catalog locates and manages table metadata. Assess remote scans, data movement, and source load for federated query performance.
-
-### Check pushdown and joins
-
-Pushdown support depends on the connector and query shape. A SQL filter does not guarantee pushdown. Check EXPLAIN and actual data read.
-
-Iceberg pruning and aggregation pushdown to a remote database both aim to reduce reading and movement. They are not the same operation. [Trino pushdown](https://trino.io/docs/current/optimizer/pushdown.html)
-
-Interpret the source’s “all workers” as workers participating in the join. Check that the small broadcast table fits each worker's memory. Skew can concentrate work and memory use on a few workers and make them finish later.
-
-### Spill and role boundaries
-
-Spill can reduce memory pressure, but it does not solve every out-of-memory failure. Disk I/O can slow the query.
-
-The Trino documentation checked on 2026-09-24 called spill legacy functionality. It suggested considering fault-tolerant execution with an appropriate task retry policy and exchange manager. Check applicability against the workload, connectors, and settings. This edit did not recheck official documentation or run performance experiments. [Trino spill](https://trino.io/docs/current/admin/spill.html)
-
-The Trino/Spark comparison describes common roles. It does not define absolute feature boundaries or guarantee performance.
-
-Iceberg pruning also depends on layout, metadata, filters, and connector behavior. [Trino Iceberg connector](https://trino.io/docs/current/connector/iceberg.html)
-
-### Existing conceptual diagram
-
-```mermaid
-flowchart LR
-  S[S3 objects] --> P[Parquet data files]
-  I[Iceberg metadata and snapshots] --> T[Trino]
-  P --> T
-  T --> B[BI and analysts]
-```

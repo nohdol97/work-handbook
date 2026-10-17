@@ -208,6 +208,8 @@ Breaking Change 방지
 - incompatible type 변경
 - 의미 변경
 
+위 `owner` 값은 가상의 팀 이름이다. JSON 자체와 JSON Schema를 통한 검증을 구분한다. Schema Registry가 단위 변경 같은 모든 의미 오류를 막아 주지는 않는다. Backward/Forward의 정확한 허용 변경은 포맷·필드 기본값·설정에 따라 다르다. 전체 이력 replay가 필요하면 직전 버전과의 호환성만 확인하는지, 전체 과거 버전까지 확인하는 transitive 설정인지 구분한다. [Confluent 스키마 호환성](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)
+
 ---
 
 ## 2.4 Delivery Semantics
@@ -278,6 +280,10 @@ event_id
 ```
 
 를 이용해 중복을 찾을 수 있다.
+
+원문 at-most-once의 “중복은 적지만”은 간략한 표현이다. 보장 범위 안에서는 최대 한 번 전달하므로 중복 전달하지 않지만 유실은 가능하다. Exactly-once는 정의된 경계 안에서 한 번 commit된 효과를 뜻하며 Kafka transaction, processor state, 외부 sink의 범위는 서로 구분한다.
+
+At-least-once는 시스템의 보존·복구 가정 안에서 설명하는 보장이다. Deduplication은 event ID 정의와 상태 보존 기간이 필요하며, replay 범위가 그 기간보다 길면 별도 검증이 필요하다. Kafka replay는 남아 있는 이력에 한정된다. 처리 로직이 과거 schema도 읽는지 확인한다. 분리된 serving/lakehouse 경로는 각자의 lag, 복구, 결과 일관성을 확인해야 한다.
 
 ---
 
@@ -402,23 +408,3 @@ Kafka
 [이 주제의 실무 프롬프트 6개 더 보기](../prompts/event-architecture.md)
 
 LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.
-
-## 적용 시 보완할 점
-
-위 `owner` 값은 가상의 팀 이름이다. JSON 자체와 JSON Schema를 통한 검증을 구분한다. Schema Registry가 단위 변경 같은 모든 의미 오류를 막아 주지는 않는다. Backward/Forward의 정확한 허용 변경은 포맷·필드 기본값·설정에 따라 다르다. 전체 이력 replay가 필요하면 직전 버전과의 호환성만 확인하는지, 전체 과거 버전까지 확인하는 transitive 설정인지 구분한다. [Confluent 스키마 호환성](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)
-
-At-least-once는 시스템의 보존·복구 가정 안에서 설명하는 보장이다. Deduplication은 event ID 정의와 상태 보존 기간이 필요하며, replay 범위가 그 기간보다 길면 별도 검증이 필요하다. Kafka replay는 남아 있는 이력에 한정된다. 처리 로직이 과거 schema도 읽는지 확인한다. 분리된 serving/lakehouse 경로는 각자의 lag, 복구, 결과 일관성을 확인해야 한다.
-
-### 2.4 보완: 전달 보장의 범위
-
-원문 at-most-once의 “중복은 적지만”은 간략한 표현이다. 보장 범위 안에서는 최대 한 번 전달하므로 중복 전달하지 않지만 유실은 가능하다. Exactly-once는 정의된 경계 안에서 한 번 commit된 효과를 뜻하며 Kafka transaction, processor state, 외부 sink의 범위는 서로 구분한다.
-
-### 기존 보완 흐름도
-
-```mermaid
-flowchart TD
-    A[Application] --> K[Kafka]
-    K --> S[Search Store]
-    K --> O[Operational Serving Store]
-    K --> L[Lakehouse / Iceberg]
-```

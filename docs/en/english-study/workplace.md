@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### X depends on Y {#workplace-depends-on}
 
-**63 occurrences · 29 documents · neutral**
+**64 occurrences · 29 documents · neutral**
 
 **X는 Y에 따라 달라진다**
 
@@ -30,7 +30,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### X does not mean Y {#workplace-does-not-mean}
 
-**47 occurrences · 32 documents · neutral**
+**46 occurrences · 32 documents · neutral**
 
 **X라고 해서 Y라는 뜻은 아니다**
 

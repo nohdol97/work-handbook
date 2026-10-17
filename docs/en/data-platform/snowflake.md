@@ -63,6 +63,20 @@ Handles:
 - access control,
 - coordination.
 
+The diagram connects the storage, compute, and Cloud Services roles in [18.1](#181-architecture).
+
+```mermaid
+flowchart TD
+    C[Cloud Services: metadata, auth, optimization, coordination]
+    C --> W1[Virtual Warehouse: BI]
+    C --> W2[Virtual Warehouse: transformation]
+    W1 --> S[Storage: native tables or Iceberg]
+    W2 --> S
+```
+
+Separate warehouses can isolate workloads. Distinguish native storage from Iceberg configurations. [Official architecture](https://docs.snowflake.com/en/user-guide/intro-key-concepts).
+
+
 ---
 
 ## 18.2 Micro-partitions
@@ -80,6 +94,9 @@ Table
 Snowflake tracks metadata such as value ranges.
 
 A query can use these value ranges to skip a group whose values cannot match its filter. That skip is called pruning.
+
+The micro-partition model in [18.2](#182-micro-partitions) describes native tables. Do not apply it directly to external Iceberg files.
+
 
 ---
 
@@ -100,6 +117,9 @@ Iceberg File Pruning
 Parquet Row Group Pruning
 ```
 
+The illustrative filter `WHERE event_date = '2026-09-26'` can skip micro-partitions that cannot match. [Iceberg file pruning](lakehouse-iceberg.md) and Parquet row group pruning share the goal of avoiding unnecessary reads. Their metadata and execution differ. Check actual scans in the query profile.
+
+
 ---
 
 ## 18.4 Clustering
@@ -109,6 +129,9 @@ When data layout no longer matches common filters, **clustering** can place simi
 Large tables may use clustering keys.
 
 The goal is not to manually partition everything, but to improve physical distribution for query patterns.
+
+Clustering can help pruning when physical layout does not suit frequent filters. Large tables can be candidates for clustering keys. This does not mean manually partitioning every table. The goal is a useful value distribution for query patterns. Include maintenance cost in the decision. [Micro-partitions and clustering](https://docs.snowflake.com/en/user-guide/tables-clustering-micropartitions).
+
 
 ---
 
@@ -126,6 +149,9 @@ Change Data
 
 For example, an order summary can process Stream changes instead of rereading every order.
 
+A Stream exposes source row changes for incremental processing. It is not a separate event log like Kafka. A Stream stores a source object offset rather than a copy of data. It uses table history to calculate changes. A plain SELECT does not advance that offset. Committing a DML transaction that consumes changes does. Monitor for streams that become stale beyond the retention window. [Streams](https://docs.snowflake.com/en/user-guide/streams-intro).
+
+
 ---
 
 ## 18.6 Tasks
@@ -141,6 +167,9 @@ Task
  ↓
 MERGE / SQL Transform
 ```
+
+A Task schedules or triggers SQL work. A common flow is `Table → Stream → Task → MERGE / SQL transform`. The Stream describes changes. The Task controls execution. SQL defines the result. [Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
+
 
 ---
 
@@ -172,6 +201,11 @@ TARGET_LAG = 10 minutes
 
 This is a **declarative pipeline**: describe the result and refresh target instead of scheduling every step by hand. Actual delay depends on work and settings.
 
+A Dynamic Table declares a result query and desired freshness. Snowflake manages refresh. A chain such as `Raw → Dynamic Table(Silver) → Dynamic Table(Gold)` describes dataset dependencies.
+
+An illustrative setting is `TARGET_LAG = '10 minutes'`. **It is neither a schedule to run every ten minutes nor a guarantee of at most ten minutes of lag.** It is a freshness target. Actual lag depends on warehouse capacity, data volume, query complexity, and dependency depth. Check actual lag and refresh history. Do not assume every SQL query supports incremental refresh. [Target lag](https://docs.snowflake.com/en/user-guide/dynamic-tables/target-lag).
+
+
 ---
 
 ## 18.8 Snowpipe / Snowpipe Streaming
@@ -187,6 +221,9 @@ Snowflake
 ```
 
 Snowpipe Streaming allows lower-latency continuous ingestion without relying only on staged files.
+
+Snowpipe loads staged files: `Object storage file → Snowpipe → Snowflake`. Snowpipe Streaming supports continuous low-latency ingestion without relying only on staged files. Measure ingestion latency, processing latency, and final mart freshness separately. Streaming ingestion does not imply the same complex event-time/state processing as [Flink](flink.md). [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro), [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview).
+
 
 ---
 
@@ -205,6 +242,11 @@ Object Storage
 Snowflake and Horizon can take part in Iceberg catalog workflows. The catalog helps tools locate a table and its current state.
 
 External engines such as Spark/Trino can participate in open Iceberg workflows.
+
+The flow `Snowflake → Iceberg table → Object storage` separates compute, table format, and storage. Distinguish a Snowflake-managed catalog from an external catalog. Assign ownership of metadata commits and maintenance. Check read, write, authentication, and table feature support separately for external engines such as Spark and Trino. [Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg).
+
+The Horizon Iceberg REST endpoint can support multiple engines. This does not promise identical behavior for every Snowflake feature or external engine combination. [External engine access through Horizon](https://docs.snowflake.com/en/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon).
+
 
 ---
 
@@ -232,6 +274,9 @@ Horizon provides:
 - Iceberg visibility,
 - semantic/business context.
 
+Databricks Unity Catalog and Snowflake Horizon Catalog both address integrated governance. Horizon covers discovery, metadata, lineage, classification, masking, row access, governance, Iceberg visibility, and semantic/business context. Similar feature names do not imply equal policies, privileges, or external engine behavior. [Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon).
+
+
 ---
 
 ## 18.11 Cortex / AI
@@ -249,6 +294,9 @@ AI interfaces
 The overall product direction is similar to the rest of the industry:
 
 > bring AI closer to governed enterprise data.
+
+Cortex AI, Search, Analyst, Agents, and AI interfaces bring AI closer to governed enterprise data. Distinguish retrieval, structured data analysis, and agent tool use. Check model, region, privilege, and data access requirements in the relevant feature documentation. [Snowflake AI and ML](https://docs.snowflake.com/en/guides-overview-ai-features).
+
 
 ---
 
@@ -280,6 +328,11 @@ Reduce Scan
 Efficient Queries
 Use incremental refresh where possible
 ```
+
+Compute uses credit-based billing. Include Virtual Warehouses, serverless compute, Cloud Services, and storage. A credit is not a fixed CPU count or a universal price for every feature.
+
+Review Auto Suspend, warehouse sizing, scan reduction, efficient queries, and incremental refresh where supported. A smaller warehouse does not always lower total cost. Compare measured usage alongside runtime, queue time, and freshness. [Snowflake costs](https://docs.snowflake.com/en/user-guide/cost-understanding-overall).
+
 
 ---
 
@@ -331,6 +384,9 @@ Snowflake
 
 Today there is significant functional overlap.
 
+Review the role map in [18.13](#1813-snowflake-mental-model). Databricks and Snowflake now overlap, so historical origins alone should not drive selection. Compare workloads and operating conditions in [platform comparison](platform-comparison.md), [Databricks](databricks.md), and [analytical modeling](analytical-modeling.md).
+
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -339,7 +395,7 @@ Today there is significant functional overlap.
 
 Picture [18.1](#181-architecture) as shelves and workbenches. The storage layer holds data; a virtual warehouse does the query work. Multiple workbenches can use the data, but performance and cost still depend on workload, warehouse settings, and data layout.
 
-For example, a team could ingest new orders with Snowpipe features, track table changes with Streams, and refresh derived results with scheduled Tasks or Dynamic Tables that manage refreshes from a query definition. These features do different jobs. Micro-partitions in [18.2](#182-micro-partitions) and pruning in [18.3](#183-pruning) can reduce what a query reads. The [18.12](#1812-cost-model) cost review must cover ingestion, transformation, and queries. Check the supplement's official documentation for actual support conditions.
+For example, a team could ingest new orders with Snowpipe features, track table changes with Streams, and refresh derived results with scheduled Tasks or Dynamic Tables that manage refreshes from a query definition. These features do different jobs. Micro-partitions in [18.2](#182-micro-partitions) and pruning in [18.3](#183-pruning) can reduce what a query reads. The [18.12](#1812-cost-model) cost review must cover ingestion, transformation, and queries. Check the official documentation cited in each section for actual support conditions.
 
 ## Key points
 
@@ -374,76 +430,3 @@ For example, a team could ingest new orders with Snowpipe features, track table 
     ```
 
 **Key point:** Hypotheses for each delay, the purpose of diagnostic queries, small experiments, and cost/correctness/freshness criteria. It may mistake target lag for an interval or guarantee and recommend a larger warehouse without evidence. Check the official target lag definition and refresh mode requirements. Challenge hypotheses with refresh history and query profiles. Compare actual lag, cost, and results before and after a limited experiment. A person approves execution.
-
-## Operational review and official documentation notes
-
-Product conditions reflect the official documentation reviewed on 2026-09-26. Check actual versions and settings.
-
-### Architecture
-
-The diagram connects the storage, compute, and Cloud Services roles in [18.1](#181-architecture).
-
-```mermaid
-flowchart TD
-    C[Cloud Services: metadata, auth, optimization, coordination]
-    C --> W1[Virtual Warehouse: BI]
-    C --> W2[Virtual Warehouse: transformation]
-    W1 --> S[Storage: native tables or Iceberg]
-    W2 --> S
-```
-
-Separate warehouses can isolate workloads. Distinguish native storage from Iceberg configurations. [Official architecture](https://docs.snowflake.com/en/user-guide/intro-key-concepts).
-
-### Micro-partitions
-
-The micro-partition model in [18.2](#182-micro-partitions) describes native tables. Do not apply it directly to external Iceberg files.
-
-### Pruning
-
-The illustrative filter `WHERE event_date = '2026-09-26'` can skip micro-partitions that cannot match. [Iceberg file pruning](lakehouse-iceberg.md) and Parquet row group pruning share the goal of avoiding unnecessary reads. Their metadata and execution differ. Check actual scans in the query profile.
-
-### Clustering
-
-Clustering can help pruning when physical layout does not suit frequent filters. Large tables can be candidates for clustering keys. This does not mean manually partitioning every table. The goal is a useful value distribution for query patterns. Include maintenance cost in the decision. [Micro-partitions and clustering](https://docs.snowflake.com/en/user-guide/tables-clustering-micropartitions).
-
-### Streams
-
-A Stream exposes source row changes for incremental processing. It is not a separate event log like Kafka. A Stream stores a source object offset rather than a copy of data. It uses table history to calculate changes. A plain SELECT does not advance that offset. Committing a DML transaction that consumes changes does. Monitor for streams that become stale beyond the retention window. [Streams](https://docs.snowflake.com/en/user-guide/streams-intro).
-
-### Tasks
-
-A Task schedules or triggers SQL work. A common flow is `Table → Stream → Task → MERGE / SQL transform`. The Stream describes changes. The Task controls execution. SQL defines the result. [Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
-
-### Dynamic Tables
-
-A Dynamic Table declares a result query and desired freshness. Snowflake manages refresh. A chain such as `Raw → Dynamic Table(Silver) → Dynamic Table(Gold)` describes dataset dependencies.
-
-An illustrative setting is `TARGET_LAG = '10 minutes'`. **It is neither a schedule to run every ten minutes nor a guarantee of at most ten minutes of lag.** It is a freshness target. Actual lag depends on warehouse capacity, data volume, query complexity, and dependency depth. Check actual lag and refresh history. Do not assume every SQL query supports incremental refresh. [Target lag](https://docs.snowflake.com/en/user-guide/dynamic-tables/target-lag).
-
-### Snowpipe / Snowpipe Streaming
-
-Snowpipe loads staged files: `Object storage file → Snowpipe → Snowflake`. Snowpipe Streaming supports continuous low-latency ingestion without relying only on staged files. Measure ingestion latency, processing latency, and final mart freshness separately. Streaming ingestion does not imply the same complex event-time/state processing as [Flink](flink.md). [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro), [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview).
-
-### Iceberg Tables
-
-The flow `Snowflake → Iceberg table → Object storage` separates compute, table format, and storage. Distinguish a Snowflake-managed catalog from an external catalog. Assign ownership of metadata commits and maintenance. Check read, write, authentication, and table feature support separately for external engines such as Spark and Trino. [Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg).
-
-The Horizon Iceberg REST endpoint can support multiple engines. This does not promise identical behavior for every Snowflake feature or external engine combination. [External engine access through Horizon](https://docs.snowflake.com/en/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon).
-
-### Governance: Horizon Catalog
-
-Databricks Unity Catalog and Snowflake Horizon Catalog both address integrated governance. Horizon covers discovery, metadata, lineage, classification, masking, row access, governance, Iceberg visibility, and semantic/business context. Similar feature names do not imply equal policies, privileges, or external engine behavior. [Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon).
-
-### Cortex / AI
-
-Cortex AI, Search, Analyst, Agents, and AI interfaces bring AI closer to governed enterprise data. Distinguish retrieval, structured data analysis, and agent tool use. Check model, region, privilege, and data access requirements in the relevant feature documentation. [Snowflake AI and ML](https://docs.snowflake.com/en/guides-overview-ai-features).
-
-### Cost model
-
-Compute uses credit-based billing. Include Virtual Warehouses, serverless compute, Cloud Services, and storage. A credit is not a fixed CPU count or a universal price for every feature.
-
-Review Auto Suspend, warehouse sizing, scan reduction, efficient queries, and incremental refresh where supported. A smaller warehouse does not always lower total cost. Compare measured usage alongside runtime, queue time, and freshness. [Snowflake costs](https://docs.snowflake.com/en/user-guide/cost-understanding-overall).
-
-### Mental model
-
-Review the role map in [18.13](#1813-snowflake-mental-model). Databricks and Snowflake now overlap, so historical origins alone should not drive selection. Compare workloads and operating conditions in [platform comparison](platform-comparison.md), [Databricks](databricks.md), and [analytical modeling](analytical-modeling.md).

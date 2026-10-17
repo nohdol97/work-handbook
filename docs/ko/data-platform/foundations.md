@@ -124,6 +124,8 @@ Lakehouse / Warehouse
 
 > **OLTP는 서비스의 현재 상태를 빠르게 처리하고, OLAP는 대량 이력을 분석한다.**
 
+PostgreSQL에서 분석계를 분리하는 기준을 row 수 하나로 정하지 않는다. 실제 쿼리, 트랜잭션 영향, 비용과 응답 시간으로 판단한다.
+
 ---
 
 ## 1.2 Row-Oriented vs Column-Oriented Storage
@@ -368,6 +370,10 @@ Parquet의 중요한 장점은:
 
 읽을 수 있다는 점이다.
 
+원문 [1.3](#13-parquet)의 “필요한 row 범위만”은 위에서 설명한 row group 등 저장 단위의 pruning을 뜻한다.
+
+Parquet의 column chunk는 row group 내부에 있다. 통계나 page index의 존재와 이를 사용하는 reader에 따라 pruning 효과가 달라진다. Predicate pushdown은 필터를 하위 처리 계층으로 전달하는 것이고, pruning은 일치할 수 없는 저장 단위를 건너뛰는 것이다. row index처럼 임의의 row만 바로 찾는 기능으로 이해하지 않는다. Encoding과 compression도 서로 다른 단계다. [Apache Parquet 파일 형식](https://parquet.apache.org/docs/file-format/)
+
 ---
 
 ## 1.4 Object Storage
@@ -441,6 +447,8 @@ Compute와 Storage가 분리되어 있으므로 네트워크를 통해 파일을
 
 등이 중요해진다.
 
+Object Storage 비용에는 저장량 외에 요청·전송 비용도 포함되며 공급자와 workload에 따라 달라진다.
+
 ---
 
 ## 1.5 File Layout Engineering
@@ -511,6 +519,8 @@ Streaming → Lakehouse 구조에서는 특히 중요하다.
 데이터 일부를 수정하기 위해 큰 파일 전체를 다시 쓰게 되면 실제 변경량보다 훨씬 많은 write가 발생할 수 있다.
 
 이런 비용도 File Layout과 Table Format 설계에서 고려해야 한다.
+
+큰 Parquet 파일도 여러 scan split으로 나뉠 수 있으므로 파일 하나와 task 하나를 항상 같다고 보면 안 된다. 목표 파일 크기는 병렬성·재작성 비용·요청 비용을 함께 보고 정한다. Bucket 예시는 개념 표기이며 실제 인수 순서와 SQL 문법은 엔진마다 확인한다. Iceberg transform의 개념 표기는 `bucket(32, user_id)`다.
 
 ---
 
@@ -609,6 +619,9 @@ date=2026-09-24
 └─ file3.parquet
 ```
 
+Cardinality는 서로 다른 값의 개수다. 날짜 partition의 day/hour 세분화도 실제 데이터 양과 query pattern에 맞춰 정한다.
+
+
 ---
 
 ## 1.7 Bucketing / Sorting / Indexing
@@ -701,17 +714,3 @@ Lakehouse는 대량 Scan workload가 중심이므로:
 [이 주제의 실무 프롬프트 6개 더 보기](../prompts/foundations.md)
 
 LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.
-
-## 적용 시 보완할 점
-
-위 설명은 저장 구조를 이해하기 위한 기본 모델이다. PostgreSQL에서 분석계를 분리하는 기준을 row 수 하나로 정하지 않는다. 실제 쿼리, 트랜잭션 영향, 비용과 응답 시간으로 판단한다. Object Storage 비용에도 요청·전송 비용이 포함되며 공급자와 workload에 따라 달라진다.
-
-Parquet의 column chunk는 row group 내부에 있다. 통계나 page index의 존재와 이를 사용하는 reader에 따라 pruning 효과가 달라진다. Predicate pushdown은 필터를 하위 처리 계층으로 전달하는 것이고, pruning은 일치할 수 없는 저장 단위를 건너뛰는 것이다. row index처럼 임의의 row만 바로 찾는 기능으로 이해하지 않는다. Encoding과 compression도 서로 다른 단계다. [Apache Parquet 파일 형식](https://parquet.apache.org/docs/file-format/)
-
-큰 Parquet 파일도 여러 scan split으로 나뉠 수 있으므로 파일 하나와 task 하나를 항상 같다고 보면 안 된다. 목표 파일 크기는 병렬성·재작성 비용·요청 비용을 함께 보고 정한다. Bucket 예시는 개념 표기이며 실제 인수 순서와 SQL 문법은 엔진마다 확인한다. Iceberg transform의 개념 표기는 `bucket(32, user_id)`다.
-
-### 1.3·1.6 보완: 통계와 cardinality
-
-원문 [1.3](#13-parquet)의 “필요한 row 범위만”은 위에서 설명한 row group 등 저장 단위의 pruning을 뜻한다.
-
-Cardinality는 서로 다른 값의 개수다. 날짜 partition의 day/hour 세분화도 실제 데이터 양과 query pattern에 맞춰 정한다.

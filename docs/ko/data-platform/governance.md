@@ -65,6 +65,8 @@ team_id → Internal
 
 이 분류를 접근, 마스킹, 보관 정책을 정할 때 사용한다.
 
+Public, Internal, Confidential, PII, Sensitive는 모든 조직에 공통인 하나의 순서형 등급이 아니다. PII는 데이터의 성격을 나타내므로 중요도 등급과 함께 사용할 수 있다.
+
 ---
 
 ## 14.3 Retention Policies
@@ -134,6 +136,14 @@ Iceberg의 현재 snapshot에서 보이지 않아도 이전 snapshot이 파일�
 
 과거 Snapshot/File cleanup까지 고려해야 한다.
 
+Snapshot 보관 요구와 원본 데이터 보관 요구를 구분한다. 현재 snapshot에 보이지 않아도 과거 snapshot이 파일을 참조할 수 있다.
+
+- Snapshot expiration은 보존 중인 snapshot이 더 이상 참조하지 않는 파일의 정리와 연결된다.
+- Orphan cleanup은 metadata가 참조하지 않는 파일을 다룬다.
+- 활성 작업이 아직 쓰는 파일을 orphan으로 오인하지 않도록 보존 간격을 잡는다.
+
+현재 조회 결과만으로 물리 삭제 완료를 주장하면 안 된다. [Iceberg maintenance](https://iceberg.apache.org/docs/latest/maintenance/)
+
 ---
 
 ## 14.5 Masking
@@ -188,6 +198,10 @@ Masking
 
 사용자별로 하나씩 부여하지 않고 역할에 권한을 묶어 관리한다.
 
+Catalog에 정책이 보인다는 사실만으로 모든 외부 엔진과 storage 경로의 보호를 가정하지 않는다.
+
+Databricks의 row filter와 column mask는 runtime, compute 방식, API 등에 제약이 있다. 확인한 공식 제한 사항에는 정책이 있는 table의 path-based 접근과 특정 REST API 접근이 지원되지 않는다고 설명한다. [Databricks filters and masks](https://docs.databricks.com/aws/en/data-governance/unity-catalog/filters-and-masks)
+
 ---
 
 ## 14.7 Auditability
@@ -220,6 +234,8 @@ Observability
 Audit
 → 누가 무엇을 했는가?
 ```
+
+실제 audit 로그의 user와 query도 민감할 수 있다. 공개 학습 자료에 그대로 옮기지 않는다.
 
 ---
 
@@ -255,6 +271,11 @@ Owner
 ```
 
 스키마 형식만 약속하는 것보다 업무 의미와 품질 책임까지 범위가 넓다.
+
+`email`, `team_id`는 설명용 필드명이며 실제 조직의 식별값을 포함하지 않는다. Data contract의 owner는 가상의 책임 팀이고 5분은 실제 승인된 SLO가 아니다.
+
+타입이 integer라는 정의만으로 단위까지 알 수는 없다. 계약에는 millisecond라는 의미와 음수 금지 조건도 적는다.
+
 
 ---
 
@@ -311,6 +332,14 @@ Snowflake 중심 Governance.
 정상인가?
 ```
 
+제품 설명은 2026-09-24에 공식 문서를 확인한 범주 수준의 비교다. 제품을 배포하거나 모든 기능을 테스트하지 않았다.
+
+- **Unity Catalog:** 전체 기능 범주와 세부 runtime·접근 경로 제한을 구분한다. [공식 개요](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
+- **Lake Formation:** 통합 엔진과 서비스별 data-filter 지원을 확인한다. [Data filtering](https://docs.aws.amazon.com/lake-formation/latest/dg/data-filtering.html)
+- **Horizon Catalog:** edition과 개별 기능 요구사항을 확인한다. 예를 들어 Access History는 Enterprise Edition 이상을 요구한다. [Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon), [Access History](https://docs.snowflake.com/en/user-guide/access-history)
+
+세 제품이 동일한 방식과 범위로 모든 정책을 강제하는 것은 아니다.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -352,58 +381,3 @@ Snowflake 중심 Governance.
 [Lineage와 metadata](lineage-metadata.md) · [데이터 품질](data-quality.md) · [데이터 관측성](data-observability.md) · [핸드북 홈](../index.md)
 
 [더 많은 실무 프롬프트](../prompts/governance.md)
-
-## 적용 시 보완할 점
-
-### 예시와 실제 정책의 구분
-
-Public, Internal, Confidential, PII, Sensitive는 모든 조직에 공통인 하나의 순서형 등급이 아니다. PII는 데이터의 성격을 나타내므로 중요도 등급과 함께 사용할 수 있다.
-
-보관 기간은 학습용 예시이며 법적 기준이나 권장 기본값이 아니다.
-
-`email`, `team_id`는 설명용 필드명이며 실제 조직의 식별값을 포함하지 않는다. Data contract의 owner는 가상의 책임 팀이고 5분은 실제 승인된 SLO가 아니다.
-
-타입이 integer라는 정의만으로 단위까지 알 수는 없다. 계약에는 millisecond라는 의미와 음수 금지 조건도 적는다.
-
-### Iceberg의 보관과 물리 삭제
-
-Snapshot 보관 요구와 원본 데이터 보관 요구를 구분한다. 현재 snapshot에 보이지 않아도 과거 snapshot이 파일을 참조할 수 있다.
-
-- Snapshot expiration은 보존 중인 snapshot이 더 이상 참조하지 않는 파일의 정리와 연결된다.
-- Orphan cleanup은 metadata가 참조하지 않는 파일을 다룬다.
-- 활성 작업이 아직 쓰는 파일을 orphan으로 오인하지 않도록 보존 간격을 잡는다.
-
-현재 조회 결과만으로 물리 삭제 완료를 주장하면 안 된다. [Iceberg maintenance](https://iceberg.apache.org/docs/latest/maintenance/)
-
-### 실제 접근 경로의 정책 적용
-
-Catalog에 정책이 보인다는 사실만으로 모든 외부 엔진과 storage 경로의 보호를 가정하지 않는다.
-
-Databricks의 row filter와 column mask는 runtime, compute 방식, API 등에 제약이 있다. 확인한 공식 제한 사항에는 정책이 있는 table의 path-based 접근과 특정 REST API 접근이 지원되지 않는다고 설명한다. [Databricks filters and masks](https://docs.databricks.com/aws/en/data-governance/unity-catalog/filters-and-masks)
-
-### 제품 비교의 확인 범위
-
-제품 설명은 2026-09-24에 공식 문서를 확인한 범주 수준의 비교다. 제품을 배포하거나 모든 기능을 테스트하지 않았다.
-
-- **Unity Catalog:** 전체 기능 범주와 세부 runtime·접근 경로 제한을 구분한다. [공식 개요](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
-- **Lake Formation:** 통합 엔진과 서비스별 data-filter 지원을 확인한다. [Data filtering](https://docs.aws.amazon.com/lake-formation/latest/dg/data-filtering.html)
-- **Horizon Catalog:** edition과 개별 기능 요구사항을 확인한다. 예를 들어 Access History는 Enterprise Edition 이상을 요구한다. [Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon), [Access History](https://docs.snowflake.com/en/user-guide/access-history)
-
-세 제품이 동일한 방식과 범위로 모든 정책을 강제하는 것은 아니다.
-
-### Audit 로그의 민감정보
-
-실제 audit 로그의 user와 query도 민감할 수 있다. 공개 학습 자료에 그대로 옮기지 않는다.
-
-### 삭제 범위의 보조 그림
-
-```mermaid
-flowchart LR
-    PostgreSQL --> Kafka
-    Kafka --> Bronze
-    Bronze --> Silver
-    Silver --> Gold
-    Gold --> Backup
-```
-
-원문의 흐름은 추적할 사본과 파생 데이터의 예다. 실제 backup은 여러 단계에서 생길 수 있다.

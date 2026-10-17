@@ -98,6 +98,10 @@ Source data outside dbt
 Another dbt model
 ```
 
+The `ref()` example is dbt template SQL, not a standalone SQL statement. `ref()` resolves a relation and declares a dependency. [dbt ref](https://docs.getdbt.com/reference/dbt-jinja-functions/ref)
+
+Staging/Intermediate/Mart and Bronze/Silver/Gold are not a standard one-to-one mapping. Set boundaries based on input data and quality responsibilities. See [analytical data modeling](analytical-modeling.md) for facts and dimensions.
+
 ---
 
 ## 8.3 Staging Models
@@ -207,6 +211,16 @@ To account for late arrivals, you can read recent days again and merge the resul
 
 Rebuild everything when needed, such as after a logic change.
 
+`event_time > last_processed_time` is pseudo-SQL for discussing missed data. A late arrival with an old event time can be missed. Even with lookback and MERGE, events outside the lookback still need a separate backfill.
+
+- Define a `unique_key` that matches the grain. Check nulls and duplicates. Setting a key does not itself run a uniqueness test.
+- SQL must be valid on the first full run and later incremental runs.
+- Strategy support and update behavior depend on the adapter and engine.
+
+[dbt incremental models](https://docs.getdbt.com/docs/build/incremental-models)
+
+Incremental models process selected new or changed data. MERGE inserts new keys and updates existing keys.
+
 ---
 
 ## 8.7 dbt Tests
@@ -234,6 +248,21 @@ Publish
 ```
 
 dbt tests are especially suited to checking basic model or table rules, rather than all aspects of data quality.
+
+Configure orchestration so a failed test really blocks publication. A value can pass basic tests and still be wrong in meaning. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
+
+A snapshot does not automatically capture every intermediate change between observations as CDC can. Design the run interval and change detection rule. [dbt snapshots](https://docs.getdbt.com/docs/build/snapshots)
+
+Do not assume dbt lineage automatically tracks ingestion services, external jobs, and all BI use. Available features also depend on the adapter and connected engine.
+
+| Test | Rule |
+| --- | --- |
+| `not_null` | Required values are present |
+| `unique` | The selected key has no duplicates |
+| `relationships` | Reference keys exist in the target |
+| `accepted_values` | Values belong to an allowed set |
+| Custom test | A business-specific rule |
+
 
 ---
 
@@ -351,41 +380,3 @@ A useful result is a list of missed-data conditions and testable fixes. The LLM 
 [Orchestration](orchestration.md) · [Analytical modeling](analytical-modeling.md) · [Trino](trino.md) · [Handbook home](../index.md)
 
 [Six related practical prompts](../prompts/dbt.md)
-
-## Additional checks before applying these ideas
-
-### Scope of sections 8.6 and 8.7
-
-Incremental models process selected new or changed data. MERGE inserts new keys and updates existing keys.
-
-| Test | Rule |
-| --- | --- |
-| `not_null` | Required values are present |
-| `unique` | The selected key has no duplicates |
-| `relationships` | Reference keys exist in the target |
-| `accepted_values` | Values belong to an allowed set |
-| Custom test | A business-specific rule |
-
-### Relations and model layers
-
-The `ref()` example is dbt template SQL, not a standalone SQL statement. `ref()` resolves a relation and declares a dependency. [dbt ref](https://docs.getdbt.com/reference/dbt-jinja-functions/ref)
-
-Staging/Intermediate/Mart and Bronze/Silver/Gold are not a standard one-to-one mapping. Set boundaries based on input data and quality responsibilities. See [analytical data modeling](analytical-modeling.md) for facts and dimensions.
-
-### Incremental processing boundaries
-
-`event_time > last_processed_time` is pseudo-SQL for discussing missed data. A late arrival with an old event time can be missed. Even with lookback and MERGE, events outside the lookback still need a separate backfill.
-
-- Define a `unique_key` that matches the grain. Check nulls and duplicates. Setting a key does not itself run a uniqueness test.
-- SQL must be valid on the first full run and later incremental runs.
-- Strategy support and update behavior depend on the adapter and engine.
-
-[dbt incremental models](https://docs.getdbt.com/docs/build/incremental-models)
-
-### Quality gates, snapshots, and lineage
-
-Configure orchestration so a failed test really blocks publication. A value can pass basic tests and still be wrong in meaning. [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
-
-A snapshot does not automatically capture every intermediate change between observations as CDC can. Design the run interval and change detection rule. [dbt snapshots](https://docs.getdbt.com/docs/build/snapshots)
-
-Do not assume dbt lineage automatically tracks ingestion services, external jobs, and all BI use. Available features also depend on the adapter and connected engine.

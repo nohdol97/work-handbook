@@ -15,7 +15,7 @@
         }
       ],
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/event-architecture.md",
@@ -24,7 +24,7 @@
       "end": "# Chapter 3 — Lakehouse / Iceberg",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/lakehouse-iceberg.md",
@@ -33,7 +33,7 @@
       "end": "# Chapter 4 — Spark",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/spark.md",
@@ -42,7 +42,7 @@
       "end": "# Chapter 5 — Flink",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/flink.md",
@@ -51,7 +51,7 @@
       "end": "# Chapter 6 — CDC / Debezium",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/cdc-debezium.md",
@@ -60,7 +60,7 @@
       "end": "# Chapter 7 — Orchestration",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/orchestration.md",
@@ -69,7 +69,7 @@
       "end": "# Chapter 8 — dbt",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/dbt.md",
@@ -78,7 +78,7 @@
       "end": "# Chapter 9 — Analytical Data Modeling",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/analytical-modeling.md",
@@ -87,7 +87,7 @@
       "end": "# Chapter 10 — Trino",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/trino.md",
@@ -96,7 +96,7 @@
       "end": "# Chapter 11 — Data Quality Engineering",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/data-quality.md",
@@ -105,7 +105,7 @@
       "end": "# Chapter 12 — Data Observability",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/data-observability.md",
@@ -114,7 +114,7 @@
       "end": "# Chapter 13 — Lineage & Metadata Platform",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/lineage-metadata.md",
@@ -123,7 +123,7 @@
       "end": "# Chapter 14 — Data Governance",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/governance.md",
@@ -132,7 +132,7 @@
       "end": "# Chapter 15 — AI-Ready Data",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/ai-ready-data.md",
@@ -141,7 +141,7 @@
       "end": "# Chapter 16 — AI Evaluation Data Platform",
       "verbatim_language": "ko",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/ai-evaluation.md",
@@ -150,7 +150,7 @@
       "end": "# Chapter 17 — Databricks Deep Dive",
       "verbatim_language": "en",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/databricks.md",
@@ -159,7 +159,7 @@
       "end": "# Chapter 18 — Snowflake Deep Dive (Condensed)",
       "verbatim_language": "en",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/snowflake.md",
@@ -168,7 +168,7 @@
       "end": "# Chapter 19 — Databricks vs Snowflake vs Open Lakehouse",
       "verbatim_language": "en",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/platform-comparison.md",
@@ -177,7 +177,7 @@
       "end": "# Chapter 20 — Production Data Platform Engineering",
       "verbatim_language": "en",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/production-operations.md",
@@ -186,7 +186,7 @@
       "end": "# Chapter 21 — Final End-to-End Data Platform Architecture",
       "verbatim_language": "en",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/architecture.md",
@@ -195,7 +195,7 @@
       "end": "# Final Mental Model",
       "verbatim_language": "en",
       "preservation_mode": "editable",
-      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만."
+      "user_request": "2026-10-17 사용자 요청: data-platform 문서의 기존 본문도 직접 개선. 2026-10-18 사용자 상시 지시: 이 스킬을 사용하는 이후 문서에도 같은 방식 적용. 이번 작업에서 선택한 문서는 data-platform만. 2026-10-18 후속 요청: 적용 시 보완할 점도 해당 본문 절에 녹이고 원래 형식과 핵심 내용을 유지."
     },
     {
       "page": "data-platform/architecture.md",

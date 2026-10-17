@@ -12,25 +12,9 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ## Expressions in the corpus — by frequency
 
-### in practice {#idioms-in-practice}
-
-**53 occurrences · 44 documents · neutral**
-
-**실제로, 실제 운영에서는**
-
-This fixed expression contrasts theory with real use. Learn it as a collocation; it does not mean doing an exercise.
-
-> In practice, the deployment may take longer.
->
-> 실제로는 배포가 더 오래 걸릴 수 있다.
-
-Counted forms: in practice.
-
-Example source pages: [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md).
-
 ### instead of {#idioms-instead-of}
 
-**53 occurrences · 34 documents · neutral**
+**52 occurrences · 34 documents · neutral**
 
 **~ 대신에**
 
@@ -43,6 +27,22 @@ This fixed prepositional expression introduces an alternative. Follow it with a 
 Counted forms: instead of.
 
 Example source pages: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/qlora-artifacts](../ai-model-development/qlora-artifacts.md).
+
+### in practice {#idioms-in-practice}
+
+**50 occurrences · 44 documents · neutral**
+
+**실제로, 실제 운영에서는**
+
+This fixed expression contrasts theory with real use. Learn it as a collocation; it does not mean doing an exercise.
+
+> In practice, the deployment may take longer.
+>
+> 실제로는 배포가 더 오래 걸릴 수 있다.
+
+Counted forms: in practice.
+
+Example source pages: [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md).
 
 ### rather than {#idioms-rather-than}
 

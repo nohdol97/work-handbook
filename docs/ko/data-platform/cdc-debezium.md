@@ -68,6 +68,12 @@ Debezium
 Kafka
 ```
 
+CDC에는 여러 접근이 있으며, 원문의 transaction log 설명은 로그 기반 CDC에 해당한다. PostgreSQL에서는 WAL과 logical decoding을 사용한다. 로그 보존과 소비 위치 관리가 필요하다.
+
+Polling SQL의 `last_time`은 저장한 처리 시점을 뜻하는 의사 변수다. 삭제된 행은 이 쿼리로 찾을 수 없다. Polling 간격에 따른 지연도 생긴다.
+
+Snapshot read(`r`)는 읽은 행을 전달한다. `before` 등 세부 필드는 실제 이벤트 형식을 확인한다.
+
 ---
 
 ## 6.2 Debezium Architecture
@@ -128,6 +134,10 @@ Snapshot 중 변경
 완료된 snapshot과 유효한 offset이 있다면 connector를 다시 시작할 때마다 전체 snapshot을 반복하지는 않는다.
 
 Offset이 있으면 이어서 읽는다.
+
+정상적으로 완료한 초기 snapshot과 유효한 offset이 있으면 보통 재시작 때 이어 읽는다. Snapshot 도중 실패했거나 snapshot mode가 다르면 다시 snapshot할 수 있다. [Debezium PostgreSQL connector](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
+
+이벤트의 `before = old row`는 개념 설명이다. PostgreSQL UPDATE/DELETE의 이전 값 범위는 `REPLICA IDENTITY`와 decoding 조건에 따라 달라진다. 항상 완전한 이전 행을 얻는다고 가정하면 안 된다. Transaction metadata의 지원·설정도 확인한다. [Replica identity 설명](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-replica-identity)
 
 ---
 
@@ -298,6 +308,10 @@ Source
 
 이 중요하다.
 
+Nullable column 추가도 소비자가 자동 수용한다는 보장은 없다. PostgreSQL logical decoding은 DDL change event를 직접 전달하지 않는다. Schema 비교와 배포 절차를 함께 설계한다. [PostgreSQL connector 제약](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
+
+MERGE/upsert의 INSERT·UPDATE와 삭제 처리는 구분한다. 논리 삭제 모델이면 소비 쿼리의 제외 규칙도 정한다. Late change를 판별할 source sequence/position의 비교 범위를 명시한다. 서로 다른 source의 position을 하나의 전역 순서로 간주하지 않는다.
+
 ---
 
 ## 6.8 CDC → Iceberg
@@ -394,6 +408,13 @@ Snapshot Recovery
 → 복구 불가능 시 재초기화
 ```
 
+Snapshot으로 현재 상태를 복구할 수 있어도 사라진 로그의 중간 변경 이력까지 복원되는 것은 아니다.
+
+- 복구 전: offset, replication slot, 필요한 WAL의 가용성, snapshot mode를 확인한다.
+- 복구 후: 샘플 key의 순서, 중복, 삭제 반영, source/current-state 일치를 검증한다.
+
+[장애 대응 동작](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-when-things-go-wrong)
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -435,46 +456,3 @@ CDC는 초기 상태와 이후 변경을 같은 순서·의미로 이어 적용�
 [오케스트레이션](orchestration.md) · [dbt](dbt.md) · [핸드북 홈](../index.md)
 
 [관련 실무 프롬프트 6개](../prompts/cdc-debezium.md)
-
-## 적용 시 보완할 점
-
-### 기존 흐름도
-
-```mermaid
-flowchart LR
-  P[PostgreSQL] --> W[WAL]
-  W --> D[Debezium]
-  D --> K[Kafka]
-  K --> C[Flink or Spark]
-  C --> H[Iceberg history]
-  C --> S[Iceberg current state]
-```
-
-### 원문 6.1~6.4의 설명 범위
-
-CDC에는 여러 접근이 있으며, 원문의 transaction log 설명은 로그 기반 CDC에 해당한다. PostgreSQL에서는 WAL과 logical decoding을 사용한다. 로그 보존과 소비 위치 관리가 필요하다.
-
-Polling SQL의 `last_time`은 저장한 처리 시점을 뜻하는 의사 변수다. 삭제된 행은 이 쿼리로 찾을 수 없다. Polling 간격에 따른 지연도 생긴다.
-
-Snapshot read(`r`)는 읽은 행을 전달한다. `before` 등 세부 필드는 실제 이벤트 형식을 확인한다.
-
-### Snapshot과 이전 행의 조건
-
-정상적으로 완료한 초기 snapshot과 유효한 offset이 있으면 보통 재시작 때 이어 읽는다. Snapshot 도중 실패했거나 snapshot mode가 다르면 다시 snapshot할 수 있다. [Debezium PostgreSQL connector](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
-
-이벤트의 `before = old row`는 개념 설명이다. PostgreSQL UPDATE/DELETE의 이전 값 범위는 `REPLICA IDENTITY`와 decoding 조건에 따라 달라진다. 항상 완전한 이전 행을 얻는다고 가정하면 안 된다. Transaction metadata의 지원·설정도 확인한다. [Replica identity 설명](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-replica-identity)
-
-### Schema와 현재 상태 적용
-
-Nullable column 추가도 소비자가 자동 수용한다는 보장은 없다. PostgreSQL logical decoding은 DDL change event를 직접 전달하지 않는다. Schema 비교와 배포 절차를 함께 설계한다. [PostgreSQL connector 제약](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
-
-MERGE/upsert의 INSERT·UPDATE와 삭제 처리는 구분한다. 논리 삭제 모델이면 소비 쿼리의 제외 규칙도 정한다. Late change를 판별할 source sequence/position의 비교 범위를 명시한다. 서로 다른 source의 position을 하나의 전역 순서로 간주하지 않는다.
-
-### 복구 전후 확인
-
-Snapshot으로 현재 상태를 복구할 수 있어도 사라진 로그의 중간 변경 이력까지 복원되는 것은 아니다.
-
-- 복구 전: offset, replication slot, 필요한 WAL의 가용성, snapshot mode를 확인한다.
-- 복구 후: 샘플 key의 순서, 중복, 삭제 반영, source/current-state 일치를 검증한다.
-
-[장애 대응 동작](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-when-things-go-wrong)

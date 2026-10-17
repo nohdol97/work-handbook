@@ -52,6 +52,11 @@ Data Modeling 순서:
 4. Metric
 ```
 
+주문 1건을 여러 주문 항목과 join한 뒤 주문 금액을 다시 합산하면 금액이 반복될 수 있다. 물리 column부터 정하기 전에 한 행의 업무 의미를 합의한다. [Kimball: Grain](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/grain/)
+
+Event/transaction 구분은 업무 설명을 위한 것이다. 모든 모델링 방법론에서 서로 배타적인 fact 분류라는 뜻은 아니다.
+
+
 ---
 
 ## 9.2 Fact Tables
@@ -156,6 +161,13 @@ customer_sk | customer_id | region | valid_from | valid_to
 
 과거 시점 분석 가능.
 
+Type 2는 과거 행을 보존하고 새 version을 추가한다. 분석 시점에 맞는 version을 join해야 한다. 같은 natural key의 유효 구간이 겹치면 행이 늘어날 수 있으므로 종료 경계의 의미를 명확히 한다.
+
+OLTP는 정규화로 변경 일관성을 관리하는 경우가 많다.
+
+Denormalization에서는 서로 다른 grain과 변경 주기가 섞이면 반복 값과 집계 오류가 생길 수 있다. 조회 편의성뿐 아니라 이력과 유지보수 비용을 비교한다.
+
+
 ---
 
 ## 9.6 Denormalization
@@ -248,6 +260,11 @@ Agent Execution
 ≠ User Event
 ```
 
+하나의 agent 실행에 여러 LLM call이 있을 수 있다. 실행 비용을 호출과 join한 뒤 합산할 때 실행 행이 호출 수만큼 반복되는지 확인한다.
+
+Conformed dimension을 쓰려면 공유 dimension의 의미와 key 규칙이 일관되어야 한다. `fact_user_event`의 필드는 업무별 event schema로 따로 정의한다. `user_id` 같은 이름은 schema 예시이며 실제 개인 식별값을 포함하지 않는다.
+
+
 ---
 
 ## 9.8 Metrics Modeling
@@ -292,6 +309,9 @@ Average Latency
 
 Dashboard, Analyst, AI Agent가 동일한 정의를 사용하게 한다.
 
+분자와 분모는 같은 기간·필터·대상 집합으로 계산한다. 분모가 0일 때의 의미도 정한다. 이름이 같아도 grain이나 제외 조건이 다르면 같은 metric이 아니다.
+
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -333,39 +353,3 @@ Dashboard, Analyst, AI Agent가 동일한 정의를 사용하게 한다.
 [dbt](dbt.md) · [Trino](trino.md) · [핸드북 홈](../index.md)
 
 [관련 실무 프롬프트 6개](../prompts/analytical-modeling.md)
-
-## 부록: 기존 보완 설명
-
-### Grain과 중복 집계
-
-주문 1건을 여러 주문 항목과 join한 뒤 주문 금액을 다시 합산하면 금액이 반복될 수 있다. 물리 column부터 정하기 전에 한 행의 업무 의미를 합의한다. [Kimball: Grain](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/grain/)
-
-Event/transaction 구분은 업무 설명을 위한 것이다. 모든 모델링 방법론에서 서로 배타적인 fact 분류라는 뜻은 아니다.
-
-### SCD와 denormalization
-
-Type 2는 과거 행을 보존하고 새 version을 추가한다. 분석 시점에 맞는 version을 join해야 한다. 같은 natural key의 유효 구간이 겹치면 행이 늘어날 수 있으므로 종료 경계의 의미를 명확히 한다.
-
-OLTP는 정규화로 변경 일관성을 관리하는 경우가 많다.
-
-Denormalization에서는 서로 다른 grain과 변경 주기가 섞이면 반복 값과 집계 오류가 생길 수 있다. 조회 편의성뿐 아니라 이력과 유지보수 비용을 비교한다.
-
-### AI platform의 공유 dimension과 비용
-
-하나의 agent 실행에 여러 LLM call이 있을 수 있다. 실행 비용을 호출과 join한 뒤 합산할 때 실행 행이 호출 수만큼 반복되는지 확인한다.
-
-Conformed dimension을 쓰려면 공유 dimension의 의미와 key 규칙이 일관되어야 한다. `fact_user_event`의 필드는 업무별 event schema로 따로 정의한다. `user_id` 같은 이름은 schema 예시이며 실제 개인 식별값을 포함하지 않는다.
-
-### Metric의 계산 조건
-
-분자와 분모는 같은 기간·필터·대상 집합으로 계산한다. 분모가 0일 때의 의미도 정한다. 이름이 같아도 grain이나 제외 조건이 다르면 같은 metric이 아니다.
-
-### 기존 개념도
-
-```mermaid
-flowchart TD
-  A[dim_agent] --- F[fact_llm_call]
-  T[dim_team] --- F
-  M[dim_model] --- F
-  D[dim_date] --- F
-```

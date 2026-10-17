@@ -147,6 +147,13 @@ Offline tests can miss:
 - permissions,
 - production-only edge cases.
 
+
+**Tool evaluation conditions:** Expected schema compliance and tool authorization are separate checks. Check both whether the selected tool is appropriate and whether its use is authorized. A score does not prove the root cause.
+
+Online evaluation scores live traffic; offline evaluation compares changes on fixed inputs. Human feedback, rules, and LLM judges provide different signals. A score is not absolute truth. [Langfuse evaluation concepts](https://langfuse.com/docs/evaluation/core-concepts).
+
+Evaluation may finish immediately or asynchronously. Record its definition, evaluator version, time, and failure or unscored status to avoid treating missing scores as success. This is a design recommendation extending the source's trace-linking principle, not an implemented or measured result. Check SQL execution in an isolated environment. Citation presence does not prove citation accuracy.
+
 ---
 
 ## 16.2 Offline Evaluation Datasets
@@ -279,6 +286,8 @@ Production
 Important pattern:
 
 > **Production Failure → Offline Regression Case**
+
+The core pattern is **production failure → offline regression case**. Fixed inputs help fair comparison. They do not automatically fix the evaluator, data permissions, or retrieval state. This is an added design caution for reproducibility.
 
 ---
 
@@ -480,6 +489,8 @@ Model-as-Judge provides scale.
 
 Human Review provides higher-confidence calibration.
 
+Calibrate with human and judge scores on a sample. Persistent disagreement is a reason to review the judge model or prompt. An example scale is `100,000 traces → Model-as-Judge` and `important 1,000 traces → Human Review`. The judge provides scale. Human review helps make calibration more reliable. Humans can still make mistakes.
+
 ---
 
 ## 16.5 Prompt Versions
@@ -582,6 +593,8 @@ judge_prompt
 summarization_prompt
 ```
 
+Useful fields are `prompt_id`, `prompt_version`, `prompt_text`, `created_at`, `created_by`, and `change_description`. For example, record `prompt_id=agent_system_prompt`, `prompt_version=12`, and change “Clarified tool usage rules.” Manage real author data under internal access and privacy rules. Do not put it in public examples.
+
 ---
 
 ## 16.6 Model Versions
@@ -673,6 +686,8 @@ Base Model   → M1
 Training Set → train_v4
 Fine-tune    → ft_v7
 ```
+
+Record the exact model version that produced a result. `model=model-X` may not be enough. The same model name in June and September may refer to different serving snapshots after a provider update. Record `provider`, `model_name`, `model_version`, `deployment_id`, and `endpoint`. Keep internal endpoints and credentials out of public documentation.
 
 ---
 
@@ -854,6 +869,8 @@ Offline is safer for pre-release testing.
 
 Online gives real-world evidence.
 
+Change one variable when possible. Keep the dataset, model, and agent logic fixed when comparing Prompt v10 and v11. Changing the prompt, model, agent, and dataset together makes differences hard to explain. Offline experiments compare Agent A and B with fixed evaluation data to reduce pre-release risk. Online experiments split live traffic to gather evidence from real conditions. Also inspect traffic mix and experiment conditions when interpreting online results.
+
 ---
 
 ## 16.9 Regression Datasets
@@ -924,6 +941,10 @@ regression_v3
 Important pattern:
 
 > **Production Failure → Regression Case → Release Test**
+
+Categories include `tool_selection_regression`, `rag_regression`, `security_regression`, and `format_regression`. Example release gates require `100%` for Critical Security Regression and `>=98%` for General Regression. These are not universal safety thresholds. Choose gates for the actual risks and requirements. Version the dataset as `regression_v1 → v2 → v3` too.
+
+The recurring pattern is **Production Failure → Regression Case → Release Test**. Define the pass-rate denominator and distinguish failed from unscored cases.
 
 ---
 
@@ -1044,6 +1065,10 @@ Smaller context
 Target:
 
 > **Maintain or improve quality while reducing cost and latency where possible.**
+
+`cost_per_success` may be more useful than raw request cost. A sequential execution of `LLM 2s + Tool 5s + LLM 2s = Total 9s` shows the tool's large contribution. Use percentiles as well as averages.
+
+A larger model may increase quality, cost, and latency. More tool calls may improve quality but also increase cost and latency. A smaller context may reduce cost and latency while lowering quality. These are tendencies and hypotheses, not guaranteed laws. Aim to maintain or improve quality while reducing cost and latency where possible.
 
 ---
 
@@ -1176,6 +1201,14 @@ Iceberg
 → Long-term Analytical History
 ```
 
+This role split is a proposed architecture, not a deployed system or a promise of automatic integration. Use Langfuse for traces, LLM and tool calls, prompts and responses, scores, feedback, experiments, and evaluation datasets. Iceberg is the table layer for long-term history, large-scale analysis, cross-domain joins, governance, BI, and historical version analysis.
+
+Export files in object storage do not automatically become Iceberg tables. An ingestion, transformation, and commit path is required. Langfuse offers blob storage export and a public API. Check supported formats, fields, versions, and hosting options before adoption. [Export documentation](https://langfuse.com/docs/api-and-data-platform/features/export-to-blob-storage), [Public API](https://langfuse.com/docs/api-and-data-platform/features/public-api).
+
+Keeping everything only in Langfuse may be insufficient when traces must join HR organization data, finance cost, product usage, and business KPIs. The data platform handles this broader analysis. Limit sensitive joins to the intended purpose and access scope.
+
+An example source-of-truth split assigns agent code, workflow, and config to Git; AI trace, prompt, and evaluation operations to Langfuse; and long-term analytical history to Iceberg. See [Iceberg](lakehouse-iceberg.md), [analytical modeling](analytical-modeling.md), and [AI-ready data](ai-ready-data.md).
+
 ---
 
 ## 16.12 Where Are All These Versions Usually Managed?
@@ -1252,6 +1285,16 @@ cost_per_execution  = $0.08
 
 These version records help reconstruct evaluation conditions and explain score differences.
 
+Manage versions by asset type and connect them with experiment or release IDs. One system does not need to own every asset. These are common options, not guarantees of identical version semantics or features across products.
+
+The commit and model names in this unified record are fictional teaching values.
+
+These links provide evidence for reproduction and explanation. IDs alone do not guarantee identical execution. Preserve the actual artifacts, inputs, runtime, and relevant external state too.
+
+Official documentation was checked on 2026-09-26. No installation or runtime test was performed. Langfuse dataset item changes create timestamp-based versions. Dataset schema changes are not part of that versioning. Record the item version and schema definition separately. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
+
+MLflow prompt versions are immutable, while aliases can move to another version. Model Registry aliases can also refer to model versions. Record the version actually used, not just a moving alias. [Prompt Registry](https://mlflow.org/docs/latest/genai/prompt-registry/), [Model Registry workflow](https://mlflow.org/docs/latest/ml/model-registry/workflow/).
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -1321,126 +1364,3 @@ These version records help reconstruct evaluation conditions and explain score d
 ** A person compares the original experiments, traces, version artifacts, and denominators. Run needed comparisons in an approved isolated evaluation environment, then review the results. No execution was performed for this page.
 
 [Online evaluation](ai-evaluation.md#161-online-evaluation-events) · [AI-ready data](ai-ready-data.md) · [Study scope](curriculum.md)
-
-## Supplement: 16.1 Langfuse links and evaluation conditions
-
-### Langfuse connection from the earlier source
-
-Concept:
-
-```text
-Langfuse Trace
- ├─ Prompt
- ├─ LLM Call
- ├─ Tool Call
- ├─ Response
- └─ Score / Feedback
-```
-
-Uses:
-
-- Find traces with low scores.
-- Investigate thumbs-down cases.
-- Compare specific agent versions.
-- Add production failures to evaluation datasets.
-
-The goal of online evaluation:
-
-> **Continuously observe quality under real user conditions.**
-
-Offline tests may miss:
-
-- new user questions,
-- tool failures,
-- long context,
-- actual permissions,
-- changes in production data.
-
----
-
-**Tool evaluation conditions:** Expected schema compliance and tool authorization are separate checks. Check both whether the selected tool is appropriate and whether its use is authorized. A score does not prove the root cause.
-
-Online evaluation scores live traffic; offline evaluation compares changes on fixed inputs. Human feedback, rules, and LLM judges provide different signals. A score is not absolute truth. [Langfuse evaluation concepts](https://langfuse.com/docs/evaluation/core-concepts).
-
-Evaluation may finish immediately or asynchronously. Record its definition, evaluator version, time, and failure or unscored status to avoid treating missing scores as success. This is a design recommendation extending the source's trace-linking principle, not an implemented or measured result. Check SQL execution in an isolated environment. Citation presence does not prove citation accuracy.
-
-## Additional checks before applying these ideas
-
-These are the additional explanations and conditions from the previous page. Read them separately from the preserved source text. The existing official-documentation review date remains 2026-09-26; no new runtime validation is claimed.
-
-### 16.2 Offline evaluation datasets — additional checks
-
-The core pattern is **production failure → offline regression case**. Fixed inputs help fair comparison. They do not automatically fix the evaluator, data permissions, or retrieval state. This is an added design caution for reproducibility.
-
-### 16.4 Model-as-Judge — additional checks
-
-Calibrate with human and judge scores on a sample. Persistent disagreement is a reason to review the judge model or prompt. An example scale is `100,000 traces → Model-as-Judge` and `important 1,000 traces → Human Review`. The judge provides scale. Human review helps make calibration more reliable. Humans can still make mistakes.
-
-### 16.5 Prompt versions — additional checks
-
-Useful fields are `prompt_id`, `prompt_version`, `prompt_text`, `created_at`, `created_by`, and `change_description`. For example, record `prompt_id=agent_system_prompt`, `prompt_version=12`, and change “Clarified tool usage rules.” Manage real author data under internal access and privacy rules. Do not put it in public examples.
-
-### 16.6 Model versions — additional checks
-
-Record the exact model version that produced a result. `model=model-X` may not be enough. The same model name in June and September may refer to different serving snapshots after a provider update. Record `provider`, `model_name`, `model_version`, `deployment_id`, and `endpoint`. Keep internal endpoints and credentials out of public documentation.
-
-### 16.8 Experiment tracking — additional checks
-
-Change one variable when possible. Keep the dataset, model, and agent logic fixed when comparing Prompt v10 and v11. Changing the prompt, model, agent, and dataset together makes differences hard to explain. Offline experiments compare Agent A and B with fixed evaluation data to reduce pre-release risk. Online experiments split live traffic to gather evidence from real conditions. Also inspect traffic mix and experiment conditions when interpreting online results.
-
-### 16.9 Regression datasets — additional checks
-
-Categories include `tool_selection_regression`, `rag_regression`, `security_regression`, and `format_regression`. Example release gates require `100%` for Critical Security Regression and `>=98%` for General Regression. These are not universal safety thresholds. Choose gates for the actual risks and requirements. Version the dataset as `regression_v1 → v2 → v3` too.
-
-The recurring pattern is **Production Failure → Regression Case → Release Test**. Define the pass-rate denominator and distinguish failed from unscored cases.
-
-### 16.10 Cost / Quality / Latency — additional checks
-
-`cost_per_success` may be more useful than raw request cost. A sequential execution of `LLM 2s + Tool 5s + LLM 2s = Total 9s` shows the tool's large contribution. Use percentiles as well as averages.
-
-A larger model may increase quality, cost, and latency. More tool calls may improve quality but also increase cost and latency. A smaller context may reduce cost and latency while lowering quality. These are tendencies and hypotheses, not guaranteed laws. Aim to maintain or improve quality while reducing cost and latency where possible.
-
-### 16.11 Langfuse + Iceberg — additional checks
-
-This role split is a proposed architecture, not a deployed system or a promise of automatic integration. Use Langfuse for traces, LLM and tool calls, prompts and responses, scores, feedback, experiments, and evaluation datasets. Iceberg is the table layer for long-term history, large-scale analysis, cross-domain joins, governance, BI, and historical version analysis.
-
-Export files in object storage do not automatically become Iceberg tables. An ingestion, transformation, and commit path is required. Langfuse offers blob storage export and a public API. Check supported formats, fields, versions, and hosting options before adoption. [Export documentation](https://langfuse.com/docs/api-and-data-platform/features/export-to-blob-storage), [Public API](https://langfuse.com/docs/api-and-data-platform/features/public-api).
-
-Keeping everything only in Langfuse may be insufficient when traces must join HR organization data, finance cost, product usage, and business KPIs. The data platform handles this broader analysis. Limit sensitive joins to the intended purpose and access scope.
-
-An example source-of-truth split assigns agent code, workflow, and config to Git; AI trace, prompt, and evaluation operations to Langfuse; and long-term analytical history to Iceberg. See [Iceberg](lakehouse-iceberg.md), [analytical modeling](analytical-modeling.md), and [AI-ready data](ai-ready-data.md).
-
-### 16.12 Where are all these versions managed? — additional checks
-
-Manage versions by asset type and connect them with experiment or release IDs. One system does not need to own every asset. These are common options, not guarantees of identical version semantics or features across products.
-
-The commit and model names in this unified record are fictional teaching values.
-
-These links provide evidence for reproduction and explanation. IDs alone do not guarantee identical execution. Preserve the actual artifacts, inputs, runtime, and relevant external state too.
-
-Official documentation was checked on 2026-09-26. No installation or runtime test was performed. Langfuse dataset item changes create timestamp-based versions. Dataset schema changes are not part of that versioning. Record the item version and schema definition separately. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
-
-MLflow prompt versions are immutable, while aliases can move to another version. Model Registry aliases can also refer to model versions. Record the version actually used, not just a moving alias. [Prompt Registry](https://mlflow.org/docs/latest/genai/prompt-registry/), [Model Registry workflow](https://mlflow.org/docs/latest/ml/model-registry/workflow/).
-
-### Additional flow diagrams
-
-```mermaid
-flowchart LR
-    P[Production] --> O[Online evaluation]
-    O --> F[Failure found]
-    F --> D[Offline regression dataset]
-    D --> E[Evaluate new version]
-    E --> R[Release]
-    R --> P
-```
-
-```mermaid
-flowchart TD
-    A[Application or Agent] --> L[Langfuse]
-    L --> T[Trace / Observation / Score]
-    T --> E[Export or API]
-    E --> O[Object storage]
-    O --> I[Iceberg tables]
-    I --> C[Spark / dbt / Trino]
-    C --> B[BI / Cost / Evaluation analytics]
-```

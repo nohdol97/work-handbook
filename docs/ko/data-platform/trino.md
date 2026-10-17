@@ -51,6 +51,11 @@ Trino Coordinator ≈ Spark Driver
 Trino Worker ≈ Spark Executor
 ```
 
+Coordinator/Worker와 Spark Driver/Executor의 비교는 역할 비유다. 실행 모델이 같다는 뜻은 아니다. `SQL → Query Plan → Stage → Task → Split`도 학습용 단순화이며 모든 실행 요소를 표현하지 않는다. [Trino concepts](https://trino.io/docs/current/overview/concepts.html)
+
+Trino Catalog는 설정된 connector와 data source를 구분한다. Iceberg Catalog는 table metadata를 찾고 관리한다. Federated query의 성능은 원격 scan, 데이터 이동, source 부하를 함께 고려한다.
+
+
 ---
 
 ## 10.2 Connector Model
@@ -148,6 +153,13 @@ Pushdown은 filter나 집계 같은 일을 가능한 경우 원천 가까이에�
 
 Iceberg에서는 Partition/File/Row Group/Column Pruning이 비슷한 목적을 수행한다.
 
+Pushdown 지원은 connector와 query 형태에 달려 있다. SQL에 filter가 있어도 반드시 적용되는 것은 아니다. EXPLAIN과 실제 읽은 데이터량으로 확인한다.
+
+Iceberg pruning과 원격 DB의 aggregation pushdown은 읽기와 이동량을 줄이려는 목적을 공유하지만 같은 연산은 아니다. [Trino pushdown](https://trino.io/docs/current/optimizer/pushdown.html)
+
+원문의 “모든 Worker”는 join에 참여하는 worker를 기준으로 이해한다. Broadcast할 작은 table이 각 worker의 memory에 맞는지 확인한다. Skew가 생기면 일부 worker에 부하와 memory 사용이 집중되어 늦게 끝날 수 있다.
+
+
 ---
 
 ## 10.5 Join Strategies
@@ -195,6 +207,15 @@ Disk 사용
 ```
 
 Spill이 허용되는 조건에서는 일부 memory 부족을 완화할 수 있지만 disk I/O로 느려지고 모든 실패를 막지는 못한다.
+
+Spill은 memory 압박을 줄이는 데 도움이 될 수 있지만 모든 OOM을 해결하지는 않는다. Disk I/O 때문에 query가 느려질 수 있다.
+
+2026-09-24에 확인한 Trino 문서는 spill을 legacy 기능으로 설명하고, 적절한 task retry policy와 exchange manager를 쓰는 fault-tolerant execution 검토를 안내했다. 실제 적용은 workload·connector·설정으로 확인한다. 이번 편집에서 공식 문서를 새로 확인하거나 성능 실험을 수행한 것은 아니다. [Trino spill](https://trino.io/docs/current/admin/spill.html)
+
+Trino/Spark 비교는 자주 맡는 역할을 설명한다. 절대적인 기능 경계나 성능 보장이 아니다.
+
+Iceberg pruning 효과도 layout, metadata, filter, connector 구현에 따라 달라진다. [Trino Iceberg connector](https://trino.io/docs/current/connector/iceberg.html)
+
 
 ---
 
@@ -315,39 +336,3 @@ Trino query는 원천에서 읽는 양, worker 사이 이동량, memory가 함�
 [분석 데이터 모델링](analytical-modeling.md) · [dbt](dbt.md) · [핸드북 홈](../index.md)
 
 [관련 실무 프롬프트 6개](../prompts/trino.md)
-
-## 부록: 기존 보완 설명
-
-### Architecture와 실행 모델
-
-Coordinator/Worker와 Spark Driver/Executor의 비교는 역할 비유다. 실행 모델이 같다는 뜻은 아니다. `SQL → Query Plan → Stage → Task → Split`도 학습용 단순화이며 모든 실행 요소를 표현하지 않는다. [Trino concepts](https://trino.io/docs/current/overview/concepts.html)
-
-Trino Catalog는 설정된 connector와 data source를 구분한다. Iceberg Catalog는 table metadata를 찾고 관리한다. Federated query의 성능은 원격 scan, 데이터 이동, source 부하를 함께 고려한다.
-
-### Pushdown과 join 검증
-
-Pushdown 지원은 connector와 query 형태에 달려 있다. SQL에 filter가 있어도 반드시 적용되는 것은 아니다. EXPLAIN과 실제 읽은 데이터량으로 확인한다.
-
-Iceberg pruning과 원격 DB의 aggregation pushdown은 읽기와 이동량을 줄이려는 목적을 공유하지만 같은 연산은 아니다. [Trino pushdown](https://trino.io/docs/current/optimizer/pushdown.html)
-
-원문의 “모든 Worker”는 join에 참여하는 worker를 기준으로 이해한다. Broadcast할 작은 table이 각 worker의 memory에 맞는지 확인한다. Skew가 생기면 일부 worker에 부하와 memory 사용이 집중되어 늦게 끝날 수 있다.
-
-### Spill과 역할 분담의 조건
-
-Spill은 memory 압박을 줄이는 데 도움이 될 수 있지만 모든 OOM을 해결하지는 않는다. Disk I/O 때문에 query가 느려질 수 있다.
-
-2026-09-24에 확인한 Trino 문서는 spill을 legacy 기능으로 설명하고, 적절한 task retry policy와 exchange manager를 쓰는 fault-tolerant execution 검토를 안내했다. 실제 적용은 workload·connector·설정으로 확인한다. 이번 편집에서 공식 문서를 새로 확인하거나 성능 실험을 수행한 것은 아니다. [Trino spill](https://trino.io/docs/current/admin/spill.html)
-
-Trino/Spark 비교는 자주 맡는 역할을 설명한다. 절대적인 기능 경계나 성능 보장이 아니다.
-
-Iceberg pruning 효과도 layout, metadata, filter, connector 구현에 따라 달라진다. [Trino Iceberg connector](https://trino.io/docs/current/connector/iceberg.html)
-
-### 기존 개념도
-
-```mermaid
-flowchart LR
-  S[S3 objects] --> P[Parquet data files]
-  I[Iceberg metadata and snapshots] --> T[Trino]
-  P --> T
-  T --> B[BI and analysts]
-```

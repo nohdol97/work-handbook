@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### check {#vocab-check}
 
-**699회 · 74개 문서 · 중립**
+**670회 · 74개 문서 · 중립**
 
 **확인하다; 점검**
 
@@ -30,7 +30,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### use {#vocab-use}
 
-**538회 · 75개 문서 · 중립**
+**530회 · 75개 문서 · 중립**
 
 **사용하다; 사용**
 
@@ -46,7 +46,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### change {#vocab-change}
 
-**412회 · 66개 문서 · 중립**
+**410회 · 66개 문서 · 중립**
 
 **변경하다; 변경 사항**
 
@@ -78,7 +78,7 @@ separate A from B로 분리 대상을 표현한다. 형용사로는 a separate t
 
 ### manage {#vocab-manage}
 
-**230회 · 46개 문서 · 중립**
+**226회 · 46개 문서 · 중립**
 
 **관리하다; 해내다**
 
@@ -94,7 +94,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### result {#vocab-result}
 
-**227회 · 73개 문서 · 중립**
+**225회 · 73개 문서 · 중립**
 
 **결과**
 
@@ -110,7 +110,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### failure {#vocab-failure}
 
-**220회 · 50개 문서 · 중립**
+**215회 · 50개 문서 · 중립**
 
 **실패; 고장**
 
@@ -126,7 +126,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### request {#vocab-request}
 
-**210회 · 30개 문서 · 중립**
+**209회 · 30개 문서 · 중립**
 
 **요청하다; 요청**
 
@@ -142,7 +142,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### actual {#vocab-actual}
 
-**209회 · 65개 문서 · 중립**
+**203회 · 65개 문서 · 중립**
 
 **실제의**
 
@@ -158,7 +158,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### evidence {#vocab-evidence}
 
-**204회 · 48개 문서 · 중립**
+**203회 · 48개 문서 · 중립**
 
 **근거; 증거**
 
@@ -174,25 +174,9 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 용법 참고: [1](https://dictionaryblog.cambridge.org/2018/03/21/countable-or-uncountable-and-why-it-matters/).
 
-### review {#vocab-review}
-
-**196회 · 58개 문서 · 중립**
-
-**검토하다; 검토**
-
-설계나 변경안을 판단하기 위해 살펴볼 때 쓴다. 검토했다는 말 자체가 승인했다는 뜻은 아니다.
-
-> We should review the migration plan before scheduling downtime.
->
-> 서비스 중단 일정을 잡기 전에 마이그레이션 계획을 검토해야 합니다.
-
-집계한 형태: review, reviews, reviewed, reviewing.
-
-본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/model-platform-collaboration](../ai-model-development/model-platform-collaboration.md).
-
 ### access {#vocab-access}
 
-**194회 · 40개 문서 · 중립**
+**191회 · 40개 문서 · 중립**
 
 **접근하다; 접근 권한**
 
@@ -206,9 +190,25 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 본문 예: [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md).
 
+### review {#vocab-review}
+
+**190회 · 58개 문서 · 중립**
+
+**검토하다; 검토**
+
+설계나 변경안을 판단하기 위해 살펴볼 때 쓴다. 검토했다는 말 자체가 승인했다는 뜻은 아니다.
+
+> We should review the migration plan before scheduling downtime.
+>
+> 서비스 중단 일정을 잡기 전에 마이그레이션 계획을 검토해야 합니다.
+
+집계한 형태: review, reviews, reviewed, reviewing.
+
+본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/model-platform-collaboration](../ai-model-development/model-platform-collaboration.md).
+
 ### record {#vocab-record}
 
-**158회 · 54개 문서 · 중립**
+**157회 · 54개 문서 · 중립**
 
 **기록하다; 기록**
 
@@ -240,7 +240,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### require {#vocab-require}
 
-**146회 · 53개 문서 · 중립**
+**145회 · 53개 문서 · 중립**
 
 **필요로 하다; 요구하다**
 
@@ -256,7 +256,7 @@ require A는 A가 필요하다는 뜻이다. require someone to do는 누군가�
 
 ### compare {#vocab-compare}
 
-**130회 · 48개 문서 · 중립**
+**128회 · 48개 문서 · 중립**
 
 **비교하다**
 
@@ -272,7 +272,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 ### capacity {#vocab-capacity}
 
-**116회 · 30개 문서 · 중립**
+**115회 · 30개 문서 · 중립**
 
 **수용 능력; 처리 여력**
 
@@ -285,22 +285,6 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 집계한 형태: capacity, capacities.
 
 본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/model-platform-collaboration](../ai-model-development/model-platform-collaboration.md).
-
-### scope {#vocab-scope}
-
-**106회 · 46개 문서 · 중립**
-
-**범위**
-
-업무·변경·조사의 경계를 설명한다. within the scope와 outside the scope로 포함 여부를 표현한다.
-
-> Data cleanup is outside the scope of this release.
->
-> 데이터 정리는 이번 릴리스 범위에 포함되지 않습니다.
-
-집계한 형태: scope, scopes.
-
-본문 예: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
 
 ### assume {#vocab-assume}
 
@@ -317,6 +301,22 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 집계한 형태: assume, assumes, assumed, assuming.
 
 본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
+
+### scope {#vocab-scope}
+
+**95회 · 45개 문서 · 중립**
+
+**범위**
+
+업무·변경·조사의 경계를 설명한다. within the scope와 outside the scope로 포함 여부를 표현한다.
+
+> Data cleanup is outside the scope of this release.
+>
+> 데이터 정리는 이번 릴리스 범위에 포함되지 않습니다.
+
+집계한 형태: scope, scopes.
+
+본문 예: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
 
 ### workload {#vocab-workload}
 
@@ -352,7 +352,7 @@ reduce by는 감소한 양, reduce to는 감소 후 값을 나타낸다. 수치�
 
 ### provide {#vocab-provide}
 
-**77회 · 35개 문서 · 중립**
+**76회 · 35개 문서 · 중립**
 
 **제공하다**
 
@@ -368,7 +368,7 @@ provide A for B 또는 provide B with A로 제공 대상과 받는 대상을 표
 
 ### handle {#vocab-handle}
 
-**70회 · 31개 문서 · 중립**
+**69회 · 31개 문서 · 중립**
 
 **처리하다; 대응하다**
 
@@ -416,38 +416,6 @@ allow someone to do로 허용이나 가능성을 표현한다. 목적어 없이 
 
 본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md).
 
-### consider {#vocab-consider}
-
-**40회 · 26개 문서 · 중립**
-
-**검토하다; 고려하다**
-
-행동을 고려할 때 consider doing을 쓴다. consider to do와 혼동하지 않는다.
-
-> We should consider adding a timeout before increasing the worker count.
->
-> 워커 수를 늘리기 전에 시간 제한 추가를 고려해야 합니다.
-
-집계한 형태: consider, considers, considered, considering.
-
-본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md).
-
-### specific {#vocab-specific}
-
-**39회 · 21개 문서 · 중립**
-
-**구체적인; 특정한**
-
-specific requirements는 구체적인 요구사항, a specific version은 특정 버전이라는 뜻이다.
-
-> Could you give a specific example of the failure you observed?
->
-> 관측한 실패 사례를 구체적으로 하나 설명해 주시겠어요?
-
-집계한 형태: specific.
-
-본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md).
-
 ### impact {#vocab-impact}
 
 **38회 · 18개 문서 · 중립**
@@ -463,6 +431,38 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 집계한 형태: impact, impacts, impacted, impacting.
 
 본문 예: [aws-cloud/managed-services](../aws-cloud/managed-services.md), [data-platform/architecture](../data-platform/architecture.md), [data-platform/data-observability](../data-platform/data-observability.md).
+
+### specific {#vocab-specific}
+
+**38회 · 20개 문서 · 중립**
+
+**구체적인; 특정한**
+
+specific requirements는 구체적인 요구사항, a specific version은 특정 버전이라는 뜻이다.
+
+> Could you give a specific example of the failure you observed?
+>
+> 관측한 실패 사례를 구체적으로 하나 설명해 주시겠어요?
+
+집계한 형태: specific.
+
+본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md).
+
+### consider {#vocab-consider}
+
+**37회 · 25개 문서 · 중립**
+
+**검토하다; 고려하다**
+
+행동을 고려할 때 consider doing을 쓴다. consider to do와 혼동하지 않는다.
+
+> We should consider adding a timeout before increasing the worker count.
+>
+> 워커 수를 늘리기 전에 시간 제한 추가를 고려해야 합니다.
+
+집계한 형태: consider, considers, considered, considering.
+
+본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md).
 
 ### expected {#vocab-expected}
 
@@ -482,7 +482,7 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 ### verify {#vocab-verify}
 
-**33회 · 21개 문서 · 중립**
+**32회 · 21개 문서 · 중립**
 
 **사실이나 정확성을 확인하다**
 
@@ -530,7 +530,7 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 ### consistent {#vocab-consistent}
 
-**25회 · 16개 문서 · 중립**
+**23회 · 15개 문서 · 중립**
 
 **일관된; 서로 모순되지 않는**
 
@@ -542,25 +542,9 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 집계한 형태: consistent.
 
-본문 예: [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/storage-databases](../aws-cloud/storage-databases.md), [data-platform/ai-ready-data](../data-platform/ai-ready-data.md).
+본문 예: [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/storage-databases](../aws-cloud/storage-databases.md), [data-platform/analytical-modeling](../data-platform/analytical-modeling.md).
 
 용법 참고: [1](https://dictionary.cambridge.org/us/dictionary/english/consistent).
-
-### preserve {#vocab-preserve}
-
-**23회 · 19개 문서 · 중립**
-
-**보존하다; 유지하다**
-
-변경 과정에서도 중요한 내용이나 성질을 유지한다는 뜻으로 쓴다.
-
-> The migration must preserve the original event timestamps.
->
-> 마이그레이션은 원래 이벤트 시각을 보존해야 합니다.
-
-집계한 형태: preserve, preserves, preserved, preserving.
-
-본문 예: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
 
 ### approach {#vocab-approach}
 
@@ -626,9 +610,25 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
 
+### preserve {#vocab-preserve}
+
+**22회 · 19개 문서 · 중립**
+
+**보존하다; 유지하다**
+
+변경 과정에서도 중요한 내용이나 성질을 유지한다는 뜻으로 쓴다.
+
+> The migration must preserve the original event timestamps.
+>
+> 마이그레이션은 원래 이벤트 시각을 보존해야 합니다.
+
+집계한 형태: preserve, preserves, preserved, preserving.
+
+본문 예: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
+
 ### constraint {#vocab-constraint}
 
-**21회 · 13개 문서 · 중립**
+**20회 · 13개 문서 · 중립**
 
 **제약 조건**
 
