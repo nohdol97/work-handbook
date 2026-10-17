@@ -49,8 +49,8 @@ make validate
 
 1. `sources/<batch>/source.md`에 민감 정보를 제거한 원문 전체를 보존한다. 커리큘럼이 있으면 `curriculum.md`도 둔다. 접근 불가 부분은 명시한다.
 2. [입력 스키마](configs/source-model.md)에 맞춰 `content-manifest.md`, `mapping.md`, `coverage-matrix.md`를 만든다. 문서 작성 전에 모든 의미 있는 지식을 먼저 추출한다.
-3. [원문 추적 스킬](.agents/skills/preserve-study-source/SKILL.md)을 적용한다. 해당 작업에서 선택된 등록 구역은 `reviews/source-preservation.json`에 상시 지시·작업 범위 증거와 `editable` 모드를 기록하고 원본·ID 추적을 유지하며 본문을 고친다. 선택하지 않은 구역과 명시적 verbatim 요청의 보존 규칙은 유지한다.
-4. 등록된 구역은 `.venv/bin/python scripts/check_source_preservation.py`로 모드별 동일성 또는 목차·코드·목록·표·인용 형태를 검사한다. 작성 방식과 관계없이 전체 한영 쌍을 직접 읽어 원문 대비 누락·정확성·가독성·쉬운 영어·개인정보를 검토한다. `reviews/bilingual.json`에 실제 검토자, 결과, 현재 SHA-256을 기록한다. 해시만 갱신해서 검토를 대신하면 안 된다.
+3. [원문 추적 스킬](.agents/skills/preserve-study-source/SKILL.md)을 적용한다. 해당 작업에서 선택된 등록 구역은 `reviews/source-preservation.json`에 상시 지시·작업 범위 증거와 `editable` 모드를 기록한다. 원본·ID와 기존 목차·예제 형태를 유지하면서 어려운 본문을 직접 고치고, 필요한 적용 조건은 해당 절에 녹인다. AI 실전은 실제 도움이 되는 곳에만 둔다. 선택하지 않은 구역과 명시적 verbatim 요청의 보존 규칙은 유지한다.
+4. 등록된 구역은 `.venv/bin/python scripts/check_source_preservation.py`로 모드별 동일성 또는 원래 목차·코드·목록·표·인용의 순서 보존을 검사한다. 새 예시는 추가할 수 있지만 기존 형태를 지울 수 없다. 작성 방식과 관계없이 전체 한영 쌍을 직접 읽어 원문 대비 누락·정확성·가독성·쉬운 영어·개인정보를 검토한다. `reviews/bilingual.json`에 실제 검토자, 결과, 현재 SHA-256을 기록한다. 해시만 갱신해서 검토를 대신하면 안 된다.
 5. 영어 빈도 후보를 먼저 확인하고 실전 영어 원고·생성물·검토 기록을 갱신한다. `.venv/bin/python scripts/check_handbook.py --write-reports`로 반영 보고서를 만든다. `make finalize`로 전체 검증과 vault 저장을 실행한다.
 6. 검증된 지정 파일을 커밋하고 공개 원격에 push한다. 자료·커리큘럼·페이지 쌍·coverage·검증·미해결 사항을 간단히 보고한다.
 

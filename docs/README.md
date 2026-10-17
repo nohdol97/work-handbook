@@ -16,6 +16,7 @@
 | [010](adr/010-language-reading-position.md) | accepted | i18n 링크를 유지하고 읽기 위치를 복원하는 이동 가능한 언어 버튼·단축키 |
 | [011](adr/011-accessible-writing-and-source-boundaries.md) | accepted | 기존 원문 검증을 유지하며 앞으로의 설명을 입문자 중심으로 작성 |
 | [012](adr/012-scoped-source-rewrite.md) | accepted | 명시 요청 구역만 원본 추적을 유지하며 본문 직접 개정 |
+| [013](adr/013-integrated-study-explanations.md) | accepted | 필요한 보완을 원문 절에 통합하고 AI 예시는 선택적으로 사용 |
 
 ## 스펙
 
@@ -31,6 +32,7 @@
 | [008](specs/008-practical-english.md) | active | 빈도 집계·한영 어휘/표현·생성물 최신성·기존/신규 문서 반복 학습 |
 | [009](specs/009-beginner-friendly-writing.md) | active | 기존 목차·핵심 지식 보존과 입문자 중심 설명·장별 요약 검토 |
 | [010](specs/010-requested-source-rewrite.md) | active | 명시 요청 구역의 본문 개정·범위 한정 등록·구조 및 의미 검토 |
+| [011](specs/011-integrated-study-pages.md) | active | 원문 절별 보완 통합·유연한 실무/AI 흐름·원래 형식 보존 |
 
 ## 제안서
 

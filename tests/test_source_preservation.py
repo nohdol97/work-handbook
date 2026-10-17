@@ -72,6 +72,22 @@ class PreservationTests(unittest.TestCase):
         self.pair(self.core.replace('\n---', ''), 'ko')
         self.assertTrue(any('form' in x for x in checker.audit(self.root)))
 
+    def test_editable_source_accepts_additive_examples_in_existing_section(self):
+        self.record['preservation_mode'] = 'editable'
+        self.record['user_request'] = 'Integrate necessary practice details into the source section.'
+        self.config()
+        addition = '\n\nA practical condition:\n\n- check the input\n- check the output\n\n```text\nnew example\n```'
+        self.pair(self.core.replace('Original paragraph.', 'Original paragraph.' + addition))
+        self.assertEqual(checker.audit(self.root), [])
+
+    def test_editable_source_cannot_move_original_form_to_another_section(self):
+        self.record['preservation_mode'] = 'editable'
+        self.record['user_request'] = 'Improve existing prose without losing source form.'
+        self.config()
+        shifted = self.core.replace('- one\n- two\n\n', '').replace('Keep order.', 'Keep order.\n\n- new one\n- new two')
+        self.pair(shifted)
+        self.assertTrue(any('form' in x for x in checker.audit(self.root)))
+
     def inline_addition(self):
         block = '<!-- INLINE ADDITION EXAMPLE START -->\n\nAdditional explanation.\n\n<!-- INLINE ADDITION EXAMPLE END -->\n\n'
         self.record['inline_additions'] = [{

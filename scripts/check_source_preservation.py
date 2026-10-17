@@ -56,6 +56,25 @@ def outline(text):
     return headings, fences, form
 
 
+def contains_in_order(original, revised):
+    """Allow added teaching examples while retaining each original form token in order."""
+    pending = iter(revised)
+    return all(any(candidate == item for candidate in pending) for item in original)
+
+
+def section_forms(text):
+    """Keep source examples and layout in their original numbered section."""
+    sections = [([], [])]
+    for item in structure(text):
+        if item[0] == 'heading' and item[1] == 2:
+            sections.append(([], []))
+        if item[0] in ('fence', 'fence-end'):
+            sections[-1][0].append(item)
+        elif item[0] in ('list', 'table', 'quote', 'separator'):
+            sections[-1][1].append(item)
+    return sections
+
+
 def _file(root, relative, parent):
     if not isinstance(relative, str) or not relative.endswith('.md'):
         raise ValueError('expected Markdown path')
@@ -184,13 +203,21 @@ def audit(root):
                 else:
                     if not core.strip():
                         errors.append(f'{label}: {lang} editable source is empty')
-                    expected_headings, expected_fences, expected_form = outline(original)
-                    headings, fences, form = outline(core)
+                    expected_headings = outline(original)[0]
+                    headings = outline(core)[0]
                     if headings != expected_headings:
                         errors.append(f'{label}: {lang} source outline mismatch')
-                    if fences != expected_fences:
+                    original_sections = section_forms(original)
+                    revised_sections = section_forms(core)
+                    if len(original_sections) != len(revised_sections) or any(
+                        not contains_in_order(source[0], current[0])
+                        for source, current in zip(original_sections, revised_sections)
+                    ):
                         errors.append(f'{label}: {lang} source fence mismatch')
-                    if form != expected_form:
+                    if len(original_sections) != len(revised_sections) or any(
+                        not contains_in_order(source[1], current[1])
+                        for source, current in zip(original_sections, revised_sections)
+                    ):
                         errors.append(f'{label}: {lang} source form mismatch')
         except (OSError, UnicodeError, ValueError, KeyError, TypeError) as exc:
             errors.append(f'{label}: source preservation: {exc}')
