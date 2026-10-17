@@ -1,8 +1,8 @@
 ---
 id: data-platform-flink
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-05-01
   - DPE-05-02
@@ -25,6 +25,8 @@ knowledge_ids:
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**Flink** processes events as they continue to arrive and keeps state between them. Picture a clerk updating a ledger whenever an order comes in. Sections 5.1–5.14 connect event time, late arrivals, state recovery, and writing results to external stores.
 
 <!-- SOURCE CORE START -->
 
@@ -556,6 +558,12 @@ Flink
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+- **Sections 5.3–5.7, time and state:** `keyBy` groups events with the same key, such as one customer. A window defines a range like “orders in ten minutes.” Event time is when an event happened; a watermark is a progress signal about how far event time has likely advanced. Mail can arrive late, and so can events after a watermark. Choose allowed lateness and state retention together.
+- **Sections 5.8–5.11, recovery and bottlenecks:** A checkpoint records processing state with input progress for recovery. A savepoint is a managed state record used for planned changes or moves. These records alone do not establish end-to-end effects; also check how the external sink writes. Backpressure means a slow downstream step holds up upstream input. Measure where the queue begins.
+- **Sections 5.12–5.14, connections:** Kafka can supply events, and Iceberg can store results for analysis. For example, Flink may calculate hourly click counts while Spark handles large historical recomputations. This is a design example based on latency and processing needs.
+
 ## Source qualifications {#source-notes}
 
 ### 5.1–5.2 and 5.12 Execution models and resource units
@@ -651,3 +659,7 @@ Example prompt:
 [See six more practical prompts for this topic](../prompts/flink.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.
+
+## Chapter takeaways
+
+Treat time, state, recovery, and sink writes as one flow. Check late events and backpressure when defining the actual guarantee.

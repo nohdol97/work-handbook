@@ -1,8 +1,8 @@
 ---
 id: data-platform-trino
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-10-01
   - DPE-10-02
@@ -19,6 +19,8 @@ knowledge_ids:
 이 문서는 Trino를 개념적으로 학습한 기록이다. Query 성능이나 실제 운영 결과를 검증했다는 뜻이 아니다. 공식 문서는 2026-09-24에 확인했다.
 
 **본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+**Trino**는 여러 저장소의 데이터를 SQL로 조회하는 분산 query engine이다. 여러 창고의 물품 목록을 한 창구에서 찾되, 물품을 어디서 얼마나 옮겨야 할지도 계산하는 방식에 가깝다. 아래 10.1~10.8은 connector, query 실행, pushdown, join과 memory의 관계를 설명한다.
 
 <!-- SOURCE CORE START -->
 
@@ -266,6 +268,12 @@ Trino
 
 <!-- SOURCE CORE END -->
 
+## 처음 읽는 독자를 위한 연결 설명
+
+- **10.1~10.3 실행 흐름:** Coordinator는 query를 계획하고 worker는 나누어진 일을 수행한다. Connector는 Iceberg나 PostgreSQL 같은 원천에 접근하는 통로다. 예를 들어 Iceberg의 큰 fact와 PostgreSQL의 작은 dimension을 join하면 어느 쪽에서 읽고 어디서 데이터를 모을지에 따라 속도와 원천 부하가 달라진다.
+- **10.4~10.6 이동량과 memory:** Pushdown은 filter나 집계를 가능한 한 원천 가까이 보내는 방식이다. 창고에서 필요한 상자만 골라 가져오는 것과 비슷하지만 connector와 SQL 형태에 따라 지원 여부가 다르다. Broadcast join은 작은 쪽을 참여 worker에 복사한다. 크기 추정이 틀리거나 key가 쏠리면 memory 압박이 생길 수 있으므로 EXPLAIN과 실제 scan·exchange 양을 확인한다.
+- **10.7~10.8 역할 연결:** Trino는 대화형 분석 질의에 쓰일 수 있고 Spark는 큰 변환 작업에 쓰일 수 있다. 역할이 절대적으로 나뉘는 것은 아니다. Iceberg table을 함께 읽더라도 metadata pruning, 파일 배치, connector 지원에 따라 결과 성능이 달라진다.
+
 ## 부록: 기존 보완 설명
 
 ### Architecture와 실행 모델
@@ -363,3 +371,7 @@ flowchart LR
 [분석 데이터 모델링](analytical-modeling.md) · [dbt](dbt.md) · [핸드북 홈](../index.md)
 
 [관련 실무 프롬프트 6개](../prompts/trino.md)
+
+## 이 장의 핵심
+
+Trino query는 원천에서 읽는 양, worker 사이 이동량, memory가 함께 결정한다. Connector 지원과 실제 계획·측정값을 확인한다.

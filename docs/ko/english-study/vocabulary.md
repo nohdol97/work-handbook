@@ -1,8 +1,8 @@
 ---
 id: english-study-vocabulary
 status: studied
-last_updated: 2026-10-06
-last_reviewed: 2026-10-06
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids: []
 ---
 
@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### check {#vocab-check}
 
-**540회 · 76개 문서 · 중립**
+**592회 · 76개 문서 · 중립**
 
 **확인하다; 점검**
 
@@ -30,7 +30,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### use {#vocab-use}
 
-**511회 · 76개 문서 · 중립**
+**536회 · 76개 문서 · 중립**
 
 **사용하다; 사용**
 
@@ -46,7 +46,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### change {#vocab-change}
 
-**334회 · 71개 문서 · 중립**
+**367회 · 72개 문서 · 중립**
 
 **변경하다; 변경 사항**
 
@@ -62,7 +62,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### result {#vocab-result}
 
-**296회 · 70개 문서 · 중립**
+**307회 · 70개 문서 · 중립**
 
 **결과**
 
@@ -78,7 +78,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### review {#vocab-review}
 
-**246회 · 63개 문서 · 중립**
+**251회 · 63개 문서 · 중립**
 
 **검토하다; 검토**
 
@@ -94,7 +94,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### separate {#vocab-separate}
 
-**231회 · 62개 문서 · 중립**
+**238회 · 63개 문서 · 중립**
 
 **분리하다; 별개의**
 
@@ -110,7 +110,7 @@ separate A from B로 분리 대상을 표현한다. 형용사로는 a separate t
 
 ### manage {#vocab-manage}
 
-**209회 · 47개 문서 · 중립**
+**219회 · 47개 문서 · 중립**
 
 **관리하다; 해내다**
 
@@ -126,7 +126,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### request {#vocab-request}
 
-**209회 · 30개 문서 · 중립**
+**216회 · 31개 문서 · 중립**
 
 **요청하다; 요청**
 
@@ -142,7 +142,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### failure {#vocab-failure}
 
-**201회 · 47개 문서 · 중립**
+**210회 · 48개 문서 · 중립**
 
 **실패; 고장**
 
@@ -158,7 +158,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### actual {#vocab-actual}
 
-**186회 · 59개 문서 · 중립**
+**195회 · 59개 문서 · 중립**
 
 **실제의**
 
@@ -174,7 +174,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### expected {#vocab-expected}
 
-**174회 · 63개 문서 · 중립**
+**176회 · 63개 문서 · 중립**
 
 **예상되는; 기대하는**
 
@@ -190,7 +190,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### access {#vocab-access}
 
-**156회 · 36개 문서 · 중립**
+**175회 · 36개 문서 · 중립**
 
 **접근하다; 접근 권한**
 
@@ -204,25 +204,9 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 본문 예: [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md).
 
-### require {#vocab-require}
-
-**135회 · 54개 문서 · 중립**
-
-**필요로 하다; 요구하다**
-
-require A는 A가 필요하다는 뜻이다. require someone to do는 누군가에게 행동을 요구한다는 뜻이다.
-
-> This change requires a review from the database team.
->
-> 이 변경에는 데이터베이스팀의 검토가 필요합니다.
-
-집계한 형태: require, requires, required, requiring.
-
-본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md).
-
 ### support {#vocab-support}
 
-**130회 · 45개 문서 · 중립**
+**140회 · 45개 문서 · 중립**
 
 **지원하다; 뒷받침하다**
 
@@ -238,7 +222,7 @@ require A는 A가 필요하다는 뜻이다. require someone to do는 누군가�
 
 ### record {#vocab-record}
 
-**118회 · 52개 문서 · 중립**
+**139회 · 54개 문서 · 중립**
 
 **기록하다; 기록**
 
@@ -251,6 +235,38 @@ require A는 A가 필요하다는 뜻이다. require someone to do는 누군가�
 집계한 형태: record, records, recorded, recording.
 
 본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md).
+
+### require {#vocab-require}
+
+**137회 · 54개 문서 · 중립**
+
+**필요로 하다; 요구하다**
+
+require A는 A가 필요하다는 뜻이다. require someone to do는 누군가에게 행동을 요구한다는 뜻이다.
+
+> This change requires a review from the database team.
+>
+> 이 변경에는 데이터베이스팀의 검토가 필요합니다.
+
+집계한 형태: require, requires, required, requiring.
+
+본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md).
+
+### compare {#vocab-compare}
+
+**114회 · 50개 문서 · 중립**
+
+**비교하다**
+
+compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명하면 기술적 주장이 더 분명해진다.
+
+> We compared both versions under the same load.
+>
+> 두 버전을 동일한 부하 조건에서 비교했습니다.
+
+집계한 형태: compare, compares, compared, comparing.
+
+본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md).
 
 ### capacity {#vocab-capacity}
 
@@ -268,25 +284,9 @@ require A는 A가 필요하다는 뜻이다. require someone to do는 누군가�
 
 본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/model-platform-collaboration](../ai-model-development/model-platform-collaboration.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md).
 
-### compare {#vocab-compare}
-
-**104회 · 49개 문서 · 중립**
-
-**비교하다**
-
-compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명하면 기술적 주장이 더 분명해진다.
-
-> We compared both versions under the same load.
->
-> 두 버전을 동일한 부하 조건에서 비교했습니다.
-
-집계한 형태: compare, compares, compared, comparing.
-
-본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md).
-
 ### assume {#vocab-assume}
 
-**101회 · 53개 문서 · 중립**
+**102회 · 53개 문서 · 중립**
 
 **가정하다; 사실이라고 여기다**
 
@@ -302,7 +302,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 ### evidence {#vocab-evidence}
 
-**96회 · 43개 문서 · 중립**
+**99회 · 43개 문서 · 중립**
 
 **근거; 증거**
 
@@ -320,7 +320,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 ### scope {#vocab-scope}
 
-**95회 · 36개 문서 · 중립**
+**98회 · 36개 문서 · 중립**
 
 **범위**
 
@@ -334,9 +334,25 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 본문 예: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md).
 
+### workload {#vocab-workload}
+
+**87회 · 28개 문서 · 중립**
+
+**시스템이 처리해야 하는 작업량과 작업의 종류**
+
+제품 이름만 비교하지 않고 실제 쿼리·수집·변환의 양과 패턴을 설명할 때 쓴다. 단순 데이터 크기와 구분한다.
+
+> We should compare the platforms with the same query workload and recovery target.
+>
+> 같은 쿼리 작업량과 복구 목표로 플랫폼을 비교해야 합니다.
+
+집계한 형태: workload, workloads.
+
+본문 예: [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md).
+
 ### preserve {#vocab-preserve}
 
-**75회 · 44개 문서 · 중립**
+**77회 · 46개 문서 · 중립**
 
 **보존하다; 유지하다**
 
@@ -352,7 +368,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 ### provide {#vocab-provide}
 
-**73회 · 34개 문서 · 중립**
+**75회 · 36개 문서 · 중립**
 
 **제공하다**
 
@@ -368,7 +384,7 @@ provide A for B 또는 provide B with A로 제공 대상과 받는 대상을 표
 
 ### reduce {#vocab-reduce}
 
-**67회 · 28개 문서 · 중립**
+**72회 · 30개 문서 · 중립**
 
 **줄이다**
 
@@ -382,9 +398,25 @@ reduce by는 감소한 양, reduce to는 감소 후 값을 나타낸다. 수치�
 
 본문 예: [ai-model-development/qlora-artifacts](../ai-model-development/qlora-artifacts.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
 
+### handle {#vocab-handle}
+
+**64회 · 32개 문서 · 중립**
+
+**처리하다; 대응하다**
+
+요청·부하·오류에 어떻게 대응하는지 설명할 때 쓴다. handle 뒤에 대상을 바로 쓴다.
+
+> How does the service handle a request after the deadline has passed?
+>
+> 기한이 지난 요청을 서비스는 어떻게 처리하나요?
+
+집계한 형태: handle, handles, handled, handling.
+
+본문 예: [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/eks](../aws-cloud/eks.md).
+
 ### allow {#vocab-allow}
 
-**59회 · 29개 문서 · 중립**
+**63회 · 30개 문서 · 중립**
 
 **허용하다; 가능하게 하다**
 
@@ -400,25 +432,9 @@ allow someone to do로 허용이나 가능성을 표현한다. 목적어 없이 
 
 용법 참고: [1](https://www.collinsdictionary.com/us/dictionary/english/allow).
 
-### handle {#vocab-handle}
-
-**59회 · 30개 문서 · 중립**
-
-**처리하다; 대응하다**
-
-요청·부하·오류에 어떻게 대응하는지 설명할 때 쓴다. handle 뒤에 대상을 바로 쓴다.
-
-> How does the service handle a request after the deadline has passed?
->
-> 기한이 지난 요청을 서비스는 어떻게 처리하나요?
-
-집계한 형태: handle, handles, handled, handling.
-
-본문 예: [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/eks](../aws-cloud/eks.md).
-
 ### validate {#vocab-validate}
 
-**55회 · 44개 문서 · 중립**
+**56회 · 44개 문서 · 중립**
 
 **타당성이나 요구사항 충족 여부를 검증하다**
 
@@ -434,7 +450,7 @@ allow someone to do로 허용이나 가능성을 표현한다. 목적어 없이 
 
 ### consistent {#vocab-consistent}
 
-**52회 · 39개 문서 · 중립**
+**54회 · 40개 문서 · 중립**
 
 **일관된; 서로 모순되지 않는**
 
@@ -452,7 +468,7 @@ allow someone to do로 허용이나 가능성을 표현한다. 목적어 없이 
 
 ### verify {#vocab-verify}
 
-**51회 · 33개 문서 · 중립**
+**52회 · 33개 문서 · 중립**
 
 **사실이나 정확성을 확인하다**
 
@@ -481,6 +497,22 @@ allow someone to do로 허용이나 가능성을 표현한다. 목적어 없이 
 집계한 형태: consider, considers, considered, considering.
 
 본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md).
+
+### impact {#vocab-impact}
+
+**38회 · 18개 문서 · 중립**
+
+**영향; 영향을 주다**
+
+명사 impact on으로 영향받는 대상을 말한다. 업무 영어에서 동사로도 쓰지만 affect로 간단히 표현할 수도 있다.
+
+> We need to understand the impact on customers before changing the default.
+>
+> 기본값을 바꾸기 전에 고객에게 미치는 영향을 파악해야 합니다.
+
+집계한 형태: impact, impacts, impacted, impacting.
+
+본문 예: [aws-cloud/managed-services](../aws-cloud/managed-services.md), [data-platform/architecture](../data-platform/architecture.md), [data-platform/data-observability](../data-platform/data-observability.md).
 
 ### specific {#vocab-specific}
 
@@ -514,25 +546,9 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md).
 
-### impact {#vocab-impact}
-
-**34회 · 17개 문서 · 중립**
-
-**영향; 영향을 주다**
-
-명사 impact on으로 영향받는 대상을 말한다. 업무 영어에서 동사로도 쓰지만 affect로 간단히 표현할 수도 있다.
-
-> We need to understand the impact on customers before changing the default.
->
-> 기본값을 바꾸기 전에 고객에게 미치는 영향을 파악해야 합니다.
-
-집계한 형태: impact, impacts, impacted, impacting.
-
-본문 예: [aws-cloud/managed-services](../aws-cloud/managed-services.md), [data-platform/architecture](../data-platform/architecture.md), [data-platform/data-observability](../data-platform/data-observability.md).
-
 ### identify {#vocab-identify}
 
-**24회 · 16개 문서 · 중립**
+**25회 · 16개 문서 · 중립**
 
 **식별하다; 찾아내다**
 
@@ -612,7 +628,7 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 ### avoid {#vocab-avoid}
 
-**19회 · 14개 문서 · 중립**
+**20회 · 14개 문서 · 중립**
 
 **피하다**
 
@@ -628,7 +644,7 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 ### prevent {#vocab-prevent}
 
-**17회 · 14개 문서 · 중립**
+**18회 · 14개 문서 · 중립**
 
 **막다; 예방하다**
 
@@ -644,7 +660,7 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 
 ### estimate {#vocab-estimate}
 
-**15회 · 8개 문서 · 중립**
+**16회 · 9개 문서 · 중립**
 
 **추정하다; 추정치**
 
@@ -656,7 +672,7 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 
 집계한 형태: estimate, estimates, estimated, estimating.
 
-본문 예: [data-platform/lineage-metadata](../data-platform/lineage-metadata.md), [data-platform/production-operations](../data-platform/production-operations.md), [glossary/index](../glossary/index.md).
+본문 예: [data-platform/lineage-metadata](../data-platform/lineage-metadata.md), [data-platform/production-operations](../data-platform/production-operations.md), [data-platform/trino](../data-platform/trino.md).
 
 ### resolve {#vocab-resolve}
 
@@ -708,7 +724,7 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 
 ### determine {#vocab-determine}
 
-**8회 · 8개 문서 · 격식**
+**10회 · 10개 문서 · 격식**
 
 **판단하다; 알아내다; 결정하다**
 

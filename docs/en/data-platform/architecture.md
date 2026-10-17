@@ -1,8 +1,8 @@
 ---
 id: data-platform-architecture
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-17-01
   - DPE-17-02
@@ -1565,6 +1565,12 @@ Data Platform
 
 <!-- SOURCE APPENDIX END -->
 
+## A beginner's guide to the connections
+
+Follow the architecture like a parcel route. Application events enter Kafka; changes in an operational database reach Kafka through CDC. Processing keeps the records close to their source form in Bronze, cleans and validates them in Silver, and builds ready-to-use results in Gold for query, analytics, and AI consumers. The key is that each stage has a different answer to **what it stores, what it changes, and where recovery can restart**.
+
+If an order metric is wrong, trace back from the dashboard through the Gold calculation, Silver cleanup, and Bronze source. Lineage helps find the route. Quality checks whether data meets its rules. Observability helps locate delays and anomalies. Orchestration coordinates execution but does not guarantee correctness. A small system may not need every component; apply the removal criteria in [21.24](#2124-what-to-remove-at-smaller-scale) against actual requirements.
+
 ## Appendix: existing study notes and application conditions
 
 This page merges the source's supplementary explanations and final mental model. The architecture explains relationships. It is not a completed system or a required design for every organization. Linked topic pages provide evidence and qualifications for product behavior.
@@ -1828,3 +1834,9 @@ Use the [21.29 checklist](#2129-final-architecture-decision-checklist) and [seve
 ## Evidence and verification scope
 
 [Databricks data engineering](https://docs.databricks.com/aws/en/data-engineering) and [Snowflake architecture](https://docs.snowflake.com/en/user-guide/intro-key-concepts) were checked on 2026-09-26. Linked canonical topics contain detailed product evidence. This page combines source architecture concepts and principles; connector integration, SQL, failure recovery, and performance were not executed.
+
+## Key points
+
+- Separate storage, transformation, query, and recovery duties from sources to consumers.
+- Quality, observability, lineage, and governance check and control the whole flow.
+- Add components for real requirements; remove those whose operating cost exceeds their value at small scale.

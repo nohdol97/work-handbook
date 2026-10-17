@@ -1,8 +1,8 @@
 ---
 id: data-platform-dbt
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-08-01
   - DPE-08-02
@@ -21,6 +21,8 @@ knowledge_ids:
 이 문서는 dbt의 역할과 모델 계층을 개념적으로 학습한 기록이다. 프로젝트 실행·성능 측정·운영 경험을 주장하지 않는다. 공식 문서는 2026-09-24에 확인했다.
 
 **본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+**dbt**는 SQL 변환을 model 단위로 정리하고 의존성·테스트·문서를 관리하는 도구다. 여러 단계의 요리법에서 어떤 재료가 어느 단계에서 만들어지는지 표시하는 것과 비슷하다. 아래 8.1~8.10은 원천 데이터에서 분석용 mart까지의 흐름을 다룬다.
 
 <!-- SOURCE CORE START -->
 ## 8.1 Project Structure
@@ -294,6 +296,12 @@ Spark와 dbt는 경쟁 관계가 아니라 함께 사용할 수 있다.
 
 <!-- SOURCE CORE END -->
 
+## 처음 읽는 독자를 위한 연결 설명
+
+- **8.1~8.5 모델 흐름:** Source는 외부에서 들어온 table을 가리키고, staging은 이름과 형식을 정리하며, intermediate는 공통 변환을, mart는 분석자가 쓰는 fact·dimension을 만든다. `ref()`는 모델 사이의 참조와 실행 의존성을 나타낸다. 주문 원천에서 날짜와 통화를 정리한 뒤 고객별 매출 mart를 만든다고 생각하면 각 계층의 책임이 분명해진다.
+- **8.6~8.8 증분과 품질:** Incremental model은 새 데이터나 바뀐 범위만 처리해 반복 계산량을 줄일 수 있다. 단, 늦게 도착한 주문을 놓치지 않도록 필터와 unique key, 재처리 범위를 설계해야 한다. Tests는 지정한 조건을 검사하고 snapshots는 값의 과거 버전을 남길 수 있다. 둘 다 모든 업무 의미 오류를 자동으로 잡지는 못한다.
+- **8.9~8.10 연결:** Lineage는 어떤 model이 어떤 source와 상위 model에 의존하는지 보여 준다. dbt가 SQL을 조직해도 실제 실행은 연결된 warehouse나 query engine이 맡는다. 따라서 Trino·Snowflake 등의 지원 기능과 adapter 조건을 확인한다.
+
 ## 적용 시 보완할 점
 
 ### 원문 8.6·8.7의 설명 범위
@@ -391,3 +399,7 @@ dbt lineage가 수집 서비스, dbt 외부 job, BI 소비까지 자동으로 �
 [오케스트레이션](orchestration.md) · [분석 데이터 모델링](analytical-modeling.md) · [Trino](trino.md) · [핸드북 홈](../index.md)
 
 [관련 실무 프롬프트 6개](../prompts/dbt.md)
+
+## 이 장의 핵심
+
+dbt는 SQL 변환의 의존성과 품질 기준을 드러낸다. 증분 처리의 정확성과 실제 엔진의 동작은 별도로 검증한다.

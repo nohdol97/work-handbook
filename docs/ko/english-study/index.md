@@ -1,8 +1,8 @@
 ---
 id: english-study-index
 status: studied
-last_updated: 2026-10-06
-last_reviewed: 2026-10-06
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids: []
 ---
 
@@ -14,7 +14,7 @@ knowledge_ids: []
 
 각 페이지의 상위 빈도부터 읽고, 예문을 소리 내어 말한 뒤 본인의 상황에 맞게 바꾼다. 면접에서는 실제로 한 일과 가정한 설계를 분명히 구분한다.
 
-- [한영 실무 어휘 사전](vocabulary.md): 48개
+- [한영 실무 어휘 사전](vocabulary.md): 49개
 - [숙어·관용 표현·연어](idioms.md): 20개
 - [업무에서 쓰는 구동사](phrasal-verbs.md): 20개
 - [면접·회사에서 쓰는 문장](workplace.md): 26개

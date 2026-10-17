@@ -1,8 +1,8 @@
 ---
 id: data-platform-lakehouse-iceberg
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-03-01
   - DPE-03-02
@@ -517,6 +517,12 @@ Unity Catalog
 
 <!-- SOURCE CORE END -->
 
+## 처음 읽는 사람을 위한 연결
+
+[3.1](#31-lakehouse-architecture)과 [3.2](#32-iceberg-metadata-internals)를 도서관에 비유하면, object storage는 책을 놓는 공간, Parquet은 책의 내부 형식, Iceberg metadata는 현재 책 목록과 판본을 가리키는 기록이다. Snapshot은 특정 시점의 테이블 상태를 가리키는 목록이고, pruning은 쿼리에 필요 없는 파일을 건너뛰는 일이다. Catalog는 그 기록의 위치를 찾게 한다. 실제 시스템에서는 파일·metadata·catalog의 책임이 다르므로 한 요소만 복구해서 테이블 전체가 정상이라고 판단하면 안 된다.
+
+예를 들어 주문 테이블을 수정하면 새 data/delete file을 쓴 뒤 [3.4](#34-atomic-commit-model)의 commit으로 새 snapshot을 공개한다. 분석 엔진은 그 snapshot이 참조하는 파일을 읽는다. 이 흐름을 알면 [3.6](#36-query-pruning)의 읽기 범위 축소와 [3.9](#39-maintenance)의 오래된 파일 정리를 언제 검토할지 연결할 수 있다. 파일 삭제 전에는 유지 중인 snapshot과 진행 중인 쓰기를 확인한다.
+
 ## 적용 시 보완할 점
 
 계층 그림은 책임을 나눈 개념 모델이다. Compute 다음에만 Catalog가 실행된다는 직렬 처리 순서가 아니다. Catalog가 현재 metadata를 찾게 하고 엔진이 metadata와 실제 파일을 읽는다. Pruning 목록도 여러 최적화 계층을 보여 주며 반드시 같은 순서로 실행되는 것은 아니다.
@@ -624,3 +630,9 @@ flowchart TD
 [이 주제의 실무 프롬프트 6개 더 보기](../prompts/lakehouse-iceberg.md)
 
 LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.
+
+## 핵심 정리
+
+- Iceberg는 파일 자체가 아니라 파일·snapshot·schema를 설명하는 테이블 metadata와 commit 규칙을 제공한다.
+- Partition·정렬·pruning은 필요한 파일을 덜 읽도록 돕지만, 실제 효과는 데이터 배치와 쿼리 조건에 달려 있다.
+- 수정·정리·복구에서는 현재 snapshot뿐 아니라 과거 참조와 진행 중인 작업까지 확인한다.

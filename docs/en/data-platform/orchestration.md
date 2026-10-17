@@ -1,8 +1,8 @@
 ---
 id: data-platform-orchestration
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-07-01
   - DPE-07-02
@@ -19,6 +19,8 @@ knowledge_ids:
 This page records conceptual study of orchestration, with Airflow as the main example. It does not claim that a DAG was deployed or operated. Official documentation was checked on 2026-09-24.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**Orchestration** manages the order of data jobs and what happens when they fail. Think of a cooking plan that waits for ingredients before starting the next step. Sections 7.1–7.8 cover DAGs, retries, historical reruns, and waiting conditions.
 
 <!-- SOURCE CORE START -->
 
@@ -276,6 +278,12 @@ Iceberg
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+- **Sections 7.1–7.3, order and retries:** A DAG is a directed graph of task dependencies with no cycles. In `ingest → clean → aggregate`, aggregation waits for cleaned data. A temporary network failure may recover on retry, while an invalid schema will likely fail again on the same input. Idempotency means a retry of the same interval does not create duplicate effects.
+- **Sections 7.4–7.6, historical intervals and inputs:** A backfill recalculates a past interval to fill a gap or apply corrected logic. If you rerun only `2026-10-01`, check that the date parameter controls both input reads and output writes. A sensor waits for a file or upstream job, but “exists” may differ from “complete and ready to use.”
+- **Sections 7.7–7.8, responsibility:** The orchestrator decides when to run work; Spark and the query engine that runs dbt models perform the data calculations. A failure alert does not prove data correctness. Define result checks and the safe rerun range together.
+
 ## Additional checks before applying these ideas
 
 ### Existing flow diagram
@@ -369,3 +377,7 @@ Expected output is a rerun scope and validation list. The LLM may assume MERGE i
 [dbt](dbt.md) · [CDC and Debezium](cdc-debezium.md) · [Handbook home](../index.md)
 
 [Six related practical prompts](../prompts/orchestration.md)
+
+## Chapter takeaways
+
+Define task order, retry safety, input readiness, and backfill scope together so a data interval can be rerun safely.

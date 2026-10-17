@@ -1,8 +1,8 @@
 ---
 id: data-platform-spark
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-04-01
   - DPE-04-02
@@ -25,6 +25,8 @@ knowledge_ids:
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**Spark** divides large data work among many workers. Imagine several people reading different parts of a ledger, then combining their results. Sections 4.1–4.14 connect task allocation, data movement, storage formats, batch work, and streaming.
 
 <!-- SOURCE CORE START -->
 
@@ -630,6 +632,12 @@ For simple SQL transformations, dbt with Trino or a warehouse may work without S
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+- **Sections 4.1–4.5, execution:** The driver plans work; executors run pieces of it. An operation such as `groupBy` may need a shuffle, which moves rows with the same key between workers. It is like dividing papers among readers and then regrouping them by topic. When a stage is slow, check data movement as well as computation.
+- **Sections 4.6–4.10, performance choices:** A broadcast join copies a small dimension to participating workers and can avoid reshuffling a large fact, but each copy must fit in memory. Skew means a few keys give some workers far more work than others. Use the Spark UI to compare partitions, spill, and slow tasks before choosing a fix.
+- **Sections 4.11–4.14, tool roles:** How Spark reads and writes Iceberg depends on file layout and commits. Structured Streaming processes continuing input but must manage state and checkpoints. dbt can manage SQL model dependencies and tests alongside Spark's large-scale computation. Choose a combination from data volume, latency needs, and model-management requirements.
+
 ## Source qualifications {#source-notes}
 
 ### 4.4–4.6 and 4.9 Join plans and skew
@@ -721,3 +729,7 @@ Example prompt:
 [See six more practical prompts for this topic](../prompts/spark.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.
+
+## Chapter takeaways
+
+Spark performance depends on task splits, shuffles, skew, and file layout together. Use execution plans and UI measurements to guide changes.

@@ -1,8 +1,8 @@
 ---
 id: data-platform-snowflake
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE2-18-01
   - DPE2-18-02
@@ -339,6 +339,12 @@ Snowflake
 
 <!-- SOURCE CORE END -->
 
+## 처음 읽는 사람을 위한 연결
+
+[18.1](#181-architecture)의 저장소와 virtual warehouse를 창고의 선반과 작업대처럼 구분해 보자. 데이터는 저장 계층에 있고 warehouse는 쿼리 계산을 수행한다. 여러 작업대가 같은 데이터에 접근할 수 있지만, 실제 성능과 비용은 작업량·warehouse 설정·데이터 배치에 따라 달라진다.
+
+예를 들어 새 주문이 들어오면 Snowpipe 계열로 수집하고 Streams로 테이블의 변경 범위를 추적하며 Tasks(예약 작업) 또는 Dynamic Tables(정의한 결과의 갱신 관리)로 파생 결과를 갱신할 수 있다. 이들은 같은 기능의 다른 이름이 아니다. [18.2](#182-micro-partitions)의 micro-partition과 [18.3](#183-pruning)의 pruning은 쿼리가 읽을 범위를 줄이는 데 도움을 주고, [18.12](#1812-cost-model)의 비용 검토는 수집·변환·조회 계산을 모두 포함해야 한다. 제품 기능의 실제 지원 조건은 보완부의 공식 문서 범위를 확인한다.
+
 ## 운영 검토와 공식 문서 보완
 
 제품 지원 조건은 2026-09-26 공식 문서 검토 범위다. 실제 환경의 버전·설정으로 확인한다.
@@ -477,3 +483,9 @@ Auto Suspend, 적절한 warehouse 크기, scan 감소, 효율적인 query, 가�
 **LLM이 틀릴 수 있는 점:** target lag를 실행 주기나 보장으로 착각하고 증거 없이 warehouse 증설을 권할 수 있다.
 
 **검증 방법:** 공식 target lag 정의와 refresh mode 조건을 확인한다. refresh history와 query profile로 가설을 반박하고 제한된 실험 전후의 actual lag·비용·결과 일치를 비교한다. 실행 승인은 사람이 한다.
+
+## 핵심 정리
+
+- 저장과 계산을 분리해서 이해하고, 수집·변경 추적·갱신의 역할도 나눠 본다.
+- Pruning은 읽는 범위를 줄일 수 있지만 쿼리 조건과 데이터 배치가 효과를 좌우한다.
+- 기능 선택과 비용은 실제 데이터량·신선도 요구·설정에서 검증한다.

@@ -1,8 +1,8 @@
 ---
 id: data-platform-governance
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-14-01
   - DPE-14-02
@@ -20,6 +20,8 @@ knowledge_ids:
 This Learn page covers studied concepts of ownership, policy, access, and audit. Durations and datasets are hypothetical. It does not claim that security policies were deployed or legal duties were verified. Governance asks, “Who may use this data, and under which conditions?”
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**Reading guide:** Data governance sets who may use which data under what conditions, much like library lending rules. Listing a rule on a screen is different from enforcing entry. Sections 14.1–14.2 assign owners and classify sensitivity; 14.3–14.4 set retention and deletion scope. Sections 14.5–14.6 can mask email values, block access to the email column, or show only rows allowed for a user's team. Sections 14.7–14.9 connect usage records, producer–consumer agreements, and policy tools. This sequence helps when sharing a new dataset or reviewing which copies a deletion request covers.
 
 <!-- SOURCE CORE START -->
 
@@ -311,6 +313,8 @@ Is it healthy?
 
 ## Details to check in practice
 
+Logical deletion in 14.4 marks records so queries can exclude them; physical deletion also addresses removal of stored data. Old snapshots or exports can make those outcomes differ. Masking in 14.5 hides values. RBAC (Role-Based Access Control) in 14.6 grants access by role. To assess actual protection, check whether the same rules apply through query engines and direct storage paths, not only in the catalog.
+
 ### Examples and actual policy
 
 Public, Internal, Confidential, PII, and Sensitive are not a single ordered scale shared by every organization. PII describes the kind of data and can be used alongside an importance level.
@@ -431,3 +435,9 @@ The source flow is an example of copies and derived data to trace. Real backups 
 [Lineage and metadata](lineage-metadata.md) · [Data quality](data-quality.md) · [Data observability](data-observability.md) · [Handbook home](../index.md)
 
 [More practical prompts](../prompts/governance.md)
+
+## Chapter key points
+
+- Owners, classifications, and retention periods define responsibility for access and deletion.
+- Masking, row and column permissions, and audits serve different needs: limit exposure, decide access, and trace use.
+- Distinguish logical from physical deletion. Check real copies and access paths, including snapshots and exports.

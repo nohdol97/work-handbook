@@ -1,8 +1,8 @@
 ---
 id: data-platform-curriculum
 status: overview
-last_updated: 2026-09-27
-last_reviewed: 2026-09-27
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-00-01
   - DPE-18-01
@@ -29,6 +29,8 @@ The source calls Chapters 1–4 **reconstructed notes** of earlier completed stu
 In the first source, Chapter 17 contains supplementary explanations and Chapter 18 records progress at that time. Chapters 16–21 in the source added on 2026-09-26 match the Phase numbers below and declare **conceptual study of Phases 1–21 complete**. The first source keeps its historical not-started record; this page reflects the new material.
 
 The current study body follows `data_platform_engineering_complete_source_ch01_21.md`, supplied on 2026-09-27. Both earlier sources remain as provenance. Pages preserve the original numbers, headings, paragraphs, lists, and code; supplements and corrections follow separately. Appendix A retains earlier supplementary material and is separate from the numbered sections in the Databricks chapter.
+
+If you are new to the topic, use this list like a travel map. Each phase leads to the next idea. For example, understand storage formats in [Foundations](foundations.md), then table management in [Lakehouse](lakehouse-iceberg.md), transformation in [Spark](spark.md), and checks in [Operations and recovery](production-operations.md). “Completed” records conceptual study of these links, not hands-on operation in a real environment.
 
 ## Completed: Phases 1–15
 
@@ -155,3 +157,9 @@ No implementation, failure experiment, or performance measurement is supplied. C
 The new source names Unity Catalog, Lakeflow Jobs, managed Delta/Iceberg, the Iceberg REST Catalog, Dynamic Tables, Horizon Catalog, and Snowflake Iceberg documentation, but supplies no URLs, versions, or access dates. Current official evidence was therefore checked separately on each product page, with dates and limits. Confirm the actual cloud, region, edition, version, and settings before use.
 
 [Architecture](architecture.md) · [Home](../index.md)
+
+## Key points
+
+- Phases 1–21 connect ingestion, storage, processing, use, and operation as a conceptual study path.
+- A completed study record is different from a tested build, performance result, or incident drill.
+- Follow the problem each technology solves and its links to nearby stages rather than memorizing names.

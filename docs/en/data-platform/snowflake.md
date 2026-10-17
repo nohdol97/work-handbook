@@ -1,8 +1,8 @@
 ---
 id: data-platform-snowflake
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE2-18-01
   - DPE2-18-02
@@ -339,6 +339,12 @@ Today there is significant functional overlap.
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+Picture [18.1](#181-architecture) as shelves and workbenches. The storage layer holds data; a virtual warehouse does the query work. Multiple workbenches can use the data, but performance and cost still depend on workload, warehouse settings, and data layout.
+
+For example, a team could ingest new orders with Snowpipe features, track table changes with Streams, and refresh derived results with scheduled Tasks or Dynamic Tables that manage refreshes from a query definition. These features do different jobs. Micro-partitions in [18.2](#182-micro-partitions) and pruning in [18.3](#183-pruning) can reduce what a query reads. The [18.12](#1812-cost-model) cost review must cover ingestion, transformation, and queries. Check the supplement's official documentation for actual support conditions.
+
 ## Operational review and official documentation notes
 
 Product conditions reflect the official documentation reviewed on 2026-09-26. Check actual versions and settings.
@@ -477,3 +483,9 @@ Review the role map in [18.13](#1813-snowflake-mental-model). Databricks and Sno
 **What the LLM Can Get Wrong:** It may mistake target lag for an interval or guarantee and recommend a larger warehouse without evidence.
 
 **How to Validate:** Check the official target lag definition and refresh mode requirements. Challenge hypotheses with refresh history and query profiles. Compare actual lag, cost, and results before and after a limited experiment. A person approves execution.
+
+## Key points
+
+- Separate storage from compute, and distinguish ingestion, change tracking, and refresh duties.
+- Pruning may reduce reads, but query filters and data layout determine its effect.
+- Test feature choices and costs with the actual data volume, freshness needs, and settings.

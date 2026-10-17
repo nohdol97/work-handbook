@@ -1,8 +1,8 @@
 ---
 id: data-platform-ai-ready-data
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-15-01
   - DPE-15-02
@@ -21,6 +21,8 @@ knowledge_ids:
 This page organizes the concepts from source Chapter 15. `studied` means conceptual study, not a deployed or tested system. Version names and numbers below are examples.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**Reading guide:** AI-ready data resembles cooking ingredients: labels alone do not make them usable. You need to know origin, freshness, version, and permission before interpreting an evaluation again. Section 15.1 sets these conditions. Telemetry in 15.2 means records of a running request: which prompt, model, and tool produced an output. Sections 15.3–15.5 version datasets and evaluation cases for comparison. Sections 15.6–15.8 connect document chunks, embeddings (number vectors that represent meaning), retrieval access, and origin. Section 15.9 asks whether model inputs and answer labels arrive on time.
 
 <!-- SOURCE CORE START -->
 
@@ -525,6 +527,8 @@ Label-like
 
 ## Source qualifications {#source-notes}
 
+A trace in 15.2 groups the steps of one request. If a new agent scores differently, compare dataset, prompt, and model versions in 15.3–15.4 along with runtime settings. Embeddings in 15.6 help find similar chunks, but access metadata in 15.7 does not itself enforce permission. Check authorization on each retrieval request and use provenance (origin and transformation history) in 15.8 to trace answer evidence.
+
 ### 15.2A Langfuse data model
 
 A trace groups a request or operation. An observation is a step such as an LLM call, tool call, or retrieval. A session groups traces. Do not infer physical storage from this conceptual diagram. [Langfuse data model](https://langfuse.com/docs/observability/data-model).
@@ -610,3 +614,9 @@ Read the “physical table state version” in 15.3 as a consistent set of files
 [Online evaluation](ai-evaluation.md#161-online-evaluation-events) · [Governance](governance.md) · [Lineage and metadata](lineage-metadata.md) · [Architecture](architecture.md)
 
 [More practical prompts](../prompts/ai-ready-data.md)
+
+## Chapter key points
+
+- AI data needs quality, freshness, versions, discoverability, and governed access.
+- Link traces and dataset versions so evaluation conditions can be checked again.
+- Embeddings help retrieval but do not grant access. Check permissions and provenance separately.

@@ -1,8 +1,8 @@
 ---
 id: data-platform-data-quality
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-11-01
   - DPE-11-02
@@ -18,6 +18,8 @@ knowledge_ids:
 This Learn page covers studied concepts and hypothetical operations. It does not claim hands-on implementation or incident response. Data quality asks, “Can we trust and use this data?” A service can respond while its data is wrong. That is still a data incident.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**Reading guide:** Data quality is like checking goods before shipment. An intact package does not prove that the contents are correct: a valid `email` format does not prove that an order amount is right. Section 11.1 names what to check; 11.2 shows when to check it. Section 11.3 separates failed records in quarantine, a holding area for investigation. Sections 11.6–11.7 use an SLO (Service Level Objective, an agreed quality target) and an incident process to judge impact and recovery. Use this flow when adding an ingestion path or investigating a changing metric.
 
 <!-- SOURCE CORE START -->
 
@@ -258,6 +260,8 @@ Remember:
 
 ## Appendix: existing application notes
 
+Section 11.1 treats completeness, uniqueness, and validity as different questions. Every row can have an `order_id` while two rows still share the same ID. In 11.2, ingestion checks input shape, Silver checks cleaned records, and Gold checks aggregates used in reports. The tools in 11.4–11.5 can run these checks, but the data use determines which rules and denominators matter.
+
 ### Quality dimensions and validation layers
 
 One healthy metric does not prove that every dimension is healthy. A valid format does not prove that a billed amount is accurate. Five-minute freshness is an example, not a default target for every dataset.
@@ -369,3 +373,9 @@ flowchart TD
 [Handbook home](../index.md)
 
 [More practical prompts](../prompts/data-quality.md)
+
+## Chapter key points
+
+- Each quality dimension finds a different kind of error. A successful job does not prove accurate data.
+- Check data at ingestion, cleanup, and aggregation. Isolate failures, then verify the cause and the scope of reprocessing.
+- Agree on targets and recovery criteria per dataset. Observability helps detect change; lineage helps find affected users and outputs.

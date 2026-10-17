@@ -1,8 +1,8 @@
 ---
 id: data-platform-lineage-metadata
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-13-01
   - DPE-13-01A
@@ -19,6 +19,8 @@ knowledge_ids:
 이 Learn 문서는 metadata, lineage, catalog의 역할을 학습한 내용이다. 예시는 가상 데이터셋이며 수집기나 플랫폼을 구축해 검증한 기록이 아니다. Metadata는 데이터를 설명하는 데이터이고, lineage는 데이터가 생성되고 사용되는 경로다.
 
 **본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+**읽기 길잡이:** 메타데이터(metadata)는 책의 제목·저자·분류처럼 데이터의 뜻과 상태를 설명한다. Lineage(계보)는 그 책이 어떤 자료에서 만들어져 어디에 쓰였는지 그린 경로다. 13.1의 기술·운영·업무 메타데이터를 함께 보면 데이터의 형태, 최근 실행, 지표의 의미를 구별할 수 있다. 예를 들어 `raw_orders.amount`의 타입을 바꾸려면 13.2–13.5의 경로를 따라 변환 테이블과 대시보드까지 확인한다. 13.6–13.7의 도구와 catalog는 이 정보를 찾도록 돕지만, 그래프에 없는 연결까지 안전하다고 보증하지는 않는다.
 
 <!-- SOURCE CORE START -->
 
@@ -310,6 +312,8 @@ Governance
 
 ## 적용 시 보완할 점
 
+13.1A의 semantic layer는 “매출” 같은 업무 지표를 일관된 계산 정의로 연결하는 층이다. Catalog가 지표 설명을 보여 주더라도 그 계산이나 접근 정책을 자동으로 실행한다는 뜻은 아니다. 13.3의 OpenLineage는 실행·데이터셋 관련 메타데이터를 주고받는 표준이며, 13.6의 Marquez는 이를 모아 살펴보는 도구의 예다. 13.4의 column-level lineage가 수집됐을 때는 테이블 전체보다 정확하게 영향받는 열을 좁힐 수 있다.
+
 ### Semantic layer의 계산 경계
 
 Revenue 식은 개념 예시이며 실제 회계 규칙이나 특정 제품의 실행 문법이 아니다.
@@ -417,3 +421,9 @@ flowchart LR
 [데이터 관측성](data-observability.md) · [거버넌스](governance.md) · [핸드북 홈](../index.md)
 
 [더 많은 실무 프롬프트](../prompts/lineage-metadata.md)
+
+## 이 장의 핵심
+
+- 메타데이터는 데이터의 뜻과 상태를 설명하고, lineage는 생성·사용 경로를 추적한다.
+- 타입이나 지표 정의를 바꿀 때 upstream 근거와 downstream 소비자를 함께 확인한다.
+- 수집되지 않은 연결과 실제 실행·정책 적용 여부는 catalog 그림만으로 판단할 수 없다.

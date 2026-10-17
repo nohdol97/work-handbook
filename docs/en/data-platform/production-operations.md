@@ -1,8 +1,8 @@
 ---
 id: data-platform-production-operations
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE2-20-01
   - DPE2-20-02
@@ -826,6 +826,12 @@ It is also defined by:
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+Read this chapter like a fire drill. Teams plan exits and owners before a fire, rather than looking for them during one. A data platform also needs a known source of truth, retention period, recovery targets, affected consumers, and owners before an incident. RTO is the allowed recovery time; RPO is the allowed span of data loss. The analogy explains preparation; it is not a recovery procedure.
+
+Suppose a Gold table is empty even though its job succeeded. A broken transformation in [20.8](#208-incident-drill-corrupt-transformation) is one hypothesis. First contain publication and check the Bronze source and lineage. Then compare a scoped recalculation in [20.1](#201-backfills), reprocessing paths in [20.2](#202-reprocessing), and recovery sources in [20.16](#2016-dr-recovery). Set acceptance checks for duplicates, missing rows, and business totals before rerunning anything.
+
 ## Appendix: existing study notes and application conditions
 
 This page records conceptual study and hypothetical incident drills. It does not claim that production recovery, drills, or performance tests were performed. It moves from how a technology works to **what to check and how to recover when it fails at 3 AM**. Product recovery behavior was checked against official documentation on 2026-09-26. Check the actual versions and settings again before use.
@@ -1039,3 +1045,9 @@ A mature platform is judged by more than architecture diagrams. Operators must a
 **What the LLM Can Get Wrong:** It may treat job success as healthy data, assume expired Kafka history exists, or assume snapshot rollback restores all downstream results. It may swap RTO/RPO or omit duplicates, state, and concurrent writes.
 
 **How to Validate:** A person checks actual source retention, offsets, snapshots, transformation diff, lineage, and official documentation. Reprocess a small range in an approved isolated environment. Compare counts, keys, required values, freshness, and business results. Production execution requires separate approval and fulfilled prerequisites. LLM output is a working hypothesis, not an execution command or a confirmed cause.
+
+## Key points
+
+- A successful job does not prove healthy data. Check counts, keys, freshness, and business results.
+- Choose backfill, replay, or snapshot recovery from the retained source and affected range.
+- Set the source of truth, retention, owners, stop/resume checks, and RTO/RPO before an incident.

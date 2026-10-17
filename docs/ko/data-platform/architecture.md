@@ -1,8 +1,8 @@
 ---
 id: data-platform-architecture
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-17-01
   - DPE-17-02
@@ -1565,6 +1565,12 @@ Data Platform
 
 <!-- SOURCE APPENDIX END -->
 
+## 처음 읽는 사람을 위한 연결
+
+전체 구조는 택배의 이동 경로처럼 따라가면 쉽다. 애플리케이션 이벤트는 Kafka로, 운영 DB의 변경은 CDC를 거쳐 Kafka로 들어온다. 처리 계층은 이를 Bronze에 원본과 가깝게 보관하고, Silver에서 정제·검증한 뒤 Gold에서 활용할 결과로 만들어 조회·분석·AI 소비자에게 제공한다. 이 비유에서 중요한 것은 단계마다 **무엇을 보관하고, 무엇을 바꾸며, 실패하면 어디서 다시 시작할지**가 다르다는 점이다.
+
+예를 들어 주문 지표가 잘못되었다면 마지막 dashboard만 고치기보다 Gold 계산, Silver 정제, Bronze 원본을 거슬러 확인한다. Lineage는 경로를 찾고 quality는 값이 정한 규칙을 만족하는지, observability는 지연과 이상이 어디서 시작됐는지 확인하도록 돕는다. Orchestration은 실행 순서를 조정하지만 정확성을 자동 보장하지 않는다. 작은 규모에서는 모든 상자를 도입할 필요가 없으며 [21.24](#2124-what-to-remove-at-smaller-scale)의 제거 기준을 요구사항과 함께 적용한다.
+
 ## 부록: 기존 학습 보충과 적용 조건
 
 원문의 보충 설명과 최종 mental model을 통합했다. 아래는 구성 요소의 관계를 설명하는 학습용 구조이며 구축 완료된 시스템이나 모든 조직에 필요한 고정 설계가 아니다. 제품별 동작·제약의 근거는 연결된 주제 문서에서 확인한다.
@@ -1828,3 +1834,9 @@ Warehouse·SQL compute·transformation·Dynamic Tables·governance·Iceberg acce
 ## 근거와 검증 범위
 
 2026-09-26에 [Databricks data engineering](https://docs.databricks.com/aws/en/data-engineering)과 [Snowflake architecture](https://docs.snowflake.com/en/user-guide/intro-key-concepts)를 확인했다. 세부 제품 비교는 연결된 정규 문서의 공식 근거를 따른다. 원문 구조와 원칙을 통합한 개념 문서이며 connector 연동·SQL·장애 복구·성능을 실제 실행하지 않았다.
+
+## 핵심 정리
+
+- 원천부터 소비자까지 각 계층의 보관·변환·조회·복구 책임을 구분한다.
+- 품질·관측·계보·거버넌스는 흐름 전체를 확인하고 통제하는 역할이다.
+- 구성 요소는 문제와 요구사항이 있을 때 선택하고, 작은 규모에서는 운영 비용에 비해 가치가 없는 요소를 줄인다.

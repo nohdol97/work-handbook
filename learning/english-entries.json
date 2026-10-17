@@ -1882,6 +1882,21 @@
       "example_en": "Check that the artifact checksum matches the checksum recorded during evaluation.",
       "example_ko": "Artifact checksum이 평가 때 기록한 checksum과 일치하는지 점검한다.",
       "register": "neutral"
+    },
+    {
+      "id": "vocab-workload",
+      "category": "vocabulary",
+      "term": "workload",
+      "forms": [
+        "workload",
+        "workloads"
+      ],
+      "meaning_ko": "시스템이 처리해야 하는 작업량과 작업의 종류",
+      "usage_ko": "제품 이름만 비교하지 않고 실제 쿼리·수집·변환의 양과 패턴을 설명할 때 쓴다. 단순 데이터 크기와 구분한다.",
+      "usage_en": "Use workload for the jobs a system must handle, including their volume and pattern. It means more than data size alone.",
+      "example_en": "We should compare the platforms with the same query workload and recovery target.",
+      "example_ko": "같은 쿼리 작업량과 복구 목표로 플랫폼을 비교해야 합니다.",
+      "register": "neutral"
     }
   ]
 }

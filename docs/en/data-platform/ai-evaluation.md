@@ -1,8 +1,8 @@
 ---
 id: data-platform-ai-evaluation
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-16-01
   - DPE2-16-01
@@ -24,6 +24,8 @@ knowledge_ids:
 This page records conceptual study of sections 16.1–16.12. All data, scores, costs, versions, and gates below are hypothetical teaching examples, not production measurements or implemented results. Online evaluation observes real executions. Offline evaluation compares changes with fixed cases. Turning failures into regression cases and linking executions to version bundles connects the two flows.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**Reading guide:** AI evaluation resembles both practice tests and feedback after real use. Online evaluation in 16.1 observes signals from real requests; offline evaluation in 16.2 compares changes on fixed cases. Sections 16.3–16.4 cover the different limits of human review and Model-as-Judge, where a model scores an answer against criteria. Sections 16.5–16.8 link prompt, model, agent, and experiment versions. Sections 16.9–16.10 check recurring failures alongside quality, cost, and latency. Sections 16.11–16.12 explain where to store and connect those records.
 
 <!-- SOURCE CORE START -->
 
@@ -1248,6 +1250,8 @@ This record makes evaluation reproducible and explainable.
 
 ## Supplement: 16.1 Langfuse links and evaluation conditions
 
+For example, a new prompt may raise the average score while failing a security case. Check the regression dataset in 16.9, a set of past failures kept for repeat tests. In 16.8, hold the dataset, evaluator, and model fixed when possible to narrow the cause of a change. A failure found online can become an offline case for the next release; this links 16.1–16.2 with 16.9. Real user requests are not exam questions with one known answer, so keep evaluator failures, unscored cases, and actual failures separate.
+
 ### Langfuse connection from the earlier source
 
 Concept:
@@ -1491,3 +1495,9 @@ flowchart TD
 - **How to validate:** A person compares the original experiments, traces, version artifacts, and denominators. Run needed comparisons in an approved isolated evaluation environment, then review the results. No execution was performed for this page.
 
 [Online evaluation](ai-evaluation.md#161-online-evaluation-events) · [AI-ready data](ai-ready-data.md) · [Study scope](curriculum.md)
+
+## Chapter key points
+
+- Online evaluation finds new issues in real use; offline evaluation compares changes on fixed cases.
+- Human, rule, and judge scores each have limits. Do not count failed or missing evaluations as successes.
+- Link versions and experiment conditions. Review regression cases, cost, latency, and quality before deciding on release.

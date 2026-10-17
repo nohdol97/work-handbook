@@ -1,8 +1,8 @@
 ---
 id: data-platform-event-architecture
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-02-01
   - DPE-02-02
@@ -19,6 +19,8 @@ knowledge_ids:
 Kafka Broker, ISR, Replica 운영 상세는 범위 밖이다. 여기서는 데이터 엔지니어링 관점의 이벤트 의미를 다룬다.
 
 **본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+**이벤트(event)**는 “주문이 생성됐다”처럼 이미 일어난 일을 기록한 메시지다. 택배 송장에 고유 번호와 시각이 필요한 것처럼 이벤트에도 ID와 시간 기준이 필요하다. 아래 2.1~2.6은 메시지의 의미를 정하고, 다시 읽거나 여러 목적지로 보낼 때 그 의미를 지키는 방법이다.
 
 <!-- SOURCE CORE START -->
 
@@ -356,6 +358,12 @@ Kafka
 
 <!-- SOURCE CORE END -->
 
+## 처음 읽는 독자를 위한 연결 설명
+
+- **2.1~2.3 계약과 스키마:** 주문 생성 이벤트에 `event_id`, `order_id`, `occurred_at`을 두면 중복 판별, 주문 연결, 발생 시각 분석에 각각 쓸 수 있다. Event contract는 생산자와 소비자가 이 필드의 의미를 함께 약속한 것이다. Schema는 필드 형태를 검증하지만 지연 시간 단위를 밀리초에서 초로 바꾸는 의미 변경까지 자동으로 알아내지는 못한다.
+- **2.4~2.5 전달과 재처리:** 같은 송장이 두 번 도착할 수 있듯 at-least-once 경로에서는 이벤트가 재전달될 수 있다. 소비자가 event ID를 기준으로 중복 효과를 막아야 하는지는 sink 동작과 보장 경계에 따라 정한다. Replay는 남아 있는 메시지를 다시 읽는 작업이다. 검색 인덱스를 다시 만들 때 보존 기간, 과거 schema, 외부 쓰기 부작용을 먼저 확인한다.
+- **2.6 두 경로:** 한 주문 이벤트를 serving 저장소에는 빠른 조회용으로, lakehouse에는 긴 기간 분석용으로 보낼 수 있다. 두 경로가 서로 다른 시점에 따라잡을 수 있으므로 같은 시각의 결과라고 가정하지 말고 각각의 lag와 복구 상태를 확인한다.
+
 ## 적용 시 보완할 점
 
 위 `owner` 값은 가상의 팀 이름이다. JSON 자체와 JSON Schema를 통한 검증을 구분한다. Schema Registry가 단위 변경 같은 모든 의미 오류를 막아 주지는 않는다. Backward/Forward의 정확한 허용 변경은 포맷·필드 기본값·설정에 따라 다르다. 전체 이력 replay가 필요하면 직전 버전과의 호환성만 확인하는지, 전체 과거 버전까지 확인하는 transitive 설정인지 구분한다. [Confluent 스키마 호환성](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)
@@ -440,3 +448,7 @@ flowchart TD
 [이 주제의 실무 프롬프트 6개 더 보기](../prompts/event-architecture.md)
 
 LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.
+
+## 이 장의 핵심
+
+이벤트의 ID·시간·필드 의미를 먼저 약속하고, 전달·재처리·두 저장 경로에서 그 약속이 유지되는지 확인한다.

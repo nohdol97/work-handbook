@@ -1,8 +1,8 @@
 ---
 id: data-platform-databricks
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE2-17-01
   - DPE2-17-02
@@ -1135,6 +1135,12 @@ Cost ↑ possible
 
 <!-- SOURCE CORE END -->
 
+## 처음 읽는 사람을 위한 연결
+
+[17.1](#171-lakehouse-architecture)의 Databricks를 한 작업장으로 생각하면 이해하기 쉽다. 테이블은 저장 공간에 있고, Runtime은 Spark 실행 환경, Photon은 지원 연산의 실행 엔진, SQL Warehouse는 SQL 질의용 계산 자원이며, Unity Catalog는 자산의 이름과 접근 정책을 관리한다. 이 비유는 역할을 구분하기 위한 것이고 모든 작업이 같은 계산 자원을 쓰거나 모든 접근 경로가 같은 정책으로 보호된다는 뜻은 아니다.
+
+예를 들어 주문 데이터를 수집해 Bronze에 두고 Lakeflow Pipelines로 Silver를 정제한 뒤 SQL Warehouse에서 Gold를 조회할 수 있다. Lakeflow Jobs는 실행 순서를 조정하고 Unity Catalog는 등록된 자산의 접근을 관리한다. [17.12](#1712-which-self-managed-components-databricks-can-replace)의 대체 여부는 기존 Airflow·Spark·Trino의 이름만 대조하지 말고 실제 작업, 외부 연동, 권한 경계, 복구 책임으로 판단한다.
+
 ## 운영 검토와 공식 문서 보완
 
 제품 지원 조건은 2026-09-26 공식 문서 검토 범위다. 실제 환경의 버전·설정으로 확인한다.
@@ -1312,3 +1318,9 @@ Pruning은 scan을 줄이고, compaction은 읽기 효율을 높이며, incremen
 **LLM이 틀릴 수 있는 점:** UC가 모든 외부 접근과 검색 row 권한을 자동 보호하거나 Kafka/Flink가 무조건 사라진다고 주장할 수 있다.
 
 **검증 방법:** 현재 공식 지원표와 실제 설정을 대조한다. 격리 환경에서 외부 읽기/쓰기, 권한 없는 검색, 재시도·복구를 검증한다. 실제 청구와 운영시간을 측정하고 사람이 승인한다.
+
+## 핵심 정리
+
+- 저장·계산·작업 조정·거버넌스는 연결되지만 각각 다른 책임이다.
+- 관리형 기능을 도입해도 데이터 정확성, 외부 경로 접근, 비용과 복구의 검증 책임은 남는다.
+- 기존 도구의 대체 여부는 기능 이름보다 실제 workload와 운영 경계로 확인한다.

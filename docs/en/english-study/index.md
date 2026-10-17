@@ -1,8 +1,8 @@
 ---
 id: english-study-index
 status: studied
-last_updated: 2026-10-06
-last_reviewed: 2026-10-06
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids: []
 ---
 
@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 Start with the highest counts on each page. Say each example aloud, then adapt it to your situation. In interviews, distinguish your real work from a hypothetical design.
 
-- [Practical bilingual vocabulary](vocabulary.md): 48 entries
+- [Practical bilingual vocabulary](vocabulary.md): 49 entries
 - [Idioms, expressions, and collocations](idioms.md): 20 entries
 - [Phrasal verbs at work](phrasal-verbs.md): 20 entries
 - [Interview and workplace expressions](workplace.md): 26 entries

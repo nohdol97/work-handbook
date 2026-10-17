@@ -1,8 +1,8 @@
 ---
 id: data-platform-analytical-modeling
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-09-01
   - DPE-09-02
@@ -19,6 +19,8 @@ knowledge_ids:
 This page records study of grain, facts, dimensions, and metrics. The AI platform schema is a hypothetical design. It contains no real user or company data and does not claim implementation experience.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**Analytical data modeling** defines what rows mean and how they relate so a question can be answered correctly. Before adding a receipt total, decide whether one row means one item or one whole order. Sections 9.1–9.8 move from this row unit, or grain, to facts, dimensions, and metrics.
 
 <!-- SOURCE CORE START -->
 
@@ -290,6 +292,12 @@ Dashboards, analysts, and AI agents can use the same definitions.
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+- **Sections 9.1–9.4, row meaning:** Grain states what one table row represents. A fact can record a measurable event such as an order amount or a state at a set time such as daily inventory. A dimension describes the fact, such as customer or date. Joining one order fact to several item rows can repeat the order amount. Write down each table's grain and key relationship before designing a star schema.
+- **Sections 9.5–9.6, changes and convenient reads:** SCD handles dimension values that change over time. If Type 2 keeps past customer tiers, join an order to the tier valid when it happened. Denormalization combines data for convenient reads, but mixing measures from different grains can make totals wrong.
+- **Sections 9.7–9.8, a practical question:** If one agent execution has several LLM calls, execution cost and call cost have different grains. Fix the numerator, denominator, period, and exclusions for a metric such as “average cost per call.” dbt can organize these models, and Trino can query their results.
+
 ## Appendix: existing application notes
 
 ### Grain and double counting
@@ -383,3 +391,7 @@ Expected output identifies where a join repeats measures and provides a validati
 [dbt](dbt.md) · [Trino](trino.md) · [Handbook home](../index.md)
 
 [Six related practical prompts](../prompts/analytical-modeling.md)
+
+## Chapter takeaways
+
+State row meaning and calculation rules before building facts or metrics. Use a small example to check that joins and history versions preserve totals.

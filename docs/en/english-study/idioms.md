@@ -1,8 +1,8 @@
 ---
 id: english-study-idioms
 status: studied
-last_updated: 2026-10-06
-last_reviewed: 2026-10-06
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids: []
 ---
 
@@ -46,7 +46,7 @@ Example source pages: [ai-model-development/qlora-training](../ai-model-developm
 
 ### instead of {#idioms-instead-of}
 
-**45 occurrences · 30 documents · neutral**
+**46 occurrences · 31 documents · neutral**
 
 **~ 대신에**
 
@@ -62,7 +62,7 @@ Example source pages: [ai-model-development/model-developer](../ai-model-develop
 
 ### rather than {#idioms-rather-than}
 
-**30 occurrences · 22 documents · neutral**
+**32 occurrences · 24 documents · neutral**
 
 **~보다는, ~하지 않고**
 

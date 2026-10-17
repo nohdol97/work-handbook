@@ -1,8 +1,8 @@
 ---
 id: data-platform-trino
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-10-01
   - DPE-10-02
@@ -19,6 +19,8 @@ knowledge_ids:
 This page records conceptual study of Trino. It does not claim verified query performance or production results. Official documentation was checked on 2026-09-24.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**Trino** is a distributed SQL query engine that can read several data sources. Imagine one desk searching inventory across warehouses while accounting for what must be moved. Sections 10.1–10.8 connect connectors, query execution, pushdown, joins, and memory.
 
 <!-- SOURCE CORE START -->
 
@@ -266,6 +268,12 @@ Trino
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+- **Sections 10.1–10.3, execution:** The coordinator plans a query; workers run its pieces. A connector is the route to a source such as Iceberg or PostgreSQL. If a query joins a large Iceberg fact with a small PostgreSQL dimension, where it reads and moves data affects both latency and source load.
+- **Sections 10.4–10.6, movement and memory:** Pushdown sends a filter or aggregation closer to the source where supported. It resembles selecting only needed boxes at a warehouse, but support depends on the connector and SQL shape. A broadcast join copies the small side to participating workers. Bad size estimates or skewed keys can create memory pressure. Check EXPLAIN and measured scan and exchange volumes.
+- **Sections 10.7–10.8, tool roles:** Trino can serve interactive analysis, while Spark can handle large transformations. These are common uses, not absolute boundaries. Even when both read Iceberg, metadata pruning, file layout, and connector support affect performance.
+
 ## Appendix: existing application notes
 
 ### Architecture and execution model
@@ -363,3 +371,7 @@ Expected output links possible bottlenecks to evidence and next checks. The LLM 
 [Analytical modeling](analytical-modeling.md) · [dbt](dbt.md) · [Handbook home](../index.md)
 
 [Six related practical prompts](../prompts/trino.md)
+
+## Chapter takeaways
+
+Trino query cost depends on source reads, worker-to-worker data movement, and memory. Check connector support, plans, and runtime measurements.

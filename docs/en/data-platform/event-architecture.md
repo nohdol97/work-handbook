@@ -1,8 +1,8 @@
 ---
 id: data-platform-event-architecture
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-02-01
   - DPE-02-02
@@ -17,6 +17,8 @@ knowledge_ids:
 Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run. Kafka broker, ISR, and replica operations are outside this page. The focus is event meaning for data engineering.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+An **event** records something that already happened, such as “an order was created.” Like a parcel label with a unique number and time, an event needs an identity and a clear time basis. Sections 2.1–2.6 show how to define its meaning and keep that meaning during replay and delivery to several destinations.
 
 <!-- SOURCE CORE START -->
 
@@ -354,6 +356,12 @@ Key point:
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+- **Sections 2.1–2.3, contract and schema:** An order-created event might carry `event_id`, `order_id`, and `occurred_at`. They support duplicate checks, order linking, and event-time analysis. An event contract is the shared promise between producer and consumer about these fields. A schema checks field shape, but it cannot automatically detect every meaning change, such as changing latency from milliseconds to seconds.
+- **Sections 2.4–2.5, delivery and replay:** Just as a parcel label may arrive twice, an at-least-once path can redeliver an event. Decide whether the consumer must prevent duplicate effects based on the sink and the guarantee boundary. Replay reads retained messages again. Before rebuilding a search index, check retention, old schemas, and side effects of external writes.
+- **Section 2.6, two paths:** The same order event can feed a serving store for quick lookup and a lakehouse for long-term analysis. The paths can catch up at different times. Check each path's lag and recovery state before comparing results.
+
 ## Qualifications for real use
 
 The owner in the example is fictional. Distinguish plain JSON from validation through JSON Schema. A registry cannot catch every semantic change, such as a unit change. Allowed changes depend on the format, field defaults, and compatibility mode. For full historical replay, check whether compatibility covers only the previous schema or all prior schemas through a transitive mode. [Confluent schema compatibility](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)
@@ -438,3 +446,7 @@ Example prompt:
 [See six more practical prompts for this topic](../prompts/event-architecture.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.
+
+## Chapter takeaways
+
+Define event identity, time, and field meaning first. Then check that delivery, replay, and each storage path preserve that contract.

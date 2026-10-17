@@ -1,8 +1,8 @@
 ---
 id: data-platform-databricks
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE2-17-01
   - DPE2-17-02
@@ -1135,6 +1135,12 @@ Cost ↑ possible
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+Think of [17.1](#171-lakehouse-architecture) as a workshop. Tables live in storage. Runtime is the Spark execution environment, Photon runs supported operations, and a SQL Warehouse supplies compute for SQL queries. Unity Catalog manages names and access policies for registered assets. The analogy separates responsibilities; it does not mean every job uses the same compute or every access path follows the same policy.
+
+For example, a team could ingest orders into Bronze, use Lakeflow Pipelines to prepare Silver, and query Gold with a SQL Warehouse. Lakeflow Jobs can coordinate execution, while Unity Catalog governs registered assets. To assess the replacements in [17.12](#1712-which-self-managed-components-databricks-can-replace), compare real jobs, external integrations, access boundaries, and recovery duties, not just product names.
+
 ## Operational review and official documentation notes
 
 Product conditions reflect the official documentation reviewed on 2026-09-26. Check actual versions and settings.
@@ -1312,3 +1318,9 @@ Balance reduced installation, upgrade, integration, security, and monitoring wor
 **What the LLM Can Get Wrong:** It may assume UC protects every external access and retrieval row, or that Kafka and Flink always disappear.
 
 **How to Validate:** Compare current official support tables with real settings. Test external reads/writes, denied retrieval, retries, and recovery in isolation. Measure actual bills and operating hours. Have a person approve the decision.
+
+## Key points
+
+- Storage, compute, job coordination, and governance work together but have different responsibilities.
+- Managed features still require checks of data correctness, direct storage access, cost, and recovery.
+- Decide whether a tool can be replaced by testing the real workload and operating boundary.

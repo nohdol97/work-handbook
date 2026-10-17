@@ -1,8 +1,8 @@
 ---
 id: data-platform-lakehouse-iceberg
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-03-01
   - DPE-03-02
@@ -517,6 +517,12 @@ Unity Catalog is better understood as a much broader governance layer.
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+Think of [3.1](#31-lakehouse-architecture) and [3.2](#32-iceberg-metadata-internals) as a library: object storage holds the books, Parquet defines their internal format, and Iceberg metadata records the current list and editions. A snapshot identifies a table state at one point in time. Pruning means skipping files a query does not need. A catalog helps find that record. Files, metadata, and catalog have different duties, so recovering one part does not prove that the whole table is healthy.
+
+For example, changing an orders table writes new data or delete files. The [3.4](#34-atomic-commit-model) commit then publishes a new snapshot. A query engine reads the files referenced by that snapshot. This flow connects [3.6](#36-query-pruning), which reduces how much is read, with [3.9](#39-maintenance), which manages old files. Before deleting files, check retained snapshots and active writers.
+
 ## Qualifications for real use
 
 The layer model describes responsibilities, not a sequence where the catalog runs after compute. The catalog helps locate metadata; engines use it to read files. The pruning list also describes cooperating layers, not one required execution order.
@@ -624,3 +630,9 @@ Example prompt:
 [See six more practical prompts for this topic](../prompts/lakehouse-iceberg.md)
 
 LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.
+
+## Key points
+
+- Iceberg provides table metadata and commit rules for files, snapshots, and schemas; it is not the data file itself.
+- Partitioning, sorting, and pruning can reduce reads, but their effect depends on data layout and query filters.
+- Changes, cleanup, and recovery require checks of past references and active work as well as the current snapshot.

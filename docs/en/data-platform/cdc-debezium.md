@@ -1,8 +1,8 @@
 ---
 id: data-platform-cdc-debezium
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-06-01
   - DPE-06-02
@@ -20,6 +20,8 @@ knowledge_ids:
 This page records conceptual study. The flows and recovery steps are examples, not records of production work or incident recovery. Product behavior was checked against official documentation on 2026-09-24. Check connector and database versions and settings in the actual environment.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**CDC (Change Data Capture)** sends database row changes to other systems. **Debezium** reads those changes and emits events. It is like receiving each amendment to a shop ledger instead of copying the whole ledger every time. Sections 6.1–6.9 follow the path from an initial copy to change application and recovery.
 
 <!-- SOURCE CORE START -->
 
@@ -381,6 +383,12 @@ Snapshot Recovery
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+- **Sections 6.1–6.4, starting and continuing:** An initial snapshot establishes a starting view of current rows; log changes follow it. An offset is a bookmark for how far the connector has read. If order 42 starts as `pending` and an UPDATE changes it to `paid`, the consumer must interpret the records in the right order. Check duplicate-handling rules where snapshots, logs, and retries overlap.
+- **Sections 6.5–6.8, applying changes:** Appending INSERT, UPDATE, and DELETE records alone does not make a current-state table. A history table keeps changes; a current-state table keeps the latest state by key. An Iceberg MERGE must respect keys, change order, delete meaning, and schema changes. Do not assume one global order across partitions.
+- **Section 6.9, recovery:** After a failure, compare the connector offset, retained Kafka range, and state already written to the sink. Moving a bookmark alone can leave gaps or duplicate effects. Compare source and final states for a small set of keys before choosing the replay range.
+
 ## Additional checks before applying these ideas
 
 ### Existing flow diagram
@@ -483,3 +491,7 @@ Expected output is a set of possible causes and checks. The LLM may order events
 [Orchestration](orchestration.md) · [dbt](dbt.md) · [Handbook home](../index.md)
 
 [Six related practical prompts](../prompts/cdc-debezium.md)
+
+## Chapter takeaways
+
+CDC applies an initial state and later changes in a consistent order and meaning. Recovery must check both read position and destination state.

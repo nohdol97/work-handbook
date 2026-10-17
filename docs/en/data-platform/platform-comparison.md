@@ -1,8 +1,8 @@
 ---
 id: data-platform-platform-comparison
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE2-19-01
   - DPE2-19-02
@@ -681,6 +681,12 @@ The goal is:
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+Read this comparison like three ways to run a kitchen. An open lakehouse and integrated managed platforms may produce the same result, but responsibility for upkeep, rules, and recovery differs. The analogy alone cannot rank quality or cost.
+
+Start with a real workload: the jobs, data volume, and concurrent use the platform must handle. Suppose order reports must refresh within 15 minutes and two engines must read the same table. Compare table access in [19.2](#192-iceberg-openness), delay in [19.5](#195-streaming), access control in [19.7](#197-governance), and full cost in [19.13](#1913-total-cost) on the same inputs. Portability of the storage format is different from portability of jobs, security policies, and operating knowledge.
+
 ## Additional checks before applying these ideas
 
 The source’s strength and ranking labels are teaching comparisons, not benchmark results. Below are the previous page’s conditional interpretations and checks. They do not claim new feature, price, or performance verification. The official-documentation review date remains 2026-09-26.
@@ -826,3 +832,9 @@ Hybrids are normal. Examples are `Kafka/Flink → Iceberg → Databricks + Trino
 **What the LLM Can Get Wrong:** It may name a universal winner or claim full portability from an open table format alone.
 
 **How to Validate:** Check official support tables and real reader/writer and access tests. Measure cost and staff time using the same data, SLOs, and recovery level. Have stakeholders review weights, trade-offs, and unknowns.
+
+## Key points
+
+- Set workload, latency, recovery, access, staffing, and cost evidence before choosing a platform.
+- An open table format alone does not make an entire pipeline portable.
+- Narrow the choice with comparable read, write, access, recovery, and total-cost checks.

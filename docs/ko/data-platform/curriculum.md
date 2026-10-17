@@ -1,8 +1,8 @@
 ---
 id: data-platform-curriculum
 status: overview
-last_updated: 2026-09-27
-last_reviewed: 2026-09-27
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-00-01
   - DPE-18-01
@@ -29,6 +29,8 @@ knowledge_ids:
 첫 자료의 Chapter 17은 보충 설명, Chapter 18은 당시 진행 현황이다. 2026-09-26 추가 자료의 Chapter 16~21은 아래 Phase 번호에 대응하며 **Phase 1~21의 개념 학습 완료**를 명시한다. 첫 자료의 미학습 표시는 당시 이력으로 보존하고 현재 상태는 이번 자료로 갱신했다.
 
 현재 본문 기준은 2026-09-27에 제공된 `data_platform_engineering_complete_source_ch01_21.md` 통합본이다. 이전 두 자료는 출처 이력으로 보존한다. 번호·제목·문단·목록·코드의 원형을 유지하며 보완 설명과 정정은 각 페이지 뒤에서 구분한다. 통합본의 Appendix A는 이전 자료의 보충 설명이며 Databricks 본장의 17번 절과 구분한다.
+
+처음 읽는다면 이 목록을 여행 지도처럼 사용한다. 각 Phase는 목적지 자체가 아니라 다음 개념으로 가는 길이다. 예를 들어 [기초](foundations.md)의 저장 형식을 이해한 뒤 [Lakehouse](lakehouse-iceberg.md)의 테이블 관리, [Spark](spark.md)의 변환, [운영·복구](production-operations.md)의 검증으로 이어진다. “완료” 표시는 이 연결을 설명할 수 있는 개념 학습 상태이며 실제 환경에서 운영해 보았다는 뜻은 아니다.
 
 ## 완료: Phase 1~15
 
@@ -155,3 +157,9 @@ knowledge_ids:
 후속 원문은 Unity Catalog, Lakeflow Jobs, managed Delta/Iceberg, Iceberg REST Catalog, Dynamic Tables, Horizon Catalog, Snowflake Iceberg 공식 문서를 참고했다고 기록하지만 URL·버전·조회일은 제공하지 않는다. 따라서 현재 공식 근거는 각 제품 정규 페이지에서 별도로 확인하고 날짜·제약을 표시했다. 실제 cloud·region·edition·버전·설정은 적용 전에 확인한다.
 
 [전체 구조](architecture.md) · [홈](../index.md)
+
+## 핵심 정리
+
+- Phase 1~21은 데이터의 수집·저장·처리·활용·운영을 잇는 개념 학습 경로다.
+- 완료 기록과 실제 구축·성능·장애 검증은 구분한다.
+- 각 기술을 외우기보다 해결하는 문제와 앞뒤 단계의 관계를 따라 읽는다.

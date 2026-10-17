@@ -1,8 +1,8 @@
 ---
 id: data-platform-ai-ready-data
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-15-01
   - DPE-15-02
@@ -21,6 +21,8 @@ knowledge_ids:
 원문의 Chapter 15를 개념별로 정리했다. `studied`는 개념 학습을 뜻하며 실제 구축·운영 또는 실행 검증을 뜻하지 않는다. 예시의 버전과 숫자는 설명용이다.
 
 **본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+**읽기 길잡이:** AI-ready 데이터는 요리 재료처럼 이름표만 붙어 있다고 바로 쓸 수 없다. 출처, 신선도, 버전, 사용 권한을 알아야 같은 평가를 다시 해석할 수 있다. 15.1은 이 조건을, 15.2의 telemetry(실행 중 남기는 관찰 기록)는 어떤 prompt·model·tool이 어떤 결과를 냈는지를 다룬다. 15.3–15.5에서는 데이터셋과 평가 사례를 버전으로 묶어 비교하고, 15.6–15.8에서는 문서 조각의 embedding(의미를 나타내는 숫자 벡터)과 검색 권한·출처를 연결한다. 15.9는 학습 입력과 정답 label이 제때 도착하는지 확인한다.
 
 <!-- SOURCE CORE START -->
 
@@ -525,6 +527,8 @@ Label-like
 
 ## 원문 적용 시 보완 {#source-notes}
 
+15.2의 trace는 한 요청의 실행 단계를 묶는 기록이다. 새 agent의 점수가 달라졌을 때 15.3–15.4의 dataset·prompt·model 버전과 실행 설정을 함께 봐야 비교 가능한지 판단할 수 있다. 검색에서는 15.6의 embedding이 비슷한 조각을 찾도록 돕지만, 15.7의 접근 메타데이터만으로 권한이 강제되지는 않는다. 검색 요청마다 허용 범위를 확인하고 15.8의 provenance(출처와 변환 이력)로 답변 근거를 추적한다.
+
 ### 15.2A Langfuse 데이터 모델
 
 Trace는 요청·작업의 논리적 묶음, observation은 LLM·tool·retrieval 같은 개별 단계, session은 여러 trace를 묶는 단위다. 실제 저장 구현을 이 개념 그림에서 추론하지 않는다. [Langfuse data model](https://langfuse.com/docs/observability/data-model).
@@ -610,3 +614,9 @@ Langfuse의 실제 수집 범위는 계측과 연동에 달려 있다. 원문 �
 [온라인 평가](ai-evaluation.md#161-online-evaluation-events) · [거버넌스](governance.md) · [계보와 메타데이터](lineage-metadata.md) · [전체 구조](architecture.md)
 
 [더 많은 실무 프롬프트](../prompts/ai-ready-data.md)
+
+## 이 장의 핵심
+
+- AI에 쓰는 데이터는 품질·신선도·버전·발견 가능성·권한을 함께 갖춰야 한다.
+- Trace와 데이터셋 버전을 연결해야 평가 차이의 조건을 다시 확인할 수 있다.
+- Embedding은 검색을 돕지만 접근을 허용하지 않는다. 검색 권한과 출처 확인은 별도 단계다.

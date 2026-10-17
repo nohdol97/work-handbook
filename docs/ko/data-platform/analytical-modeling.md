@@ -1,8 +1,8 @@
 ---
 id: data-platform-analytical-modeling
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-09-01
   - DPE-09-02
@@ -19,6 +19,8 @@ knowledge_ids:
 이 문서는 grain, fact, dimension, metric을 학습한 기록이다. AI platform schema는 가상의 설계 예시이며 실제 사용자·조직 데이터나 구현 경험을 담지 않는다.
 
 **본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+**분석 데이터 모델링**은 질문에 답할 수 있도록 데이터의 행 의미와 관계를 정하는 일이다. 영수증 한 줄이 상품 한 개를 뜻하는지 주문 한 건을 뜻하는지 먼저 정해야 합계를 맞출 수 있다. 아래 9.1~9.8은 그 행 단위인 grain에서 fact·dimension·metric으로 이어진다.
 
 <!-- SOURCE CORE START -->
 
@@ -290,6 +292,12 @@ Dashboard, Analyst, AI Agent가 동일한 정의를 사용하게 한다.
 
 <!-- SOURCE CORE END -->
 
+## 처음 읽는 독자를 위한 연결 설명
+
+- **9.1~9.4 행의 의미:** Grain은 table의 한 행이 무엇을 나타내는지 정한 약속이다. Fact는 주문 금액처럼 측정할 사건이나 일별 재고처럼 특정 시점의 상태를 담고, dimension은 고객이나 날짜처럼 fact를 설명하는 축이다. 주문 한 건 fact를 주문 상품 여러 행과 바로 join하면 주문 금액이 상품 수만큼 반복될 수 있다. Star schema를 설계할 때 먼저 각 table의 grain과 key 관계를 적는다.
+- **9.5~9.6 변경과 읽기 편의:** SCD는 시간이 지나며 바뀌는 dimension 값을 다루는 방식이다. Type 2가 고객 등급의 과거 버전을 보관한다면 주문 당시 유효했던 버전과 연결해야 한다. Denormalization은 읽기 편의를 위해 정보를 합치지만 grain이 다른 측정값을 무심코 섞으면 합계가 틀릴 수 있다.
+- **9.7~9.8 실제 질문:** 한 agent 실행에 LLM 호출이 여러 번 있다면 실행 비용과 호출 비용은 서로 다른 grain이다. “호출당 평균 비용”의 분자·분모·기간·제외 조건을 고정해야 metric을 비교할 수 있다. dbt는 이런 모델을 구성하고 Trino는 그 결과를 질의하는 데 쓸 수 있다.
+
 ## 부록: 기존 보완 설명
 
 ### Grain과 중복 집계
@@ -383,3 +391,7 @@ flowchart TD
 [dbt](dbt.md) · [Trino](trino.md) · [핸드북 홈](../index.md)
 
 [관련 실무 프롬프트 6개](../prompts/analytical-modeling.md)
+
+## 이 장의 핵심
+
+모든 fact와 metric은 먼저 한 행의 의미와 계산 조건을 명시한다. Join과 이력 버전이 합계를 바꾸지 않는지 작은 예제로 확인한다.

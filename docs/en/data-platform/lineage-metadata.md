@@ -1,8 +1,8 @@
 ---
 id: data-platform-lineage-metadata
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-13-01
   - DPE-13-01A
@@ -19,6 +19,8 @@ knowledge_ids:
 This Learn page covers the studied roles of metadata, lineage, and catalogs. The datasets are hypothetical. It does not claim that collectors or platforms were built and tested. Metadata describes data. Lineage describes how data is created and used.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**Reading guide:** Metadata describes data much like a book's title, author, and category describe a book. Lineage maps where that data came from and where it is used. The technical, operational, and business metadata in 13.1 separate data shape, recent runs, and metric meaning. Before changing the type of `raw_orders.amount`, follow the paths in 13.2–13.5 to transformations and dashboards. The tools and catalog in 13.6–13.7 help find these links, but a missing edge in the graph does not prove that a consumer is safe.
 
 <!-- SOURCE CORE START -->
 
@@ -310,6 +312,8 @@ It is developing into this combination.
 
 ## Details to check in practice
 
+The semantic layer in 13.1A connects a business metric such as “revenue” to a consistent calculation definition. A catalog showing that description does not mean it runs the calculation or enforces access. OpenLineage in 13.3 is a standard for exchanging run and dataset metadata; Marquez in 13.6 is one tool for exploring it. When column-level lineage in 13.4 has been collected, it can narrow an impact review from a whole table to affected columns.
+
 ### Calculation boundaries in a semantic layer
 
 The Revenue formula is conceptual. It is not an accounting rule or runnable syntax for a specific product.
@@ -417,3 +421,9 @@ flowchart LR
 [Data observability](data-observability.md) · [Governance](governance.md) · [Handbook home](../index.md)
 
 [More practical prompts](../prompts/lineage-metadata.md)
+
+## Chapter key points
+
+- Metadata describes meaning and state. Lineage traces how data is produced and used.
+- Before changing a type or metric, check upstream evidence and downstream consumers.
+- A catalog graph alone cannot prove complete collection, correct execution, or policy enforcement.

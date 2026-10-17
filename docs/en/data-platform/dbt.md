@@ -1,8 +1,8 @@
 ---
 id: data-platform-dbt
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-08-01
   - DPE-08-02
@@ -21,6 +21,8 @@ knowledge_ids:
 This page records conceptual study of dbt and model layers. It does not claim project execution, performance testing, or production experience. Official documentation was checked on 2026-09-24.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**dbt** organizes SQL transformations as models and manages their dependencies, tests, and documentation. It is like a recipe that says which ingredient each step produces for the next. Sections 8.1–8.10 follow data from sources to analytical marts.
 
 <!-- SOURCE CORE START -->
 
@@ -295,6 +297,12 @@ Spark and dbt can work together rather than competing with each other.
 
 <!-- SOURCE CORE END -->
 
+## A beginner's guide to the connections
+
+- **Sections 8.1–8.5, model flow:** A source points to incoming tables. Staging cleans names and formats, intermediate models hold shared transformations, and marts provide facts and dimensions for analysis. `ref()` links models and records their run dependencies. Think of cleaning dates and currency from raw orders before building a customer-revenue mart.
+- **Sections 8.6–8.8, incremental work and quality:** An incremental model can process only new or changed data to reduce repeated work. Design its filter, unique key, and rerun range so late orders are not missed. Tests check specified conditions; snapshots can keep earlier versions of values. Neither automatically catches every business-meaning error.
+- **Sections 8.9–8.10, connections:** Lineage shows which sources and upstream models a model depends on. dbt organizes SQL, while the connected warehouse or query engine executes it. Check adapter support and engine behavior for Trino, Snowflake, or another target.
+
 ## Additional checks before applying these ideas
 
 ### Scope of sections 8.6 and 8.7
@@ -392,3 +400,7 @@ Expected output is a list of missed-data conditions and testable fixes. The LLM 
 [Orchestration](orchestration.md) · [Analytical modeling](analytical-modeling.md) · [Trino](trino.md) · [Handbook home](../index.md)
 
 [Six related practical prompts](../prompts/dbt.md)
+
+## Chapter takeaways
+
+dbt makes SQL dependencies and quality rules visible. Check incremental correctness and the actual engine behavior separately.

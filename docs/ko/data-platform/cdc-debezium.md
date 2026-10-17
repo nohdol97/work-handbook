@@ -1,8 +1,8 @@
 ---
 id: data-platform-cdc-debezium
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-06-01
   - DPE-06-02
@@ -20,6 +20,8 @@ knowledge_ids:
 이 문서는 개념 학습 기록이다. 아래 경로와 복구 절차는 설명용이며 실제 운영·장애 복구를 수행한 기록이 아니다. 제품 동작은 2026-09-24에 공식 문서와 대조했다. 실행 환경에서는 connector와 DB 버전 및 설정을 다시 확인한다.
 
 **본문 안내:** 아래 원문 구역은 원래 순서와 형태를 보존한 본문이다. 원문의 단순화된 설명에 대한 정정·적용 조건과 추가 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
+
+**CDC(Change Data Capture)**는 데이터베이스의 행 변경을 다른 시스템에 전달하는 방식이고, **Debezium**은 그 변경을 읽어 이벤트로 내보내는 도구다. 가게 장부를 매번 통째로 복사하는 대신 수정 내역을 이어서 받는 것에 가깝다. 아래 6.1~6.9는 초기 사본부터 변경 적용과 복구까지의 흐름이다.
 
 <!-- SOURCE CORE START -->
 ## 6.1 CDC Fundamentals
@@ -380,6 +382,12 @@ Snapshot Recovery
 
 <!-- SOURCE CORE END -->
 
+## 처음 읽는 독자를 위한 연결 설명
+
+- **6.1~6.4 처음부터 이어 읽기:** Initial snapshot은 현재 행의 출발점을 만들고, 이후 로그의 변경을 이어 받는다. Offset은 어디까지 읽었는지 표시하는 책갈피다. 주문 42의 초기 상태가 `pending`이고 다음 UPDATE가 `paid`라면 소비자는 둘을 올바른 순서로 해석해야 한다. Snapshot과 로그가 겹치거나 재시도되는 구간은 중복 처리 규칙을 확인한다.
+- **6.5~6.8 목적지 적용:** INSERT, UPDATE, DELETE를 단순히 추가하기만 하면 현재 상태를 나타내기 어렵다. History table은 변경 기록을 남기고 current-state table은 key별 최신 상태를 나타낸다. Iceberg에 MERGE할 때는 key, 변경 순서, delete 의미, schema 변화가 일치해야 한다. 여러 partition 사이의 전역 순서를 당연하게 가정하지 않는다.
+- **6.9 복구:** 장애 뒤에는 connector offset, Kafka에 남은 범위, sink에 반영된 위치를 비교한다. 책갈피만 옮기면 빠진 변경이나 중복 효과가 생길 수 있으므로 작은 key 집합에서 원본과 최종 상태를 대조한 뒤 재처리 범위를 정한다.
+
 ## 적용 시 보완할 점
 
 ### 기존 흐름도
@@ -482,3 +490,7 @@ Snapshot으로 현재 상태를 복구할 수 있어도 사라진 로그의 중�
 [오케스트레이션](orchestration.md) · [dbt](dbt.md) · [핸드북 홈](../index.md)
 
 [관련 실무 프롬프트 6개](../prompts/cdc-debezium.md)
+
+## 이 장의 핵심
+
+CDC는 초기 상태와 이후 변경을 같은 순서·의미로 이어 적용하는 문제다. 복구 때는 읽기 위치와 목적지 상태를 함께 검증한다.

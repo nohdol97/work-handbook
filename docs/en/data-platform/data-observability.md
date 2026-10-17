@@ -1,8 +1,8 @@
 ---
 id: data-platform-data-observability
 status: studied
-last_updated: 2026-10-04
-last_reviewed: 2026-10-04
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids:
   - DPE-12-01
   - DPE-12-02
@@ -18,6 +18,8 @@ knowledge_ids:
 This Learn page covers continuous measurement of data health. The numbers and incidents are learning examples, not measurements or hands-on experience. Data quality defines expected conditions. Observability helps show the current state and locate where a problem starts.
 
 **Reading note:** The source core below keeps the original order and form. Read the section-specific corrections, conditions, and additions in the supplement after the source material; some original statements are simplified.
+
+**Reading guide:** Data observability is like parcel tracking: it shows how far data has traveled and where a delay began. Freshness in 12.1 asks whether data is current. Volume in 12.2 asks whether the count is expected. Sections 12.3–12.4 check changes in structure and value distribution. For example, an ingestion job can succeed while today's partition is empty and a dashboard shows zero rows. Sections 12.5–12.7 therefore separate job health from data health and connect measurements and alerts to business impact.
 
 <!-- SOURCE CORE START -->
 
@@ -195,6 +197,8 @@ Avoid alert fatigue.
 
 ## Details to check in practice
 
+The timestamps in 12.1 resemble pickup, sorting, and delivery times: each marks a different stage. Check whether `event_time` is old or only processing finished late before choosing an investigation path. In 12.6, an SLI (Service Level Indicator) is a measured value; an SLO (Service Level Objective) is an agreed target for it. [Quality checks](data-quality.md) define expected conditions, and observability shows whether those conditions hold over time. An alert in 12.7 is more useful when it includes the duration and affected dataset, not just a number.
+
 ### Freshness timestamps
 
 Event time, collection time, processing completion time, and screen refresh time are different measurements. Define which timestamps to compare before using them in operations.
@@ -291,3 +295,9 @@ Define duration and context to reduce alert fatigue. Check that this does not hi
 [Data quality](data-quality.md) · [Lineage and metadata](lineage-metadata.md) · [Handbook home](../index.md)
 
 [More practical prompts](../prompts/data-observability.md)
+
+## Chapter key points
+
+- Freshness, counts, schemas, and distributions can reveal data problems even when jobs succeed.
+- Define timestamps, windows, and baselines before treating a change as abnormal.
+- Set SLIs and SLOs for the dataset's purpose. Include impact and next checks in alerts.

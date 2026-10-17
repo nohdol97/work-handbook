@@ -1,8 +1,8 @@
 ---
 id: english-study-idioms
 status: studied
-last_updated: 2026-10-06
-last_reviewed: 2026-10-06
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids: []
 ---
 
@@ -46,7 +46,7 @@ get something wrong이라는 관용 표현이다. 보통 목적어를 가운데 
 
 ### instead of {#idioms-instead-of}
 
-**45회 · 30개 문서 · 중립**
+**46회 · 31개 문서 · 중립**
 
 **~ 대신에**
 
@@ -62,7 +62,7 @@ get something wrong이라는 관용 표현이다. 보통 목적어를 가운데 
 
 ### rather than {#idioms-rather-than}
 
-**30회 · 22개 문서 · 중립**
+**32회 · 24개 문서 · 중립**
 
 **~보다는, ~하지 않고**
 

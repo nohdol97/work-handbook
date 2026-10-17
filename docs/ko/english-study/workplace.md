@@ -1,8 +1,8 @@
 ---
 id: english-study-workplace
 status: studied
-last_updated: 2026-10-06
-last_reviewed: 2026-10-06
+last_updated: 2026-10-17
+last_reviewed: 2026-10-17
 knowledge_ids: []
 ---
 
@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### X depends on Y {#workplace-depends-on}
 
-**48회 · 25개 문서 · 중립**
+**57회 · 25개 문서 · 중립**
 
 **X는 Y에 따라 달라진다**
 
@@ -30,7 +30,7 @@ knowledge_ids: []
 
 ### X does not mean Y {#workplace-does-not-mean}
 
-**47회 · 32개 문서 · 중립**
+**49회 · 33개 문서 · 중립**
 
 **X라고 해서 Y라는 뜻은 아니다**
 
@@ -46,7 +46,7 @@ knowledge_ids: []
 
 ### X does not guarantee Y {#workplace-does-not-guarantee}
 
-**33회 · 24개 문서 · 중립**
+**34회 · 25개 문서 · 중립**
 
 **X가 Y를 보장하지는 않는다**
 
@@ -62,7 +62,7 @@ knowledge_ids: []
 
 ### Check that ... {#workplace-check-that}
 
-**28회 · 26개 문서 · 중립**
+**31회 · 28개 문서 · 중립**
 
 **...인지 점검하다**
 
@@ -78,7 +78,7 @@ knowledge_ids: []
 
 ### For example, ... {#workplace-for-example}
 
-**18회 · 12개 문서 · 중립**
+**25회 · 17개 문서 · 중립**
 
 **예를 들어 ...**
 
@@ -94,7 +94,7 @@ knowledge_ids: []
 
 ### Check whether ... {#workplace-check-whether}
 
-**14회 · 12개 문서 · 중립**
+**16회 · 13개 문서 · 중립**
 
 **...인지 확인하다**
 
