@@ -24,6 +24,7 @@ jobs:
       - run: python -m venv .venv
       - run: .venv/bin/python -m pip install -r requirements.txt
       - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
       - run: make validate
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main' && vars.PAGES_ENABLED == 'true' && github.event_name != 'pull_request'

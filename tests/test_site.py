@@ -6,20 +6,82 @@ from unittest.mock import patch
 
 MODULE = Path(__file__).resolve().parents[1] / 'scripts' / 'check_site.py'
 class SiteTests(unittest.TestCase):
-    def audit_bilingual_fixture(self, ko_content, en_content):
+    def audit_bilingual_fixture(self, ko_content, en_content, mutate=None):
         spec = importlib.util.spec_from_file_location('sitecheck', MODULE)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             (root/'docs/ko').mkdir(parents=True)
-            (root/'docs/ko/index.md').write_text('# 홈')
+            (root/'docs/ko/index.md').write_text('---\nid: handbook-home\n---\n# 홈')
+            (root/'docs/en').mkdir(parents=True)
+            (root/'docs/en/index.md').write_text('---\nid: handbook-home\n---\n# Home')
             (root/'site/en').mkdir(parents=True)
             (root/'site/index.html').write_text(
-                '<a hreflang="en" href="en/">English</a>' + ko_content)
+                '<a hreflang="en" href="en/">English</a>'
+                '<a data-slide-link href="slides/ko/">Slides</a>' + ko_content)
             (root/'site/en/index.html').write_text(
-                '<a hreflang="ko" href="../">한국어</a>' + en_content)
+                '<a hreflang="ko" href="../">한국어</a>'
+                '<a data-slide-link href="../slides/en/">Slides</a>' + en_content)
+            (root/'site/slides/ko').mkdir(parents=True)
+            (root/'site/slides/en').mkdir(parents=True)
+            (root/'site/slides/index.html').write_text(
+                '<a href="ko/">한국어</a><a href="en/">English</a>')
+            (root/'site/slides/ko/index.html').write_text(
+                '<meta name="handbook-source-id" content="handbook-home">'
+                '<a data-source-link href="../../">원문</a>'
+                '<a data-language-link href="../en/">English</a>')
+            (root/'site/slides/en/index.html').write_text(
+                '<meta name="handbook-source-id" content="handbook-home">'
+                '<a data-source-link href="../../en/">Source</a>'
+                '<a data-language-link href="../ko/">한국어</a>')
+            if mutate:
+                mutate(root)
             return module.audit_site(root)
+
+    def test_slide_pair_and_bidirectional_links_pass(self):
+        article = '<article class="md-content__inner"><h1>Title</h1></article>'
+        self.assertEqual(self.audit_bilingual_fixture(article, article), [])
+
+    def test_missing_slide_and_wrong_source_id_fail(self):
+        article = '<article class="md-content__inner"><h1>Title</h1></article>'
+        def mutate(root):
+            (root/'site/slides/en/index.html').unlink()
+            (root/'site/slides/ko/index.html').write_text(
+                '<meta name="handbook-source-id" content="wrong">'
+                '<a data-source-link href="../../">원문</a>'
+                '<a data-language-link href="../en/">English</a>')
+        errors = self.audit_bilingual_fixture(article, article, mutate)
+        self.assertTrue(any('missing slide' in error for error in errors), errors)
+        self.assertTrue(any('source id' in error for error in errors), errors)
+
+    def test_wrong_slide_backlink_and_unexpected_html_fail(self):
+        article = '<article class="md-content__inner"><h1>Title</h1></article>'
+        def mutate(root):
+            (root/'site/slides/ko/index.html').write_text(
+                '<meta name="handbook-source-id" content="handbook-home">'
+                '<a data-source-link href="../../en/">원문</a>'
+                '<a data-language-link href="../en/">English</a>')
+            (root/'site/slides/private.html').write_text('leak')
+        errors = self.audit_bilingual_fixture(article, article, mutate)
+        self.assertTrue(any('wrong slide source link' in error for error in errors), errors)
+        self.assertTrue(any('unexpected public HTML' in error for error in errors), errors)
+
+    def test_wrong_navigation_links_and_extra_english_source_fail(self):
+        article = '<article class="md-content__inner"><h1>Title</h1></article>'
+        def mutate(root):
+            (root/'site/index.html').write_text(
+                '<a hreflang="en" href="en/">English</a>' + article)
+            (root/'site/slides/en/index.html').write_text(
+                '<meta name="handbook-source-id" content="handbook-home">'
+                '<a data-source-link href="../../en/">Source</a>'
+                '<a data-language-link href="../../">한국어</a>')
+            (root/'site/slides/index.html').write_text('<a href="ko/">한국어</a>')
+            (root/'docs/en/extra.md').write_text('---\nid: extra\n---\n# Extra')
+        errors = self.audit_bilingual_fixture(article, article, mutate)
+        for text in ('wrong source slide link', 'wrong slide language link',
+                     'missing slide index link', 'unpaired English source'):
+            self.assertTrue(any(text in error for error in errors), (text, errors))
 
     def test_bilingual_heading_order_or_count_mismatch_fails(self):
         ko = '<article class="md-content__inner"><h1>제목</h1><h2>절</h2><h3>하위</h3></article>'

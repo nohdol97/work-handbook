@@ -2,6 +2,13 @@
 
 각 섹션은 실제 공유 스킬 하나와 정확히 연결된다. 세부 판단은 링크된 영어 원본을 따른다.
 
+## handbook-interactive-slides
+
+- 원본: [handbook-interactive-slides/SKILL.md](handbook-interactive-slides/SKILL.md)
+- 역할·트리거: 공개 한영 Handbook 문서에서 원문 추적 인터랙티브 HTML 슬라이드를 생성·갱신하고 렌더러·학습 활동을 확장한다.
+- 경계: MkDocs 탐색의 공개 문서만 대상으로 삼고 원본 Markdown과 vault 사본은 수정하지 않는다. 원문에 없는 계산·수치·실제 운영 결과를 만들지 않으며 단순화 모델의 한계를 화면에 표시한다.
+- 완료 기준: 전체 변환 보고서의 실패·미대응 구역 0, 한영·원문 왕복 링크·오프라인 브라우저 조작·전체 사이트 및 vault 검증. 자동 줄 단위 커버리지는 의미 검토를 대신하지 않는다.
+
 ## preserve-study-source
 
 - 원본: [preserve-study-source/SKILL.md](preserve-study-source/SKILL.md)

@@ -11,7 +11,7 @@ Markdown 검사가 통과해도 사이트 링크, 언어 전환과 비공개 제
 
 - R1. `mkdocs build --strict`가 성공한다. 한국어·영어의 같은 주제 언어 선택 링크를 모든 산출물에서 확인한다.
 - R2. 실제 HTML의 내부 파일과 anchor 링크가 모두 존재한다. 누락 파일과 fragment에 대한 실패 테스트가 통과한다.
-- R3. 공개 HTML은 docs/ko, docs/en 페이지 및 404만 포함한다. sources·운영 계약·ADR·spec·review를 게시하지 않는다.
+- R3. 공개 HTML은 docs/ko, docs/en의 정규 페이지, 이에 1:1 대응하는 검증된 인터랙티브 슬라이드, 슬라이드 인덱스 및 404만 포함한다. sources·운영 계약·ADR·spec·review를 게시하지 않는다. 슬라이드의 원문 ID·왕복 링크·한영 링크를 검사한다. [스펙 012](012-interactive-learning-slides.md)를 따른다.
 - R4. 모든 Mermaid fence를 Mermaid parser로 검사한다. 잘못된 문법 입력이 비정상 종료하는 별도 재현으로 확인한다.
 - R5. push와 PR에서 같은 테스트·구조·출처·리뷰·Mermaid·strict build·산출물 검증을 실행한다. Pages는 명시적 활성화 변수와 main push 조건을 모두 요구한다. 공개 활성화 전 즉시 확인한다.
 - R6. 로컬 `make finalize`는 전체 검증, vault 복사와 읽기 전용 hash 재확인을 순서대로 수행한다. CI는 개인 vault에 접근하지 않는다.

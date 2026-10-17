@@ -22,6 +22,19 @@
 
 `make validate`가 낡은 코퍼스/원고/생성물을 거부하면 후보 확인·생성·의미 검토를 수행한다. 생성 페이지를 직접 수정하지 않고 검토 원고를 수정한다.
 
+## 인터랙티브 학습 슬라이드
+
+[전용 Skill](.agents/skills/handbook-interactive-slides/SKILL.md)은 MkDocs 탐색에 있는 공개 문서 83쌍을 각각 독립 HTML로 변환한다. 원문의 ID·절·줄과 한영 대응을 스키마와 `manifest.json`에 남기며, 원문 수치의 범위 판정·표 비교·원문 표 퀴즈·단계 실행·구성 요소 탐색·영어 예문 플래시카드·실무 요청 편집 등 원문으로 설명할 수 있는 활동만 고른다. 일반 설명에는 조작을 강요하지 않는다. 슬라이드의 학습 모델은 실제 시스템 실행이나 성능 측정이 아니다.
+
+```bash
+make slides
+.venv/bin/python scripts/interactive_slides.py build --bundle _workspace/slides-renderer/renderer.js --select ai-model-development
+.venv/bin/python scripts/interactive_slides.py build --bundle _workspace/slides-renderer/renderer.js --select data-platform/architecture.md
+.venv/bin/python scripts/interactive_slides.py build --bundle _workspace/slides-renderer/renderer.js --force
+```
+
+`_workspace/handbook-slides/index.html`에서 결과 목록을 열고, 같은 경로의 `schema/`, `manifest.json`과 `report.json`에서 원본-슬라이드 스키마·매핑·줄 대응·실패를 확인한다. 선택 빌드는 로컬 검토용이다. `make validate`는 전체 생성, strict 사이트 빌드, 원문↔슬라이드 링크 연결, 오프라인 브라우저 조작을 수행한다. 공개 URL은 한국어 `/slides/ko/<원문 상대경로>/`, 영어 `/slides/en/<원문 상대경로>/`다. 원문 Markdown과 vault 사본은 바꾸지 않는다. 새 문서·상호작용·출력 형식 확장은 [아키텍처 가이드](.agents/skills/handbook-interactive-slides/references/architecture.md)를 따른다.
+
 ## 설계 원칙
 
 - 지정 목차·순서와 핵심 기술 지식은 유지한다. 원문 추적 스킬로 문서를 작성·개정하면 선택된 등록 구역만 사용자 상시 지시와 작업 범위의 증거·`editable` 모드로 기록하고, 원본은 `sources/`에 둔 채 공개 본문의 어려운 표현을 직접 고친다. 선택하지 않은 구역은 기존 보존을 유지하고, 명시적으로 원문 그대로 요청한 구역은 예외로 둔다. 자료 없이 기술 내용을 꾸며내지 않는다.
@@ -39,6 +52,7 @@ Python 3.12 이상과 Node.js 22 이상을 사용한다. 최초 검증은 Python
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 npm ci --ignore-scripts
+npx playwright install chromium
 make validate
 .venv/bin/mkdocs serve
 ```
@@ -85,6 +99,7 @@ README·운영 계약·출처·한영 문서·자체 스킬 등 first-party `.md
 | `docs/README.md` | 사이트에서 제외한 운영 ADR·스펙·변경 이력 지도. 저장소에서는 공개 |
 | `_workspace/` | 개인 vault 경로와 복사 상태. Git 미추적 |
 | `.agents/skills/` | 공통 하네스 스킬과 검증된 외부 스킬 |
+| `third_party/slides-generator-template/` | 고정 리비전에서 선별한 React 슬라이드 템플릿과 MIT 출처 기록 |
 
 ## GitHub Pages와 안전 경계
 
@@ -92,11 +107,11 @@ README·운영 계약·출처·한영 문서·자체 스킬 등 first-party `.md
 
 저장소에 커밋한 소스·운영 문서와 이력도 GitHub에서 공개된다. 사이트에 제외된 파일이라도 저장소에서는 공개된다는 점을 구분한다. 원문은 공개 가능한 내용으로 정리한 경우에만 `sources/`에 커밋한다.
 
-공개 산출물에는 `docs/ko`, `docs/en`만 포함한다. 내부 URL, 고객·회사 식별자, credentials, 개인정보, 독점 코드는 저장하지 않는다. 공부한 내용을 실제 업무 경험으로 표현하지 않는다.
+공개 산출물에는 `docs/ko`, `docs/en`의 정규 페이지와 여기서 검증해 파생한 슬라이드만 포함한다. 내부 URL, 고객·회사 식별자, credentials, 개인정보, 독점 코드는 저장하지 않는다. 공부한 내용을 실제 업무 경험으로 표현하지 않는다.
 
 ## 검증과 문제 해결
 
-`make validate`는 단위 테스트, 하네스 구조, 한영·출처·검토 증거·용어집 중복, Mermaid 구문, strict 빌드, 프롬프트 언어 쌍·줄바꿈·문서 간 일치와 HTML 링크·언어 전환·게시 범위를 검사한다. 의미 검토는 에이전트/사람이 수행하고 자동화는 해시가 최신인지 검사한다. 외부 링크 가용성, 실제 기술 주장, 예제 운영 적합성은 별도 증거가 필요하다.
+`make validate`는 단위 테스트, 하네스 구조, 한영·출처·검토 증거·용어집 중복, Mermaid 구문, 슬라이드 전체·오프라인 브라우저 조작, strict 빌드, 프롬프트 언어 쌍·줄바꿈·문서 간 일치와 HTML 링크·언어 전환·게시 범위를 검사한다. 의미 검토는 에이전트/사람이 수행하고 자동화는 해시가 최신인지 검사한다. 외부 링크 가용성, 실제 기술 주장, 예제 운영 적합성은 별도 증거가 필요하다.
 
 원문에 공백 정규화 기록이 있으면 `check_handbook.py`가 ledger를 복원한 byte 수와 SHA-256도 확인한다. 불일치는 업로드와 보존본을 대조해 원인을 찾고, 검사를 통과시키기 위해 hash만 바꾸지 않는다. 일반 source 파일의 기존 추적 규칙은 유지한다.
 

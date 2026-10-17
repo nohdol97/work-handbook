@@ -17,6 +17,7 @@
 | [011](adr/011-accessible-writing-and-source-boundaries.md) | accepted | 기존 원문 검증을 유지하며 앞으로의 설명을 입문자 중심으로 작성 |
 | [012](adr/012-scoped-source-rewrite.md) | accepted | 명시 요청 구역만 원본 추적을 유지하며 본문 직접 개정 |
 | [013](adr/013-integrated-study-explanations.md) | accepted | 필요한 보완을 원문 절에 통합하고 AI 예시는 선택적으로 사용 |
+| [014](adr/014-interactive-slides-pipeline.md) | accepted | 공개 한영 문서를 스키마 기반 독립 HTML 슬라이드로 생성 |
 
 ## 스펙
 
@@ -33,10 +34,13 @@
 | [009](specs/009-beginner-friendly-writing.md) | active | 기존 목차·핵심 지식 보존과 입문자 중심 설명·장별 요약 검토 |
 | [010](specs/010-requested-source-rewrite.md) | active | 명시 요청 구역의 본문 개정·범위 한정 등록·구조 및 의미 검토 |
 | [011](specs/011-integrated-study-pages.md) | active | 원문 절별 보완 통합·유연한 실무/AI 흐름·원래 형식 보존 |
+| [012](specs/012-interactive-learning-slides.md) | active | 공개 문서의 추적 가능한 인터랙티브 슬라이드 생성·게시·검증 |
 
 ## 제안서
 
-아직 제안서가 없다. 외부 도구나 패턴을 평가할 때 `proposals/YYYY-MM-DD-title.md`를 만들고 이 표에 추가한다.
+| 제안서 | 상태 | 범위 |
+|---|---|---|
+| [2026-10-18](proposals/2026-10-18-interactive-slide-skills.md) | 적용 | 외부 슬라이드 Skill의 고정 리비전·라이선스·의존성 검토와 선별 재사용 |
 
 ## 변경 이력
 
