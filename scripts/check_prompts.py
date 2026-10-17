@@ -28,20 +28,11 @@ def inspect_html(html):
                 continue
             grouped_count += 1
             text = codes[0].get_text()
-            if len([line for line in text.splitlines() if line.strip()]) < 4:
-                errors.append('prompt must remain multiline')
-            markers = (['[맥락]', '[요청]', '[출력]', '[검증]'] if label == '한국어'
-                       else ['[Context]', '[Task]', '[Output]', '[Checks]'])
-            lines = [line.strip() for line in text.splitlines()]
-            if any(lines.count(marker) != 1 for marker in markers):
-                errors.append('prompt needs each language-specific section exactly once')
-            else:
-                positions = [lines.index(marker) for marker in markers]
-                if positions != sorted(positions):
-                    errors.append('prompt sections must follow context, task, output, checks order')
-                elif any(not any(lines[start + 1:end]) for start, end in
-                         zip(positions, positions[1:] + [len(lines)])):
-                    errors.append('prompt sections must contain instructions')
+            if not text.strip():
+                errors.append('prompt is empty')
+            if any(re.fullmatch(r'\[(?:맥락|요청|출력|검증|작업 경계|Context|Task|Output|Checks|Scope)\]', line.strip())
+                   for line in text.splitlines()):
+                errors.append('prompt contains legacy section markers')
             group[label] = text
         groups.append(group)
     if grouped_count != len(all_codes):

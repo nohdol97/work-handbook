@@ -32,23 +32,19 @@ def render(text):
 
 
 class PromptRenderingTests(unittest.TestCase):
-    def test_language_tabs_keep_prompt_lines_and_literal_placeholders(self):
+    def test_language_tabs_keep_natural_prompt_and_literal_placeholders(self):
         source = '''=== "한국어"
 
     ```text {.prompt}
-    [맥락]
-    SQL: [익명화 SQL]
-    [요청]
-    관찰과 가설을 구분해 주세요.
+    이 [익명화 SQL]의 느린 부분을 검토해 줘.
+    실행 계획에서 확인할 근거도 알려 줘.
     ```
 
 === "English"
 
     ```text {.prompt}
-    [Context]
-    SQL: [sanitized SQL]
-    [Task]
-    Separate observations from hypotheses.
+    Review the slow part of this [sanitized SQL].
+    Tell me what to check in the execution plan.
     ```
 '''
         soup = render(source)
@@ -58,8 +54,8 @@ class PromptRenderingTests(unittest.TestCase):
         self.assertEqual(labels, ['한국어', 'English'])
         codes = tabs[0].select('.tabbed-block .prompt pre code')
         self.assertEqual(len(codes), 2)
-        self.assertEqual(codes[0].get_text(), '[맥락]\nSQL: [익명화 SQL]\n[요청]\n관찰과 가설을 구분해 주세요.\n')
-        self.assertEqual(codes[1].get_text(), '[Context]\nSQL: [sanitized SQL]\n[Task]\nSeparate observations from hypotheses.\n')
+        self.assertEqual(codes[0].get_text(), '이 [익명화 SQL]의 느린 부분을 검토해 줘.\n실행 계획에서 확인할 근거도 알려 줘.\n')
+        self.assertEqual(codes[1].get_text(), 'Review the slow part of this [sanitized SQL].\nTell me what to check in the execution plan.\n')
 
     def test_regular_code_is_not_marked_as_a_prompt(self):
         soup = render('```sql\nSELECT a, b FROM example;\n```')
@@ -74,13 +70,15 @@ class PromptAuditTests(unittest.TestCase):
         cls.audit = importlib.util.module_from_spec(audit_spec)
         audit_spec.loader.exec_module(cls.audit)
 
-    def group(self, ko='[맥락]\n입력\n[요청]\n비교\n[출력]\n표\n[검증]\n근거', en='[Context]\nInput\n[Task]\nCompare\n[Output]\nTable\n[Checks]\nEvidence'):
+    def group(self, ko='이 [익명화 SQL]을 검토하고 느린 이유를 알려 줘.', en='Review this [sanitized SQL] and explain the slow part.'):
         return '<div class="tabbed-set"><div class="tabbed-labels"><label>한국어</label><label>English</label></div><div class="tabbed-content">' + ''.join(
             '<div class="tabbed-block"><div class="prompt"><pre><code>' + text + '</code></pre></div></div>' for text in [ko, en]) + '</div></div>'
 
-    def test_rejects_single_line_prompt(self):
-        errors, _ = self.audit.inspect_html(self.group(en='Review everything in one long line.'))
-        self.assertTrue(any('multiline' in e for e in errors))
+    def test_accepts_short_and_multiline_requests(self):
+        for en in ['Review this [sanitized SQL].', 'Review this [sanitized SQL].\nFlag uncertain assumptions.']:
+            with self.subTest(en=en):
+                errors, _ = self.audit.inspect_html(self.group(en=en))
+                self.assertEqual(errors, [])
 
     def test_rejects_missing_language(self):
         errors, _ = self.audit.inspect_html(self.group().replace('<label>English</label>', ''))
@@ -90,8 +88,8 @@ class PromptAuditTests(unittest.TestCase):
         errors, groups = self.audit.inspect_html(self.group())
         self.assertEqual(errors, [])
         self.assertEqual(set(groups[0]), {'한국어', 'English'})
-        self.assertIn('[맥락]', groups[0]['한국어'])
-        self.assertIn('[Task]', groups[0]['English'])
+        self.assertIn('익명화 SQL', groups[0]['한국어'])
+        self.assertIn('sanitized SQL', groups[0]['English'])
         soup = BeautifulSoup(self.group(), 'html.parser')
         for selector in ['.tabbed-labels', '.tabbed-content']:
             parent = soup.select_one(selector)
@@ -102,20 +100,11 @@ class PromptAuditTests(unittest.TestCase):
         self.assertEqual(reverse_errors, [])
         self.assertEqual(reversed_groups, groups)
 
-    def test_rejects_missing_task_output_and_checks(self):
-        errors, _ = self.audit.inspect_html(self.group(en='[Context]\nInput\nMore input\nMore context'))
-        self.assertTrue(any('section' in e for e in errors))
-
-    def test_rejects_wrong_language_section_markers(self):
-        errors, _ = self.audit.inspect_html(self.group(en='[맥락]\nInput\n[Task]\nCompare\n[Output]\nTable\n[Checks]\nEvidence'))
-        self.assertTrue(any('section' in e for e in errors))
-
-    def test_rejects_empty_or_reordered_sections(self):
-        for en in ['[Context]\nInput\n[Task]\n[Output]\nTable\n[Checks]\nEvidence',
-                   '[Task]\nCompare\n[Context]\nInput\n[Output]\nTable\n[Checks]\nEvidence']:
+    def test_rejects_empty_or_legacy_template_requests(self):
+        for en in ['', '   ', '[Context]\nInput\n[Task]\nCompare', '[맥락]\n자료\n[요청]\n검토']:
             with self.subTest(en=en):
                 errors, _ = self.audit.inspect_html(self.group(en=en))
-                self.assertTrue(any('section' in e for e in errors))
+                self.assertTrue(any('empty' in e or 'legacy' in e for e in errors))
 
     def test_audit_does_not_require_prompts_for_llm_concept_headings(self):
         headings = [
@@ -163,7 +152,7 @@ class PromptAuditTests(unittest.TestCase):
             source = root / 'docs/ko/prompts/example.md'
             source.parent.mkdir(parents=True)
             source.write_text('# Example')
-            for prefix, html in [('', self.group()), ('en/', self.group().replace('Evidence', 'Different evidence'))]:
+            for prefix, html in [('', self.group()), ('en/', self.group().replace('sanitized SQL', 'different input'))]:
                 page = root / f'site/{prefix}prompts/example/index.html'
                 page.parent.mkdir(parents=True)
                 page.write_text(html)
