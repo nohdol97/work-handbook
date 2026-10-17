@@ -99,11 +99,15 @@ knowledge_ids:
 
 # Chapter 15. End-to-End AI Platform Architecture
 
-제공된 Basic Chapter 15와 과정 마지막 정리의 학습 기록이다. 실제 production 구축·배포·장애 복구 경험을 뜻하지 않는다. [플랫폼 인프라 학습 지도](index.md)와 함께 읽는다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
+
+관련: [플랫폼 인프라 학습 지도](index.md)
 
 <!-- SOURCE CORE START -->
 
 ## 15.1 Request Path
+
+플랫폼에는 배포 설정을 바꾸는 제어 경로와 사용자의 요청을 처리하는 실행 경로가 있다. 무대 뒤 조정과 공연 중 동작을 구분하면 장애 위치와 책임을 좁히기 쉽다.
 
 LLM Request의 기본 경로:
 
@@ -168,6 +172,26 @@ LiteLLM은:
 > 누가 어떤 모델을 얼마나 사용할 수 있고, 어느 Backend로 보낼지를 결정
 
 한다.
+
+**·15.26·15.53–15.54: gateway 정책의 실제 설정**
+
+LiteLLM은 team/key 등의 범위에서 model 접근, budget, RPM/TPM 같은 정책을 설정할 수 있다. 적용 범위, edition과 배포 설정을 확인해야 하며, 원문의 항목이 설치 즉시 모두 활성화된다고 가정하지 않는다. 공유 gateway replica 전체에서 제한이 어떻게 집계되는지도 검증한다. [LiteLLM budgets and rate limits](https://docs.litellm.ai/docs/proxy/users)
+
+Retry와 fallback은 명시적으로 설정하고, 오류 종류와 재시도 횟수를 확인해야 한다. 다른 model/provider로의 전환은 품질·데이터 전달 대상도 바꾸므로 허용된 대상인지 검토한다. 이미 전달된 streaming 응답을 새 모델 응답으로 투명하게 대체할 수 있다고 가정하지 않는다. [LiteLLM reliability](https://docs.litellm.ai/docs/proxy/reliability)
+
+```mermaid
+flowchart TD
+    Portal[Developer Portal] --> API[Platform API]
+    API --> Policy[Policy and validation]
+    Policy --> Infra[Terraform]
+    Policy --> Git[Deployment Git]
+    Git --> Argo[Argo CD and Helm rendering]
+    Infra --> Cluster[Kubernetes resources]
+    Argo --> Cluster
+    User[User request] --> Gateway[Gateway and LiteLLM]
+    Gateway --> Model[vLLM replica]
+    Model --> GPU[GPU compute]
+```
 
 ---
 
@@ -610,6 +634,12 @@ Model Serving Ready
 
 새 Replica가 Ready된 뒤에만 Traffic을 보내야 한다.
 
+**·15.43·15.44: readiness와 종료 순서**
+
+Readiness 실패는 그 자체로 컨테이너를 재시작하지 않는다. 준비되지 않은 Pod로 일반 Service 트래픽이 전달되지 않도록 한다. 느린 모델 시작에는 startup probe를 고려하며, 실제 모델 요청을 받을 준비가 되었는지 확인하는 readiness 조건을 구성해야 한다. [Kubernetes probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/)
+
+15.28의 도식은 목표로 하는 요청 drain 흐름이지 Kubernetes가 보장하는 엄격한 이벤트 순서가 아니다. 종료 시 kubelet은 설정된 `preStop`을 실행한 뒤 컨테이너에 TERM을 보내고, 이와 병행해 EndpointSlice의 종료 상태가 반영된다. 애플리케이션은 종료 신호를 처리해 진행 중 요청을 마쳐야 한다. 유예 시간이 끝나면 강제 종료될 수 있으므로 streaming 시간, drain 동작, `terminationGracePeriodSeconds`를 함께 시험한다. [Pod termination](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#termination-of-pods)
+
 ---
 
 ## 15.20 AI Serving Capacity Bottleneck
@@ -643,6 +673,10 @@ Memory Bottleneck
 ```
 
 을 구분해야 한다.
+
+**·15.67: 병목은 가설로 검증**
+
+원문의 GPU 사용률·KV cache 조합은 조사 출발점이다. 이 지표만으로 원인을 확정하지 않는다. 같은 시간대의 요청 길이, queue 대기, TTFT/TPOT, CPU·network 대기를 비교한다. 15.67은 하나의 Pod가 한 Node에 GPU 4개를 요구하는 예다. 여러 Node에 걸친 분산 추론 구성 전체가 불가능하다는 뜻은 아니다. [GPU 인프라](gpu-infrastructure.md)와 [vLLM](vllm.md)을 함께 읽는다.
 
 ---
 
@@ -976,6 +1010,10 @@ Default Deny
 필요한 Ingress / Egress만 Allow
 ```
 
+**격리의 적용 조건**
+
+NetworkPolicy는 이를 구현하는 네트워크 플러그인이 있어야 효력이 있다. 정책 객체 생성만으로 차단을 입증할 수 없다. Namespace, RBAC, quota, 노드 분리도 각각 다른 경계를 담당한다. 신뢰하지 않는 tenant에 대해 Namespace만으로 강한 보안 격리를 보장한다고 해석하지 않는다. [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/), [Kubernetes multi-tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/)
+
 ---
 
 ## 15.34 TLS / mTLS
@@ -1065,6 +1103,10 @@ Helm
 Kubernetes
 ```
 
+**·15.75·Final Mental Model: 도식의 범위**
+
+원문 도식은 모두 하나의 고정된 배치나 실행 순서를 뜻하지 않는다. 15.9에서는 Backend가 LiteLLM을 호출하고, 15.64에서는 LiteLLM과 Backend를 조사 계층으로 나열한다. 실제 request trace로 경로를 확인한다. Helm은 manifest를 렌더링하며 Argo CD가 그 결과를 적용하므로, 도식의 `Argo CD → Helm`과 `Helm → Argo CD`를 서로 다른 배포 엔진의 순차 실행으로 읽지 않는다. [CI/CD와 GitOps](cicd-gitops.md)
+
 ---
 
 ## 15.38 CI
@@ -1090,6 +1132,10 @@ agent-api:a1b2c3d
 ```
 
 같은 Immutable Image Version을 만든다.
+
+**commit 모양의 tag와 불변성**
+
+`agent-api:a1b2c3d`는 commit을 나타내는 예시 tag지만 이름만으로 불변성을 보장하지 않는다. Registry에서 tag가 다른 image를 가리키도록 바뀔 수 있다. 동일한 image 내용을 고정하려면 digest를 사용하고, tag를 쓰는 경우 별도의 registry 불변 정책을 확인한다. [Kubernetes images](https://kubernetes.io/docs/concepts/containers/images/)
 
 ---
 
@@ -1148,6 +1194,10 @@ Sync
 ```
 
 Manual / Auto Sync 모두 가능하다.
+
+**Git 복구와 Argo CD rollback**
+
+Argo CD는 automated sync가 켜진 Application에 rollback을 수행할 수 없다고 명시한다. 원문의 `Git / Argo Rollback`은 항상 같은 방식으로 실행할 수 있다는 뜻으로 읽으면 안 된다. Git의 desired state를 복구한 뒤 sync하는 경로와, 자동 동기화 설정을 검토한 후 수행하는 history rollback을 구분한다. 실제 운영에서는 복구 권한과 현재 sync 정책부터 확인한다. [Argo CD automated sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/)
 
 ---
 
@@ -2569,80 +2619,18 @@ Chapter 15 End-to-End AI Platform Architecture ✅
 
 ## LLM in Practice: 배포 후 TTFT 증가 조사
 
-
 **프롬프트:**
 
 === "한국어"
 
     ```text {.prompt}
-    새 모델 canary 뒤 TTFT가 늘어난 가상 사례다. 실제 장애 경험이나 측정 결과가 아니다.
-    관측, 가정, 계층별 원인 가설을 구분하라.
-    gateway, queue, compute, memory 가설을 구분할 증거와 다음 확인을 제안하라.
-    계층 / 가설 / 근거 / 미확인 정보 / 다음 확인 표를 작성하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    새 모델 canary 뒤 TTFT가 늘었어. 배포 시각과 gateway·queue·모델 서버 지표를 대조해 병목 가설과 확인해야 할 근거를 정리해 줘. 관측하지 않은 원인을 확정하거나 운영 변경을 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    A hypothetical case where TTFT rises after a new model canary. This is not an account of a real incident or measurement.
-    Suggest evidence and next checks to distinguish gateway, queue, compute, and memory hypotheses.
-    Make a table: layer / hypothesis / evidence / unknowns / next check.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    TTFT increased after a new model canary. Compare deployment timing with gateway, queue, and model-server metrics, then list plausible bottlenecks and missing evidence. Do not assert an unobserved cause or apply production changes.
     ```
 
 **핵심 사항:** gateway·queue·compute·memory별 가설, 필요한 증거, canary routing 복구와 capacity 조정의 조건을 구분한 조사안. GPU 사용률만으로 병목을 확정하거나, readiness 실패를 재시작으로 오해하거나, 자동 sync가 켜진 Argo CD rollback을 바로 제안할 수 있다. 실제 trace·Pod 이벤트·routing 설정과 공식 문서로 확인한다. 복구는 권한과 변경 절차를 따른다. 격리된 환경에서 drain·fallback·canary 복귀를 시험하고 결과를 기록한다.
-
-## 원문 절별 보완과 정정
-
-2026-10-05에 아래 공식 문서를 확인했다. 다음은 원문 밖의 보완이며 실제 배포·부하 시험 결과가 아니다. 원문의 `# 15.4`부터 `# 15.10`까지의 묶음 제목과 `## 15.4` 등의 절 번호는 서로 다른 계층에 있는 원문 표기 그대로다.
-
-### 15.19·15.28·15.43·15.44: readiness와 종료 순서
-
-Readiness 실패는 그 자체로 컨테이너를 재시작하지 않는다. 준비되지 않은 Pod로 일반 Service 트래픽이 전달되지 않도록 한다. 느린 모델 시작에는 startup probe를 고려하며, 실제 모델 요청을 받을 준비가 되었는지 확인하는 readiness 조건을 구성해야 한다. [Kubernetes probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/)
-
-15.28의 도식은 목표로 하는 요청 drain 흐름이지 Kubernetes가 보장하는 엄격한 이벤트 순서가 아니다. 종료 시 kubelet은 설정된 `preStop`을 실행한 뒤 컨테이너에 TERM을 보내고, 이와 병행해 EndpointSlice의 종료 상태가 반영된다. 애플리케이션은 종료 신호를 처리해 진행 중 요청을 마쳐야 한다. 유예 시간이 끝나면 강제 종료될 수 있으므로 streaming 시간, drain 동작, `terminationGracePeriodSeconds`를 함께 시험한다. [Pod termination](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#termination-of-pods)
-
-### 15.38·15.40: commit 모양의 tag와 불변성
-
-`agent-api:a1b2c3d`는 commit을 나타내는 예시 tag지만 이름만으로 불변성을 보장하지 않는다. Registry에서 tag가 다른 image를 가리키도록 바뀔 수 있다. 동일한 image 내용을 고정하려면 digest를 사용하고, tag를 쓰는 경우 별도의 registry 불변 정책을 확인한다. [Kubernetes images](https://kubernetes.io/docs/concepts/containers/images/)
-
-### 15.41·15.73: Git 복구와 Argo CD rollback
-
-Argo CD는 automated sync가 켜진 Application에 rollback을 수행할 수 없다고 명시한다. 원문의 `Git / Argo Rollback`은 항상 같은 방식으로 실행할 수 있다는 뜻으로 읽으면 안 된다. Git의 desired state를 복구한 뒤 sync하는 경로와, 자동 동기화 설정을 검토한 후 수행하는 history rollback을 구분한다. 실제 운영에서는 복구 권한과 현재 sync 정책부터 확인한다. [Argo CD automated sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/)
-
-### 15.33·15.48–15.52·15.85: 격리의 적용 조건
-
-NetworkPolicy는 이를 구현하는 네트워크 플러그인이 있어야 효력이 있다. 정책 객체 생성만으로 차단을 입증할 수 없다. Namespace, RBAC, quota, 노드 분리도 각각 다른 경계를 담당한다. 신뢰하지 않는 tenant에 대해 Namespace만으로 강한 보안 격리를 보장한다고 해석하지 않는다. [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/), [Kubernetes multi-tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/)
-
-### 15.2·15.7·15.26·15.53–15.54: gateway 정책의 실제 설정
-
-LiteLLM은 team/key 등의 범위에서 model 접근, budget, RPM/TPM 같은 정책을 설정할 수 있다. 적용 범위, edition과 배포 설정을 확인해야 하며, 원문의 항목이 설치 즉시 모두 활성화된다고 가정하지 않는다. 공유 gateway replica 전체에서 제한이 어떻게 집계되는지도 검증한다. [LiteLLM budgets and rate limits](https://docs.litellm.ai/docs/proxy/users)
-
-Retry와 fallback은 명시적으로 설정하고, 오류 종류와 재시도 횟수를 확인해야 한다. 다른 model/provider로의 전환은 품질·데이터 전달 대상도 바꾸므로 허용된 대상인지 검토한다. 이미 전달된 streaming 응답을 새 모델 응답으로 투명하게 대체할 수 있다고 가정하지 않는다. [LiteLLM reliability](https://docs.litellm.ai/docs/proxy/reliability)
-
-### 15.20·15.66·15.67: 병목은 가설로 검증
-
-원문의 GPU 사용률·KV cache 조합은 조사 출발점이다. 이 지표만으로 원인을 확정하지 않는다. 같은 시간대의 요청 길이, queue 대기, TTFT/TPOT, CPU·network 대기를 비교한다. 15.67은 하나의 Pod가 한 Node에 GPU 4개를 요구하는 예다. 여러 Node에 걸친 분산 추론 구성 전체가 불가능하다는 뜻은 아니다. [GPU 인프라](gpu-infrastructure.md)와 [vLLM](vllm.md)을 함께 읽는다.
-
-### 15.37·15.64·15.75·Final Mental Model: 도식의 범위
-
-원문 도식은 모두 하나의 고정된 배치나 실행 순서를 뜻하지 않는다. 15.9에서는 Backend가 LiteLLM을 호출하고, 15.64에서는 LiteLLM과 Backend를 조사 계층으로 나열한다. 실제 request trace로 경로를 확인한다. Helm은 manifest를 렌더링하며 Argo CD가 그 결과를 적용하므로, 도식의 `Argo CD → Helm`과 `Helm → Argo CD`를 서로 다른 배포 엔진의 순차 실행으로 읽지 않는다. [CI/CD와 GitOps](cicd-gitops.md)
-
-## 보완: 제어 경로와 요청 경로
-
-다음 Mermaid는 원문 text 도식을 대체하지 않는 개념 보완이다. Portal에서 만든 desired state와 사용자의 실시간 요청을 구분한다.
-
-```mermaid
-flowchart TD
-    Portal[Developer Portal] --> API[Platform API]
-    API --> Policy[Policy and validation]
-    Policy --> Infra[Terraform]
-    Policy --> Git[Deployment Git]
-    Git --> Argo[Argo CD and Helm rendering]
-    Infra --> Cluster[Kubernetes resources]
-    Argo --> Cluster
-    User[User request] --> Gateway[Gateway and LiteLLM]
-    Gateway --> Model[vLLM replica]
-    Model --> GPU[GPU compute]
-```

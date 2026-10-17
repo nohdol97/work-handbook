@@ -22,14 +22,13 @@ knowledge_ids:
 
 # Chapter 2. Kubernetes Core
 
-Kubernetes keeps containers across several servers close to a **declared desired state**. If the target is “keep three nginx instances,” controllers maintain three Pods and create a missing Pod when only two remain. This Learn page uses `studied` for concept study. No cluster setup, command execution, or failure experiment was performed. All addresses, settings, and numbers below are learning examples.
-
-
-The source core below preserves the supplied study notes and their order in translation. Read **Corrections and additions by source section** after the core for simplified or incomplete claims. Before applying the material, check the incomplete YAML in 2.2, revisions in 2.4, shutdown order in 2.5, requests and QoS in 2.12, and probe conditions in 2.13.
+The configurations and commands are study examples, not results of a deployment or failure test.
 
 <!-- SOURCE CORE START -->
 
 ## 2.1 Kubernetes Architecture
+
+Kubernetes works like a thermostat that keeps comparing desired and observed state. Declaring three Pods does not mean they are running or ready for requests; check status and events.
 
 A definition of Kubernetes:
 
@@ -199,6 +198,8 @@ kube-proxy
 → Handle Service networking
 ```
 
+The API Server, controllers, and Scheduler in the Control Plane and the kubelet on a Worker observe API state and act asynchronously. A successful `kubectl apply` does not mean a Pod is ready. If three replicas are desired and two are running, a controller works to add the missing one, but scheduling, image, or resource constraints can delay it.
+
 ---
 
 ## 2.2 Kubernetes API / Declarative Model
@@ -305,6 +306,23 @@ Controller checks the spec
 ↓
 Reconcile the actual state
 ```
+
+**Declarative API: Resources, Objects, spec, and status**
+
+Resources are API-managed entities such as Pods, Deployments, Services, ConfigMaps, and Secrets. A Deployment named `my-api` is an actual object of the Deployment kind. A declarative model says what state should exist rather than listing every execution step.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-api
+spec:
+  replicas: 3
+```
+
+This is an **incomplete teaching fragment** showing `apiVersion`, `kind`, `metadata`, and `spec`. It is not a complete deployable Deployment. Required fields such as a selector and Pod template are missing. `spec` describes desired state. `status` reports the state observed by the system. Controllers reconcile their goals with observations; they do not simply compare two JSON documents for equality.
+
+With a complete manifest, the command form is `kubectl apply -f deployment.yaml`. The flow is YAML submission → object creation or update through the API Server → etcd storage → controller observation of spec → state reconciliation. An accepted API request does not mean the workload is ready.
 
 ---
 
@@ -414,6 +432,23 @@ Sidecar
 → Support the main app
 ```
 
+**Pods: The Container Execution Unit**
+
+A Pod is the smallest deployable unit in Kubernetes. It groups one or more containers. A common layout is `Pod → Container → App`. Another is `Pod → App + Sidecar`. Containers in the same Pod share an IP and port space, so they can use `localhost`. They can share configured volumes. This does not mean all filesystems and resources are shared automatically.
+
+Example addresses are Pod A `10.244.1.10` and Pod B `10.244.2.15`. Replacement Pods may have different IPs, so clients normally use a Service. A Pod is a replaceable execution unit, not a permanent server.
+
+| Concept | Meaning and example |
+| --- | --- |
+| Lifecycle | The basic flow is `Pending → Running → Succeeded / Failed`. `Unknown` is a separate phase when state cannot be obtained |
+| `Always` | The default Pod restart policy restarts a terminated container regardless of its exit result |
+| `OnFailure` | Restarts a container after a failure exit |
+| `Never` | Does not restart a container under that policy |
+| Regular init container | Completes preparation, such as creating a config file, before the main app |
+| Sidecar | Runs a helper such as a log collector or proxy alongside the app |
+
+`Running` does not mean all containers are ready to accept requests. A container can restart within an existing Pod. A replacement created by a controller is a new Pod object. Status descriptions such as `CrashLoopBackOff` are not Pod phases. Distinguish ordinary init-container completion from Kubernetes' dedicated sidecar lifecycle support. [Pod lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/), [Sidecar containers](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/)
+
 ---
 
 ## 2.4 ReplicaSet / Deployment
@@ -494,6 +529,12 @@ Rollback
 = Return to a previous version
 ```
 
+**ReplicaSets and Deployments**
+
+Read the replica-count, rolling-update, and revision examples in [source 2.4](#24-replicaset-deployment) with these conditions.
+
+The source sequence illustrates gradual replacement. Actual concurrent Pod counts depend on rollout settings and readiness. The source's “a revision for each deployment change” means a **Pod template change that triggers a rollout**. Scaling alone does not create a revision. Rollback restores the Pod template from a retained revision. It does not undo external database changes. [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+
 ---
 
 ## 2.5 StatefulSet
@@ -568,6 +609,24 @@ StatefulSet
 = Support workloads where order matters
 ```
 
+**StatefulSets: Stable Identity and Storage**
+
+Deployment Pods are generally interchangeable and suit stateless apps. Use a StatefulSet when each Pod needs a stable name, network identity, and its own storage.
+
+```text
+postgres-0, postgres-1, postgres-2
+
+db-0 → Volume 0
+db-1 → Volume 1
+db-2 → Volume 2
+
+Ordered startup: db-0 → db-1 → db-2
+```
+
+A replacement for `db-1` can use the same ordinal name and associated storage. It is not the same Pod object, UID, or necessarily IP. PostgreSQL, Kafka, Redis Cluster, and ZooKeeper-family systems are learning examples. An Operator can add application-specific operations.
+
+The default `OrderedReady` policy respects order and readiness. Pods are created in ascending ordinal order and terminated in reverse order during scale-down. This does not guarantee ordered shutdown when the StatefulSet resource itself is deleted. `Parallel` relaxes the ordering rules. A StatefulSet does not implement database replication, consensus, or backup by itself. You must provision storage and define application recovery separately. [StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
+
 ---
 
 ## 2.6 DaemonSet / Job / CronJob
@@ -619,6 +678,16 @@ Job
 CronJob
 = Scheduled recurring Jobs
 ```
+
+**Choosing DaemonSet, Job, or CronJob**
+
+| Resource | Purpose | Source examples |
+| --- | --- | --- |
+| DaemonSet | Runs a Pod on each eligible Node | Log, monitoring, and network agents |
+| Job | Runs work and tracks completion | Data migration, batch processing, one-time file conversion, database initialization |
+| CronJob | Creates Jobs on a schedule | A backup at 2 a.m. each day; hourly statistics |
+
+“Each Node” means Nodes that meet placement rules, including selectors and taints. “One-time work” does not guarantee exactly-once execution. Jobs can retry failures. Scheduled work must also account for duplicate or missed runs. Review time zones, concurrency, retries, and idempotency against operational requirements. The schedules above are examples, not live settings. [Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/), [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)
 
 ---
 
@@ -715,6 +784,23 @@ Headless Service
 = For cases that need access to individual Pods
 ```
 
+**Services: An Access Point for Changing Pods**
+
+A Service gives a stable abstraction for reaching a changing set of Pods. It usually selects Pods by labels. If Pods A, B, and C have `app=my-api` and the Service has that selector, they become target candidates. Readiness and other conditions affect actual delivery.
+
+```text
+Client → Service → Pod A / Pod B / Pod C
+```
+
+| Type | Purpose | Example and boundary |
+| --- | --- | --- |
+| ClusterIP | A virtual IP for access inside the cluster | Separates the access address from Pod replacement |
+| NodePort | Access through a chosen port on Node addresses | `NodeIP:30080 → Service → Pod`; external reachability depends on routing, firewalls, and Node address settings |
+| LoadBalancer | Integrates an external load balancer | `Internet → Cloud Load Balancer → Service → Pods`; a supporting implementation is required |
+| Headless | Discovers endpoints without a virtual ClusterIP | `clusterIP: None`; useful for individual addresses in StatefulSets, database clusters, and Kafka |
+
+A Service does not always provide one fixed virtual IP. Headless Services are an exception. A Kubernetes declaration also cannot create an external load balancer in every environment without a supporting implementation. [Service](https://kubernetes.io/docs/concepts/services-networking/service/)
+
 ---
 
 ## 2.8 Ingress / Gateway API
@@ -791,6 +877,25 @@ Ingress
 = Decide which Service receives an external HTTP request
 ```
 
+**Ingress and Gateway API: Routing HTTP Requests**
+
+Services expose sets of Pods. Ingress defines which Service should receive an external HTTP/HTTPS request based on its host or path.
+
+```text
+api.example.com → API Service
+web.example.com → Web Service
+example.com/api → API Service
+example.com/web → Web Service
+
+Ingress Resource → Ingress Controller → Service → Pod
+Client --HTTPS--> Ingress --HTTP or HTTPS--> Service → Pod
+Gateway → HTTPRoute → Service
+```
+
+An Ingress resource alone does not process traffic. An Ingress controller must implement its rules. TLS termination ends the client's HTTPS connection at the edge. Whether the backend connection uses HTTP or HTTPS depends on separate configuration and implementation support.
+
+Gateway API offers extensible APIs such as `GatewayClass`, `Gateway`, and `HTTPRoute` with clearer role and routing boundaries. It also needs installed APIs and a supporting controller. Official guidance states that Ingress API is frozen and recommends Gateway API for new development. This does not mean existing Ingress is about to be removed. Check feature support against the selected implementation and version. [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/), [Gateway API](https://kubernetes.io/docs/concepts/services-networking/gateway/)
+
 ---
 
 ## 2.9 ConfigMap / Secret
@@ -851,6 +956,18 @@ ConfigMap / Secret
 ```
 
 The same image can be reused in dev, staging, and production.
+
+**ConfigMaps and Secrets: Separate Configuration from Images**
+
+| Item | Content | Example |
+| --- | --- | --- |
+| Container image | Application code and runtime artifacts | Reuse the same image in dev, staging, and production |
+| ConfigMap | Non-sensitive environment settings | `APP_ENV=production`, `LOG_LEVEL=info`, `API_URL=http://backend` |
+| Secret | Sensitive settings such as credentials | Key names `DB_PASSWORD`, `API_KEY`, `TOKEN`; no real values are shown |
+
+Pass settings to a Pod through environment variables or file mounts. `DB_HOST=postgres` and `DB_PASSWORD=***` illustrate the shape. The asterisks are not a password. A ConfigMap can also appear as `/app/config.yaml`.
+
+Base64 in a Secret is not encryption. Review API storage encryption at rest, least-privilege RBAC, workload access, log exposure, and rotation. Tools such as Vault or External Secrets can help, but do not guarantee complete security. Check the copy and access boundaries between external storage and Kubernetes Secrets. Do not paste real secrets into YAML, Git, or prompts. [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/), [Secret good practices](https://kubernetes.io/docs/concepts/security/secrets-good-practices/)
 
 ---
 
@@ -948,6 +1065,24 @@ PVC-1
 Disk-1
 ```
 
+**Volumes, PVs, PVCs, and StorageClasses**
+
+| Term | Role |
+| --- | --- |
+| Volume | Storage or a data source used by a Pod; not every volume is persistent |
+| PersistentVolume, PV | A cluster storage resource representing backing storage such as AWS EBS, NFS, or a cloud disk |
+| PersistentVolumeClaim, PVC | A resource requesting storage capacity and access conditions for a workload |
+| StorageClass | Defines a provisioner and storage type or policy. Example names are `fast-ssd`, `standard`, and `high-iops` |
+
+```text
+Pod → PVC → PV → Disk
+PVC request → StorageClass → Provisioner → Disk + PV → PVC binding
+postgres-0 → PVC-0 → Disk-0
+postgres-1 → PVC-1 → Disk-1
+```
+
+Dynamic provisioning creates storage and a PV when a suitable StorageClass and provisioner are available. The arrows show logical dependencies. Binding timing depends on policy. A PV is an API object representing storage, not the disk itself. Even with a separate PVC for each StatefulSet Pod, review access modes, topology, reclaim policy, and backup. [Persistent volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/), [Dynamic provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/)
+
 ---
 
 ## 2.11 Scheduling
@@ -1012,6 +1147,27 @@ Taint / Toleration
 Pod Anti-Affinity
 → Place similar Pods apart
 ```
+
+**Scheduling: Where Should a Pod Run?**
+
+This teaching fragment belongs inside a Pod spec. `gpu: "true"` selects a label. It does not request an actual GPU allocation.
+
+```yaml
+nodeSelector:
+  gpu: "true"
+```
+
+| Mechanism | Question and role |
+| --- | --- |
+| Node Selector | Does the Node have the required label? |
+| Node Affinity | More flexible Node conditions: `required` is mandatory; `preferred` is a preference |
+| Pod Affinity | Should the Pod run close to certain Pods in the same topology domain? |
+| Pod Anti-Affinity | Should certain Pods run apart? Example: A→Node 1, B→Node 2, C→Node 3 |
+| Taint | Which Pods should a Node restrict? Behavior depends on the effect |
+| Toleration | Can this Pod tolerate a taint? It neither guarantees placement nor attracts the Pod to the Node |
+| Topology Spread | How evenly should Pods be spread across Nodes or availability zones? |
+
+Node Selector/Affinity asks where a Pod should go. Taints/tolerations control which Pods a Node permits. They can be combined for dedicated GPU Nodes. Strict anti-affinity or spread rules can prevent scheduling even when resources are available. [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/), [Taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
 
 ---
 
@@ -1121,6 +1277,34 @@ QoS
 = Resource protection level based on request and limit settings
 ```
 
+**Requests, Limits, and QoS**
+
+This is a teaching fragment for a container's `resources` field.
+
+```yaml
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "1"
+    memory: "2Gi"
+```
+
+A CPU request of `500m` means `0.5 CPU`. A limit of `1` means `1 CPU`. The Scheduler uses requests for resource accounting. If a Node has **two CPUs left in request-based allocation** and a new Pod requests three, it cannot fit. Low measured CPU use is not enough. The source's “minimum required resource” refers to this reservation and scheduling model. A request is not a usage ceiling.
+
+A CPU limit restricts CPU time and can cause throttling. A memory limit can lead to a kernel OOM kill, observed with a reason such as `OOMKilled`. CPU and memory enforcement differ. A brief memory-limit overrun does not always appear as an immediate termination. Check the active cgroup and kubelet settings as well. [Resource management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+
+The following basic model uses per-container CPU and memory settings.
+
+| QoS | Classification criteria |
+| --- | --- |
+| Guaranteed | Every container has positive CPU and memory requests and limits, with request equal to limit for each resource |
+| Burstable | Not Guaranteed, but at least one CPU or memory request or limit exists |
+| BestEffort | No container has CPU or memory requests or limits |
+
+Explicit requests and limits alone do not imply Guaranteed. The example has unequal values and is Burstable. With Pod-level resources in supported versions and configurations, Pod-level values also affect classification. Check the actual `status.qosClass`. QoS influences treatment under resource pressure. It is not a performance SLA or immunity from failure. [Pod QoS](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/)
+
 ---
 
 ## 2.13 Health Checks
@@ -1186,6 +1370,16 @@ Readiness Probe
 Liveness Probe
 = Is the application alive and working normally?
 ```
+
+**Health Checks: Alive, Ready, and Started**
+
+| Probe | Question | Meaning of failure |
+| --- | --- | --- |
+| Liveness | Can the app keep working correctly? | At the configured failure condition, the container is terminated and restarted according to its restart policy |
+| Readiness | Can the app accept requests now? | Marks the Pod unready, removing it from the normal ready endpoints of a Service; probe failure alone does not restart the container |
+| Startup | Has startup finished? | Liveness and readiness probes wait until it succeeds; reaching its failure threshold can trigger restart handling |
+
+A hypothetical vLLM sequence is `start → model load → GPU memory preparation → Ready after several minutes`. Size the startup-probe budget from measurements so slow initialization is not mistaken for a liveness failure. “Several minutes” is not a fixed recommendation. A Running Pod may not be Ready. Restarting is not always the right response to a readiness failure. Also check exceptions such as a Service configured to publish unready endpoints. [Probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/)
 
 ---
 
@@ -1287,266 +1481,7 @@ kube-proxy
 = Implement Service-to-Pod traffic forwarding
 ```
 
----
-
-<!-- SOURCE CORE END -->
-
-## Key points
-
-Kubernetes desired and actual state can differ. Check Pod execution and service readiness separately.
-
-## LLM in Practice: Separate Running from Ready for a Model Server
-
-
-**Prompt:**
-
-=== "한국어"
-
-    ```text {.prompt}
-    배포 뒤 Pod는 Running인데 Service 요청이 실패할 때 manifest와 readiness를 검토한다.
-    변경 diff와 요청 실패 시각을 연결하라. selector·port/targetPort·ready endpoint·startup/readiness/liveness·requests/limits를 나눠 확인하고 Running을 Ready로 간주하지 마라.
-    manifest 위치 / 위험 또는 가설 / 근거 / 누락 자료 / 다음 확인 표와 PR 검토 의견을 작성하라. 컨테이너 재시작과 새 Pod 생성, CPU throttling과 OOM을 구분하고 최소 변경 후보의 검증·복귀 조건을 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
-    ```
-
-=== "English"
-
-    ```text {.prompt}
-    Review manifests and readiness when Pods are Running but Service requests fail after a deployment.
-    Relate the change diff to the failure timeline. Check selectors, port/targetPort, ready endpoints, startup/readiness/liveness, and requests/limits separately. Do not equate Running with Ready.
-    Produce a table: manifest location / risk or hypothesis / evidence / missing input / next check, plus PR review comments. Distinguish container restarts from new Pods and CPU throttling from OOM. State validation and recovery conditions for each minimal change.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
-    ```
-
-**Key point:** Review comments for the Deployment/Service diff, the failing request boundary, and validation/recovery conditions for minimal fixes. It may blame every 503 on liveness or recommend restarting a Pod solely because readiness fails. Match selector-selected Pods to actual EndpointSlices and readiness, and distinguish the consequences of each failed probe. Each fix must state how startup time and request success will be checked. This is an authored work example, not a verified model result or measured improvement.
-
-Related: [Platform infrastructure guide](index.md) · [Handbook home](../index.md)
-
-## Corrections and additions by source section
-
-Official documentation checked: 2026-09-27. These corrections and conditions clarify the source sections; they do not claim tests on a running cluster.
-
-### 2.1 notes: Control Plane and Worker Nodes
-
-| Location | Component | Responsibility |
-| --- | --- | --- |
-| Control Plane | API Server | The entry point to the Kubernetes API. It handles requests such as `kubectl get pods` and returns information |
-| Control Plane | Scheduler | Selects a Node for a Pod that has no assigned Node |
-| Control Plane | Controller Manager | Runs controllers that reconcile observed state with desired state |
-| Control Plane | etcd | Stores the cluster's API state |
-| Worker Node | kubelet | The Node agent. It reads Pod specifications and manages containers through a runtime |
-| Worker Node | Container runtime | An implementation such as containerd runs containers |
-| Worker Node | kube-proxy or a replacement | Configures networking so Service traffic reaches endpoints |
-
-The Control Plane manages the cluster. Workers run workloads. After `kubectl apply`, the API Server stores accepted state in etcd. Controllers create the needed objects. The Scheduler selects a Node. Its kubelet uses the runtime to reconcile execution. These components watch and update the API asynchronously. The diagram is not one synchronous call stack.
-
-```mermaid
-flowchart TD
-    User[kubectl apply] --> API[API Server]
-    API <--> Store[etcd]
-    Controllers[Controllers] <--> API
-    Scheduler[Scheduler] <--> API
-    Kubelet[Node kubelet] <--> API
-    Kubelet --> Runtime[Container runtime]
-    Runtime --> Containers[Containers]
-```
-
-Repeated reconciliation is the key idea. If desired replicas are three and current replicas are two, a controller works to add the missing one. Scheduling, image, or resource constraints can prevent the target from being reached immediately.
-
-### 2.2 notes: Declarative API: Resources, Objects, spec, and status
-
-Resources are API-managed entities such as Pods, Deployments, Services, ConfigMaps, and Secrets. A Deployment named `my-api` is an actual object of the Deployment kind. A declarative model says what state should exist rather than listing every execution step.
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-api
-spec:
-  replicas: 3
-```
-
-This is an **incomplete teaching fragment** showing `apiVersion`, `kind`, `metadata`, and `spec`. It is not a complete deployable Deployment. Required fields such as a selector and Pod template are missing. `spec` describes desired state. `status` reports the state observed by the system. Controllers reconcile their goals with observations; they do not simply compare two JSON documents for equality.
-
-With a complete manifest, the command form is `kubectl apply -f deployment.yaml`. The flow is YAML submission → object creation or update through the API Server → etcd storage → controller observation of spec → state reconciliation. An accepted API request does not mean the workload is ready.
-
-### 2.3 notes: Pods: The Container Execution Unit
-
-A Pod is the smallest deployable unit in Kubernetes. It groups one or more containers. A common layout is `Pod → Container → App`. Another is `Pod → App + Sidecar`. Containers in the same Pod share an IP and port space, so they can use `localhost`. They can share configured volumes. This does not mean all filesystems and resources are shared automatically.
-
-Example addresses are Pod A `10.244.1.10` and Pod B `10.244.2.15`. Replacement Pods may have different IPs, so clients normally use a Service. A Pod is a replaceable execution unit, not a permanent server.
-
-| Concept | Meaning and example |
-| --- | --- |
-| Lifecycle | The basic flow is `Pending → Running → Succeeded / Failed`. `Unknown` is a separate phase when state cannot be obtained |
-| `Always` | The default Pod restart policy restarts a terminated container regardless of its exit result |
-| `OnFailure` | Restarts a container after a failure exit |
-| `Never` | Does not restart a container under that policy |
-| Regular init container | Completes preparation, such as creating a config file, before the main app |
-| Sidecar | Runs a helper such as a log collector or proxy alongside the app |
-
-`Running` does not mean all containers are ready to accept requests. A container can restart within an existing Pod. A replacement created by a controller is a new Pod object. Status descriptions such as `CrashLoopBackOff` are not Pod phases. Distinguish ordinary init-container completion from Kubernetes' dedicated sidecar lifecycle support. [Pod lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/), [Sidecar containers](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/)
-
-### 2.4 notes: ReplicaSets and Deployments
-
-Read the replica-count, rolling-update, and revision examples in [source 2.4](#24-replicaset-deployment) with these conditions.
-
-The source sequence illustrates gradual replacement. Actual concurrent Pod counts depend on rollout settings and readiness. The source's “a revision for each deployment change” means a **Pod template change that triggers a rollout**. Scaling alone does not create a revision. Rollback restores the Pod template from a retained revision. It does not undo external database changes. [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
-
-### 2.5 notes: StatefulSets: Stable Identity and Storage
-
-Deployment Pods are generally interchangeable and suit stateless apps. Use a StatefulSet when each Pod needs a stable name, network identity, and its own storage.
-
-```text
-postgres-0, postgres-1, postgres-2
-
-db-0 → Volume 0
-db-1 → Volume 1
-db-2 → Volume 2
-
-Ordered startup: db-0 → db-1 → db-2
-```
-
-A replacement for `db-1` can use the same ordinal name and associated storage. It is not the same Pod object, UID, or necessarily IP. PostgreSQL, Kafka, Redis Cluster, and ZooKeeper-family systems are learning examples. An Operator can add application-specific operations.
-
-The default `OrderedReady` policy respects order and readiness. Pods are created in ascending ordinal order and terminated in reverse order during scale-down. This does not guarantee ordered shutdown when the StatefulSet resource itself is deleted. `Parallel` relaxes the ordering rules. A StatefulSet does not implement database replication, consensus, or backup by itself. You must provision storage and define application recovery separately. [StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
-
-### 2.6 notes: Choosing DaemonSet, Job, or CronJob
-
-| Resource | Purpose | Source examples |
-| --- | --- | --- |
-| DaemonSet | Runs a Pod on each eligible Node | Log, monitoring, and network agents |
-| Job | Runs work and tracks completion | Data migration, batch processing, one-time file conversion, database initialization |
-| CronJob | Creates Jobs on a schedule | A backup at 2 a.m. each day; hourly statistics |
-
-“Each Node” means Nodes that meet placement rules, including selectors and taints. “One-time work” does not guarantee exactly-once execution. Jobs can retry failures. Scheduled work must also account for duplicate or missed runs. Review time zones, concurrency, retries, and idempotency against operational requirements. The schedules above are examples, not live settings. [Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/), [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)
-
-### 2.7 notes: Services: An Access Point for Changing Pods
-
-A Service gives a stable abstraction for reaching a changing set of Pods. It usually selects Pods by labels. If Pods A, B, and C have `app=my-api` and the Service has that selector, they become target candidates. Readiness and other conditions affect actual delivery.
-
-```text
-Client → Service → Pod A / Pod B / Pod C
-```
-
-| Type | Purpose | Example and boundary |
-| --- | --- | --- |
-| ClusterIP | A virtual IP for access inside the cluster | Separates the access address from Pod replacement |
-| NodePort | Access through a chosen port on Node addresses | `NodeIP:30080 → Service → Pod`; external reachability depends on routing, firewalls, and Node address settings |
-| LoadBalancer | Integrates an external load balancer | `Internet → Cloud Load Balancer → Service → Pods`; a supporting implementation is required |
-| Headless | Discovers endpoints without a virtual ClusterIP | `clusterIP: None`; useful for individual addresses in StatefulSets, database clusters, and Kafka |
-
-A Service does not always provide one fixed virtual IP. Headless Services are an exception. A Kubernetes declaration also cannot create an external load balancer in every environment without a supporting implementation. [Service](https://kubernetes.io/docs/concepts/services-networking/service/)
-
-### 2.8 notes: Ingress and Gateway API: Routing HTTP Requests
-
-Services expose sets of Pods. Ingress defines which Service should receive an external HTTP/HTTPS request based on its host or path.
-
-```text
-api.example.com → API Service
-web.example.com → Web Service
-example.com/api → API Service
-example.com/web → Web Service
-
-Ingress Resource → Ingress Controller → Service → Pod
-Client --HTTPS--> Ingress --HTTP or HTTPS--> Service → Pod
-Gateway → HTTPRoute → Service
-```
-
-An Ingress resource alone does not process traffic. An Ingress controller must implement its rules. TLS termination ends the client's HTTPS connection at the edge. Whether the backend connection uses HTTP or HTTPS depends on separate configuration and implementation support.
-
-Gateway API offers extensible APIs such as `GatewayClass`, `Gateway`, and `HTTPRoute` with clearer role and routing boundaries. It also needs installed APIs and a supporting controller. Official guidance states that Ingress API is frozen and recommends Gateway API for new development. This does not mean existing Ingress is about to be removed. Check feature support against the selected implementation and version. [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/), [Gateway API](https://kubernetes.io/docs/concepts/services-networking/gateway/)
-
-### 2.9 notes: ConfigMaps and Secrets: Separate Configuration from Images
-
-| Item | Content | Example |
-| --- | --- | --- |
-| Container image | Application code and runtime artifacts | Reuse the same image in dev, staging, and production |
-| ConfigMap | Non-sensitive environment settings | `APP_ENV=production`, `LOG_LEVEL=info`, `API_URL=http://backend` |
-| Secret | Sensitive settings such as credentials | Key names `DB_PASSWORD`, `API_KEY`, `TOKEN`; no real values are shown |
-
-Pass settings to a Pod through environment variables or file mounts. `DB_HOST=postgres` and `DB_PASSWORD=***` illustrate the shape. The asterisks are not a password. A ConfigMap can also appear as `/app/config.yaml`.
-
-Base64 in a Secret is not encryption. Review API storage encryption at rest, least-privilege RBAC, workload access, log exposure, and rotation. Tools such as Vault or External Secrets can help, but do not guarantee complete security. Check the copy and access boundaries between external storage and Kubernetes Secrets. Do not paste real secrets into YAML, Git, or prompts. [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/), [Secret good practices](https://kubernetes.io/docs/concepts/security/secrets-good-practices/)
-
-### 2.10 notes: Volumes, PVs, PVCs, and StorageClasses
-
-| Term | Role |
-| --- | --- |
-| Volume | Storage or a data source used by a Pod; not every volume is persistent |
-| PersistentVolume, PV | A cluster storage resource representing backing storage such as AWS EBS, NFS, or a cloud disk |
-| PersistentVolumeClaim, PVC | A resource requesting storage capacity and access conditions for a workload |
-| StorageClass | Defines a provisioner and storage type or policy. Example names are `fast-ssd`, `standard`, and `high-iops` |
-
-```text
-Pod → PVC → PV → Disk
-PVC request → StorageClass → Provisioner → Disk + PV → PVC binding
-postgres-0 → PVC-0 → Disk-0
-postgres-1 → PVC-1 → Disk-1
-```
-
-Dynamic provisioning creates storage and a PV when a suitable StorageClass and provisioner are available. The arrows show logical dependencies. Binding timing depends on policy. A PV is an API object representing storage, not the disk itself. Even with a separate PVC for each StatefulSet Pod, review access modes, topology, reclaim policy, and backup. [Persistent volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/), [Dynamic provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/)
-
-### 2.11 notes: Scheduling: Where Should a Pod Run?
-
-This teaching fragment belongs inside a Pod spec. `gpu: "true"` selects a label. It does not request an actual GPU allocation.
-
-```yaml
-nodeSelector:
-  gpu: "true"
-```
-
-| Mechanism | Question and role |
-| --- | --- |
-| Node Selector | Does the Node have the required label? |
-| Node Affinity | More flexible Node conditions: `required` is mandatory; `preferred` is a preference |
-| Pod Affinity | Should the Pod run close to certain Pods in the same topology domain? |
-| Pod Anti-Affinity | Should certain Pods run apart? Example: A→Node 1, B→Node 2, C→Node 3 |
-| Taint | Which Pods should a Node restrict? Behavior depends on the effect |
-| Toleration | Can this Pod tolerate a taint? It neither guarantees placement nor attracts the Pod to the Node |
-| Topology Spread | How evenly should Pods be spread across Nodes or availability zones? |
-
-Node Selector/Affinity asks where a Pod should go. Taints/tolerations control which Pods a Node permits. They can be combined for dedicated GPU Nodes. Strict anti-affinity or spread rules can prevent scheduling even when resources are available. [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/), [Taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
-
-### 2.12 notes: Requests, Limits, and QoS
-
-This is a teaching fragment for a container's `resources` field.
-
-```yaml
-resources:
-  requests:
-    cpu: "500m"
-    memory: "1Gi"
-  limits:
-    cpu: "1"
-    memory: "2Gi"
-```
-
-A CPU request of `500m` means `0.5 CPU`. A limit of `1` means `1 CPU`. The Scheduler uses requests for resource accounting. If a Node has **two CPUs left in request-based allocation** and a new Pod requests three, it cannot fit. Low measured CPU use is not enough. The source's “minimum required resource” refers to this reservation and scheduling model. A request is not a usage ceiling.
-
-A CPU limit restricts CPU time and can cause throttling. A memory limit can lead to a kernel OOM kill, observed with a reason such as `OOMKilled`. CPU and memory enforcement differ. A brief memory-limit overrun does not always appear as an immediate termination. Check the active cgroup and kubelet settings as well. [Resource management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
-
-The following basic model uses per-container CPU and memory settings.
-
-| QoS | Classification criteria |
-| --- | --- |
-| Guaranteed | Every container has positive CPU and memory requests and limits, with request equal to limit for each resource |
-| Burstable | Not Guaranteed, but at least one CPU or memory request or limit exists |
-| BestEffort | No container has CPU or memory requests or limits |
-
-Explicit requests and limits alone do not imply Guaranteed. The example has unequal values and is Burstable. With Pod-level resources in supported versions and configurations, Pod-level values also affect classification. Check the actual `status.qosClass`. QoS influences treatment under resource pressure. It is not a performance SLA or immunity from failure. [Pod QoS](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/)
-
-### 2.13 notes: Health Checks: Alive, Ready, and Started
-
-| Probe | Question | Meaning of failure |
-| --- | --- | --- |
-| Liveness | Can the app keep working correctly? | At the configured failure condition, the container is terminated and restarted according to its restart policy |
-| Readiness | Can the app accept requests now? | Marks the Pod unready, removing it from the normal ready endpoints of a Service; probe failure alone does not restart the container |
-| Startup | Has startup finished? | Liveness and readiness probes wait until it succeeds; reaching its failure threshold can trigger restart handling |
-
-A hypothetical vLLM sequence is `start → model load → GPU memory preparation → Ready after several minutes`. Size the startup-probe budget from measurements so slow initialization is not mistaken for a liveness failure. “Several minutes” is not a fixed recommendation. A Running Pod may not be Ready. Restarting is not always the right response to a readiness failure. Also check exceptions such as a Service configured to publish unready endpoints. [Probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/)
-
-### 2.14 notes: Networking Roles: Pods, Services, DNS, and CNI
+**Networking Roles: Pods, Services, DNS, and CNI**
 
 In the example, Pod A `10.244.1.10` talks to Pod B `10.244.2.20`. The Pod network implementation provides addresses and connectivity across Nodes. CNI stands for Container Network Interface. Implementations such as Calico and Cilium handle related networking roles. Distinguish the Kubernetes networking model from the features of a specific CNI plugin.
 
@@ -1565,8 +1500,32 @@ flowchart LR
 
 The diagram shows the logical route from an external request to an application process. The actual packet path may go directly to Pod endpoints, depending on the Ingress and Service implementation.
 
-### Study Boundaries and Next Checks
-
-This page preserves all 14 topics in source Chapter 2 and clarifies basic explanations against official documentation. Key boundaries include revision creation, Headless Services, Secret encoding, QoS, probes versus Pod phases, and networking implementations. Official documents were checked on 2026-09-27. No particular Kubernetes version was tested.
-
 For an interview, connect these ideas first: the API stores desired state; controllers reconcile it; the Scheduler places Pods; kubelet and the runtime execute them; a Service abstracts access; readiness describes the ability to accept requests. In a real incident, compare objects, events, state, logs, configuration, and measurements. Continue with [Linux and containers](linux-containers.md) and [Kubernetes operations](kubernetes-operations.md).
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Key points
+
+Kubernetes desired and actual state can differ. Check Pod execution and service readiness separately.
+
+## LLM in Practice: Separate Running from Ready for a Model Server
+
+**Prompt:**
+
+=== "한국어"
+
+    ```text {.prompt}
+    배포 뒤 Pod는 Running인데 Service 요청이 실패해. manifest diff, Pod 상태와 EndpointSlice를 보고 selector·port·readiness 중 어느 경계에서 실패했는지 검토해 줘. Running을 Ready로 간주하거나 구성을 변경하지 마.
+    ```
+
+=== "English"
+
+    ```text {.prompt}
+    After deployment, Pods are Running but Service requests fail. Use the manifest diff, Pod status, and EndpointSlice to locate a selector, port, or readiness failure. Do not treat Running as Ready or change the configuration.
+    ```
+
+**Key point:** Review comments for the Deployment/Service diff, the failing request boundary, and validation/recovery conditions for minimal fixes. It may blame every 503 on liveness or recommend restarting a Pod solely because readiness fails. Match selector-selected Pods to actual EndpointSlices and readiness, and distinguish the consequences of each failed probe. Each fix must state how startup time and request success will be checked.
+
+Related: [Platform infrastructure guide](index.md) · [Handbook home](../index.md)

@@ -14,11 +14,13 @@ knowledge_ids:
 
 # Chapter 3. Compute & Load Balancing
 
-최신 compact 원문의 번호·순서·예시를 보존했다. 3.4의 unhealthy target 제외에는 fail-open 예외가 있고, 3.6의 Service 도식은 target 모드별 실제 경로와 구분한다. 뒤의 별도 보완을 함께 읽는다. 실제 AWS 배포·성능 시험 기록이 아니다.
+예시 구성은 학습용이며 실제 AWS 환경에서 실행한 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 3.1 EC2
+
+EC2는 작업을 실행하는 서버이고 로드 밸런서는 손님을 적절한 창구로 안내하는 접수대와 비슷하다. 서버 수를 늘리는 일과 요청을 어디로 보내는 일은 따로 확인한다.
 
 EC2 = Elastic Compute Cloud.
 
@@ -69,6 +71,9 @@ Access Key를 코드에 직접 저장하기보다 IAM Role을 통해 AWS Resourc
 
 ### EKS Node
 EKS Worker Node의 실체는 보통 EC2다.
+
+
+`t` 계열은 CPU credit을 사용하는 burstable 인스턴스이므로 모든 부하에서 저비용을 보장하지 않는다. User Data의 최초 부팅 실행은 기본 동작이며 AMI·launch agent 설정으로 반복 실행도 가능하다. [CPU credit](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html), [User Data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html)
 
 ---
 
@@ -132,6 +137,9 @@ Cache / Session → ElastiCache
 Object → S3
 ```
 
+
+ALB 상태 확인과 ASG 교체는 별도다. ASG가 ELB health check 결과를 교체 판단에 쓰려면 해당 검사를 활성화해야 한다. [ASG health checks](https://docs.aws.amazon.com/autoscaling/ec2/userguide/health-checks-overview.html)
+
 ---
 
 ## 3.4 ALB
@@ -163,6 +171,9 @@ ALB = Application Load Balancer.
 Unhealthy Target에는 트래픽을 보내지 않는다.
 
 ALB는 Internet-facing 또는 Internal로 사용할 수 있다.
+
+
+원문의 “Unhealthy Target에는 트래픽을 보내지 않는다”에는 예외가 있다. 등록된 target들이 모두 unhealthy이면 ALB는 **fail-open**으로 해당 target들에 요청을 보낼 수 있다. [ALB health checks](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html)
 
 ---
 
@@ -246,6 +257,9 @@ ip target → Pod IP
 
 즉 ALB/NLB가 항상 Node만 선택하는 것은 아니다.
 
+
+도식의 Service는 논리적 연결이다. AWS Load Balancer Controller의 instance target은 NodePort를 경유하고 ip target은 Pod IP로 직접 전달하므로, 모든 요청이 ClusterIP를 경유하는 것은 아니다. 실제 controller·Service type·CNI·target type 조건을 확인한다. YAML은 ports 부분만 보여주는 예시다. [ALB target type](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/ingress/annotations/#target-type), [NLB target mode](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/service/nlb/)
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -254,6 +268,8 @@ ip target → Pod IP
 
 EC2와 로드 밸런서는 실행과 트래픽 분산을 맡는다. 연결 경로와 장애 범위를 확인해 실제 서비스에 맞게 선택한다.
 
+영속 상태를 어디에 둘지는 [스토리지·DB](storage-databases.md)에서 이어서 살펴본다.
+
 ## LLM in Practice
 
 **프롬프트:**
@@ -261,30 +277,13 @@ EC2와 로드 밸런서는 실행과 트래픽 분산을 맡는다. 연결 경�
 === "한국어"
 
     ```text {.prompt}
-    ALB target이 unhealthy인데 요청이 도달하거나 일부 경로만 실패할 때 요청 경로를 조사한다.
-    관측 경로와 논리 도식을 구분하고 instance→NodePort와 ip→Pod IP 경로를 확인하라. 모든 target unhealthy일 때의 fail-open과 health check 경로·실제 요청 경로 차이를 검토하라.
-    요청 단계 / 실제 target·port / 관측 근거 / 가설 / 다음 확인 표와 설정 diff 검토 의견을 작성하라. ALB health와 ASG 교체 판단을 분리하고 변경 후보의 영향·되돌릴 조건을 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    ALB target이 unhealthy인데 요청이 일부 도달하고 있어. target type, Service port, health check와 요청 로그를 보고 실제 경로와 fail-open 가능성을 설명해 줘. ALB 상태와 ASG 교체 판단은 구분하고 설정은 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Investigate the request path when ALB targets are unhealthy but requests arrive, or only some paths fail.
-    Distinguish the observed path from a logical diagram. Check instance→NodePort and ip→Pod IP paths. Review fail-open when all targets are unhealthy and differences between health-check and application-request paths.
-    Produce a table: request step / actual target and port / evidence / hypothesis / next check, plus configuration-diff comments. Separate ALB health from ASG replacement decisions. State impact and recovery conditions for each proposal.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    ALB targets are unhealthy, yet some requests still arrive. Use the target type, Service ports, health checks, and request logs to explain the actual path and possible fail-open behavior. Keep ALB health separate from ASG replacement decisions, and do not change settings.
     ```
 
-**핵심 사항:** 실제 target type·Service port를 따른 요청 경로, fail-open/health check 가설과 최소 설정 변경 검토 의견. unhealthy를 항상 차단으로 보거나 모든 요청이 ClusterIP·controller를 통과한다고 가정할 수 있다. target 등록·health reason·요청 로그 시각이 경로 설명과 맞는지 확인한다. instance와 ip 모드를 섞거나 ALB health를 ASG 자동 교체로 간주한 결론은 다시 검토한다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다. 관련: [3.4–3.6](#34-alb)
-
-## 별도 보완: 실제 적용 조건
-
-공식 문서 확인일: 2026-10-04.
-
-- **3.1:** `t` 계열은 CPU credit을 사용하는 burstable 인스턴스이므로 모든 부하에서 저비용을 보장하지 않는다. User Data의 최초 부팅 실행은 기본 동작이며 AMI·launch agent 설정으로 반복 실행도 가능하다. [CPU credit](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html), [User Data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html)
-- **3.3–3.4:** ALB 상태 확인과 ASG 교체는 별도다. ASG가 ELB health check 결과를 교체 판단에 쓰려면 해당 검사를 활성화해야 한다. [ASG health checks](https://docs.aws.amazon.com/autoscaling/ec2/userguide/health-checks-overview.html)
-- **3.4:** 원문의 “Unhealthy Target에는 트래픽을 보내지 않는다”에는 예외가 있다. 등록된 target들이 모두 unhealthy이면 ALB는 **fail-open**으로 해당 target들에 요청을 보낼 수 있다. [ALB health checks](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html)
-- **3.6:** 도식의 Service는 논리적 연결이다. AWS Load Balancer Controller의 instance target은 NodePort를 경유하고 ip target은 Pod IP로 직접 전달하므로, 모든 요청이 ClusterIP를 경유하는 것은 아니다. 실제 controller·Service type·CNI·target type 조건을 확인한다. YAML은 ports 부분만 보여주는 예시다. [ALB target type](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/ingress/annotations/#target-type), [NLB target mode](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/service/nlb/)
-
-읽기 순서: EC2·EBS의 역할, ASG의 개수 관리, ALB/NLB와 Service의 요청 경로를 나누어 읽는다. 영속 상태의 선택은 [스토리지·DB](storage-databases.md)를 참고한다.
+**핵심 사항:** 실제 target type·Service port를 따른 요청 경로, fail-open/health check 가설과 최소 설정 변경 검토 의견. unhealthy를 항상 차단으로 보거나 모든 요청이 ClusterIP·controller를 통과한다고 가정할 수 있다. target 등록·health reason·요청 로그 시각이 경로 설명과 맞는지 확인한다. instance와 ip 모드를 섞거나 ALB health를 ASG 자동 교체로 간주한 결론은 다시 검토한다. 관련: [3.4–3.6](#34-alb)

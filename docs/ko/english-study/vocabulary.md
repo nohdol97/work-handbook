@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### check {#vocab-check}
 
-**736회 · 76개 문서 · 중립**
+**699회 · 74개 문서 · 중립**
 
 **확인하다; 점검**
 
@@ -26,11 +26,11 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 집계한 형태: check, checks, checked, checking.
 
-본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md).
+본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md).
 
 ### use {#vocab-use}
 
-**543회 · 75개 문서 · 중립**
+**538회 · 75개 문서 · 중립**
 
 **사용하다; 사용**
 
@@ -46,7 +46,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### change {#vocab-change}
 
-**413회 · 67개 문서 · 중립**
+**412회 · 66개 문서 · 중립**
 
 **변경하다; 변경 사항**
 
@@ -62,7 +62,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### separate {#vocab-separate}
 
-**259회 · 66개 문서 · 중립**
+**243회 · 65개 문서 · 중립**
 
 **분리하다; 별개의**
 
@@ -74,7 +74,7 @@ separate A from B로 분리 대상을 표현한다. 형용사로는 a separate t
 
 집계한 형태: separate, separates, separated, separating.
 
-본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md).
+본문 예: [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md).
 
 ### manage {#vocab-manage}
 
@@ -94,7 +94,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### result {#vocab-result}
 
-**224회 · 72개 문서 · 중립**
+**227회 · 73개 문서 · 중립**
 
 **결과**
 
@@ -108,25 +108,9 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md).
 
-### actual {#vocab-actual}
-
-**219회 · 68개 문서 · 중립**
-
-**실제의**
-
-계획·예상·예시와 구분되는 실제 상태를 말한다. 현재라는 뜻으로 쓰지 않는다.
-
-> The actual response time was higher than our estimate.
->
-> 실제 응답 시간은 예상치보다 길었습니다.
-
-집계한 형태: actual.
-
-본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md).
-
 ### failure {#vocab-failure}
 
-**214회 · 48개 문서 · 중립**
+**220회 · 50개 문서 · 중립**
 
 **실패; 고장**
 
@@ -142,7 +126,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### request {#vocab-request}
 
-**211회 · 29개 문서 · 중립**
+**210회 · 30개 문서 · 중립**
 
 **요청하다; 요청**
 
@@ -156,9 +140,25 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 본문 예: [ai-model-development/model-platform-collaboration](../ai-model-development/model-platform-collaboration.md), [ai-model-development/qlora-artifacts](../ai-model-development/qlora-artifacts.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md).
 
+### actual {#vocab-actual}
+
+**209회 · 65개 문서 · 중립**
+
+**실제의**
+
+계획·예상·예시와 구분되는 실제 상태를 말한다. 현재라는 뜻으로 쓰지 않는다.
+
+> The actual response time was higher than our estimate.
+>
+> 실제 응답 시간은 예상치보다 길었습니다.
+
+집계한 형태: actual.
+
+본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md).
+
 ### evidence {#vocab-evidence}
 
-**202회 · 48개 문서 · 중립**
+**204회 · 48개 문서 · 중립**
 
 **근거; 증거**
 
@@ -170,13 +170,13 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 집계한 형태: evidence.
 
-본문 예: [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md).
+본문 예: [ai-model-development/model-platform-collaboration](../ai-model-development/model-platform-collaboration.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md).
 
 용법 참고: [1](https://dictionaryblog.cambridge.org/2018/03/21/countable-or-uncountable-and-why-it-matters/).
 
 ### review {#vocab-review}
 
-**202회 · 60개 문서 · 중립**
+**196회 · 58개 문서 · 중립**
 
 **검토하다; 검토**
 
@@ -192,7 +192,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### access {#vocab-access}
 
-**192회 · 39개 문서 · 중립**
+**194회 · 40개 문서 · 중립**
 
 **접근하다; 접근 권한**
 
@@ -208,7 +208,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### record {#vocab-record}
 
-**165회 · 59개 문서 · 중립**
+**158회 · 54개 문서 · 중립**
 
 **기록하다; 기록**
 
@@ -240,7 +240,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### require {#vocab-require}
 
-**147회 · 54개 문서 · 중립**
+**146회 · 53개 문서 · 중립**
 
 **필요로 하다; 요구하다**
 
@@ -256,7 +256,7 @@ require A는 A가 필요하다는 뜻이다. require someone to do는 누군가�
 
 ### compare {#vocab-compare}
 
-**130회 · 49개 문서 · 중립**
+**130회 · 48개 문서 · 중립**
 
 **비교하다**
 
@@ -272,7 +272,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 ### capacity {#vocab-capacity}
 
-**111회 · 29개 문서 · 중립**
+**116회 · 30개 문서 · 중립**
 
 **수용 능력; 처리 여력**
 
@@ -284,11 +284,11 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 집계한 형태: capacity, capacities.
 
-본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/model-platform-collaboration](../ai-model-development/model-platform-collaboration.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md).
+본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/model-platform-collaboration](../ai-model-development/model-platform-collaboration.md).
 
 ### scope {#vocab-scope}
 
-**106회 · 45개 문서 · 중립**
+**106회 · 46개 문서 · 중립**
 
 **범위**
 
@@ -300,7 +300,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 집계한 형태: scope, scopes.
 
-본문 예: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md).
+본문 예: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
 
 ### assume {#vocab-assume}
 
@@ -320,7 +320,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 ### workload {#vocab-workload}
 
-**92회 · 28개 문서 · 중립**
+**90회 · 28개 문서 · 중립**
 
 **시스템이 처리해야 하는 작업량과 작업의 종류**
 
@@ -336,7 +336,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 ### reduce {#vocab-reduce}
 
-**76회 · 28개 문서 · 중립**
+**78회 · 28개 문서 · 중립**
 
 **줄이다**
 
@@ -352,7 +352,7 @@ reduce by는 감소한 양, reduce to는 감소 후 값을 나타낸다. 수치�
 
 ### provide {#vocab-provide}
 
-**74회 · 34개 문서 · 중립**
+**77회 · 35개 문서 · 중립**
 
 **제공하다**
 
@@ -384,7 +384,7 @@ provide A for B 또는 provide B with A로 제공 대상과 받는 대상을 표
 
 ### allow {#vocab-allow}
 
-**62회 · 31개 문서 · 중립**
+**63회 · 31개 문서 · 중립**
 
 **허용하다; 가능하게 하다**
 
@@ -400,41 +400,25 @@ allow someone to do로 허용이나 가능성을 표현한다. 목적어 없이 
 
 용법 참고: [1](https://www.collinsdictionary.com/us/dictionary/english/allow).
 
-### verify {#vocab-verify}
+### available {#vocab-available}
 
-**53회 · 33개 문서 · 중립**
+**43회 · 25개 문서 · 중립**
 
-**사실이나 정확성을 확인하다**
+**이용 가능한; 시간이 되는**
 
-로그·설정·값이 주장과 맞는지 근거로 대조할 때 쓴다. 무엇을 어떻게 확인했는지 함께 말한다.
+자원이나 기능을 이용할 수 있는지 말한다. 사람에게 쓰면 일정상 시간이 있다는 뜻도 된다.
 
-> We verified the file size against the value in the manifest.
+> I am available after lunch to review the deployment plan.
 >
-> 매니페스트의 값과 대조해 파일 크기를 확인했습니다.
+> 점심 이후에 배포 계획을 검토할 시간이 있습니다.
 
-집계한 형태: verify, verifies, verified, verifying.
+집계한 형태: available.
 
-본문 예: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md).
-
-### preserve {#vocab-preserve}
-
-**43회 · 34개 문서 · 중립**
-
-**보존하다; 유지하다**
-
-변경 과정에서도 중요한 내용이나 성질을 유지한다는 뜻으로 쓴다.
-
-> The migration must preserve the original event timestamps.
->
-> 마이그레이션은 원래 이벤트 시각을 보존해야 합니다.
-
-집계한 형태: preserve, preserves, preserved, preserving.
-
-본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md).
+본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md).
 
 ### consider {#vocab-consider}
 
-**41회 · 26개 문서 · 중립**
+**40회 · 26개 문서 · 중립**
 
 **검토하다; 고려하다**
 
@@ -448,21 +432,21 @@ allow someone to do로 허용이나 가능성을 표현한다. 목적어 없이 
 
 본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md).
 
-### available {#vocab-available}
+### specific {#vocab-specific}
 
-**40회 · 25개 문서 · 중립**
+**39회 · 21개 문서 · 중립**
 
-**이용 가능한; 시간이 되는**
+**구체적인; 특정한**
 
-자원이나 기능을 이용할 수 있는지 말한다. 사람에게 쓰면 일정상 시간이 있다는 뜻도 된다.
+specific requirements는 구체적인 요구사항, a specific version은 특정 버전이라는 뜻이다.
 
-> I am available after lunch to review the deployment plan.
+> Could you give a specific example of the failure you observed?
 >
-> 점심 이후에 배포 계획을 검토할 시간이 있습니다.
+> 관측한 실패 사례를 구체적으로 하나 설명해 주시겠어요?
 
-집계한 형태: available.
+집계한 형태: specific.
 
-본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md).
+본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md).
 
 ### impact {#vocab-impact}
 
@@ -480,22 +464,6 @@ allow someone to do로 허용이나 가능성을 표현한다. 목적어 없이 
 
 본문 예: [aws-cloud/managed-services](../aws-cloud/managed-services.md), [data-platform/architecture](../data-platform/architecture.md), [data-platform/data-observability](../data-platform/data-observability.md).
 
-### specific {#vocab-specific}
-
-**38회 · 21개 문서 · 중립**
-
-**구체적인; 특정한**
-
-specific requirements는 구체적인 요구사항, a specific version은 특정 버전이라는 뜻이다.
-
-> Could you give a specific example of the failure you observed?
->
-> 관측한 실패 사례를 구체적으로 하나 설명해 주시겠어요?
-
-집계한 형태: specific.
-
-본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md).
-
 ### expected {#vocab-expected}
 
 **34회 · 16개 문서 · 중립**
@@ -512,9 +480,25 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 본문 예: [aws-cloud/foundations](../aws-cloud/foundations.md), [data-platform/ai-evaluation](../data-platform/ai-evaluation.md), [data-platform/ai-ready-data](../data-platform/ai-ready-data.md).
 
+### verify {#vocab-verify}
+
+**33회 · 21개 문서 · 중립**
+
+**사실이나 정확성을 확인하다**
+
+로그·설정·값이 주장과 맞는지 근거로 대조할 때 쓴다. 무엇을 어떻게 확인했는지 함께 말한다.
+
+> We verified the file size against the value in the manifest.
+>
+> 매니페스트의 값과 대조해 파일 크기를 확인했습니다.
+
+집계한 형태: verify, verifies, verified, verifying.
+
+본문 예: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md).
+
 ### identify {#vocab-identify}
 
-**29회 · 18개 문서 · 중립**
+**29회 · 17개 문서 · 중립**
 
 **식별하다; 찾아내다**
 
@@ -544,22 +528,6 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 본문 예: [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/eks](../aws-cloud/eks.md).
 
-### deploy {#vocab-deploy}
-
-**26회 · 16개 문서 · 중립**
-
-**배포하다; 사용할 곳에 배치하다**
-
-소프트웨어를 어느 환경에 배포하는지 deploy to와 함께 말한다. 배포와 실제 정상 동작 검증은 구분한다.
-
-> We plan to deploy the update to staging tomorrow.
->
-> 내일 스테이징 환경에 업데이트를 배포할 계획입니다.
-
-집계한 형태: deploy, deploys, deployed, deploying.
-
-본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/foundations](../aws-cloud/foundations.md).
-
 ### consistent {#vocab-consistent}
 
 **25회 · 16개 문서 · 중립**
@@ -577,6 +545,22 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 본문 예: [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/storage-databases](../aws-cloud/storage-databases.md), [data-platform/ai-ready-data](../data-platform/ai-ready-data.md).
 
 용법 참고: [1](https://dictionary.cambridge.org/us/dictionary/english/consistent).
+
+### preserve {#vocab-preserve}
+
+**23회 · 19개 문서 · 중립**
+
+**보존하다; 유지하다**
+
+변경 과정에서도 중요한 내용이나 성질을 유지한다는 뜻으로 쓴다.
+
+> The migration must preserve the original event timestamps.
+>
+> 마이그레이션은 원래 이벤트 시각을 보존해야 합니다.
+
+집계한 형태: preserve, preserves, preserved, preserving.
+
+본문 예: [ai-model-development/index](../ai-model-development/index.md), [ai-model-development/model-retraining](../ai-model-development/model-retraining.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
 
 ### approach {#vocab-approach}
 
@@ -609,6 +593,22 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 집계한 형태: avoid, avoids, avoided, avoiding.
 
 본문 예: [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [aws-cloud/foundations](../aws-cloud/foundations.md), [data-platform/ai-evaluation](../data-platform/ai-evaluation.md).
+
+### deploy {#vocab-deploy}
+
+**22회 · 13개 문서 · 중립**
+
+**배포하다; 사용할 곳에 배치하다**
+
+소프트웨어를 어느 환경에 배포하는지 deploy to와 함께 말한다. 배포와 실제 정상 동작 검증은 구분한다.
+
+> We plan to deploy the update to staging tomorrow.
+>
+> 내일 스테이징 환경에 업데이트를 배포할 계획입니다.
+
+집계한 형태: deploy, deploys, deployed, deploying.
+
+본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/foundations](../aws-cloud/foundations.md).
 
 ### improve {#vocab-improve}
 
@@ -644,7 +644,7 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 ### prevent {#vocab-prevent}
 
-**20회 · 16개 문서 · 중립**
+**19회 · 16개 문서 · 중립**
 
 **막다; 예방하다**
 
@@ -658,25 +658,9 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 
 본문 예: [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [data-platform/ai-ready-data](../data-platform/ai-ready-data.md).
 
-### validate {#vocab-validate}
-
-**16회 · 14개 문서 · 중립**
-
-**타당성이나 요구사항 충족 여부를 검증하다**
-
-기준에 맞는지 확인할 때 쓰고 어떤 기준인지 함께 밝힌다. 사용 분야에 따라 verify와 구분하는 방식은 달라질 수 있다.
-
-> We will validate the recovery procedure against the agreed time limit.
->
-> 합의한 시간 한도를 기준으로 복구 절차를 검증하겠습니다.
-
-집계한 형태: validate, validates, validated, validating.
-
-본문 예: [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
-
 ### confirm {#vocab-confirm}
 
-**15회 · 12개 문서 · 중립**
+**16회 · 13개 문서 · 중립**
 
 **확인하다; 확정하다**
 
@@ -689,6 +673,22 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 집계한 형태: confirm, confirms, confirmed, confirming.
 
 본문 예: [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [data-platform/curriculum](../data-platform/curriculum.md).
+
+### validate {#vocab-validate}
+
+**15회 · 13개 문서 · 중립**
+
+**타당성이나 요구사항 충족 여부를 검증하다**
+
+기준에 맞는지 확인할 때 쓰고 어떤 기준인지 함께 밝힌다. 사용 분야에 따라 verify와 구분하는 방식은 달라질 수 있다.
+
+> We will validate the recovery procedure against the agreed time limit.
+>
+> 합의한 시간 한도를 기준으로 복구 절차를 검증하겠습니다.
+
+집계한 형태: validate, validates, validated, validating.
+
+본문 예: [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
 
 ### estimate {#vocab-estimate}
 
@@ -706,6 +706,22 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 
 본문 예: [data-platform/lineage-metadata](../data-platform/lineage-metadata.md), [data-platform/production-operations](../data-platform/production-operations.md), [glossary/index](../glossary/index.md).
 
+### determine {#vocab-determine}
+
+**13회 · 12개 문서 · 격식**
+
+**판단하다; 알아내다; 결정하다**
+
+근거를 바탕으로 원인이나 상태를 알아내거나 결과를 결정하는 맥락에 쓴다. 사실을 알아내는 이 뜻은 격식 있는 표현이며 일상 대화에서는 find out도 쓸 수 있다.
+
+> We need the original logs to determine when the failure began.
+>
+> 실패가 시작된 시점을 알아내려면 원본 로그가 필요합니다.
+
+집계한 형태: determine, determines, determined, determining.
+
+본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/compute](../aws-cloud/compute.md).
+
 ### resolve {#vocab-resolve}
 
 **12회 · 8개 문서 · 중립**
@@ -722,25 +738,9 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 
 본문 예: [data-platform/ai-evaluation](../data-platform/ai-evaluation.md), [data-platform/dbt](../data-platform/dbt.md), [data-platform/orchestration](../data-platform/orchestration.md).
 
-### determine {#vocab-determine}
-
-**11회 · 10개 문서 · 격식**
-
-**판단하다; 알아내다; 결정하다**
-
-근거를 바탕으로 원인이나 상태를 알아내거나 결과를 결정하는 맥락에 쓴다. 사실을 알아내는 이 뜻은 격식 있는 표현이며 일상 대화에서는 find out도 쓸 수 있다.
-
-> We need the original logs to determine when the failure began.
->
-> 실패가 시작된 시점을 알아내려면 원본 로그가 필요합니다.
-
-집계한 형태: determine, determines, determined, determining.
-
-본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/networking](../aws-cloud/networking.md).
-
 ### maintain {#vocab-maintain}
 
-**7회 · 6개 문서 · 중립**
+**6회 · 5개 문서 · 중립**
 
 **유지하다; 관리하다**
 
@@ -753,6 +753,22 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 집계한 형태: maintain, maintains, maintained, maintaining.
 
 본문 예: [data-platform/ai-evaluation](../data-platform/ai-evaluation.md), [data-platform/flink](../data-platform/flink.md), [data-platform/snowflake](../data-platform/snowflake.md).
+
+### ensure {#vocab-ensure}
+
+**5회 · 5개 문서 · 중립**
+
+**확실히 되도록 하다**
+
+ensure that 뒤에 보장하려는 결과를 쓴다. 실제로 보장할 근거가 없을 때는 절대적 표현을 피한다.
+
+> Please ensure that the report includes the test conditions.
+>
+> 보고서에 테스트 조건이 포함되도록 해 주세요.
+
+집계한 형태: ensure, ensures, ensured, ensuring.
+
+본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md).
 
 ### reliable {#vocab-reliable}
 
@@ -787,19 +803,3 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 집계한 형태: sufficient.
 
 본문 예: [aws-cloud/managed-services](../aws-cloud/managed-services.md), [data-platform/dbt](../data-platform/dbt.md), [platform-infrastructure/kafka](../platform-infrastructure/kafka.md).
-
-### ensure {#vocab-ensure}
-
-**4회 · 4개 문서 · 중립**
-
-**확실히 되도록 하다**
-
-ensure that 뒤에 보장하려는 결과를 쓴다. 실제로 보장할 근거가 없을 때는 절대적 표현을 피한다.
-
-> Please ensure that the report includes the test conditions.
->
-> 보고서에 테스트 조건이 포함되도록 해 주세요.
-
-집계한 형태: ensure, ensures, ensured, ensuring.
-
-본문 예: [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [platform-infrastructure/gpu-infrastructure](../platform-infrastructure/gpu-infrastructure.md).

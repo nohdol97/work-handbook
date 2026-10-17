@@ -16,11 +16,13 @@ knowledge_ids:
 
 # Chapter 5. PostgreSQL for Platform Systems
 
-원문의 순서와 형태를 보존한 개념 학습 기록이다. 예시 수치·명령·식별자는 설명용이며 실행·운영 검증 결과가 아니다. 원문의 단순화와 주의할 적용 조건은 본문 뒤 보완 설명에서 해당 절 번호로 확인한다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 5.1 PostgreSQL Architecture
+
+PostgreSQL은 거래 장부를 쓰는 동안 변경 기록인 WAL을 먼저 남긴다. 장애 복구와 복제는 이 기록을 사용하지만, 쿼리 지연은 잠금·연결·I/O 등 다른 원인도 함께 봐야 한다.
 
 PostgreSQL은 관계형 DB다.
 
@@ -80,6 +82,10 @@ WAL 기록
 - 장애 복구
 - Replication
 - PITR
+
+**WAL의 정확한 순서**
+
+WAL의 핵심 보장은 데이터 파일의 변경 페이지를 영구 저장하기 전에 해당 WAL 기록이 영구 저장되어야 한다는 것이다. 원문의 흐름은 개념도이며 메모리의 모든 변경보다 WAL 디스크 쓰기가 먼저라는 뜻은 아니다. [PostgreSQL WAL](https://www.postgresql.org/docs/18/wal-intro.html).
 
 ---
 
@@ -179,6 +185,10 @@ PostgreSQL connections 100
 
 특히 Kubernetes/Autoscaling 환경에 유용하다.
 
+**Connection pool의 범위**
+
+`1,000 → 100`은 설명용 구성이다. Pooler가 처리 용량을 자동으로 열 배 늘리지는 않는다. PgBouncer의 transaction pooling은 transaction 동안만 서버 connection을 할당하고 이후 반환한다. Session에 의존하는 기능과의 호환성이 session pooling과 다르므로 드라이버·실제 사용 기능을 확인한다. [PgBouncer features](https://www.pgbouncer.org/features.html).
+
 ---
 
 ## 5.3 Transactions / MVCC
@@ -255,6 +265,12 @@ Read + Write
 Write + Write
 → Lock 경쟁 가능
 ```
+
+**Vacuum과 5.4 실행 계획**
+
+일반 `VACUUM`은 다시 쓸 수 있는 공간을 확보하지만 보통 파일을 줄여 OS에 반환하지는 않는다. 아직 다른 transaction에서 볼 수 있는 row version을 임의로 지울 수도 없다. 긴 transaction과 autovacuum 상태를 함께 확인한다. [PostgreSQL routine vacuuming](https://www.postgresql.org/docs/18/routine-vacuuming.html).
+
+`EXPLAIN ANALYZE`는 대상 문장을 실제 실행한다. SELECT도 부하나 함수 부작용을 일으킬 수 있으므로 실행 환경과 문장을 먼저 확인한다. `EXPLAIN`의 추정 계획과 실행 통계를 구분한다. [PostgreSQL EXPLAIN](https://www.postgresql.org/docs/18/sql-explain.html).
 
 ---
 
@@ -400,6 +416,10 @@ Read 부하 분산에 사용 가능.
 
 비동기 복제라면 약간 오래된 데이터가 보일 수 있다.
 
+**Synchronous의 대기 지점**
+
+Standby 확인은 설정에 따라 다르다. `synchronous_standby_names`와 `synchronous_commit`을 함께 확인한다. `on`은 지정된 synchronous standby의 WAL durable flush를 기다리고, `remote_apply`는 replay되어 query에서 보이는 시점까지 기다린다. `remote_write`는 같은 내구성 보장이 아니다. 동기 standby가 응답하지 않으면 commit 대기가 길어질 수 있다. [PostgreSQL synchronous_commit](https://www.postgresql.org/docs/18/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT).
+
 ---
 
 ## 5.6 Backup / Recovery
@@ -475,6 +495,10 @@ Backup / PITR
 → 운영 실수 / 데이터 손상 대비
 ```
 
+**PITR의 전제**
+
+PITR에는 올바른 base backup과 복구 시점까지 이어지는 WAL이 필요하다. `pg_dump` 결과에 WAL을 붙이는 방식은 physical PITR이 아니다. 원문의 10:44 복구는 필요한 backup·WAL·timeline을 보유한 경우의 설명용 목표다. 복구 결과는 별도 환경에서 실제 확인해야 한다. [PostgreSQL continuous archiving](https://www.postgresql.org/docs/18/continuous-archiving.html).
+
 ---
 
 ## 5.7 Operational Tuning
@@ -532,6 +556,10 @@ Checkpoint
 5. Autovacuum
 6. Disk I/O
 ```
+
+**work_mem의 총량**
+
+`work_mem`은 connection이나 query 전체의 고정 상한이 아니라 sort·hash 같은 개별 연산의 기준이다. 한 query에 여러 연산이 있고 동시에 여러 session이 실행될 수 있다. Hash 연산에는 `hash_mem_multiplier`도 관여한다. 따라서 `connection 수 × work_mem`만으로 전체 메모리 상한을 계산하지 않는다. [PostgreSQL resource consumption](https://www.postgresql.org/docs/18/runtime-config-resource.html).
 
 ---
 
@@ -659,6 +687,12 @@ RDS PostgreSQL
 
 구조도 매우 흔하다.
 
+**StatefulSet과 Operator**
+
+`postgres-0 → Primary`는 예시이며 ordinal 자체가 PostgreSQL primary 역할을 보장하지 않는다. Failover 후 역할은 바뀔 수 있다. StatefulSet은 안정적인 식별자·저장소 연결을 제공하고, DB 역할·복구 로직은 별도로 구성한다. [Kubernetes StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
+
+Operator는 custom resource와 controller를 통해 운영 로직을 구현하는 패턴이다. 원문의 설치 순서는 개념도다. CRD 등록과 controller 설치의 실제 순서·지원 PostgreSQL 버전·backup 기능은 선택한 Operator의 설치 문서를 따른다. [Kubernetes Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -669,63 +703,20 @@ PostgreSQL 지연은 연결 수만이 아니라 쿼리, 잠금, I/O와 리소스
 
 ## LLM in Practice: Connection 증가와 DB 지연 검토
 
-
 **프롬프트:**
 
 === "한국어"
 
     ```text {.prompt}
-    앱 Pod 확장 뒤 DB connection과 지연이 증가했을 때 pool 설정 또는 query 변경을 검토한다.
-    connection 상한과 실제 동시 작업을 구분하고 pool 대기·lock·느린 query·vacuum 지연 가설을 비교하라. transaction pooling의 session 기능 호환성과 work_mem의 연산별 사용을 검토하라.
-    가설 / 근거 / 반증할 읽기 전용 자료 / 제안 변경 / 검증·복귀 조건 표를 작성하라. max_connections 증가나 Redis 도입을 먼저 결론 내리지 말고 EXPLAIN 추정치와 실행 통계를 구분하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    앱 Pod 확장 뒤 PostgreSQL 연결 수와 지연이 늘었어. pool 대기, lock, 느린 query, vacuum 지표를 보고 가능한 원인을 구분해 줘. max_connections 증가나 Redis 도입을 먼저 결론 내리지 말고 DB 설정은 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review pooling or query changes when DB connections and latency rise after application Pods scale out.
-    Distinguish connection limits from actual concurrent work. Compare pool waits, locks, slow queries, and delayed vacuum. Review session-feature compatibility with transaction pooling and work_mem use per operation.
-    Produce a table: hypothesis / evidence / read-only material that could disprove it / proposed change / validation and recovery conditions. Do not start by recommending higher max_connections or Redis. Distinguish EXPLAIN estimates from execution statistics.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    PostgreSQL connections and latency rose after scaling app Pods. Use pool waits, locks, slow queries, and vacuum metrics to separate possible causes. Do not jump to raising max_connections or adding Redis, and do not change DB settings.
     ```
 
-**핵심 사항:** pool·query·lock·vacuum 원인 후보, connection 상한과 실제 동시성을 분리한 근거표, 설정/SQL 검토 의견. EXPLAIN ANALYZE를 읽기 전용으로 보거나 connection 수×work_mem을 전체 메모리 상한으로 계산할 수 있다. pool 대기와 DB lock/query 관측을 대조하고 설정 변경의 예상 메모리·연결 영향이 계산되는지 확인한다. 실행 통계가 없을 때 추정 plan을 실측으로 표현하지 않는다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다.
+**핵심 사항:** pool·query·lock·vacuum 원인 후보, connection 상한과 실제 동시성을 분리한 근거표, 설정/SQL 검토 의견. EXPLAIN ANALYZE를 읽기 전용으로 보거나 connection 수×work_mem을 전체 메모리 상한으로 계산할 수 있다. pool 대기와 DB lock/query 관측을 대조하고 설정 변경의 예상 메모리·연결 영향이 계산되는지 확인한다. 실행 통계가 없을 때 추정 plan을 실측으로 표현하지 않는다.
 
 관련: [Redis](redis.md) · [Kubernetes 운영](kubernetes-operations.md)
-
-## 보완 설명과 적용 조건
-
-공식 문서 확인일: 2026-10-01. PostgreSQL 링크는 확인 당시 current인 18 문서를 기준으로 읽었다. 설치된 버전의 동작이나 아래 SQL·복구 절차를 실행 검증했다는 뜻은 아니다.
-
-### 5.1 WAL의 정확한 순서
-
-WAL의 핵심 보장은 데이터 파일의 변경 페이지를 영구 저장하기 전에 해당 WAL 기록이 영구 저장되어야 한다는 것이다. 원문의 흐름은 개념도이며 메모리의 모든 변경보다 WAL 디스크 쓰기가 먼저라는 뜻은 아니다. [PostgreSQL WAL](https://www.postgresql.org/docs/18/wal-intro.html).
-
-### 5.2 Connection pool의 범위
-
-`1,000 → 100`은 설명용 구성이다. Pooler가 처리 용량을 자동으로 열 배 늘리지는 않는다. PgBouncer의 transaction pooling은 transaction 동안만 서버 connection을 할당하고 이후 반환한다. Session에 의존하는 기능과의 호환성이 session pooling과 다르므로 드라이버·실제 사용 기능을 확인한다. [PgBouncer features](https://www.pgbouncer.org/features.html).
-
-### 5.3 Vacuum과 5.4 실행 계획
-
-일반 `VACUUM`은 다시 쓸 수 있는 공간을 확보하지만 보통 파일을 줄여 OS에 반환하지는 않는다. 아직 다른 transaction에서 볼 수 있는 row version을 임의로 지울 수도 없다. 긴 transaction과 autovacuum 상태를 함께 확인한다. [PostgreSQL routine vacuuming](https://www.postgresql.org/docs/18/routine-vacuuming.html).
-
-`EXPLAIN ANALYZE`는 대상 문장을 실제 실행한다. SELECT도 부하나 함수 부작용을 일으킬 수 있으므로 실행 환경과 문장을 먼저 확인한다. `EXPLAIN`의 추정 계획과 실행 통계를 구분한다. [PostgreSQL EXPLAIN](https://www.postgresql.org/docs/18/sql-explain.html).
-
-### 5.5 Synchronous의 대기 지점
-
-Standby 확인은 설정에 따라 다르다. `synchronous_standby_names`와 `synchronous_commit`을 함께 확인한다. `on`은 지정된 synchronous standby의 WAL durable flush를 기다리고, `remote_apply`는 replay되어 query에서 보이는 시점까지 기다린다. `remote_write`는 같은 내구성 보장이 아니다. 동기 standby가 응답하지 않으면 commit 대기가 길어질 수 있다. [PostgreSQL synchronous_commit](https://www.postgresql.org/docs/18/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT).
-
-### 5.6 PITR의 전제
-
-PITR에는 올바른 base backup과 복구 시점까지 이어지는 WAL이 필요하다. `pg_dump` 결과에 WAL을 붙이는 방식은 physical PITR이 아니다. 원문의 10:44 복구는 필요한 backup·WAL·timeline을 보유한 경우의 설명용 목표다. 복구 결과는 별도 환경에서 실제 확인해야 한다. [PostgreSQL continuous archiving](https://www.postgresql.org/docs/18/continuous-archiving.html).
-
-### 5.7 work_mem의 총량
-
-`work_mem`은 connection이나 query 전체의 고정 상한이 아니라 sort·hash 같은 개별 연산의 기준이다. 한 query에 여러 연산이 있고 동시에 여러 session이 실행될 수 있다. Hash 연산에는 `hash_mem_multiplier`도 관여한다. 따라서 `connection 수 × work_mem`만으로 전체 메모리 상한을 계산하지 않는다. [PostgreSQL resource consumption](https://www.postgresql.org/docs/18/runtime-config-resource.html).
-
-### 5.8 StatefulSet과 Operator
-
-`postgres-0 → Primary`는 예시이며 ordinal 자체가 PostgreSQL primary 역할을 보장하지 않는다. Failover 후 역할은 바뀔 수 있다. StatefulSet은 안정적인 식별자·저장소 연결을 제공하고, DB 역할·복구 로직은 별도로 구성한다. [Kubernetes StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
-
-Operator는 custom resource와 controller를 통해 운영 로직을 구현하는 패턴이다. 원문의 설치 순서는 개념도다. CRD 등록과 controller 설치의 실제 순서·지원 PostgreSQL 버전·backup 기능은 선택한 Operator의 설치 문서를 따른다. [Kubernetes Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).

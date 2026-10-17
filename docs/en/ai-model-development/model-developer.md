@@ -16,11 +16,13 @@ knowledge_ids:
 
 # Chapter 8. The AI Model Developer's Role
 
-These notes preserve AI Model / QLoRA Training Basic Chapter 8. They do not claim real model-training or deployment experience.
+The models and settings are study examples, not results of training, evaluation, or deployment.
 
 <!-- SOURCE CORE START -->
 
 ## 8.1 Core Role of an AI Model Developer
+
+A model developer adjusts the training ingredients and recipe, then checks the result. Record the data and evaluation criteria so the platform team can run the intended model safely.
 
 An AI model developer who fine-tunes an existing foundation model for a company or service
 is more than someone who runs a training script.
@@ -99,6 +101,10 @@ Hard to build a good model
 
 This is why dataset quality matters so much.
 
+**, 8.7–8.8: Selection Data and Independent Evaluation**
+
+Data used repeatedly to choose hyperparameters or models influences that choice. Calling it golden does not guarantee an independent final evaluation. Recommendation: separate a fixed regression suite from an unused holdout checked after final selection. Learn general training needs from failure categories, but do not copy final evaluation answers into training. Distinguish performance selected through repeated checks on the same cases from performance on new cases. [Cross-validation and test-set separation](https://scikit-learn.org/stable/modules/cross_validation.html)
+
 ---
 
 ## 8.4 Choosing a Training Strategy
@@ -126,6 +132,10 @@ Smaller Model + QLoRA
 ```
 
 These are decisions you may make.
+
+**Different Ways to Classify Training Methods**
+
+Full fine-tuning and LoRA mainly differ in which parameters are trained. QLoRA combines a quantized base model with LoRA training. SFT and preference training describe training objectives and data signals. These are not five mutually exclusive choices. For example, SFT can use QLoRA. [PEFT quantization](https://huggingface.co/docs/peft/developer_guides/quantization), [TRL SFT Trainer](https://huggingface.co/docs/trl/sft_trainer)
 
 ---
 
@@ -184,6 +194,10 @@ These two areas have different goals.
 
 Serving quantization can be decided together with an AI serving / platform engineer.
 
+**Quantization and Production Performance**
+
+Training and serving quantization differ in purpose. Also check supported kernels, hardware, and formats. Lower precision does not always guarantee lower latency or cost. Recommendation: measure quality, TTFT/TPOT, throughput, and memory together under the same evaluation conditions on the target GPU. [vLLM quantization support](https://docs.vllm.ai/en/latest/features/quantization/)
+
 ---
 
 ## 8.7 Evaluation
@@ -238,21 +252,10 @@ Repeat this loop to improve the model.
 
 <!-- SOURCE CORE END -->
 
-## Supplements and Conditions by Source Section
+## Key points
 
-Official documents were checked on 2026-10-05. These additions sit outside the source and are not results from training or evaluating a model.
+Record the training method, data, and evaluation criteria together to explain an improvement. Check compatibility and operating conditions before handing artifacts to the platform team.
 
-### 8.4: Different Ways to Classify Training Methods
-
-Full fine-tuning and LoRA mainly differ in which parameters are trained. QLoRA combines a quantized base model with LoRA training. SFT and preference training describe training objectives and data signals. These are not five mutually exclusive choices. For example, SFT can use QLoRA. [PEFT quantization](https://huggingface.co/docs/peft/developer_guides/quantization), [TRL SFT Trainer](https://huggingface.co/docs/trl/sft_trainer)
-
-### 8.3, 8.5, 8.7–8.8: Selection Data and Independent Evaluation
-
-Data used repeatedly to choose hyperparameters or models influences that choice. Calling it golden does not guarantee an independent final evaluation. Recommendation: separate a fixed regression suite from an unused holdout checked after final selection. Learn general training needs from failure categories, but do not copy final evaluation answers into training. Distinguish performance selected through repeated checks on the same cases from performance on new cases. [Cross-validation and test-set separation](https://scikit-learn.org/stable/modules/cross_validation.html)
-
-### 8.6–8.7: Quantization and Production Performance
-
-Training and serving quantization differ in purpose. Also check supported kernels, hardware, and formats. Lower precision does not always guarantee lower latency or cost. Recommendation: measure quality, TTFT/TPOT, throughput, and memory together under the same evaluation conditions on the target GPU. [vLLM quantization support](https://docs.vllm.ai/en/latest/features/quantization/)
 
 ## Related Topics
 

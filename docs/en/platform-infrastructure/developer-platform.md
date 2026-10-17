@@ -32,11 +32,13 @@ knowledge_ids:
 
 # Chapter 14. Internal Developer Platform / Self-Service
 
-The supplied study notes retain sections 14.1–14.24, their order, paragraphs, and examples. The example API and YAML are not execution results. See the separate supplement for CRDs and controllers, approval and capacity, resource deletion, and quota conditions.
+The configurations and commands are study examples, not results of a deployment or failure test.
 
 <!-- SOURCE CORE START -->
 
 ## 14.1 Platform as a Product
+
+A developer platform is like a self-service desk for requesting an environment. Approval alone does not mean GPU or storage is available or that the service is ready.
 
 A Platform Team can act like a Product Team that treats internal developers as customers, rather than only operating clusters.
 
@@ -298,6 +300,10 @@ At a basic level:
 
 This is a useful way to understand it.
 
+**Roles of the CRD and Controller**
+
+A CRD registers a resource type. A custom resource alone stores and retrieves structured data; a controller implements the behavior that turns desired state into a deployment. The source YAML is a conceptual example that omits fields such as `apiVersion` and `metadata`. It is not a complete manifest ready to apply. LiteLLM registration also belongs to the Platform Controller implementation; Kubernetes does not provide it automatically. [Kubernetes Custom Resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
+
 ---
 
 ## 14.8 Why Not Give Everyone Unrestricted Terraform Access?
@@ -448,6 +454,12 @@ Production DB
 ```
 
 Design different workflows based on cost and risk.
+
+**Checks for Approval, Capacity, and Deletion**
+
+Design recommendation: record the request, policy version, and cost evidence at approval, and recheck capacity immediately before execution. Another request may use the GPUs while approval is pending, so treat approval and schedulability as separate states. Link the request identifier to the created resources to prevent duplicate creation on retries. Show resources left behind after partial failure.
+
+Before returning an endpoint in 14.14, use requests to check authentication, quotas, and routing as well as model readiness. The deletion sequence in 14.17 is conceptual. An actual procedure should address in-flight requests, verify ownership of DNS records and secrets shared with other services, and check released GPUs and any remaining billable resources. Receiving a deletion request does not prove cleanup is complete.
 
 ---
 
@@ -675,6 +687,12 @@ Memory <= 16Gi
 
 ResourceQuota, LimitRange, and LLM quotas can implement these constraints.
 
+**Quotas and Actual Capacity**
+
+ResourceQuota limits aggregate resource usage within a namespace. For the `nvidia.com/gpu` extended resource, for example, `requests.nvidia.com/gpu: 4` can cap total requests. This limit does not reserve GPUs or guarantee model performance. If Team A uses multiple namespaces, its overall team limit needs a separate design. [Kubernetes Resource Quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
+
+LLM token and cost quotas use different units from GPU counts. Keep a separate check of memory per GPU, placement feasibility, and target response latency using the model, precision, context, and concurrency inputs from 14.13. Related: [GPU capacity planning](gpu-infrastructure.md), [Multi-tenancy and cost](multitenancy-cost.md).
+
 ---
 
 ## 14.21 Security Guardrails
@@ -772,6 +790,10 @@ Retention
 
 They are different areas.
 
+**Where Governance Areas Meet**
+
+Platform Governance and Data Governance are distinct, but they can be reviewed together for endpoint data access, log retention, and ownership policies. When designing the platform, do not interpret permission to create resources as permission to access training data, prompts, or response logs.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -794,46 +816,13 @@ Self-service speeds requests, but approval and actual resource readiness need se
 === "한국어"
 
     ```text {.prompt}
-    GPU가 부족한 상태에서 승인 대기 중인 모델 Endpoint 요청의 진행 조건과 실패 복구안을 검토한다.
-    관측, 가정, 원인 가설을 구분하라.
-    승인 상태, quota 여유, 배치 가능한 용량을 따로 평가하라.
-    재시도 중복 생성과 부분 실패 후 남은 Resource를 확인하라.
-    단계 / 근거 / 미확인 정보 / 진행·중단 기준 표를 작성하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    GPU가 부족한 상태에서 모델 endpoint 요청이 승인 대기 중이야. 요청 상태, quota, 실제 배치 가능 용량과 부분 실패 후 남은 리소스를 검토해 진행 가능 조건을 알려 줘. 승인을 대신하거나 리소스를 생성하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review the conditions for proceeding and the failure recovery plan for a model endpoint request awaiting approval while GPUs are scarce.
-    Assess approval status, quota headroom, and schedulable capacity separately.
-    Check duplicate creation on retries and resources left after partial failure.
-    Make a table: step / evidence / unknowns / go-stop criteria.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    A model endpoint request is awaiting approval while GPU capacity is short. Review request state, quota, schedulable capacity, and resources left after partial failures. State what is needed to proceed without granting approval or creating resources.
     ```
 
 **Key point:** A go-stop table that separates approval, quota headroom, and schedulability, plus checks for duplicate creation and cleanup after partial failure. It may assume that unused quota means GPUs are available, or treat approval as proof of model performance. It may declare retries or deletion safe without checking actual resources. Compare the policy version and approval scope with GPU placement and quota usage from the same time window. Check created resources by request identifier. Verify measured response latency and errors at the target context and concurrency. This scenario is a review example, not a record of model execution or performance testing.
-
-## Supplement — Request Approval and Service Readiness
-
-Official documentation checked: 2026-10-05. The explanations and design recommendations below are separate from the source. The example API, CRD, model names, GPUs, and endpoint are not verified implementation or deployment results.
-
-### 14.7 Roles of the CRD and Controller
-
-A CRD registers a resource type. A custom resource alone stores and retrieves structured data; a controller implements the behavior that turns desired state into a deployment. The source YAML is a conceptual example that omits fields such as `apiVersion` and `metadata`. It is not a complete manifest ready to apply. LiteLLM registration also belongs to the Platform Controller implementation; Kubernetes does not provide it automatically. [Kubernetes Custom Resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
-
-### 14.11–14.17 Checks for Approval, Capacity, and Deletion
-
-Design recommendation: record the request, policy version, and cost evidence at approval, and recheck capacity immediately before execution. Another request may use the GPUs while approval is pending, so treat approval and schedulability as separate states. Link the request identifier to the created resources to prevent duplicate creation on retries. Show resources left behind after partial failure.
-
-Before returning an endpoint in 14.14, use requests to check authentication, quotas, and routing as well as model readiness. The deletion sequence in 14.17 is conceptual. An actual procedure should address in-flight requests, verify ownership of DNS records and secrets shared with other services, and check released GPUs and any remaining billable resources. Receiving a deletion request does not prove cleanup is complete.
-
-### 14.20 Quotas and Actual Capacity
-
-ResourceQuota limits aggregate resource usage within a namespace. For the `nvidia.com/gpu` extended resource, for example, `requests.nvidia.com/gpu: 4` can cap total requests. This limit does not reserve GPUs or guarantee model performance. If Team A uses multiple namespaces, its overall team limit needs a separate design. [Kubernetes Resource Quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
-
-LLM token and cost quotas use different units from GPU counts. Keep a separate check of memory per GPU, placement feasibility, and target response latency using the model, precision, context, and concurrency inputs from 14.13. Related: [GPU capacity planning](gpu-infrastructure.md), [Multi-tenancy and cost](multitenancy-cost.md).
-
-### 14.24 Where Governance Areas Meet
-
-Platform Governance and Data Governance are distinct, but they can be reviewed together for endpoint data access, log retention, and ownership policies. When designing the platform, do not interpret permission to create resources as permission to access training data, prompts, or response logs.

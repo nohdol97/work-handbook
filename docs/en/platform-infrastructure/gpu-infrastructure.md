@@ -17,13 +17,13 @@ knowledge_ids:
 
 # Chapter 9. GPU Infrastructure & Scheduling
 
-The supplied study notes retain their numbering, order, and examples. Numbers and environment descriptions below are source statements; this page does not verify an actual deployment or measured performance. See the supplement for model and GPU specifications, memory assumptions, and operational corrections tied to the original sections. Code and commands were not executed.
-
-In particular, the supplement corrects the assumptions that 100% GPU Util proves a compute bottleneck and that total spare GPUs guarantee recovery from a node failure.
+The configurations and commands are study examples, not results of a deployment or failure test.
 
 <!-- SOURCE CORE START -->
 
 ## 9.1 GPU Fundamentals
+
+GPU capacity is more than a count of empty seats. A model that needs several GPUs on one node also depends on placement and capacity after a node failure.
 
 A GPU is an accelerator that processes large parallel workloads quickly.
 
@@ -95,6 +95,12 @@ VRAM 60%
 GPU Util 100%
 → Compute bottleneck
 ```
+
+**Interpreting utilization and capacity**
+
+**`GPU Util 100% → Compute bottleneck` is not a conclusive diagnosis.** In the [NVIDIA nvidia-smi documentation](https://docs.nvidia.com/deploy/nvidia-smi/index.html), GPU utilization measures the fraction of a sample period with a running kernel. It does not directly measure use of peak compute throughput. Check memory bandwidth, communication, kernel efficiency, clock limits, and CPU input delays together. Low utilization does not necessarily mean spare compute capacity either.
+
+The 9.8 example of 8 concurrent requests per replica and a peak of 24 assumes linear scaling to 3 replicas. Test actual request-length distributions, queues, routing imbalance, and failure-time SLOs under load. See section 7.2 and the capacity calculation in [vLLM](vllm.md) for GLM/B300 numbers and unit assumptions.
 
 ---
 
@@ -209,6 +215,12 @@ Device Plugin
 Container Toolkit
 → Lets containers actually use GPUs
 ```
+
+**GPU requests, placement, and sharing**
+
+Under [Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/), a GPU `limits` value also becomes the request when no request is given. If both are present, they must match. Check resources and constraints on one node that can host the pod, rather than total cluster headroom. In 9.4, a toleration permits a taint but does not ensure placement on a particular node. Distinguish taint effects and required/preferred affinity.
+
+The [NVIDIA GPU sharing documentation](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/gpu-sharing.html) states that time slicing provides no memory/fault isolation between replicas and does not guarantee compute proportional to request count. MIG partitions only supported GPUs and profiles. Dedicated GPUs, time slicing, MIG, and MPS cannot be exchanged based only on the source's selection guide.
 
 ---
 
@@ -699,6 +711,12 @@ Queue grows
 → Compute capacity problem
 ```
 
+**spare capacity and recovery**
+
+A total of 4 spare GPUs out of 16 does not guarantee recovery after a node failure. If 12 GPUs are in use across the source's two 8-GPU nodes, losing one node leaves only 8 GPUs in total. The original 12-GPU serving capacity cannot be fully restored. Recreating a single 4-GPU replica requires a feasible 4-GPU placement on one suitable surviving node. Also check CPU/RAM, affinity, taints, device health, and model readiness time.
+
+The cordon/drain sequence outlines planned maintenance. Actual drain requires review of allowed disruption, PodDisruptionBudgets, and replacement capacity. No GPU commands, drain, or load tests were run for this page. 
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -718,41 +736,13 @@ GPU operations require attention to memory, model loading, node health, and reco
 === "한국어"
 
     ```text {.prompt}
-    GPU Node 정비·증설 전에 현재 replica 배치가 Node 장애와 serving 최소 용량을 견디는지 검토한다.
-    각 Node가 사라지는 경우 남는 총 GPU, 기존 replica 사용량, 재배치 가능한 GPU를 따로 계산하라. 8-GPU Node 2개·4-GPU replica 3개 같은 합계로 전체 12-GPU 복구를 보장하지 마라.
-    장애 Node / 살아남은 배치 / 복구 가능한 replica / 부족 제약 / 최소 용량 충족 여부 표를 작성하라. canary·정비·장애 예비 용량을 중복 계산하지 말고 증설 또는 배치 변경 후보와 필요한 검증을 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    GPU Node 정비 전에 replica를 다른 Node로 옮길 수 있는지 계산해 줘. Node별 실제 배치와 모델의 GPU 묶음 요구를 사용하고, canary·정비·장애 예비 용량을 중복 계산하지 마. Node 작업은 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review whether current replica placement can survive node failure and meet minimum serving capacity before GPU-node maintenance or expansion.
-    For the loss of each node, calculate surviving GPUs, existing replica use, and GPUs available for replacement separately. Totals such as two 8-GPU nodes with three 4-GPU replicas do not guarantee recovery of all 12 serving GPUs.
-    Produce a table: failed node / surviving placement / recoverable replicas / missing capacity or constraints / minimum capacity met. Do not count canary, maintenance, and failure reserves twice. List expansion or placement proposals and the checks they require.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Before GPU node maintenance, calculate whether replicas can move to other nodes. Use actual placement and each model’s grouped GPU requirement; do not double-count canary, maintenance, or failure reserve. Do not operate nodes.
     ```
 
-**Key point:** Surviving replicas, replacement capacity, and minimum-serving-capacity status for each node failure, plus expansion or placement proposals. It may treat total spare GPUs as capacity on one node or infer a compute bottleneck from 100% GPU utilization. Recalculate GPUs, CPU/RAM, affinity, taints, and surviving-replica use on each eligible node, not just total GPUs. Recovery time must include model preparation and readiness. This is an authored work example, not a verified model result or measured improvement. Related: [Kubernetes operations](kubernetes-operations.md)
-
-## Supplement — interpretation and operating conditions
-
-Reviewed on 2026-10-01. Source examples are not verified observations of an operating environment.
-
-### 9.1 / 9.8 / 9.9 utilization and capacity
-
-**`GPU Util 100% → Compute bottleneck` is not a conclusive diagnosis.** In the [NVIDIA nvidia-smi documentation](https://docs.nvidia.com/deploy/nvidia-smi/index.html), GPU utilization measures the fraction of a sample period with a running kernel. It does not directly measure use of peak compute throughput. Check memory bandwidth, communication, kernel efficiency, clock limits, and CPU input delays together. Low utilization does not necessarily mean spare compute capacity either.
-
-The 9.8 example of 8 concurrent requests per replica and a peak of 24 assumes linear scaling to 3 replicas. Test actual request-length distributions, queues, routing imbalance, and failure-time SLOs under load. See the 7.2 and unnumbered calculation sections in the [vLLM supplement](vllm.md) for GLM/B300 numbers and unit assumptions.
-
-### 9.3–9.5 GPU requests, placement, and sharing
-
-Under [Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/), a GPU `limits` value also becomes the request when no request is given. If both are present, they must match. Check resources and constraints on one node that can host the pod, rather than total cluster headroom. In 9.4, a toleration permits a taint but does not ensure placement on a particular node. Distinguish taint effects and required/preferred affinity.
-
-The [NVIDIA GPU sharing documentation](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/gpu-sharing.html) states that time slicing provides no memory/fault isolation between replicas and does not guarantee compute proportional to request count. MIG partitions only supported GPUs and profiles. Dedicated GPUs, time slicing, MIG, and MPS cannot be exchanged based only on the source's selection guide.
-
-### 9.9 spare capacity and recovery
-
-A total of 4 spare GPUs out of 16 does not guarantee recovery after a node failure. If 12 GPUs are in use across the source's two 8-GPU nodes, losing one node leaves only 8 GPUs in total. The original 12-GPU serving capacity cannot be fully restored. Recreating a single 4-GPU replica requires a feasible 4-GPU placement on one suitable surviving node. Also check CPU/RAM, affinity, taints, device health, and model readiness time.
-
-The cordon/drain sequence outlines planned maintenance. Actual drain requires review of allowed disruption, PodDisruptionBudgets, and replacement capacity. No GPU commands, drain, or load tests were run for this page. Reading guide: distinguish the layers in 9.1–9.3; check placement, sharing, and communication in 9.4–9.7; then validate capacity and failure assumptions in 9.8–9.9.
+**Key point:** Surviving replicas, replacement capacity, and minimum-serving-capacity status for each node failure, plus expansion or placement proposals. It may treat total spare GPUs as capacity on one node or infer a compute bottleneck from 100% GPU utilization. Recalculate GPUs, CPU/RAM, affinity, taints, and surviving-replica use on each eligible node, not just total GPUs. Recovery time must include model preparation and readiness. Related: [Kubernetes operations](kubernetes-operations.md)

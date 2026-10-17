@@ -12,9 +12,13 @@ knowledge_ids:
 
 # Chapter 7. Model / Dataset Artifact Management
 
+The models and settings are study examples, not results of training, evaluation, or deployment.
+
 <!-- SOURCE CORE START -->
 
 ## 7.1 Example S3 Structure
+
+Artifact lineage works like a parcel tracking record: it links input data, run settings, evaluation results, and model files. Those links let a team locate a model and explain how it was produced.
 
 ```text
 s3://ai-platform/
@@ -45,6 +49,10 @@ Object Storage holds the actual files.
 
 Files alone do not easily show which Experiment produced them.
 
+**Prefixes and Immutable Artifacts**
+
+A prefix such as `v1/` is only a name; it does not prevent overwrites. S3 Versioning retains multiple object versions. For reproducible artifact references, record the key and versionId or a verifiable content hash. Versioning alone does not guarantee deletion protection or write-once storage. [S3 Versioning](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html)
+
 ---
 
 ## 7.2 Link Metadata
@@ -64,6 +72,12 @@ Adapter v5
 ```
 
 These links make it possible to build a reproducible Training Pipeline.
+
+**Traceability and Reproducibility**
+
+Review recommendation: add tokenizer/chat-template revisions, code commits, library/container versions, seeds, quantization/generation settings, and dataset/artifact hashes to the source metadata. Keep checkpoint state separately if training must resume. These links alone do not guarantee bitwise identical results. PyTorch also notes that its deterministic-algorithm setting alone does not guarantee reproducibility for an entire application. [PyTorch deterministic algorithms](https://docs.pytorch.org/docs/main/generated/torch.use_deterministic_algorithms.html)
+
+The straight arrows in 7.4 list concepts to trace. In actual lineage, the dataset, base model, and training config are run inputs. The adapter is an output, and evaluation and deployment refer to that artifact. Distinguish relation directions to trace which deployments a changed input affects. [Lineage and metadata](../data-platform/lineage-metadata.md)
 
 ---
 
@@ -96,6 +110,10 @@ Production
 ↓
 Archived
 ```
+
+**Conceptual Stages and Registry Implementation**
+
+Candidate→Validated→Staging→Production→Archived is a design example. Not every registry provides these exact states. MLflow Model Stages have been deprecated since 2.9.0; current docs describe aliases, tags, and separate environments. Define states, approvals, and artifact references for your product and version. A registry state change also differs from successful serving deployment. [MLflow Model Registry workflows](https://mlflow.org/docs/latest/ml/model-registry/workflow/)
 
 ---
 
@@ -134,23 +152,10 @@ You must be able to trace these details.
 
 <!-- SOURCE CORE END -->
 
-## Supplements and Conditions by Source Section
+## Key points
 
-The official sources below were checked on 2026-10-05. S3 paths and run/eval IDs are study examples, not references to an actual repository or training run.
+Link data, code, settings, evaluation, and model files to one run ID. A path name alone does not make an artifact immutable or a result reproducible.
 
-### 7.1: Prefixes and Immutable Artifacts
-
-A prefix such as `v1/` is only a name; it does not prevent overwrites. S3 Versioning retains multiple object versions. For reproducible artifact references, record the key and versionId or a verifiable content hash. Versioning alone does not guarantee deletion protection or write-once storage. [S3 Versioning](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html)
-
-### 7.2, 7.4: Traceability and Reproducibility
-
-Review recommendation: add tokenizer/chat-template revisions, code commits, library/container versions, seeds, quantization/generation settings, and dataset/artifact hashes to the source metadata. Keep checkpoint state separately if training must resume. These links alone do not guarantee bitwise identical results. PyTorch also notes that its deterministic-algorithm setting alone does not guarantee reproducibility for an entire application. [PyTorch deterministic algorithms](https://docs.pytorch.org/docs/main/generated/torch.use_deterministic_algorithms.html)
-
-The straight arrows in 7.4 list concepts to trace. In actual lineage, the dataset, base model, and training config are run inputs. The adapter is an output, and evaluation and deployment refer to that artifact. Distinguish relation directions to trace which deployments a changed input affects. [Lineage and metadata](../data-platform/lineage-metadata.md)
-
-### 7.3: Conceptual Stages and Registry Implementation
-
-Candidate→Validated→Staging→Production→Archived is a design example. Not every registry provides these exact states. MLflow Model Stages have been deprecated since 2.9.0; current docs describe aliases, tags, and separate environments. Define states, approvals, and artifact references for your product and version. A registry state change also differs from successful serving deployment. [MLflow Model Registry workflows](https://mlflow.org/docs/latest/ml/model-registry/workflow/)
 
 ## Related Pages
 

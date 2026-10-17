@@ -13,11 +13,13 @@ knowledge_ids:
 
 # Chapter 7. AI/GPU + End-to-End
 
-These AWS Cloud Basic Chapter 7 study notes cover GPU EC2, EKS, model storage, vLLM, and the overall architecture. They do not record creating AWS resources or measuring inference performance.
+The configurations are study examples, not results from a running AWS environment.
 
 <!-- SOURCE CORE START -->
 
 ## 7.1 GPU EC2
+
+A GPU service is not ready just because the device is attached. Pod placement, image and model downloads, GPU memory loading, and readiness must all work before it can serve requests.
 
 GPU EC2:
 
@@ -101,6 +103,12 @@ Load model into GPU VRAM
 Serving Ready
 ```
 
+**GPU Count and Placement Conditions**
+
+The source's `resources: GPU: 1` is a conceptual diagram, not an applicable Kubernetes manifest. In the usual NVIDIA device plugin path, set `nvidia.com/gpu: 1` under the container's `resources.limits`. If GPU requests are also set, they must equal the limits. A limit alone also becomes the request. Beyond GPU count, check VRAM per GPU, model precision, context, concurrency, CPU/RAM, labels, and taints. A toleration alone does not guarantee placement on a particular node. [Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/), [AWS AI/ML compute](https://docs.aws.amazon.com/eks/latest/best-practices/aiml-compute.html)
+
+EKS-optimized AL2023 NVIDIA AMIs include the driver and container toolkit, but the NVIDIA Kubernetes device plugin needs a separate installation. EKS Auto Mode manages drivers and device plugins for supported GPUs. Do not repeat the same installation steps there. The source flow does not apply identically to every AMI and operating mode. [Accelerated AMI](https://docs.aws.amazon.com/eks/latest/userguide/ml-eks-optimized-ami.html), [Auto Mode accelerated workload](https://docs.aws.amazon.com/eks/latest/userguide/auto-accelerated.html)
+
 ---
 
 ## 7.2 EKS GPU Node
@@ -175,6 +183,10 @@ Add GPU EC2 instances
 ```
 
 GPUs are expensive. Carefully consider the minimum node count, scale-out conditions, idle time, and whether to use Spot.
+
+**Pod Scaling and Node Scaling**
+
+More Pods or Pending Pods do not automatically expand every EKS node group. Replica control through HPA or a similar tool and node capacity control are separate functions. Cluster Autoscaler adjusts Auto Scaling Groups. Karpenter provisions nodes to fit Pod requirements. Check actual settings, permissions, instance/AZ availability, and quotas. Even after a new node is Ready, model download and loading must finish before it can accept inference traffic. [EKS compute scaling](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html), [Inference autoscaling](https://docs.aws.amazon.com/eks/latest/userguide/ml-inference-autoscaling.html)
 
 ---
 
@@ -269,6 +281,29 @@ GPU Pod
 
 S3 stores the original model. For serving, a cache can keep it close to the node.
 
+**Image-Pull Identity and Model-Download Identity**
+
+The permissions an EC2 node's kubelet uses to pull an ECR image differ from those a running Pod uses to access S3. Check the node IAM role for image pulling. Check the Pod Identity role associated with the ServiceAccount and the SDK credential chain for S3 access. Pod Identity is an association for a cluster, namespace, and ServiceAccount. It does not automatically create a unique role for every Pod. [EKS node role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html), [Pod Identity](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html)
+
+`s3:GetObject` and `model-prod/*` illustrate least privilege. Actual IAM resources specify object ARN scopes in a bucket. If the downloader lists objects, check `s3:ListBucket`. Reading a specific versionId needs `s3:GetObjectVersion`. Reading an object encrypted with a customer-managed KMS key also requires the relevant `kms:Decrypt` permission. Match permissions to actual APIs and errors instead of adding all of them by default. [S3 API permissions](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-policy-actions.html)
+
+**Separating Code and Models, Versions, and Caches**
+
+Separating code and models is a design choice. The product does not prohibit putting a model in an image. An S3 prefix such as `llama-v1/` does not make its contents immutable. Design recommendation: record the image digest, model object version or checksum, tokenizer, and serving settings as a reproducible set. Even a model-only change needs checks of vLLM, CUDA, model format compatibility, and GPU capacity. [S3 Versioning](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html), [Kubernetes image digests](https://kubernetes.io/docs/concepts/containers/images/)
+
+Configure the S3 download step through an init container, startup script, or supported loader. Do not assume every vLLM image automatically downloads an arbitrary S3 path. For example, Tensorizer supports loading models from S3 after they have been serialized into its supported format. To reuse a local cache, check volume lifetime and cache keys for each version. A new node may have no cache. [vLLM Docker](https://docs.vllm.ai/en/latest/deployment/docker/), [vLLM Tensorizer](https://docs.vllm.ai/en/latest/models/extensions/tensorizer/)
+
+```mermaid
+flowchart LR
+    Node[EC2 node kubelet] --> NodeRole[Node IAM role]
+    NodeRole --> ECR[ECR image pull]
+    Pod[Model downloader in Pod] --> SA[ServiceAccount and Pod Identity]
+    SA --> Role[Workload IAM role]
+    Role --> S3[S3 model objects]
+    S3 --> Cache[Local model cache]
+    Cache --> vLLM[vLLM and GPU VRAM]
+```
+
 ---
 
 ## 7.4 vLLM Serving Structure
@@ -354,6 +389,16 @@ Operational considerations:
 - Model Cache
 - Autoscaling
 - Traffic forecasting
+
+**Cold Start and Serving Readiness**
+
+The source startup flow guarantees no fixed completion time. In a design review, measure node creation, image pull, model download, and load/warm-up separately. A startup probe protects slow startup. Readiness signals whether the Pod can receive traffic. A failed readiness probe does not itself restart the container. Also check whether keeping a minimum node count actually keeps a minimum number of model replicas Ready. [Kubernetes probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/)
+
+**Logical Structure and Actual AWS Paths**
+
+`Private Subnets → EKS` does not mean the entire control plane runs in worker subnets. AWS manages the EKS control plane. The source simplifies workload placement. `ALB → Service → Pod` is also a logical path. Depending on the AWS Load Balancer Controller target type, traffic uses nodes/NodePorts or Pod IPs. Read the control plane and ALB explanations in [EKS](eks.md) and [Networking](networking.md).
+
+`SQS → one task` does not guarantee exactly-once processing. Follow section 6.1 in [Managed Services](managed-services.md) for redelivery, duplicate handling, visibility timeout, and idempotency. Design private access paths to services such as S3/ECR separately from IAM permissions. Diagram arrows alone do not prove internet exposure or permission to access a resource.
 
 ---
 
@@ -559,78 +604,18 @@ Explain GPU service readiness by checking the Pod, model loading, network, and p
 
 ## LLM in Practice: Investigate a GPU Pod That Never Becomes Ready
 
-
 **Prompt:**
 
 === "한국어"
 
     ```text {.prompt}
-    GPU Pod를 늘린 뒤 새 replica가 Ready가 되지 않는 가상 사례를 검토한다.
-    scheduling, image pull, model 다운로드, GPU load, readiness 단계를 구분하라.
-    관측·가정·가설을 구분하고 node role과 workload role을 따로 평가하라.
-    필수 근거가 없으면 우선순위 질문 최대 3개를 제시하고 결론을 유보하라.
-    단계 / 근거·시각 / 책임 구성·identity / 미확인 정보 / 다음 확인 표를 작성하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    GPU Pod를 늘린 뒤 새 replica가 Ready가 되지 않았어. Pod event와 image·model 다운로드 로그를 바탕으로 scheduling, 권한, GPU 적재, readiness 중 어디에서 멈췄는지 구분해 줘. 비밀값을 출력하거나 AWS 구성을 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review a hypothetical case where new GPU replicas do not become Ready after scaling out.
-    Separate scheduling, image pull, model download, GPU loading, and readiness stages.
-    Make a table: stage / evidence and time / responsible setting or identity / unknowns / next check.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    A new GPU Pod replica does not become Ready. Use Pod events and image and model download logs to separate scheduling, permission, GPU loading, and readiness failures. Do not reveal secrets or change AWS resources.
     ```
 
 **Key point:** Failure hypotheses by startup stage, responsible identities, required evidence, minimal change candidates, and checks that confirm recovery to Ready. It may treat every Pending Pod as a GPU shortage, assume changing the Pod role also fixes ECR image pulls, or confuse node readiness with model readiness. Compare events, permissions, download results, and probes from the same time window against official documentation. Follow actual authority and operating procedures for changes. Reproduce and verify recovery in an isolated test. This example is not a record of running a model or measuring improvements.
-
-## Supplements and Conditions by Source Section
-
-The official documents below were checked on 2026-10-05. These explanations and design checks sit outside the source. They are not results from an AWS deployment or performance test.
-
-### 7.1–7.2: GPU Count and Placement Conditions
-
-The source's `resources: GPU: 1` is a conceptual diagram, not an applicable Kubernetes manifest. In the usual NVIDIA device plugin path, set `nvidia.com/gpu: 1` under the container's `resources.limits`. If GPU requests are also set, they must equal the limits. A limit alone also becomes the request. Beyond GPU count, check VRAM per GPU, model precision, context, concurrency, CPU/RAM, labels, and taints. A toleration alone does not guarantee placement on a particular node. [Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/), [AWS AI/ML compute](https://docs.aws.amazon.com/eks/latest/best-practices/aiml-compute.html)
-
-EKS-optimized AL2023 NVIDIA AMIs include the driver and container toolkit, but the NVIDIA Kubernetes device plugin needs a separate installation. EKS Auto Mode manages drivers and device plugins for supported GPUs. Do not repeat the same installation steps there. The source flow does not apply identically to every AMI and operating mode. [Accelerated AMI](https://docs.aws.amazon.com/eks/latest/userguide/ml-eks-optimized-ami.html), [Auto Mode accelerated workload](https://docs.aws.amazon.com/eks/latest/userguide/auto-accelerated.html)
-
-### 7.2, 7.4: Pod Scaling and Node Scaling
-
-More Pods or Pending Pods do not automatically expand every EKS node group. Replica control through HPA or a similar tool and node capacity control are separate functions. Cluster Autoscaler adjusts Auto Scaling Groups. Karpenter provisions nodes to fit Pod requirements. Check actual settings, permissions, instance/AZ availability, and quotas. Even after a new node is Ready, model download and loading must finish before it can accept inference traffic. [EKS compute scaling](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html), [Inference autoscaling](https://docs.aws.amazon.com/eks/latest/userguide/ml-inference-autoscaling.html)
-
-### 7.3: Image-Pull Identity and Model-Download Identity
-
-The permissions an EC2 node's kubelet uses to pull an ECR image differ from those a running Pod uses to access S3. Check the node IAM role for image pulling. Check the Pod Identity role associated with the ServiceAccount and the SDK credential chain for S3 access. Pod Identity is an association for a cluster, namespace, and ServiceAccount. It does not automatically create a unique role for every Pod. [EKS node role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html), [Pod Identity](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html)
-
-`s3:GetObject` and `model-prod/*` illustrate least privilege. Actual IAM resources specify object ARN scopes in a bucket. If the downloader lists objects, check `s3:ListBucket`. Reading a specific versionId needs `s3:GetObjectVersion`. Reading an object encrypted with a customer-managed KMS key also requires the relevant `kms:Decrypt` permission. Match permissions to actual APIs and errors instead of adding all of them by default. [S3 API permissions](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-policy-actions.html)
-
-### 7.3: Separating Code and Models, Versions, and Caches
-
-Separating code and models is a design choice. The product does not prohibit putting a model in an image. An S3 prefix such as `llama-v1/` does not make its contents immutable. Design recommendation: record the image digest, model object version or checksum, tokenizer, and serving settings as a reproducible set. Even a model-only change needs checks of vLLM, CUDA, model format compatibility, and GPU capacity. [S3 Versioning](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html), [Kubernetes image digests](https://kubernetes.io/docs/concepts/containers/images/)
-
-Configure the S3 download step through an init container, startup script, or supported loader. Do not assume every vLLM image automatically downloads an arbitrary S3 path. For example, Tensorizer supports loading models from S3 after they have been serialized into its supported format. To reuse a local cache, check volume lifetime and cache keys for each version. A new node may have no cache. [vLLM Docker](https://docs.vllm.ai/en/latest/deployment/docker/), [vLLM Tensorizer](https://docs.vllm.ai/en/latest/models/extensions/tensorizer/)
-
-### 7.4: Cold Start and Serving Readiness
-
-The source startup flow guarantees no fixed completion time. In a design review, measure node creation, image pull, model download, and load/warm-up separately. A startup probe protects slow startup. Readiness signals whether the Pod can receive traffic. A failed readiness probe does not itself restart the container. Also check whether keeping a minimum node count actually keeps a minimum number of model replicas Ready. [Kubernetes probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/)
-
-### 7.4–7.5: Logical Structure and Actual AWS Paths
-
-`Private Subnets → EKS` does not mean the entire control plane runs in worker subnets. AWS manages the EKS control plane. The source simplifies workload placement. `ALB → Service → Pod` is also a logical path. Depending on the AWS Load Balancer Controller target type, traffic uses nodes/NodePorts or Pod IPs. Read the control plane and ALB supplements in [EKS](eks.md) and [Networking](networking.md).
-
-`SQS → one task` does not guarantee exactly-once processing. Follow the section 6.1 supplement in [Managed Services](managed-services.md) for redelivery, duplicate handling, visibility timeout, and idempotency. Design private access paths to services such as S3/ECR separately from IAM permissions. Diagram arrows alone do not prove internet exposure or permission to access a resource.
-
-## Supplement Diagram: Two Permission Paths for a GPU Pod
-
-This concept diagram separates image pulling from model access while preserving the original text diagrams.
-
-```mermaid
-flowchart LR
-    Node[EC2 node kubelet] --> NodeRole[Node IAM role]
-    NodeRole --> ECR[ECR image pull]
-    Pod[Model downloader in Pod] --> SA[ServiceAccount and Pod Identity]
-    SA --> Role[Workload IAM role]
-    Role --> S3[S3 model objects]
-    S3 --> Cache[Local model cache]
-    Cache --> vLLM[vLLM and GPU VRAM]
-```

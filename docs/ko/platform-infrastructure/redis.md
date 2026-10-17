@@ -16,11 +16,13 @@ knowledge_ids:
 
 # Chapter 4. Redis for Platform Systems
 
-원문의 순서와 형태를 보존한 개념 학습 기록이다. 예시 수치·명령·식별자는 설명용이며 실행·운영 검증 결과가 아니다. 원문의 단순화와 주의할 적용 조건은 본문 뒤 보완 설명에서 해당 절 번호로 확인한다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 4.1 Redis Fundamentals
+
+Redis는 자주 꺼내는 물건을 가까운 서랍에 두는 것과 비슷하다. 빠른 접근이 장점이지만 만료, 메모리 한도, 복제와 원본 데이터의 관계를 정해야 한다.
 
 Redis는 메모리에 데이터를 저장해서 매우 빠르게 읽고 쓰는 Key-Value 저장소다.
 
@@ -114,6 +116,10 @@ Redis
 상품 정보 원본 → PostgreSQL
 상품 정보 Cache → Redis
 ```
+
+**TTL의 의미**
+
+만료된 key는 접근할 때와 주기적인 만료 검사에서 제거된다. TTL은 애플리케이션에서 더 이상 유효하지 않은 시점을 나타내며, 그 순간 모든 메모리를 즉시 회수한다는 뜻은 아니다. [Redis EXPIRE](https://redis.io/docs/latest/commands/expire/).
 
 ---
 
@@ -314,6 +320,16 @@ Connection Pool
 
 을 최적화한 뒤 Redis를 고려한다.
 
+**Rate limit, lock, 중복 방지의 원자성**
+
+분당 counter는 시간 구간과 만료 정책이 있어야 한다. `INCR`와 `EXPIRE`를 별도 요청으로 처리하다 중단되면 만료가 빠지는 경쟁 조건이 생길 수 있으므로 공식 패턴의 원자적 처리 조건을 확인한다. [Redis INCR](https://redis.io/docs/latest/commands/incr/).
+
+원문의 `없음 → 처리 → 기록` 흐름만으로 한 번의 처리를 보장할 수는 없다. 두 요청이 동시에 없음을 확인하거나 처리 직후 기록 전에 중단될 수 있다. 이는 원문 흐름에서 도출한 설계상 한계다. 결제 같은 외부 부작용에는 대상 저장소의 내구성 있는 idempotency 기록과 처리 결과를 함께 설계해야 한다. Redis marker 하나를 완전한 exactly-once 보장으로 해석하지 않는다.
+
+Lock은 획득의 원자성, 만료, 소유자 식별자, 소유자 확인 후 해제를 함께 검토한다. 작업이 TTL보다 오래 걸리면 다른 client가 lock을 얻을 수 있다. 비동기 복제의 장애 전환도 상호 배제를 깨뜨릴 수 있다. 공식 lock 문서는 이런 보장 조건을 다루며 단순 `DEL`로 다른 소유자의 lock을 지우지 말라고 설명한다. [Redis distributed locks](https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/).
+
+`5,000 × (1 − 0.95) = 250 req/s`는 각 miss가 DB 요청 하나이고 다른 DB traffic이 없다는 설명용 계산이다. Cache 도입 기준이나 실측 성능이 아니다. Cache 재구축 시 동시 miss가 DB에 미칠 부하도 따로 검토한다.
+
 ---
 
 ## 4.3 Persistence
@@ -387,6 +403,10 @@ Cache 재생성
 
 > Redis 데이터가 사라져도 다시 만들 수 있는가?
 
+**Persistence와 데이터 손실 범위**
+
+AOF를 켰다는 사실만으로 데이터 손실이 없어지지 않는다. `appendfsync` 정책과 저장장치 조건을 확인한다. `everysec` 정책에서는 장애 시 약 1초의 write를 잃을 수 있다. Redis 7.0부터 AOF는 base·incremental 파일과 manifest를 쓰므로 백업은 파일 집합의 일관성까지 고려해야 한다. RDB/AOF가 있어도 별도 보관과 복구 확인이 필요하다. [Redis persistence](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/).
+
 ---
 
 ## 4.4 Replication
@@ -441,6 +461,12 @@ Replication
 ≠
 Automatic Failover
 ```
+
+**HA와 Cluster의 조건**
+
+Sentinel의 장애 판단 quorum과 failover 승인에 필요한 Sentinel 과반수는 다르다. 독립적인 장애 영역에 Sentinel을 배치하고 client가 새 primary를 발견하고 재연결하는지 검토한다. Sentinel도 비동기 복제에서 이미 응답한 write의 손실을 완전히 막지는 못한다. [Redis Sentinel](https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/).
+
+Redis Cluster는 16,384 hash slot을 사용한다. 여러 key를 함께 쓰는 연산에는 같은 slot 조건이 있으므로 key 설계와 client의 Cluster 지원도 확인한다. Node 추가는 단일 hot key를 자동 분할하지 않는다. Cluster 역시 장애 시점과 복제 상태에 따른 write 손실 가능성이 있다. [Redis Cluster specification](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/).
 
 ---
 
@@ -632,6 +658,12 @@ Redis 느림
 → Network round trip 과다?
 ```
 
+**메모리와 Kubernetes 역할**
+
+Fragmentation 지표만으로 누수를 단정하지 않는다. 데이터 크기와 allocator가 보유한 메모리, OS에 보이는 사용량을 함께 본다. [Redis memory optimization](https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/).
+
+StatefulSet은 Pod 식별자와 저장소 연결을 유지하는 기반이다. Redis 역할 선출·복제·백업을 자동으로 구성하지 않는다. PVC만으로 백업이나 전체 장애 복구가 보장되지 않는다. [Kubernetes StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
+
 ---
 
 ## 4.8 Redis on Kubernetes
@@ -706,61 +738,20 @@ Redis 지연은 메모리·네트워크·명령 패턴과 지속성 설정에 �
 
 ## LLM in Practice: Redis 지연 원인 검토
 
-
 **프롬프트:**
 
 === "한국어"
 
     ```text {.prompt}
-    Redis 지연이나 cache miss 증가를 조사하고 DB 부하와 연결해 변경 필요성을 판단한다.
-    hot key, big key, 동시 cache miss, eviction, 복제 지연 가설을 비교하라. hit rate 하나로 원인을 확정하지 말고 Cluster 추가가 단일 hot key를 해결하는지 구분하라.
-    가설 / 근거 시각 / 반증 조회 / DB 영향 / 다음 확인 표를 작성하라. TTL·cache 정책·용량 변경 후보별 예상 효과와 실패 조건, 검증할 지표를 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    Redis 지연과 cache miss가 늘었어. key 분포, memory·eviction, replication 지표와 DB 부하를 보고 hot key, big key, 동시 miss 중 무엇이 문제인지 검토해 줘. hit rate만으로 단정하거나 설정을 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Investigate Redis latency or cache misses and decide whether a change is justified by the related DB load.
-    Compare hot keys, big keys, concurrent cache misses, eviction, and replication lag. Do not infer a cause from hit rate alone. Distinguish adding Cluster nodes from solving a single hot key.
-    Produce a table: hypothesis / evidence timestamp / falsifying check / DB impact / next check. For each TTL, cache-policy, or capacity proposal, state the expected effect, failure conditions, and metrics to verify.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Redis latency and cache misses increased. Use key distribution, memory, eviction, replication metrics, and DB load to assess hot keys, big keys, and concurrent misses. Do not conclude from hit rate alone or change settings.
     ```
 
-**핵심 사항:** hot/big key·동시 miss·eviction·복제 가설과 DB 영향 비교, TTL·cache·용량 변경 후보별 성공·중단 지표. cache가 빨라지면 전체 요청도 빨라진다고 보거나 데이터 삭제를 진단 방법으로 권할 수 있다. key 분포·TTL·메모리·hit/miss·DB 부하를 같은 구간에서 대조한다. hit rate만 좋아지고 DB 지연이나 캐시 재구축 부하가 악화되는 후보도 드러나야 한다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다.
+**핵심 사항:** hot/big key·동시 miss·eviction·복제 가설과 DB 영향 비교, TTL·cache·용량 변경 후보별 성공·중단 지표. cache가 빨라지면 전체 요청도 빨라진다고 보거나 데이터 삭제를 진단 방법으로 권할 수 있다. key 분포·TTL·메모리·hit/miss·DB 부하를 같은 구간에서 대조한다. hit rate만 좋아지고 DB 지연이나 캐시 재구축 부하가 악화되는 후보도 드러나야 한다.
 
 관련: [PostgreSQL](postgresql.md) · [Kubernetes 운영](kubernetes-operations.md)
-
-## 보완 설명과 적용 조건
-
-공식 문서 확인일: 2026-10-01. 아래는 원문을 고치지 않고 구분한 보완이다. Redis 설치, 부하 시험, 장애 전환 또는 복구를 실행한 기록은 아니다.
-
-### 4.1 TTL의 의미
-
-만료된 key는 접근할 때와 주기적인 만료 검사에서 제거된다. TTL은 애플리케이션에서 더 이상 유효하지 않은 시점을 나타내며, 그 순간 모든 메모리를 즉시 회수한다는 뜻은 아니다. [Redis EXPIRE](https://redis.io/docs/latest/commands/expire/).
-
-### 4.2 Rate limit, lock, 중복 방지의 원자성
-
-분당 counter는 시간 구간과 만료 정책이 있어야 한다. `INCR`와 `EXPIRE`를 별도 요청으로 처리하다 중단되면 만료가 빠지는 경쟁 조건이 생길 수 있으므로 공식 패턴의 원자적 처리 조건을 확인한다. [Redis INCR](https://redis.io/docs/latest/commands/incr/).
-
-원문의 `없음 → 처리 → 기록` 흐름만으로 한 번의 처리를 보장할 수는 없다. 두 요청이 동시에 없음을 확인하거나 처리 직후 기록 전에 중단될 수 있다. 이는 원문 흐름에서 도출한 설계상 한계다. 결제 같은 외부 부작용에는 대상 저장소의 내구성 있는 idempotency 기록과 처리 결과를 함께 설계해야 한다. Redis marker 하나를 완전한 exactly-once 보장으로 해석하지 않는다.
-
-Lock은 획득의 원자성, 만료, 소유자 식별자, 소유자 확인 후 해제를 함께 검토한다. 작업이 TTL보다 오래 걸리면 다른 client가 lock을 얻을 수 있다. 비동기 복제의 장애 전환도 상호 배제를 깨뜨릴 수 있다. 공식 lock 문서는 이런 보장 조건을 다루며 단순 `DEL`로 다른 소유자의 lock을 지우지 말라고 설명한다. [Redis distributed locks](https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/).
-
-`5,000 × (1 − 0.95) = 250 req/s`는 각 miss가 DB 요청 하나이고 다른 DB traffic이 없다는 설명용 계산이다. Cache 도입 기준이나 실측 성능이 아니다. Cache 재구축 시 동시 miss가 DB에 미칠 부하도 따로 검토한다.
-
-### 4.3 Persistence와 데이터 손실 범위
-
-AOF를 켰다는 사실만으로 데이터 손실이 없어지지 않는다. `appendfsync` 정책과 저장장치 조건을 확인한다. `everysec` 정책에서는 장애 시 약 1초의 write를 잃을 수 있다. Redis 7.0부터 AOF는 base·incremental 파일과 manifest를 쓰므로 백업은 파일 집합의 일관성까지 고려해야 한다. RDB/AOF가 있어도 별도 보관과 복구 확인이 필요하다. [Redis persistence](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/).
-
-### 4.4–4.6 HA와 Cluster의 조건
-
-Sentinel의 장애 판단 quorum과 failover 승인에 필요한 Sentinel 과반수는 다르다. 독립적인 장애 영역에 Sentinel을 배치하고 client가 새 primary를 발견하고 재연결하는지 검토한다. Sentinel도 비동기 복제에서 이미 응답한 write의 손실을 완전히 막지는 못한다. [Redis Sentinel](https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/).
-
-Redis Cluster는 16,384 hash slot을 사용한다. 여러 key를 함께 쓰는 연산에는 같은 slot 조건이 있으므로 key 설계와 client의 Cluster 지원도 확인한다. Node 추가는 단일 hot key를 자동 분할하지 않는다. Cluster 역시 장애 시점과 복제 상태에 따른 write 손실 가능성이 있다. [Redis Cluster specification](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/).
-
-### 4.7–4.8 메모리와 Kubernetes 역할
-
-Fragmentation 지표만으로 누수를 단정하지 않는다. 데이터 크기와 allocator가 보유한 메모리, OS에 보이는 사용량을 함께 본다. [Redis memory optimization](https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/).
-
-StatefulSet은 Pod 식별자와 저장소 연결을 유지하는 기반이다. Redis 역할 선출·복제·백업을 자동으로 구성하지 않는다. PVC만으로 백업이나 전체 장애 복구가 보장되지 않는다. [Kubernetes StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).

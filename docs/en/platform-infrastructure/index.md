@@ -1,8 +1,8 @@
 ---
 id: platform-infrastructure-overview
 status: overview
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - PIS-00-01
   - PIS-04-01
@@ -61,7 +61,7 @@ Start with component roles and boundaries. Then connect source symptoms to the r
 
 Chapters 12–15 connect Terraform/IaC, resource and usage isolation, cost, self-service, failure diagnosis, and the full architecture. The supplied 15-chapter Basic course is complete. Further advanced study and lab material have not been supplied.
 
-Connect the data-processing view in the [data platform curriculum](../data-platform/curriculum.md) with the service operations and serving view here. Read each technical page’s supplement for corrections and conditions tied to source section numbers.
+Connect the data-processing view in the [data platform curriculum](../data-platform/curriculum.md) with the service operations and serving view here. Corrections and operating conditions appear beside the related concepts in each chapter.
 
 ## Using commands and practical examples
 

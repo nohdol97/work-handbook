@@ -13,11 +13,13 @@ knowledge_ids:
 
 # Chapter 7. AI/GPU + End-to-End
 
-AWS Cloud Basic Chapter 7의 GPU EC2·EKS·model storage·vLLM·전체 구조 학습 기록이다. 실제 AWS 자원을 생성하거나 추론 성능을 측정한 기록이 아니다.
+예시 구성은 학습용이며 실제 AWS 환경에서 실행한 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 7.1 GPU EC2
+
+GPU 서비스는 장비를 꽂는 것만으로 준비되지 않는다. Pod 배치, image와 model 다운로드, GPU 메모리 적재, readiness가 이어져야 요청을 받을 수 있다.
 
 GPU EC2:
 
@@ -101,6 +103,12 @@ GPU VRAM에 Model Load
 Serving Ready
 ```
 
+**GPU 개수와 실제 배치 조건**
+
+`resources: GPU: 1`은 원문의 개념 도식이며 적용 가능한 Kubernetes manifest가 아니다. 일반적인 NVIDIA device plugin 경로에서는 container의 `resources.limits`에 `nvidia.com/gpu: 1`을 지정한다. GPU requests도 쓰면 limits와 같아야 하며, limits만 쓰면 그 값이 request가 된다. GPU 개수 외에도 GPU별 VRAM, model precision, context와 concurrency, CPU·RAM, label·taint 조건을 확인한다. Toleration만으로 특정 node 배치를 보장하지 않는다. [Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/), [AWS AI/ML compute](https://docs.aws.amazon.com/eks/latest/best-practices/aiml-compute.html)
+
+EKS-optimized AL2023 NVIDIA AMI는 driver와 container toolkit을 포함하지만 NVIDIA Kubernetes device plugin은 별도 설치가 필요하다. EKS Auto Mode는 지원하는 GPU의 driver와 device plugin을 관리하므로 같은 설치 절차를 중복 적용하지 않는다. 원문의 흐름을 모든 AMI와 운영 모드에 동일하게 적용하지 않는다. [Accelerated AMI](https://docs.aws.amazon.com/eks/latest/userguide/ml-eks-optimized-ami.html), [Auto Mode accelerated workload](https://docs.aws.amazon.com/eks/latest/userguide/auto-accelerated.html)
+
 ---
 
 ## 7.2 EKS GPU Node
@@ -175,6 +183,10 @@ GPU EC2 추가
 ```
 
 GPU는 비싸므로 최소 Node 수, Scale Out 조건, Idle 시간, Spot 여부 등을 신중하게 본다.
+
+**Pod scaling과 Node scaling**
+
+Pod가 늘거나 Pending이 생겼다는 이유만으로 모든 EKS node group이 자동 확장되지는 않는다. HPA 등의 replica 조절과 node capacity 조절은 별도 기능이다. Cluster Autoscaler는 Auto Scaling Group을 조절하며, Karpenter는 Pod 요구에 맞는 node를 provision한다. 실제 설정·권한·instance/AZ 가용성·quota를 확인한다. 새 node가 Ready여도 model 다운로드·load까지 끝나야 추론 트래픽을 받을 수 있다. [EKS compute scaling](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html), [Inference autoscaling](https://docs.aws.amazon.com/eks/latest/userguide/ml-inference-autoscaling.html)
 
 ---
 
@@ -269,6 +281,29 @@ GPU Pod
 
 S3는 원본 Model Storage, 실제 Serving에서는 Node 근처에 캐시할 수 있다.
 
+**Image pull identity와 Model 다운로드 identity**
+
+EC2 node의 kubelet이 ECR image를 pull할 때 쓰는 권한과, 실행 중 Pod가 S3에 접근하는 권한은 다르다. 전자는 node IAM role에서, 후자는 ServiceAccount에 연결된 Pod Identity role과 SDK credential chain에서 확인한다. Pod Identity는 cluster·namespace·ServiceAccount association이며 각 Pod에 자동으로 고유 role이 생기는 기능은 아니다. [EKS node role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html), [Pod Identity](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html)
+
+`s3:GetObject`와 `model-prod/*`는 최소 권한의 개념 표현이다. 실제 IAM resource는 bucket의 object ARN 범위를 지정한다. 다운로드 방식이 목록 조회를 수행하면 `s3:ListBucket`, 특정 versionId를 읽으면 `s3:GetObjectVersion`, customer-managed KMS key로 암호화된 object를 읽으면 관련 `kms:Decrypt` 권한도 검토한다. 무조건 권한을 모두 추가하지 말고 실제 API와 오류에 맞춘다. [S3 API permissions](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-policy-actions.html)
+
+**Code와 Model 분리, 버전과 Cache**
+
+Code와 model 분리는 설계 선택이다. 모델을 image에 넣을 수 없다는 제품 제약은 아니다. S3의 `llama-v1/` 같은 prefix 이름만으로 내용이 불변이 되지는 않는다. 설계 권고: image digest, model object version 또는 checksum, tokenizer와 serving 설정을 함께 기록해 재현 가능한 조합을 만든다. model만 바꿔도 vLLM·CUDA·model format 호환성과 GPU capacity를 다시 확인한다. [S3 Versioning](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html), [Kubernetes image digests](https://kubernetes.io/docs/concepts/containers/images/)
+
+S3에서 model을 내려받는 단계는 init container, 시작 스크립트 또는 지원 loader 등으로 실제 구성해야 한다. 모든 vLLM image가 임의의 S3 경로를 자동 다운로드한다고 가정하지 않는다. 예를 들어 Tensorizer는 지원 형식으로 미리 직렬화한 model을 S3에서 load하는 경로를 제공한다. Local cache를 재사용하려면 volume 수명과 version별 cache key를 검토한다. 새 node에는 cache가 없을 수 있다. [vLLM Docker](https://docs.vllm.ai/en/latest/deployment/docker/), [vLLM Tensorizer](https://docs.vllm.ai/en/latest/models/extensions/tensorizer/)
+
+```mermaid
+flowchart LR
+    Node[EC2 node kubelet] --> NodeRole[Node IAM role]
+    NodeRole --> ECR[ECR image pull]
+    Pod[Model downloader in Pod] --> SA[ServiceAccount and Pod Identity]
+    SA --> Role[Workload IAM role]
+    Role --> S3[S3 model objects]
+    S3 --> Cache[Local model cache]
+    Cache --> vLLM[vLLM and GPU VRAM]
+```
+
 ---
 
 ## 7.4 vLLM Serving 구조
@@ -354,6 +389,16 @@ Ready
 - Model Cache
 - Autoscaling
 - 트래픽 예측
+
+**Cold start와 Serving Ready**
+
+원문의 시작 흐름에 특정 완료 시간이 보장되지는 않는다. 설계 검토에서는 node 생성, image pull, model 다운로드, load·warm-up을 각각 측정한다. Startup probe는 느린 시작을 보호하고 readiness는 트래픽 수신 준비 여부를 표시한다. Readiness 실패 자체가 컨테이너 재시작을 뜻하지 않는다. 최소 node 유지가 최소한의 Ready model replica를 보장하는지도 따로 확인한다. [Kubernetes probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/)
+
+**논리 구조와 실제 AWS 경로**
+
+`Private Subnets → EKS`는 전체 control plane이 worker subnet에 배치된다는 뜻이 아니다. EKS control plane은 AWS가 관리하며 원문은 workload 배치 관계를 단순화했다. `ALB → Service → Pod`도 논리 경로다. AWS Load Balancer Controller의 target type에 따라 node/NodePort 또는 Pod IP를 사용한다. [EKS](eks.md)의 control plane·ALB 설명과 [네트워크](networking.md)를 함께 읽는다.
+
+`SQS → 하나의 작업`은 exactly-once 처리 보장이 아니다. 재전달·중복 처리, visibility timeout과 idempotency는 [Managed Services](managed-services.md)의 6.1절을 따른다. S3/ECR 등 VPC 주변 서비스에 접근하는 private 경로와 IAM 권한은 별도로 설계한다. 도식의 화살표만으로 인터넷 노출 여부나 접근 허용을 판단하지 않는다.
 
 ---
 
@@ -559,78 +604,18 @@ GPU 서비스의 상태는 Pod 준비, 모델 적재, 네트워크와 권한 경
 
 ## LLM 실무: GPU Pod가 Ready가 되지 않는 원인 조사
 
-
 **프롬프트:**
 
 === "한국어"
 
     ```text {.prompt}
-    GPU Pod를 늘린 뒤 새 replica가 Ready가 되지 않는 가상 사례를 검토한다.
-    scheduling, image pull, model 다운로드, GPU load, readiness 단계를 구분하라.
-    관측·가정·가설을 구분하고 node role과 workload role을 따로 평가하라.
-    필수 근거가 없으면 우선순위 질문 최대 3개를 제시하고 결론을 유보하라.
-    단계 / 근거·시각 / 책임 구성·identity / 미확인 정보 / 다음 확인 표를 작성하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    GPU Pod를 늘린 뒤 새 replica가 Ready가 되지 않았어. Pod event와 image·model 다운로드 로그를 바탕으로 scheduling, 권한, GPU 적재, readiness 중 어디에서 멈췄는지 구분해 줘. 비밀값을 출력하거나 AWS 구성을 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review a hypothetical case where new GPU replicas do not become Ready after scaling out.
-    Separate scheduling, image pull, model download, GPU loading, and readiness stages.
-    Make a table: stage / evidence and time / responsible setting or identity / unknowns / next check.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    A new GPU Pod replica does not become Ready. Use Pod events and image and model download logs to separate scheduling, permission, GPU loading, and readiness failures. Do not reveal secrets or change AWS resources.
     ```
 
 **핵심 사항:** 시작 단계별 실패 가설, 책임 identity와 필요한 증거, 최소 수정 후보 및 Ready 복구 확인 조건. 모든 Pending을 GPU 수 부족으로 보거나, Pod role을 바꾸면 ECR image pull도 해결된다고 가정하거나, Node Ready를 model readiness와 혼동할 수 있다. 동일 시간대의 event·권한·다운로드·probe 증거와 공식 문서를 대조한다. 변경은 실제 권한과 운영 절차를 따르고, 격리된 시험에서 재현·복구를 확인한다. 이 예제는 모델을 실행하거나 개선 효과를 측정한 기록이 아니다.
-
-## 원문 절별 보완과 적용 조건
-
-2026-10-05에 아래 공식 문서를 확인했다. 보완은 원문과 구분한 설명·설계 검토 항목이며 실제 AWS 배포나 성능 시험 결과가 아니다.
-
-### 7.1–7.2: GPU 개수와 실제 배치 조건
-
-`resources: GPU: 1`은 원문의 개념 도식이며 적용 가능한 Kubernetes manifest가 아니다. 일반적인 NVIDIA device plugin 경로에서는 container의 `resources.limits`에 `nvidia.com/gpu: 1`을 지정한다. GPU requests도 쓰면 limits와 같아야 하며, limits만 쓰면 그 값이 request가 된다. GPU 개수 외에도 GPU별 VRAM, model precision, context와 concurrency, CPU·RAM, label·taint 조건을 확인한다. Toleration만으로 특정 node 배치를 보장하지 않는다. [Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/), [AWS AI/ML compute](https://docs.aws.amazon.com/eks/latest/best-practices/aiml-compute.html)
-
-EKS-optimized AL2023 NVIDIA AMI는 driver와 container toolkit을 포함하지만 NVIDIA Kubernetes device plugin은 별도 설치가 필요하다. EKS Auto Mode는 지원하는 GPU의 driver와 device plugin을 관리하므로 같은 설치 절차를 중복 적용하지 않는다. 원문의 흐름을 모든 AMI와 운영 모드에 동일하게 적용하지 않는다. [Accelerated AMI](https://docs.aws.amazon.com/eks/latest/userguide/ml-eks-optimized-ami.html), [Auto Mode accelerated workload](https://docs.aws.amazon.com/eks/latest/userguide/auto-accelerated.html)
-
-### 7.2·7.4: Pod scaling과 Node scaling
-
-Pod가 늘거나 Pending이 생겼다는 이유만으로 모든 EKS node group이 자동 확장되지는 않는다. HPA 등의 replica 조절과 node capacity 조절은 별도 기능이다. Cluster Autoscaler는 Auto Scaling Group을 조절하며, Karpenter는 Pod 요구에 맞는 node를 provision한다. 실제 설정·권한·instance/AZ 가용성·quota를 확인한다. 새 node가 Ready여도 model 다운로드·load까지 끝나야 추론 트래픽을 받을 수 있다. [EKS compute scaling](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html), [Inference autoscaling](https://docs.aws.amazon.com/eks/latest/userguide/ml-inference-autoscaling.html)
-
-### 7.3: Image pull identity와 Model 다운로드 identity
-
-EC2 node의 kubelet이 ECR image를 pull할 때 쓰는 권한과, 실행 중 Pod가 S3에 접근하는 권한은 다르다. 전자는 node IAM role에서, 후자는 ServiceAccount에 연결된 Pod Identity role과 SDK credential chain에서 확인한다. Pod Identity는 cluster·namespace·ServiceAccount association이며 각 Pod에 자동으로 고유 role이 생기는 기능은 아니다. [EKS node role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html), [Pod Identity](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html)
-
-`s3:GetObject`와 `model-prod/*`는 최소 권한의 개념 표현이다. 실제 IAM resource는 bucket의 object ARN 범위를 지정한다. 다운로드 방식이 목록 조회를 수행하면 `s3:ListBucket`, 특정 versionId를 읽으면 `s3:GetObjectVersion`, customer-managed KMS key로 암호화된 object를 읽으면 관련 `kms:Decrypt` 권한도 검토한다. 무조건 권한을 모두 추가하지 말고 실제 API와 오류에 맞춘다. [S3 API permissions](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-policy-actions.html)
-
-### 7.3: Code와 Model 분리, 버전과 Cache
-
-Code와 model 분리는 설계 선택이다. 모델을 image에 넣을 수 없다는 제품 제약은 아니다. S3의 `llama-v1/` 같은 prefix 이름만으로 내용이 불변이 되지는 않는다. 설계 권고: image digest, model object version 또는 checksum, tokenizer와 serving 설정을 함께 기록해 재현 가능한 조합을 만든다. model만 바꿔도 vLLM·CUDA·model format 호환성과 GPU capacity를 다시 확인한다. [S3 Versioning](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html), [Kubernetes image digests](https://kubernetes.io/docs/concepts/containers/images/)
-
-S3에서 model을 내려받는 단계는 init container, 시작 스크립트 또는 지원 loader 등으로 실제 구성해야 한다. 모든 vLLM image가 임의의 S3 경로를 자동 다운로드한다고 가정하지 않는다. 예를 들어 Tensorizer는 지원 형식으로 미리 직렬화한 model을 S3에서 load하는 경로를 제공한다. Local cache를 재사용하려면 volume 수명과 version별 cache key를 검토한다. 새 node에는 cache가 없을 수 있다. [vLLM Docker](https://docs.vllm.ai/en/latest/deployment/docker/), [vLLM Tensorizer](https://docs.vllm.ai/en/latest/models/extensions/tensorizer/)
-
-### 7.4: Cold start와 Serving Ready
-
-원문의 시작 흐름에 특정 완료 시간이 보장되지는 않는다. 설계 검토에서는 node 생성, image pull, model 다운로드, load·warm-up을 각각 측정한다. Startup probe는 느린 시작을 보호하고 readiness는 트래픽 수신 준비 여부를 표시한다. Readiness 실패 자체가 컨테이너 재시작을 뜻하지 않는다. 최소 node 유지가 최소한의 Ready model replica를 보장하는지도 따로 확인한다. [Kubernetes probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/)
-
-### 7.4–7.5: 논리 구조와 실제 AWS 경로
-
-`Private Subnets → EKS`는 전체 control plane이 worker subnet에 배치된다는 뜻이 아니다. EKS control plane은 AWS가 관리하며 원문은 workload 배치 관계를 단순화했다. `ALB → Service → Pod`도 논리 경로다. AWS Load Balancer Controller의 target type에 따라 node/NodePort 또는 Pod IP를 사용한다. [EKS](eks.md)의 control plane·ALB 보완과 [네트워크](networking.md)를 함께 읽는다.
-
-`SQS → 하나의 작업`은 exactly-once 처리 보장이 아니다. 재전달·중복 처리, visibility timeout과 idempotency는 [Managed Services](managed-services.md)의 6.1 보완을 따른다. S3/ECR 등 VPC 주변 서비스에 접근하는 private 경로와 IAM 권한은 별도로 설계한다. 도식의 화살표만으로 인터넷 노출 여부나 접근 허용을 판단하지 않는다.
-
-## 보완 도식: GPU Pod의 두 권한 경로
-
-원문 text 도식을 유지하면서 image pull과 model 접근을 분리한 개념도다.
-
-```mermaid
-flowchart LR
-    Node[EC2 node kubelet] --> NodeRole[Node IAM role]
-    NodeRole --> ECR[ECR image pull]
-    Pod[Model downloader in Pod] --> SA[ServiceAccount and Pod Identity]
-    SA --> Role[Workload IAM role]
-    Role --> S3[S3 model objects]
-    S3 --> Cache[Local model cache]
-    Cache --> vLLM[vLLM and GPU VRAM]
-```

@@ -12,11 +12,13 @@ knowledge_ids:
 
 # Chapter 1. AWS Foundation
 
-제공된 compact 원문의 순서와 예시를 보존한 학습 기록이다. 실제 AWS 운영 결과가 아니다.
+예시 구성은 학습용이며 실제 AWS 환경에서 실행한 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 1.1 Region / Availability Zone
+
+AWS 계정은 건물의 관리 경계, IAM은 각 방의 출입 권한과 비슷하다. 계정을 나누는 것과 역할에 필요한 작업만 허용하는 것은 서로 다른 설계 결정이다.
 
 ### Region
 AWS의 큰 지리적 운영 영역이다.
@@ -63,6 +65,9 @@ Region = 큰 지리적 영역
 AZ = Region 내부의 독립 장애 영역
 기본 운영 패턴 = Single Region + Multi-AZ
 ```
+
+
+여러 AZ에 배치해도 애플리케이션·데이터 복제·장애 시 라우팅·잔여 용량을 검증해야 한다. Multi-AZ 자체가 Region 전체 장애에 대한 복구를 보장하지는 않는다.
 
 ---
 
@@ -121,6 +126,9 @@ SCP = 조직 수준의 최대 허용 범위 제한
 ```
 
 SCP 자체가 권한을 주는 것은 아니다.
+
+
+SCP는 Organizations의 모든 기능을 활성화한 조직에서 사용하며, 멤버 계정의 root에도 적용된다. 관리 계정의 사용자·역할과 서비스 연결 역할에는 적용되지 않는다. 사람의 일상 접근은 연동 로그인과 임시 자격 증명을 우선하고 MFA를 적용한다. [AWS SCP 문서](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html), [IAM 보안 권장 사항](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
 
 ---
 
@@ -206,6 +214,9 @@ Pod → Kubernetes API = Kubernetes RBAC
 Pod → S3 / SQS / Secrets Manager = AWS IAM
 ```
 
+
+원문의 JSON은 정책 전체가 아니라 하나의 statement이다. 실제 정책 문서는 `Statement`로 감싸고 정책 언어 버전 `Version`을 지정한다. `Condition`은 선택 사항이다. Trust Policy가 역할 수임 주체를 허용해도 Permission Policy의 서비스 권한을 대신하지 않는다. 임시 자격 증명도 비밀이며 만료 전에 안전하게 갱신해야 한다. ARN의 `123456789012`는 설명용 계정 번호이다. [IAM 정책 요소](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html), [IAM 역할](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html).
+
 ---
 
 ## 1.4 AWS Resource / ARN
@@ -240,29 +251,13 @@ arn:aws:iam::123456789012:role/MyRole
 === "한국어"
 
     ```text {.prompt}
-    S3 접근 권한 요청이나 IAM 정책 PR에서 최소 권한과 역할 수임 조건을 검토한다.
-    예를 들어 example-study-bucket/reports/* 읽기 요구를 실제 요청 범위와 대조하라. role 수임과 서비스 권한, SCP 제한을 나누고 필요한 최소 statement를 검토하라.
-    정책 위치 / 허용할 action·resource / 현재 과다·누락 권한 / 근거 / 추가 질문 표와 JSON 초안을 작성하라. statement와 전체 정책 문서를 구분하고 trust/SCP가 권한 부여의 충분조건이라고 쓰지 마라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    S3의 example-study-bucket/reports/* 읽기 요청을 위한 IAM 정책 PR을 검토해 줘. 역할 수임 조건, 서비스 권한, SCP 제한을 구분하고 필요한 최소 권한을 제안해 줘. 비밀값은 다루지 말고 정책을 적용하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review least privilege and role-assumption conditions in an S3 access request or IAM policy PR.
-    Compare a requirement such as reading example-study-bucket/reports/* with the actual request scope. Review role assumption, service permissions, and SCP restrictions separately, then assess the minimum required statement.
-    Produce a table: policy location / required action-resource / excess or missing permissions / evidence / follow-up question, plus a JSON draft. Distinguish a statement from a complete policy. Do not treat trust or an SCP as sufficient to grant service access.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review an IAM policy PR for reading example-study-bucket/reports/*. Separate role assumption, service permissions, and SCP restrictions, then suggest the minimum needed permissions. Do not handle secrets or apply the policy.
     ```
 
-**핵심 사항:** 요청 action/resource에 맞춘 최소 IAM JSON 초안과 trust·SCP·계정 범위별 과다/누락 권한 검토표. AccessDenied를 보고 Resource:* 또는 관리자 권한으로 확대하거나 SCP를 권한 부여 정책으로 해석할 수 있다. 정책 전체 구조와 object ARN을 확인하고 허용·거부 action/resource 사례를 원본 정책에 대조한다. trust·SCP 미제공 상태를 자동 접근 허용으로 해석한 판정은 채택하지 않는다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다.
-
-## 보완: 1.1~1.4의 적용 조건
-
-공식 문서 확인일: 2026-10-04.
-
-**1.1 Multi-AZ:** 여러 AZ에 배치해도 애플리케이션·데이터 복제·장애 시 라우팅·잔여 용량을 검증해야 한다. Multi-AZ 자체가 Region 전체 장애에 대한 복구를 보장하지는 않는다.
-
-**1.2 계정과 SCP:** SCP는 Organizations의 모든 기능을 활성화한 조직에서 사용하며, 멤버 계정의 root에도 적용된다. 관리 계정의 사용자·역할과 서비스 연결 역할에는 적용되지 않는다. 사람의 일상 접근은 연동 로그인과 임시 자격 증명을 우선하고 MFA를 적용한다. [AWS SCP 문서](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html), [IAM 보안 권장 사항](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
-
-**1.3~1.4 정책 예제:** 원문의 JSON은 정책 전체가 아니라 하나의 statement이다. 실제 정책 문서는 `Statement`로 감싸고 정책 언어 버전 `Version`을 지정한다. `Condition`은 선택 사항이다. Trust Policy가 역할 수임 주체를 허용해도 Permission Policy의 서비스 권한을 대신하지 않는다. 임시 자격 증명도 비밀이며 만료 전에 안전하게 갱신해야 한다. ARN의 `123456789012`는 설명용 계정 번호이다. [IAM 정책 요소](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html), [IAM 역할](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html).
+**핵심 사항:** 요청 action/resource에 맞춘 최소 IAM JSON 초안과 trust·SCP·계정 범위별 과다/누락 권한 검토표. AccessDenied를 보고 Resource:* 또는 관리자 권한으로 확대하거나 SCP를 권한 부여 정책으로 해석할 수 있다. 정책 전체 구조와 object ARN을 확인하고 허용·거부 action/resource 사례를 원본 정책에 대조한다. trust·SCP 미제공 상태를 자동 접근 허용으로 해석한 판정은 채택하지 않는다.

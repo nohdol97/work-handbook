@@ -15,11 +15,13 @@ knowledge_ids:
 
 # Chapter 3. Training Dataset과 Golden Dataset
 
-제공된 학습 원문의 번호·순서·JSON 예시를 보존했다. 3.2–3.3의 학습 형식·loss 범위와 3.4–3.7의 분할 누수·Golden Dataset 사용 조건은 뒤의 별도 보완에서 확인한다. 실제 데이터셋 구축·학습·평가 결과가 아니다.
+예시 모델과 설정은 학습용이며 실제 학습·평가·배포 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 3.1 Fine-Tuning의 핵심 자산
+
+학습 데이터와 평가 데이터가 섞이면 시험 문제를 미리 보고 시험을 치르는 것과 같다. 원본 문서에서 나온 비슷한 문장까지 같은 그룹으로 추적해야 실제 성능을 판단할 수 있다.
 
 Base Model은 시간이 지나면서 변경될 수 있다.
 
@@ -84,6 +86,12 @@ Assistant:
 3. Downstream Latency 확인
 4. Rebalance 여부 확인
 ```
+
+**Raw Text·Chat Template·Loss 범위**
+
+TRL SFT는 language modeling과 prompt-completion, 일반 text와 conversation 형식을 지원한다. 따라서 원문의 instruction/response 변환은 목적에 맞는 한 방식이며 모든 학습이 반드시 QA 변환을 요구하지는 않는다. `messages` 예시는 모델에 맞는 chat template로 처리한다. [TRL SFTTrainer](https://huggingface.co/docs/trl/main/en/sft_trainer)
+
+`messages`에 user/assistant가 있다는 사실만으로 assistant token만 학습되는 것은 아니다. TRL의 `assistant_only_loss=True`는 해당 loss mask를 제공하는 chat template 지원이 필요하다. 최종 token·label·truncation 결과를 확인해 학습 대상 답변이 남아 있는지 검토한다. [TRL assistant-only loss](https://huggingface.co/docs/trl/main/en/sft_trainer#train-on-assistant-messages-only)
 
 ---
 
@@ -157,6 +165,12 @@ Adapter Update
 ### Golden Dataset
 
 최종 모델의 실제 품질을 비교하는 고정 Evaluation Set이다.
+
+**분할 단위와 Golden Dataset의 사용**
+
+Golden Dataset은 여기서 고정된 최종 평가용 holdout을 뜻한다. 그 점수를 반복해 보며 모델·prompt를 선택하면 gradient에 직접 넣지 않아도 평가 정보가 튜닝에 흘러들 수 있다. 선택에는 validation을 사용하고 최종 평가의 독립성을 관리한다. [교차 검증과 test set](https://scikit-learn.org/stable/modules/cross_validation.html)
+
+적용 권고: 한 문서·대화·사용자로부터 여러 sample을 만들었다면 같은 원본 group이 train과 평가 양쪽에 걸치지 않는 분할을 검토한다. 정확히 같은 문자열뿐 아니라 중복 문서·의역 sample도 확인한다. 8,500/1,000/500은 예시이며 업무 범주·시간·희귀 실패의 대표성도 확인한다. [Group 분할](https://scikit-learn.org/stable/modules/cross_validation.html#group-k-fold)
 
 ---
 
@@ -243,6 +257,10 @@ Training Config 변경 때문인지
 
 구분할 수 있어야 하기 때문이다.
 
+**버전과 평가 조건**
+
+Dataset version만 같아도 모든 비교 조건이 같아지는 것은 아니다. 모델·tokenizer·template·평가 기준·생성 설정·전처리 revision을 함께 기록한다. 학습으로 추정하는 전처리 통계나 선택 규칙에는 평가 데이터를 섞지 않는다. [데이터 누수 방지](https://scikit-learn.org/stable/common_pitfalls.html#data-leakage), [AI-ready 데이터 버전](../data-platform/ai-ready-data.md)
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -261,48 +279,18 @@ Training Config 변경 때문인지
 
 ## LLM 실무: 학습 전 데이터 누수 검토
 
-
 **프롬프트:**
 
 === "한국어"
 
     ```text {.prompt}
-    하나의 원본 문서에서 만든 여러 QA sample이 train과 golden 양쪽에 들어갔을 가능성을 검토하는 가상 사례다.
-    먼저 현재 분할을 평가하고 관측·가정·누수 가설을 구분하라.
-    원본 group 중복, 의역·정답 중복, 시간 누수, golden 점수 반복 튜닝을 따로 점검하라.
-    필수 근거가 없으면 우선순위 질문 최대 3개를 제시하고 해당 결론을 유보하라.
-    누수 경로 / 근거 ID / 영향 범위 / 미확인 정보 / 최소 수정 후보 / 확인 기준 표를 작성하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    학습 데이터와 golden 평가 데이터가 같은 원본 문서에서 나온 QA를 공유할 가능성이 있어. 현재 분할 규칙과 sample 출처를 검토해 원본 중복, 의역 중복, 시간 누수와 반복 튜닝 위험을 찾아 줘. 데이터를 옮기거나 학습을 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    A hypothetical review of whether multiple QA samples from one source document appear in both training and golden splits.
-    Assess the existing split first. Separate observations, assumptions, and leakage hypotheses.
-    Check source-group overlap, paraphrase or answer overlap, time leakage, and repeated tuning on golden scores separately.
-    Make a table: leakage path / evidence IDs / scope / unknowns / minimal change candidate / check criteria.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Training and golden evaluation sets may contain QA samples from the same source document. Review the split rules and sample provenance for source overlap, paraphrases, time leakage, and repeated tuning against the golden set. Do not move data or run training.
     ```
 
 **핵심 사항:** 확인된 누수와 가설을 구분한 표, 영향받은 sample·평가 범위, 최소 수정 후보와 독립 평가 확인 기준. 문자열이 다르면 독립 sample로 판단하거나, 같은 원본 문서에서 나온 의역을 놓치거나, golden을 gradient에 넣지 않았다는 이유만으로 평가 누수가 없다고 볼 수 있다. 실제 group ID와 lineage, 정확·근사 중복 검사, split 생성 코드·manifest, 모델 선택과 평가 이력을 대조한다. 변경 후의 분할 독립성과 업무 범주별 표본 수는 별도 검사한다. 이 시나리오는 검토 예시이며 누수 검사나 모델 학습을 실행한 결과가 아니다.
-
-## 보완 — 학습 입력과 데이터 누수
-
-2026-10-05 공식 TRL·scikit-learn 문서를 확인했다. scikit-learn의 평가·분할 원칙을 이 원문의 LLM dataset 검토에 적용한 권고도 포함한다. TRL `main`은 개발 문서이므로 실제 설치 버전의 동작을 확인해야 한다. 학습이나 평가를 실행하지 않았다.
-
-### 3.2 / 3.3 Raw Text·Chat Template·Loss 범위
-
-TRL SFT는 language modeling과 prompt-completion, 일반 text와 conversation 형식을 지원한다. 따라서 원문의 instruction/response 변환은 목적에 맞는 한 방식이며 모든 학습이 반드시 QA 변환을 요구하지는 않는다. `messages` 예시는 모델에 맞는 chat template로 처리한다. [TRL SFTTrainer](https://huggingface.co/docs/trl/main/en/sft_trainer)
-
-`messages`에 user/assistant가 있다는 사실만으로 assistant token만 학습되는 것은 아니다. TRL의 `assistant_only_loss=True`는 해당 loss mask를 제공하는 chat template 지원이 필요하다. 최종 token·label·truncation 결과를 확인해 학습 대상 답변이 남아 있는지 검토한다. [TRL assistant-only loss](https://huggingface.co/docs/trl/main/en/sft_trainer#train-on-assistant-messages-only)
-
-### 3.4–3.6 분할 단위와 Golden Dataset의 사용
-
-Golden Dataset은 여기서 고정된 최종 평가용 holdout을 뜻한다. 그 점수를 반복해 보며 모델·prompt를 선택하면 gradient에 직접 넣지 않아도 평가 정보가 튜닝에 흘러들 수 있다. 선택에는 validation을 사용하고 최종 평가의 독립성을 관리한다. [교차 검증과 test set](https://scikit-learn.org/stable/modules/cross_validation.html)
-
-적용 권고: 한 문서·대화·사용자로부터 여러 sample을 만들었다면 같은 원본 group이 train과 평가 양쪽에 걸치지 않는 분할을 검토한다. 정확히 같은 문자열뿐 아니라 중복 문서·의역 sample도 확인한다. 8,500/1,000/500은 예시이며 업무 범주·시간·희귀 실패의 대표성도 확인한다. [Group 분할](https://scikit-learn.org/stable/modules/cross_validation.html#group-k-fold)
-
-### 3.7 버전과 평가 조건
-
-Dataset version만 같아도 모든 비교 조건이 같아지는 것은 아니다. 모델·tokenizer·template·평가 기준·생성 설정·전처리 revision을 함께 기록한다. 학습으로 추정하는 전처리 통계나 선택 규칙에는 평가 데이터를 섞지 않는다. [데이터 누수 방지](https://scikit-learn.org/stable/common_pitfalls.html#data-leakage), [AI-ready 데이터 버전](../data-platform/ai-ready-data.md)

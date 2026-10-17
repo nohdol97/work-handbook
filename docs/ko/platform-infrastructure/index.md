@@ -1,8 +1,8 @@
 ---
 id: platform-infrastructure-overview
 status: overview
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - PIS-00-01
   - PIS-04-01
@@ -61,7 +61,7 @@ flowchart TD
 
 12~15장 원문은 Terraform/IaC, 자원·사용량 격리와 비용, self-service, 장애 대응과 전체 구조까지 연결한다. 현재 제공된 15장 Basic 과정은 완료 상태다. 후속 심화·실습 자료는 아직 제공되지 않았다.
 
-[데이터 플랫폼 과정](../data-platform/curriculum.md)의 데이터 처리 관점과 이번 서비스 운영·서빙 관점을 연결해 읽는다. 각 기술 문서에서는 원문 뒤 보완 구역에서 해당 절의 정정·적용 조건을 확인한다.
+[데이터 플랫폼 과정](../data-platform/curriculum.md)의 데이터 처리 관점과 이번 서비스 운영·서빙 관점을 연결해 읽는다. 기술별 정정·적용 조건은 각 문서의 관련 절에서 함께 확인한다.
 
 ## 명령과 실무 예시 사용
 

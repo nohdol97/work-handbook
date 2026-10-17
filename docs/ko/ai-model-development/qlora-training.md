@@ -22,11 +22,13 @@ knowledge_ids:
 
 # Chapter 4. QLoRA 학습 과정
 
-**읽기 안내:** 원문의 제목·번호·표·예시·text 도식을 그대로 보존했다. 원문 뒤의 **원문 절별 보완과 적용 조건**에서 실제 적용 조건을 함께 읽는다. 수치와 설정은 학습용 예시이며 이 문서에서 학습·배포·성능 시험을 실행하지 않았다.
+예시 모델과 설정은 학습용이며 실제 학습·평가·배포 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 4.1 전체 Training Flow
+
+QLoRA 학습은 큰 기계 전체를 다시 만들기보다 일부 조절 손잡이를 학습하는 방식이다. 자원 사용은 줄이지만 데이터 형식, loss 범위와 저장 조건을 정확히 정해야 원하는 동작을 배운다.
 
 QLoRA 기반 SFT의 전체 흐름은 다음과 같다.
 
@@ -152,6 +154,12 @@ GPU Memory 사용 감소
 Base Model Weight는 Frozen 상태로 두고
 LoRA Adapter Parameter만 학습 대상으로 둔다.
 
+**·4.10: 저장 정밀도와 학습 대상**
+
+QLoRA는 frozen 4-bit base를 통해 gradient를 전파해 adapter를 학습한다. Frozen은 base weight를 optimizer가 갱신하지 않는다는 뜻이며, base 연산 전체를 `no_grad`로 감싸라는 뜻은 아니다. 4-bit weight 저장과 연산 dtype은 구분한다. [QLoRA 논문](https://arxiv.org/abs/2305.14314), [PEFT quantization](https://huggingface.co/docs/peft/main/developer_guides/quantization)
+
+`q_proj`, `v_proj` 등 이름은 모델 구조에 따라 다르다. PEFT는 QLoRA 스타일의 대상 지정에 `target_modules="all-linear"`를 제공한다. 원문의 rank 16·alpha 32는 예시다. 실제 module 이름과 trainable parameter를 확인하고 성능은 별도 평가한다. [PEFT quantization](https://huggingface.co/docs/peft/main/developer_guides/quantization)
+
 ---
 
 ## 4.6 Step 4 — LoRA Target Module 설정
@@ -212,6 +220,12 @@ Model Input
 ```
 
 형태로 변환된다.
+
+**Tokenizer와 Loss의 실제 의미**
+
+Token ID 예시는 특정 문장의 보편적인 ID가 아니다. Base model에 맞는 tokenizer와 chat template을 사용한다. 학습 샘플에 적용한 role·special token·EOS 처리를 확인한다. [Chat templates](https://huggingface.co/docs/transformers/main/chat_templating)
+
+일반적인 causal SFT의 loss는 정답 token에 대한 예측으로 계산한다. 출력 문장 두 개를 단순 비교하는 점수가 아니다. TRL의 `assistant_only_loss` 등은 loss를 계산할 token 범위를 바꾸며 지원하는 template 조건이 있다. 실제 labels와 mask를 확인해야 한다. [TRL SFT Trainer](https://huggingface.co/docs/trl/main/sft_trainer)
 
 ---
 
@@ -319,6 +333,12 @@ Epoch 3
 
 실제 Training에서는 Batch 단위로 Sample을 처리하고 Parameter를 Update한다.
 
+**Microbatch와 Optimizer Step**
+
+Gradient accumulation을 사용하면 여러 microbatch의 gradient를 모은 뒤 optimizer update를 한다. 원문의 “Batch 단위 Update”를 모든 microbatch마다 update한다는 뜻으로 읽지 않는다. 일반적인 data-parallel 구성의 유효 batch는 `per-device batch × data-parallel workers × accumulation steps`이며 마지막 불완전 batch 등은 따로 확인한다. [Transformers Trainer](https://huggingface.co/docs/transformers/main/main_classes/trainer)
+
+검토 권고: 원문의 Experiment A/B는 learning rate와 rank를 함께 바꾸므로 결과 차이를 한 변수의 효과로 단정하지 않는다. Dataset·길이·mask·seed와 평가 조건도 기록한다. 낮은 loss만으로 품질 개선을 판정하지 않는다.
+
 ---
 
 ## 4.12 주요 Training Parameter
@@ -403,6 +423,10 @@ S3
 
 이후 Model Registry에서 Metadata와 연결할 수 있다.
 
+**Adapter 저장과 학습 재개**
+
+PEFT의 adapter checkpoint에는 base model weight가 포함되지 않는다. 원문의 두 파일을 저장해도 독립된 전체 모델이 되는 것은 아니다. 학습을 이어가려면 optimizer·scheduler·RNG 등 재개 상태도 확인한다. [PEFT checkpoint](https://huggingface.co/docs/peft/main/developer_guides/checkpoint), [Transformers Trainer](https://huggingface.co/docs/transformers/main/main_classes/trainer)
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -417,54 +441,18 @@ QLoRA는 기본 모델을 고정하고 작은 어댑터를 학습해 자원 부�
 
 ## LLM 실무: QLoRA 학습 설정 검토
 
-
 **프롬프트:**
 
 === "한국어"
 
     ```text {.prompt}
-    새 QLoRA 학습의 설정·데이터·저장 계획을 실행 전에 검토하는 가상 사례다.
-    원문의 4.5–4.14를 기준으로 quantization, target module, tokenization, loss, update, 저장을 검토하라.
-    유효 batch와 optimizer step을 구분하고 모든 microbatch가 update한다고 가정하지 마라.
-    관측·가정·가설을 나누고 필수 근거가 없으면 우선순위 질문 최대 3개를 제시하라.
-    설정 / 확인된 근거 / 위험 또는 미확인 조건 / 최소 수정 후보 / 검증 방법 표를 작성하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    이 저장소의 QLoRA 학습 설정과 저장 계획을 검토해 줘. Base Model 버전, quantization, target module, tokenization, loss 범위, 유효 batch와 optimizer step이 서로 맞는지 확인하고 근거가 부족한 설정은 질문으로 남겨 줘. 비밀값을 노출하거나 학습을 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review a hypothetical new QLoRA run's settings, data, and saving plan before execution.
-    Review quantization, target modules, tokenization, loss, updates, and saving against source sections 4.5–4.14.
-    Distinguish effective batch size and optimizer steps. Do not assume every microbatch updates parameters.
-    Make a table: setting / confirmed evidence / risk or unknown condition / minimal change candidate / verification method.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review this repository’s QLoRA training configuration and saving plan. Check whether the base-model version, quantization, target modules, tokenization, loss scope, effective batch, and optimizer steps fit together. Flag missing evidence as questions. Do not reveal secrets or run training.
     ```
 
 **핵심 사항:** 학습 단계별 검토 표, 일반적인 data-parallel 조건에서 유효 batch 32 계산, 필수 미확인 항목과 시작·승격 판단을 위한 확인 조건. rank만으로 메모리와 품질을 보장하거나, 모든 모델에 같은 target 이름이 있다고 가정하거나, 낮은 loss만으로 배포를 권할 수 있다. 실제 module·label mask·설치 버전과 설정을 대조한다. 허가된 소규모 시험에서 update와 저장·재로딩을 확인하고 분리된 평가로 판단한다. 이 문서는 해당 시험이나 학습을 수행한 기록이 아니다.
-
-## 원문 절별 보완과 적용 조건
-
-2026-10-05에 아래 공식 자료를 확인했다. 보완은 실행 결과가 아니라 구현 전에 확인할 조건이다. `main` 문서는 개발 중인 API도 포함하므로 설치한 버전의 문서와 대조한다.
-
-### 4.5–4.6·4.10: 저장 정밀도와 학습 대상
-
-QLoRA는 frozen 4-bit base를 통해 gradient를 전파해 adapter를 학습한다. Frozen은 base weight를 optimizer가 갱신하지 않는다는 뜻이며, base 연산 전체를 `no_grad`로 감싸라는 뜻은 아니다. 4-bit weight 저장과 연산 dtype은 구분한다. [QLoRA 논문](https://arxiv.org/abs/2305.14314), [PEFT quantization](https://huggingface.co/docs/peft/main/developer_guides/quantization)
-
-`q_proj`, `v_proj` 등 이름은 모델 구조에 따라 다르다. PEFT는 QLoRA 스타일의 대상 지정에 `target_modules="all-linear"`를 제공한다. 원문의 rank 16·alpha 32는 예시다. 실제 module 이름과 trainable parameter를 확인하고 성능은 별도 평가한다. [PEFT quantization](https://huggingface.co/docs/peft/main/developer_guides/quantization)
-
-### 4.7–4.9: Tokenizer와 Loss의 실제 의미
-
-Token ID 예시는 특정 문장의 보편적인 ID가 아니다. Base model에 맞는 tokenizer와 chat template을 사용한다. 학습 샘플에 적용한 role·special token·EOS 처리를 확인한다. [Chat templates](https://huggingface.co/docs/transformers/main/chat_templating)
-
-일반적인 causal SFT의 loss는 정답 token에 대한 예측으로 계산한다. 출력 문장 두 개를 단순 비교하는 점수가 아니다. TRL의 `assistant_only_loss` 등은 loss를 계산할 token 범위를 바꾸며 지원하는 template 조건이 있다. 실제 labels와 mask를 확인해야 한다. [TRL SFT Trainer](https://huggingface.co/docs/trl/main/sft_trainer)
-
-### 4.11–4.13: Microbatch와 Optimizer Step
-
-Gradient accumulation을 사용하면 여러 microbatch의 gradient를 모은 뒤 optimizer update를 한다. 원문의 “Batch 단위 Update”를 모든 microbatch마다 update한다는 뜻으로 읽지 않는다. 일반적인 data-parallel 구성의 유효 batch는 `per-device batch × data-parallel workers × accumulation steps`이며 마지막 불완전 batch 등은 따로 확인한다. [Transformers Trainer](https://huggingface.co/docs/transformers/main/main_classes/trainer)
-
-검토 권고: 원문의 Experiment A/B는 learning rate와 rank를 함께 바꾸므로 결과 차이를 한 변수의 효과로 단정하지 않는다. Dataset·길이·mask·seed와 평가 조건도 기록한다. 낮은 loss만으로 품질 개선을 판정하지 않는다.
-
-### 4.14: Adapter 저장과 학습 재개
-
-PEFT의 adapter checkpoint에는 base model weight가 포함되지 않는다. 원문의 두 파일을 저장해도 독립된 전체 모델이 되는 것은 아니다. 학습을 이어가려면 optimizer·scheduler·RNG 등 재개 상태도 확인한다. [PEFT checkpoint](https://huggingface.co/docs/peft/main/developer_guides/checkpoint), [Transformers Trainer](https://huggingface.co/docs/transformers/main/main_classes/trainer)

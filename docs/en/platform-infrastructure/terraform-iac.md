@@ -1,8 +1,8 @@
 ---
 id: platform-terraform-iac
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - PIS4-12-01
   - PIS4-12-02
@@ -18,11 +18,13 @@ knowledge_ids:
 
 # Chapter 12. Terraform & Infrastructure as Code
 
-This page preserves the supplied study source’s numbering, order, and examples. See the separate supplement for State security, S3 locking, and approved-plan conditions in 12.3–12.5, and workspace isolation limits in 12.9. The examples are not results of infrastructure runs.
+The configurations and commands are study examples, not results of a deployment or failure test.
 
 <!-- SOURCE CORE START -->
 
 ## 12.1 IaC Fundamentals
+
+Terraform code is an infrastructure blueprint, and state is the inventory of what was built. Protecting the blueprint alone is insufficient; state, plans, secrets, and approved change scope matter too.
 
 Infrastructure as Code (IaC) declares and manages infrastructure in code instead of creating it manually in a console.
 
@@ -198,6 +200,10 @@ If State is lost, Terraform can lose its mapping to existing resources.
 
 You can use `import` to bring an existing resource under Terraform management.
 
+**Sensitive data in State and Plans**
+
+State and saved Plans can contain sensitive values such as passwords. `sensitive = true` hides their display; it does not remove values from files. Keep State and Plans out of Git and public CI logs. Manage storage access, encryption, and retention together. [Terraform sensitive data](https://developer.hashicorp.com/terraform/language/manage-sensitive-data)
+
 ---
 
 ## 12.4 Remote State
@@ -227,6 +233,10 @@ The following matter for State storage.
 - Locking
 
 Enabling S3 Versioning helps recover State.
+
+**Enable S3 locking explicitly**
+
+The S3 backend defaults `use_lockfile` to `false`. Remote State alone does not protect concurrent writes. When enabling locking, check read, write, and delete permissions on the `.tflock` object. DynamoDB locking is officially deprecated; both methods can be configured during migration. Also check bucket versioning for State recovery. [Terraform S3 backend](https://developer.hashicorp.com/terraform/language/backend/s3)
 
 ---
 
@@ -275,6 +285,10 @@ Apply
 ```
 
 Keep this gate in the workflow.
+
+**Reviewed Plans and actual execution**
+
+Running `terraform apply` without a Plan file creates a new Plan. To apply reviewed changes, bind the saved Plan to the approval. Passing a saved Plan executes it without another interactive confirmation, so put the approval gate before that step. A partially successful Apply does not automatically roll back on failure. Review State recovery separately from recovery of actual cloud changes. [Terraform apply](https://developer.hashicorp.com/terraform/cli/commands/apply)
 
 ---
 
@@ -467,6 +481,10 @@ separate state
 
 This approach is generally easier to manage.
 
+**CLI workspaces and access boundaries**
+
+Workspace here means a Terraform CLI State workspace. These workspaces are not suitable for deployments needing separate credentials and access controls, or for system decomposition. Separate directories alone do not separate permissions. Check backend State locations and execution credentials together. [Terraform workspaces](https://developer.hashicorp.com/terraform/language/state/workspaces)
+
 ---
 
 ## 12.10 Terraform Operations
@@ -515,25 +533,10 @@ Direct State edits are risky, so keep them to a minimum.
 
 <!-- SOURCE CORE END -->
 
-## Supplement — State protection and execution boundaries
+## Key points
 
-Official documentation checked on 2026-10-05. No Terraform runs, cloud changes, or State recovery were performed.
+Protect Terraform code, state, and plans together. Before applying a reviewed plan, confirm scope, approval, and a recovery path.
 
-### 12.3 / 12.4 Sensitive data in State and Plans
-
-State and saved Plans can contain sensitive values such as passwords. `sensitive = true` hides their display; it does not remove values from files. Keep State and Plans out of Git and public CI logs. Manage storage access, encryption, and retention together. [Terraform sensitive data](https://developer.hashicorp.com/terraform/language/manage-sensitive-data)
-
-### 12.4 Enable S3 locking explicitly
-
-The S3 backend defaults `use_lockfile` to `false`. Remote State alone does not protect concurrent writes. When enabling locking, check read, write, and delete permissions on the `.tflock` object. DynamoDB locking is officially deprecated; both methods can be configured during migration. Also check bucket versioning for State recovery. [Terraform S3 backend](https://developer.hashicorp.com/terraform/language/backend/s3)
-
-### 12.5 / 12.10 Reviewed Plans and actual execution
-
-Running `terraform apply` without a Plan file creates a new Plan. To apply reviewed changes, bind the saved Plan to the approval. Passing a saved Plan executes it without another interactive confirmation, so put the approval gate before that step. A partially successful Apply does not automatically roll back on failure. Review State recovery separately from recovery of actual cloud changes. [Terraform apply](https://developer.hashicorp.com/terraform/cli/commands/apply)
-
-### 12.9 CLI workspaces and access boundaries
-
-Workspace here means a Terraform CLI State workspace. These workspaces are not suitable for deployments needing separate credentials and access controls, or for system decomposition. Separate directories alone do not separate permissions. Check backend State locations and execution credentials together. [Terraform workspaces](https://developer.hashicorp.com/terraform/language/state/workspaces)
 
 ## Related topics
 

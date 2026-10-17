@@ -11,24 +11,24 @@
       "notes": "이전 전문 검토본의 변경 없는 내용은 유지. 이번 QLoRA/영어 학습 경로·83쌍·145실습·신규 기술 용어12개의 변경을 양언어 대조. LoRA 저랭크 용어 수정 재확인. 영어 학습의 수치 한계와 실제 실행 경험 구분."
     },
     "index.md": {
-      "ko_sha256": "ad8242accae72d0713eb1a4e578d26793414c37b7bafce2f1ce000cbff862185",
-      "en_sha256": "a292f02a768317cb1749cba433ca519fbb60e965a1b8d8f6b11cdf7f701bc141",
-      "semantic": "pass",
-      "simple_english": "pass",
-      "privacy": "pass",
-      "reviewer": "Codex /root + 변경부 독립 검토 Codex /root/chapter15",
-      "reviewed": "2026-10-05",
-      "notes": "이전 전문 검토본의 변경 없는 내용은 유지. 이번 QLoRA/영어 학습 경로·83쌍·145실습·신규 기술 용어12개의 변경을 양언어 대조. LoRA 저랭크 용어 수정 재확인. 영어 학습의 수치 한계와 실제 실행 경험 구분."
-    },
-    "methodologies/knowledge-workflow.md": {
-      "ko_sha256": "549721ef7195c302ea01b2f4b574985c0e8b5aa73f0ccc741b4705c812331e80",
-      "en_sha256": "bd0a50d0d793c6b77e7dcc22e125e9c9d62a85c0f575c0adeea3f921f0424239",
+      "ko_sha256": "c4d8cb85086dcb0f31c8dce16395826a79a03af5eefbb94a5cb0107056cd2702",
+      "en_sha256": "d0fc328121d7ce94213307148a97f9900295144e4b45a546aa4386ae33a402ac",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "기존 등록 원문 구역은 byte 보존했다. 바깥 안내에서 별도 보완을 가리키던 낡은 문구를 해당 개념 절의 적용 조건으로 수정하고 한영 링크·학습 범위를 대조했다."
+    },
+    "methodologies/knowledge-workflow.md": {
+      "ko_sha256": "17840937f7eeee15b49d9d9da7c30049685e031a020295c0c0356bac1e905e8e",
+      "en_sha256": "599a963c97c08e1e741ce97a1d120856ee39bd719d6def0adce82292afe70c8d",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-18",
+      "notes": "기존 전문 검토본을 유지하고 실전 요청의 한영 복사 문구와 원문 대조·명령 비실행 제약을 확인했다."
     },
     "data-platform/foundations.md": {
       "ko_sha256": "612ebfbebba3badaccd5b54333e3d6fefacb4fadf8c6043c0f73fa27926b0dc3",
@@ -431,244 +431,244 @@
       "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
     },
     "platform-infrastructure/linux-containers.md": {
-      "ko_sha256": "f2f19a7768a6455fefeb32bd9a3811dc9f892e18e6d9ca5556e083aaffbd585f",
-      "en_sha256": "da47fb7ab5ca32b68b6c0f957aba16a642609fa0b19f5ab4e6b67f3db95288c9",
+      "ko_sha256": "d2f0c79f34ce48b44ea6e61e2c1d55b462c96bdff18d76d6147a1d6177bb4db0",
+      "en_sha256": "e6ac24e1b2aa638df1db30748dde15f0604624cb9f350952fd864ebcfb7f61af",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/kubernetes-core.md": {
-      "ko_sha256": "c4e8b731c4971ceca4ff5a7ff93038e4f4d770a75c1473b2b0a20179f071b8f5",
-      "en_sha256": "bb293b6004fc5d521675bdb6e321b3f88ea473e0b9ab72b199e905679eefd0ef",
+      "ko_sha256": "c7ea5ae6f133509adbd4e8611107dcb77e6640a16d33f74b40a588eb34e9e146",
+      "en_sha256": "756b484f6277f960ddc8de39346b1209fecff6bbba68f73fb49b74c0ea6fbb8c",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/kubernetes-operations.md": {
-      "ko_sha256": "79c30d8f52736deffbdb126fb6fe5999d289f31fd7f3a389313221abea8d089e",
-      "en_sha256": "11cd3df144023f4de5acce63a4d929eeab63a7d53496bca14ba499d91ecd530e",
+      "ko_sha256": "0daf6d1a71e73306d0f6626b967d259cf41f9f6440047bd67da80b941f9e616e",
+      "en_sha256": "28dc98aaf8fef41182caeb9f2e48dc81d33ae8445aaea3aae5d69a0e93833571",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/index.md": {
-      "ko_sha256": "30be6c211a15627fc31ab75d3c80c90b63c16ae6cdd59923dd1a3ab459ebf51c",
-      "en_sha256": "aeba61ab9962236a0ff5438fba7b6026d10d6d9dd8849c4474469e841b93650a",
+      "ko_sha256": "41ffcc667b8743e5bada739a11fc083b60fa5a2021a1d007afc95309fee10a0a",
+      "en_sha256": "af577197dafd55e1b5b4d3dd956f00f8493b5e244c8e041ba479be66e798ae78",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root; 플랫폼 현황·홈·용어집 변경 독립 검토 Codex /root/chapters12_13",
-      "reviewed": "2026-10-05",
-      "notes": "기존 한영 전체 내용과 변경 구간 대조. 신규 소개 원문과 번역, 1~15장 현재 완료와 역사적 진도 분리, 65쌍, 관련 AWS 링크, 용어 12개를 확인. 프롬프트 수 141(모음100+본문41)은 렌더 검사로 확인한다. 변경 없는 기존 원문 구역은 보존 검사로 동일성 확인. 학습 완료와 실제 운영 경험을 구분한다."
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-18",
+      "notes": "기존 등록 원문 구역은 byte 보존했다. 바깥 안내에서 별도 보완을 가리키던 낡은 문구를 해당 개념 절의 적용 조건으로 수정하고 한영 링크·학습 범위를 대조했다."
     },
     "platform-infrastructure/redis.md": {
-      "ko_sha256": "732e0eeab524a4739d8c30d5900316bc02903b0345589159fe631ff3ef3e0953",
-      "en_sha256": "5984944b454bd10916735533375139a53963a61276fa3af5c5bf39ea841a5c2e",
+      "ko_sha256": "d2f3ec2f23a469cf901a4ca94a260412e444c8be856d1b9a7cc333fa7fbe0642",
+      "en_sha256": "7b8463cd6b3d1159ac17cec8ff8f5f8044099cc426b5d2c31412931dcf08f9d8",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/postgresql.md": {
-      "ko_sha256": "593cf78a199d34db6804be17e77fa3a2432c15bb92599b848f0113e398637b56",
-      "en_sha256": "8f6b44a2a195e4ebae2b45b79240f17ed3ade554a48499f4fe72c945f89b9f7d",
+      "ko_sha256": "5d320cb001e6d0d305d5644803b4043911d7e934f787291775bd6161ab381e8f",
+      "en_sha256": "d64839a5846f86f4c398a6424790396a01a01a36052ad3db3aab7e402797017e",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/kafka.md": {
-      "ko_sha256": "ac257ccac511090967b49b5922cd0d3e9dfc0bcd584f98bfb75fbd6aa6a7fadd",
-      "en_sha256": "2fcd046231bbe5fe936dad89ad89025c164f7f305512d66b2a9d000881d5a1f1",
+      "ko_sha256": "ca7569076f85f3fcedb736c820fd825038d6098d20e0b320ac2e0132f7276042",
+      "en_sha256": "651cd8e93669268bcd4cdd7fef5df159e1ca3587b16f28006fe16d2acf658943",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/litellm.md": {
-      "ko_sha256": "5cf8071f2d48186261d9bdca6c15aac8e04ded659e0337251cb7f124e32c6f11",
-      "en_sha256": "365854c583b5cda13076ab791d35df7ce292c56279a780bd8faf19d6c7302b7c",
+      "ko_sha256": "f59a5f1a35dde7c88e1a96e02965ada8ceb9866f13cc4f1dfb8f3ca64fdf5795",
+      "en_sha256": "19bec460e82ff0f71b3c6708de50a62ed735f7110804778f43b12ceacf041a4d",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/vllm.md": {
-      "ko_sha256": "c149f46091dd2ecb72b788d1d5d5dae6cfdde84ed70f236a5ccfdc21b4e55c67",
-      "en_sha256": "30ea16ff6437bcf2fe17b756296026ebc28eb2acdaee89a06f0744eb142b1c47",
+      "ko_sha256": "406eb0863b5411f7e0b64dcf7479f7726145f4791798d886dda7715e95d6a939",
+      "en_sha256": "d7aad49af02fa79543150cc652f521280f8585257b29cb8622bc9dbeedb1d449",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/gpu-infrastructure.md": {
-      "ko_sha256": "7bec4ffe7eb724e4363e1290a969b2a8ecf8f5f5e07fd38922db92b781dae10e",
-      "en_sha256": "4d3d2489be736e1fb5c80436ec56631d4ecd05e54afaa888690f52d534eefe4c",
+      "ko_sha256": "63cf147d5f6b72eda03625173d7eca0b6ef67145cb4e48dd45961e3cc47d47ce",
+      "en_sha256": "1af3104c8a84dc5429c1a8c22aa858efd116302e765783a913685360ef960cb8",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/platform-security.md": {
-      "ko_sha256": "64f4c906795f7dfa14260b8ec3ca72241f94760903f76c5c3da9b7a872796ead",
-      "en_sha256": "380e95773d05e8bfb1cf03da5288a0ba30ebe1219d20c00dcf0ba5cf60e03662",
+      "ko_sha256": "ebf82332f1ff55ed8e7e4b7954d7673b553403688d61b3a6bd396b23e7806905",
+      "en_sha256": "f200e6f7efd2a22e80df4de0664dd19a587b1bdde226d3c6ab587dff1294b92f",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/cicd-gitops.md": {
-      "ko_sha256": "ecae0c2060a73412075023bf4b28b8e6563f69d9e6a7cd7286b5ee0d10eca886",
-      "en_sha256": "784d6672fc641ea0b77c53995cb66f36975e2f304902ca717ca5f3a8c9c687a6",
+      "ko_sha256": "ca993d8384b8e1c4bf6dfe86e2b666b30fabb70d6a8df613262d249da51df364",
+      "en_sha256": "b4f03782b970b781fcb0654c281948a54a1b901c80141ca61c636a1823857166",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "aws-cloud/foundations.md": {
-      "ko_sha256": "d482828f612748f86c979e469069839be63d9bfbd53cc1c958d21a705281ee18",
-      "en_sha256": "e76986b7a2bf92bfddefb81dccc76687a453280c26f16089bb22d0a4387bf822",
+      "ko_sha256": "554bca216365bd20fe4de34de03b6f25a3674ffbfba406e855af9ad3af00927c",
+      "en_sha256": "aeb579defadc71dc39a7833c3f8ecb6d271a9883dc33adc67868f51327b16e4c",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "aws-cloud/networking.md": {
-      "ko_sha256": "0260aec1994c0f818187a3a2af67c87d57cabc7c532506bffe8b84034bdd3dd3",
-      "en_sha256": "aa12b0a7c4b5e2b0b1b0e26109889ad33eb60901e4f6102e210cc9754b21934a",
+      "ko_sha256": "af1c42ecce60e94ae1d85d12e2811c1e5f870d7bd2aa1c654737a99b970a9bdf",
+      "en_sha256": "eac2594529a782706e57c526c9b75eb0e5d22740f61f115cb6065932fbb7d629",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "aws-cloud/compute.md": {
-      "ko_sha256": "1bc8e7366f0cb0c40dd39c84c7d049e66c00c674de469c2d74d7a4ffb4f54cc1",
-      "en_sha256": "e30d3b50bac22fc8f5e9cf0960b231807932c09edb15663008ed60abb48f1fc9",
+      "ko_sha256": "c222c119867e4a61149802c69906df9ea0ec494665fb5db415ced0d68e140ff8",
+      "en_sha256": "9d308720210d6fcfd4cab39d68ee59561b8c299866c534f39f29bcfcf92279fa",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "aws-cloud/storage-databases.md": {
-      "ko_sha256": "e72e23bb93b412e53585bf42fc04f0c564dfaa298696c24639f2c919c8cd4184",
-      "en_sha256": "ea565ade9d971c2fc450bc0d80caa05bfaca2751f4d4ea68a8469a018f158e38",
+      "ko_sha256": "ba479bd30b4d19a18e193c50b756b9aecaaff65bfb73e2f81a6457c600f1511e",
+      "en_sha256": "d0f377be3b43317c6b8e21487822079d59dc3f7594b255739dbf76ea5df9ba2f",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "aws-cloud/eks.md": {
-      "ko_sha256": "6d6d75cc09fc6679abdee17aa16ece274ebc4ae8b9f75c01fff67c893c64c062",
-      "en_sha256": "0ca1115539e5d45a9da5db03a519acf025c743d76b0f3b9eb42f45b7998c06b3",
+      "ko_sha256": "e67c8d34e92f1768f901cc0ad76dab856d57f23e858aef78cf27f59c6facc982",
+      "en_sha256": "2ae5367e555466acfcac702d1a4c9626ece18d81afe031e9fce815d865c1f021",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "aws-cloud/index.md": {
-      "ko_sha256": "93638f4cdbb24e77e8646e5cb662a9c4fe871187748551eae54ebbfcb5afd9aa",
-      "en_sha256": "5b9cfb11f9c3e0d88d21017f1da7c48dfd14621b47559ec1ed45d5a95d8c88bc",
+      "ko_sha256": "82706202615793caf25872ffe76cbe003fcc41d69982b10cc14815440352ed40",
+      "en_sha256": "212572d76d766b4a232bdc341446c2b37ebf2996a4a2171dc27a3e1f1f4ca005",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root + 독립 검토 Codex /root/chapter14",
-      "reviewed": "2026-10-05",
-      "notes": "AWS 목차 양언어 전체와 최신 소개·요약·완료 원문3구역 번역을 읽고 과거 진도 분리를 확인. 홈·용어집·프롬프트 목차는 이전 전체 검토본과 이번 변경을 대조: 67쌍·142예시·용어12개가 동등. 변경 없는 기존 내용은 그대로 유지. Codex /root/chapter14도 공통 변경을 독립 대조."
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-18",
+      "notes": "기존 등록 원문 구역은 byte 보존했다. 바깥 안내에서 별도 보완을 가리키던 낡은 문구를 해당 개념 절의 적용 조건으로 수정하고 한영 링크·학습 범위를 대조했다."
     },
     "platform-infrastructure/terraform-iac.md": {
-      "ko_sha256": "b30ff93ea34c7c9a8f79d9281571302ccecde237b52bbe5223b3b5f363ed546a",
-      "en_sha256": "9b9414cd83a84dc513d212596be8011befcef1522a88ad9dcd6758ff8dd52406",
+      "ko_sha256": "ddf0c02cca1586a24c601429e55672e940498a2617dd36b4267f288793d980cb",
+      "en_sha256": "92587eea4932a22506aa94280ec7decbcff559221303eee428592f3f4933d847",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/chapters12_13 + 독립 검토 Codex /root/chapter14",
-      "reviewed": "2026-10-05",
-      "notes": "배정된 원문과 완성 한국어·영어 페이지 전체를 작성자와 독립 검토자가 읽고 의미·예시·수치·조건·주의를 대조. KO 원문 동일성, 번역 구조·hard break·코드 예시 보존 확인. source core 밖 공식 근거 보완을 두 언어로 대조. 실제 민감값 발견 없음; 모델·endpoint·팀·자원 수는 학습 예시이며 실제 배포·시험 결과가 아니다. 개발자 플랫폼 프롬프트 표식 정리는 작성자가 변경 후 재검토·실제 Markdown 렌더 검사했다."
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-18",
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/multitenancy-cost.md": {
-      "ko_sha256": "630d51834a6303b295887b3b1cbe7c5258f4321e7dc90a3e63451b739d601456",
-      "en_sha256": "62719a9984c5eb03b5bd0e4a2adbdf0d3c64558385b4a9c814ae11b0926f3328",
+      "ko_sha256": "afa76375b16cfea76d566397916d394a99b79c5fbe28d5c2a45e2c26a2eaaf73",
+      "en_sha256": "becf4c7606a990fa7ef0bb7f01d33bc102ccb089ef38e11b9ff60b8d8fea5ae6",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/chapters12_13 + 독립 검토 Codex /root/chapter14",
-      "reviewed": "2026-10-05",
-      "notes": "배정된 원문과 완성 한국어·영어 페이지 전체를 작성자와 독립 검토자가 읽고 의미·예시·수치·조건·주의를 대조. KO 원문 동일성, 번역 구조·hard break·코드 예시 보존 확인. source core 밖 공식 근거 보완을 두 언어로 대조. 실제 민감값 발견 없음; 모델·endpoint·팀·자원 수는 학습 예시이며 실제 배포·시험 결과가 아니다. 개발자 플랫폼 프롬프트 표식 정리는 작성자가 변경 후 재검토·실제 Markdown 렌더 검사했다."
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-18",
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/developer-platform.md": {
-      "ko_sha256": "fec24df20980ee04d26f44df6a804ee1873ebd1920b9c29b19a998474e9fe049",
-      "en_sha256": "2b3b468f7e74e91846282c20792749f0ec2468602fa06f548d0079be363802b9",
+      "ko_sha256": "d2e3193301b9834ba771dc0c32d29157007abce6341c4d3ada5e3ca1f62e3ea1",
+      "en_sha256": "0dc600b6b5a4d175c288c01546530de759d62348c33a0feef0f5d7784d76b34b",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "platform-infrastructure/architecture.md": {
-      "ko_sha256": "dddbf364404f0346b522b68b6d1c197cfbdfb8262e04b8abd19d7b0ea8c0196e",
-      "en_sha256": "b34af75f19b96e18df78cc780102955dc1797eb59687056c8162f5d6fdff41fe",
+      "ko_sha256": "a6c23f439c16b61255bf3abe6bcc178b3336bb49b909bcb7c0822cba95a71a35",
+      "en_sha256": "008b81d52b16c56d284ffee5177413a5eadaaf350d83e02117d5f94157cad827",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "aws-cloud/managed-services.md": {
-      "ko_sha256": "fe89cdb364233ac896f4bfd793f80f04058342413b663d198ac15d437bd49d43",
-      "en_sha256": "79d47a3b5e4780046fd9c239045dcb153cf427e8381375d2d77f0d8ba922616a",
-      "semantic": "pass",
-      "simple_english": "pass",
-      "privacy": "pass",
-      "reviewer": "Codex /root/chapters12_13 + 독립 검토 Codex /root/chapter14",
-      "reviewed": "2026-10-05",
-      "notes": "원문과 새 장 한영 완성본 전체(보완·프롬프트 포함)를 작성자와 독립 검토자가 대조. 개념·예시·수치·조건과 쉬운 영어·개인정보 확인. KO core 원문 그대로, EN 구조 일치. 공식 문서에 따른 정정은 원문 밖에 분리. 학습용 자원명·모델·수치는 실제 배포·측정 증거가 아니다."
-    },
-    "aws-cloud/ai-gpu-architecture.md": {
-      "ko_sha256": "a2e797c945e3c18da708c25e9c40cd5a8c4157b85147e88a227f41f5a79a0bfb",
-      "en_sha256": "f9097f8cc6e3291e887d7a38d3ccdbe9fbf1a53169f7d2e249d341b9269706d1",
+      "ko_sha256": "f83040056c7d09d06c2dec24189d34bd26db9ac2add45977ba21298505d828ff",
+      "en_sha256": "7b9c6e9c755e8d375f0ce35d670b802ed615a5aacc4f77f17ffadf7aa98780cc",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
+    },
+    "aws-cloud/ai-gpu-architecture.md": {
+      "ko_sha256": "75da1084a0f210e583766171dc5869c95237fa5e5e24d49282052a3bec07e8aa",
+      "en_sha256": "636d458bf6b50368b6510aa15bb0278e38b60f246fc839f97a83e900ae13c695",
+      "semantic": "pass",
+      "simple_english": "pass",
+      "privacy": "pass",
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-18",
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "ai-model-development/index.md": {
       "ko_sha256": "349dfd8e66efe96f15fd28abed286110c15be26dea012764847d190ab1463677",
@@ -681,104 +681,104 @@
       "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
     },
     "ai-model-development/qlora-artifacts.md": {
-      "ko_sha256": "8661e8acf82d8d450094e7bde8d51643ccc94df830bc8283fc006e7c96395c0b",
-      "en_sha256": "3795d92a0d34c3c73eb0cd6290c7015c6bd323e8df1751e47dc1566cbb8de3f8",
+      "ko_sha256": "ac72043e7f6a2476b51a3822feb9b620ea99dc3ae66455e61a4201400e0f159e",
+      "en_sha256": "39b2b389998c6ba1f2914b93dc4498a005bf17b43ce6536434b69b0f469e9694",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/chapters12_13 + 독립 검토 Codex /root/chapter14",
-      "reviewed": "2026-10-05",
-      "notes": "해당 원문 구간과 KO/EN 완성 페이지를 작성자와 독립 검토자가 전문 읽음. 제목·번호·순서·코드·수치·hard break 보존, 쉬운 영어·조건·예문·privacy 검토. 잘못된 원문 주장과 라이브러리 적용 조건은 source core 밖 공식 근거 보완으로 분리. 실제 GPU 학습·성능 평가·배포·LLM 실행 기록이 아님."
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-18",
+      "notes": "이전 전문 검토본의 변경 없는 원문은 유지하고 이번 개정의 한영 설명·예제·링크를 대조. 원본의 A: 4096×16, B: 16×4096은 ΔW=B×A와 차원이 맞지 않아 A: 16×4096, B: 4096×16으로 본문에서 정정했다. 근거는 LoRA 논문 §4.1(https://arxiv.org/html/2106.09685)이며 원본 주장은 sources/에 남는다. 보완의 필수 조건을 1.1~1.8 해당 절에 통합하고 원래 목차·코드 형태를 보존했다. 실제 학습·배포는 검증하지 않았다."
     },
     "ai-model-development/adapter-compatibility.md": {
-      "ko_sha256": "111bb0c13a2a777593c6b5efd559aeb48cc8e7b480ebd36caf2cd2c900ce296e",
-      "en_sha256": "2db9524a5054b07d03e9051a70eab6c269819f47224f3561436e731baf9be144",
+      "ko_sha256": "991a2ea31227155a40a4f0fb337c448ba0159f922d84e8b3d7adae4886a706ec",
+      "en_sha256": "bdc63d02fb81b3999218abc69694f746d597a49322437f99a26cb4cb2b4bacf0",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
-      "reviewer": "Codex /root/chapters12_13 + 독립 검토 Codex /root/chapter14",
-      "reviewed": "2026-10-05",
-      "notes": "해당 원문 구간과 KO/EN 완성 페이지를 작성자와 독립 검토자가 전문 읽음. 제목·번호·순서·코드·수치·hard break 보존, 쉬운 영어·조건·예문·privacy 검토. 잘못된 원문 주장과 라이브러리 적용 조건은 source core 밖 공식 근거 보완으로 분리. 실제 GPU 학습·성능 평가·배포·LLM 실행 기록이 아님."
+      "reviewer": "Codex /root",
+      "reviewed": "2026-10-18",
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "ai-model-development/training-datasets.md": {
-      "ko_sha256": "0e108294df649b89d618ca3080cd72dde1ed21da354558f80e4843c3cb80f549",
-      "en_sha256": "bf9a88a6b61596cfbf5471d6cb9e55bb6a57b76af7945b599b0403ecccaceb59",
+      "ko_sha256": "c4d0e18f55182a5ccde7a1017fce7474c7d6c9ccb651886c987959b910ecd023",
+      "en_sha256": "b99caffac59dfefeac94da05903f924337e01c46b137ee315917913af1ceb5bb",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "ai-model-development/qlora-training.md": {
-      "ko_sha256": "3ede124cca4f62578eafcac590b0a774ee830a4ca1a850f66eabf78f04f93e10",
-      "en_sha256": "5f636224b34e2c0536510f01a38f594a9b75c5940831711a7dc2182d62f074d8",
+      "ko_sha256": "11c7af48106bbb0d2d9a46dc16ed8e2df5fc11847464a0725191c272dbe198a4",
+      "en_sha256": "0c24a4ed7a7877601e8f075c72ba576cd5f89f27136ecbf6dc9a3ec2ef9d51a9",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "ai-model-development/evaluation-promotion.md": {
-      "ko_sha256": "220caae1d7fb699509bf30c1742a475fd5581eb040b8aa9e71a978f6bc8cb32a",
-      "en_sha256": "f8e3d681a971ebb28ba795b75631389f43564a341f3a525cf150e33e1f359c90",
+      "ko_sha256": "015e36f7a87b69ed53288d5c19d24d0663f085941f625c4cd3652aaa3c16f1e7",
+      "en_sha256": "3995f29d5430158f3aa80faa05b104d144155185275a8c940499f68d153c816e",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "ai-model-development/model-retraining.md": {
-      "ko_sha256": "ebdecc80fa05dd630e55b43d3dba0455d5ad2408871ea17a412485d39aff529c",
-      "en_sha256": "7171511c32d6fb4aa9023bd8abf56b86b75c1842845ec88b4585f0d7d0e5fa42",
+      "ko_sha256": "13f5ce8d2f9737372ec02054732d99c66c14bb3cb8db1888d723905c88faeaf4",
+      "en_sha256": "aa86d402aa4f9be61c355c274fe8e754f371140030537de746fdab808414ecd7",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "ai-model-development/artifact-lineage.md": {
-      "ko_sha256": "46d3f9ab359f6fb5c532845584fe5b359962fc24d518f73f97fa0eef8330819b",
-      "en_sha256": "bf7230ff345ffd2f960a98e22b3cfd7f1889a89f2448db72b423a4740d33fd23",
+      "ko_sha256": "5b398b7082b9b7546a24a97626c40c732f1ef4c69c5cea37b5de4a1ff7a79dc8",
+      "en_sha256": "bdccb570b81bbe9aa069f4fc27b807df6a912f5a2afadd387c03d679f480c677",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "ai-model-development/model-developer.md": {
-      "ko_sha256": "f22c38455907778e1af70836d9be03982ec198b61f147fd32c2039c42180ba36",
-      "en_sha256": "f1fb8ca5418a9583427a2e431555307332c70e3f324e5913a1fd4a99b68e84fd",
+      "ko_sha256": "8d9bee99060c9d6cf79086550b644cf5a374dca4731399b0ce38904a090df84a",
+      "en_sha256": "27e2776cf39d1dcd3f32ca2996d6251b84a2574aa9de60759b63b9ec50b11189",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "ai-model-development/model-platform-collaboration.md": {
-      "ko_sha256": "962144f3884062f76213cd94ddd80fe95aab8dbc83053434f68c1703f106be8e",
-      "en_sha256": "864de8235d5134ff7c051207edb4a4407975ca23a7e9aab20dd095c8f7f6fbbd",
+      "ko_sha256": "59c7fab19cf5e1f53183a856a0b701a2371809a88174b7ba675547386a888c69",
+      "en_sha256": "22c9ebf91b9990ccbab3cddf4a0b21d771b0c1ad5e0ffa59b57f8494d5bc93eb",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "ai-model-development/training-platform-architecture.md": {
-      "ko_sha256": "0478d78f301e68407756c60aa9528daa6d5d72044a37c09d925c21df8807c88a",
-      "en_sha256": "5fc00766bf3a82276e260acae43f9a30cb8750c858962fd6ed151050e1ad11ea",
+      "ko_sha256": "e3c6a5da626f5b9d91b388b75f4af6615d5ae3dcba67bac685ec20cf560f8ee1",
+      "en_sha256": "cfc9ee49b27d178adf3ad2758d402edb1067c5989e1fbf04002781a3a3a5a0b3",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 전문 검토본의 변경 없는 원문을 유지하고, 이번 개정에서 별도 보완의 기술 조건·인용·도식이 대응 번호 절로 이동한 위치를 대조했다. 원래 제목·번호·예제·코드·표·목록과 링크의 보존, 새 개념 비유의 한계, 짧아진 한영 실전 요청과 운영 안전 조건을 확인했다. 실제 시스템 실행이나 성능 측정 결과로 주장하지 않는다."
     },
     "english-study/index.md": {
       "ko_sha256": "b6769f81e665a9f35c5cf9d286c4ce673a64e981870628d81f0e696bd129868c",
@@ -791,34 +791,34 @@
       "notes": "2026-10-18: data-platform 영어 본문 개정 후 빈도 후보를 확인하고 생성 페이지의 한영 빈도·출처·정렬과 기존 예문을 대조했다. 검토 원고(learning/english-entries.json)는 변경하지 않았으며 새 의미·사용역을 자동으로 승인하지 않았다."
     },
     "english-study/workplace.md": {
-      "ko_sha256": "1ff4b55ce28380d65e423d29748d311eb08cd0da1e1fdc12e993ae0df7e1d2e6",
-      "en_sha256": "6273b17ab7237d2039d64e100fc99b895b4870b60e18f35cd04ddd52f4b4fb25",
+      "ko_sha256": "ff940a96fca28ad30637d198b643929a3b33094a9b4124d12d448c71d3361511",
+      "en_sha256": "ede5bca9143d2e0da9d0f35b3ce0ab93c5d46f2c3cbde5f7331c17292bf6360a",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 검토 원고와 이번 영어 본문 변경의 빈도·예문을 대조해 재생성했다. 새 표의 빈도는 핸드북 안의 횟수이며 일반 영어 사용 빈도를 뜻하지 않는다."
     },
     "english-study/vocabulary.md": {
-      "ko_sha256": "285b49f50e08cad578d5ecbae69154261f3f22174b051b0d8e94334486921fb1",
-      "en_sha256": "3577764788e48ffc0575a5d1bb977974a41d2edd39cae7a8cfd5659c6912351c",
+      "ko_sha256": "569b0887d20f0029f35613208a0e6b0e51f0a55dd59522c5660fd91687c57923",
+      "en_sha256": "24453f38131d807d43abbc32033ffbdafc5330ae73c0b2b48dccae70180f9310",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 검토 원고와 이번 영어 본문 변경의 빈도·예문을 대조해 재생성했다. 새 표의 빈도는 핸드북 안의 횟수이며 일반 영어 사용 빈도를 뜻하지 않는다."
     },
     "english-study/idioms.md": {
-      "ko_sha256": "c1b8c76bf5f39f781bde09403e7620cd536896dc7edb0fccc3e31191827a0dc2",
-      "en_sha256": "0e0396b9ea0b8135a8e209cd6b629650e47e4a65882a587419485579cf677113",
+      "ko_sha256": "5305007aec54da3c45b6546275784be18f9cd26a15071bc9c8018aed0f493c01",
+      "en_sha256": "bb197ef1b2aa0b687befb3956fdcb0c0659945a199bdeb0dc29a7cad1e74368b",
       "semantic": "pass",
       "simple_english": "pass",
       "privacy": "pass",
       "reviewer": "Codex /root",
       "reviewed": "2026-10-18",
-      "notes": "이전 전문 검토본의 변경 없는 본문을 유지하고 이번 변경의 한영 실전 요청, 핵심 사항, 마무리 순서와 상단 안내 삭제를 대조했다. 복사 문구의 양쪽 페이지 일치, 원문 경계, 기술·안전 조건을 확인했다. 실제 모델 실행이나 운영 변경을 검증한 기록은 아니다."
+      "notes": "이전 검토 원고와 이번 영어 본문 변경의 빈도·예문을 대조해 재생성했다. 새 표의 빈도는 핸드북 안의 횟수이며 일반 영어 사용 빈도를 뜻하지 않는다."
     },
     "english-study/phrasal-verbs.md": {
       "ko_sha256": "d676a4b87ac7310445e3dbb6cfb8d3e5bec5f66082854f49ee5c47cc8ff22fb1",

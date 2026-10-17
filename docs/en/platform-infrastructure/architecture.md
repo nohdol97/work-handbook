@@ -99,11 +99,15 @@ knowledge_ids:
 
 # Chapter 15. End-to-End AI Platform Architecture
 
-These study notes preserve Basic Chapter 15 and the course closing sections. They do not claim real production implementation, deployment, or incident recovery experience. Read them with the [platform infrastructure learning map](index.md).
+The configurations and commands are study examples, not results of a deployment or failure test.
+
+Related: [platform infrastructure learning map](index.md)
 
 <!-- SOURCE CORE START -->
 
 ## 15.1 Request Path
+
+A platform has a control path for deployment changes and a runtime path for user requests. Separating backstage coordination from the live performance helps locate failures and ownership.
 
 The basic path of an LLM request:
 
@@ -168,6 +172,26 @@ LiteLLM has this responsibility:
 > Decide who can use which model, how much they can use it, and which backend receives the request
 
 This is its role.
+
+**, 15.26, 15.53–15.54: Actual Gateway Policy Settings**
+
+LiteLLM can configure model access, budgets, and RPM/TPM policies at scopes such as teams and keys. Check scope, edition, and deployment settings. Do not assume that every source item is active immediately after installation. Verify how limits are counted across all shared gateway replicas. [LiteLLM budgets and rate limits](https://docs.litellm.ai/docs/proxy/users)
+
+Configure retries and fallbacks explicitly. Check error types and retry counts. Switching to another model or provider also changes quality and where data is sent, so check that the target is allowed. Do not assume that a streaming response already sent to a user can be transparently replaced by a new model's response. [LiteLLM reliability](https://docs.litellm.ai/docs/proxy/reliability)
+
+```mermaid
+flowchart TD
+    Portal[Developer Portal] --> API[Platform API]
+    API --> Policy[Policy and validation]
+    Policy --> Infra[Terraform]
+    Policy --> Git[Deployment Git]
+    Git --> Argo[Argo CD and Helm rendering]
+    Infra --> Cluster[Kubernetes resources]
+    Argo --> Cluster
+    User[User request] --> Gateway[Gateway and LiteLLM]
+    Gateway --> Model[vLLM replica]
+    Model --> GPU[GPU compute]
+```
 
 ---
 
@@ -610,6 +634,12 @@ Model Serving Ready
 
 Send traffic to a new replica only after it becomes Ready.
 
+**, 15.43, 15.44: Readiness and Shutdown Order**
+
+A failed readiness probe does not itself restart a container. It keeps ordinary Service traffic away from an unready Pod. Consider a startup probe for slow model loading. Configure readiness to check whether the model can actually accept requests. [Kubernetes probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/)
+
+The diagram in 15.28 describes the desired request drain flow. It is not a strict event order guaranteed by Kubernetes. During termination, the kubelet runs a configured `preStop` hook and then sends TERM to the container. EndpointSlice termination state changes happen alongside this process. The application must handle the signal and finish active requests. It may be killed when the grace period ends. Test streaming duration, drain behavior, and `terminationGracePeriodSeconds` together. [Pod termination](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#termination-of-pods)
+
 ---
 
 ## 15.20 AI Serving Capacity Bottleneck
@@ -643,6 +673,10 @@ Memory Bottleneck
 ```
 
 These must be distinguished.
+
+**, 15.67: Test Bottleneck Hypotheses**
+
+The source's combinations of GPU utilization and KV cache use are starting points for investigation. They do not prove a cause by themselves. Compare request length, queue wait, TTFT/TPOT, and CPU/network waits over the same time window. Section 15.67 assumes one Pod needs four GPUs on one node. It does not mean all forms of distributed inference across nodes are impossible. Read [GPU infrastructure](gpu-infrastructure.md) and [vLLM](vllm.md) together.
 
 ---
 
@@ -976,6 +1010,10 @@ Default Deny
 Allow only required ingress / egress
 ```
 
+**Conditions for isolation**
+
+NetworkPolicy needs a network plugin that implements it. Creating the policy object does not prove that traffic is blocked. Namespaces, RBAC, quotas, and separate nodes each enforce different boundaries. Do not assume that namespaces alone provide strong security isolation for untrusted tenants. [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/), [Kubernetes multi-tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/)
+
 ---
 
 ## 15.34 TLS / mTLS
@@ -1065,6 +1103,10 @@ Helm
 Kubernetes
 ```
 
+**, 15.75, Final Mental Model: Scope of the Diagrams**
+
+The source diagrams do not all describe one fixed deployment or execution order. In 15.9, the backend calls LiteLLM. In 15.64, LiteLLM and the backend are listed as layers to investigate. Check the path in real request traces. Helm renders manifests and Argo CD applies the result. Do not read `Argo CD → Helm` and `Helm → Argo CD` as separate deployment engines running in a fixed sequence. [CI/CD and GitOps](cicd-gitops.md)
+
 ---
 
 ## 15.38 CI
@@ -1090,6 +1132,10 @@ agent-api:a1b2c3d
 ```
 
 Create an immutable image version like this.
+
+**Commit-Like Tags and Immutability**
+
+`agent-api:a1b2c3d` is an example tag that represents a commit. Its name alone does not make it immutable. A registry can change which image a tag points to. Use a digest to pin image content. If using tags, check the registry's separate immutability policy. [Kubernetes images](https://kubernetes.io/docs/concepts/containers/images/)
 
 ---
 
@@ -1148,6 +1194,10 @@ Sync
 ```
 
 Both manual and automatic sync are possible.
+
+**Git Recovery and Argo CD Rollback**
+
+Argo CD states that rollback cannot run on an Application with automated sync enabled. Do not read the source's `Git / Argo Rollback` as two options that always work in the same way. Distinguish restoring desired state in Git and syncing it from using history rollback after checking automated sync settings. Check recovery permissions and the current sync policy first. [Argo CD automated sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/)
 
 ---
 
@@ -2569,80 +2619,18 @@ Separate the deployment control path from the request path to narrow performance
 
 ## LLM in Practice: Investigate Higher TTFT After Deployment
 
-
 **Prompt:**
 
 === "한국어"
 
     ```text {.prompt}
-    새 모델 canary 뒤 TTFT가 늘어난 가상 사례다. 실제 장애 경험이나 측정 결과가 아니다.
-    관측, 가정, 계층별 원인 가설을 구분하라.
-    gateway, queue, compute, memory 가설을 구분할 증거와 다음 확인을 제안하라.
-    계층 / 가설 / 근거 / 미확인 정보 / 다음 확인 표를 작성하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    새 모델 canary 뒤 TTFT가 늘었어. 배포 시각과 gateway·queue·모델 서버 지표를 대조해 병목 가설과 확인해야 할 근거를 정리해 줘. 관측하지 않은 원인을 확정하거나 운영 변경을 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    A hypothetical case where TTFT rises after a new model canary. This is not an account of a real incident or measurement.
-    Suggest evidence and next checks to distinguish gateway, queue, compute, and memory hypotheses.
-    Make a table: layer / hypothesis / evidence / unknowns / next check.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    TTFT increased after a new model canary. Compare deployment timing with gateway, queue, and model-server metrics, then list plausible bottlenecks and missing evidence. Do not assert an unobserved cause or apply production changes.
     ```
 
 **Key point:** An investigation plan that separates gateway, queue, compute, and memory hypotheses. It lists the evidence needed and conditions for restoring canary routing or changing capacity. It may diagnose a bottleneck from GPU utilization alone, confuse failed readiness with restarts, or suggest Argo CD rollback while automated sync is enabled. Check real traces, Pod events, routing settings, and official documents. Follow recovery permissions and change procedures. Test draining, fallback, and canary reversal in an isolated environment and record the results.
-
-## Supplements and Corrections by Source Section
-
-The official documents below were checked on 2026-10-05. These additions sit outside the source. They are not results from a deployment or load test. The source's group headings from `# 15.4` to `# 15.10` and section numbers such as `## 15.4` remain unchanged at their original heading levels.
-
-### 15.19, 15.28, 15.43, 15.44: Readiness and Shutdown Order
-
-A failed readiness probe does not itself restart a container. It keeps ordinary Service traffic away from an unready Pod. Consider a startup probe for slow model loading. Configure readiness to check whether the model can actually accept requests. [Kubernetes probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/)
-
-The diagram in 15.28 describes the desired request drain flow. It is not a strict event order guaranteed by Kubernetes. During termination, the kubelet runs a configured `preStop` hook and then sends TERM to the container. EndpointSlice termination state changes happen alongside this process. The application must handle the signal and finish active requests. It may be killed when the grace period ends. Test streaming duration, drain behavior, and `terminationGracePeriodSeconds` together. [Pod termination](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#termination-of-pods)
-
-### 15.38, 15.40: Commit-Like Tags and Immutability
-
-`agent-api:a1b2c3d` is an example tag that represents a commit. Its name alone does not make it immutable. A registry can change which image a tag points to. Use a digest to pin image content. If using tags, check the registry's separate immutability policy. [Kubernetes images](https://kubernetes.io/docs/concepts/containers/images/)
-
-### 15.41, 15.73: Git Recovery and Argo CD Rollback
-
-Argo CD states that rollback cannot run on an Application with automated sync enabled. Do not read the source's `Git / Argo Rollback` as two options that always work in the same way. Distinguish restoring desired state in Git and syncing it from using history rollback after checking automated sync settings. Check recovery permissions and the current sync policy first. [Argo CD automated sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/)
-
-### 15.33, 15.48–15.52, 15.85: Conditions for Isolation
-
-NetworkPolicy needs a network plugin that implements it. Creating the policy object does not prove that traffic is blocked. Namespaces, RBAC, quotas, and separate nodes each enforce different boundaries. Do not assume that namespaces alone provide strong security isolation for untrusted tenants. [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/), [Kubernetes multi-tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/)
-
-### 15.2, 15.7, 15.26, 15.53–15.54: Actual Gateway Policy Settings
-
-LiteLLM can configure model access, budgets, and RPM/TPM policies at scopes such as teams and keys. Check scope, edition, and deployment settings. Do not assume that every source item is active immediately after installation. Verify how limits are counted across all shared gateway replicas. [LiteLLM budgets and rate limits](https://docs.litellm.ai/docs/proxy/users)
-
-Configure retries and fallbacks explicitly. Check error types and retry counts. Switching to another model or provider also changes quality and where data is sent, so check that the target is allowed. Do not assume that a streaming response already sent to a user can be transparently replaced by a new model's response. [LiteLLM reliability](https://docs.litellm.ai/docs/proxy/reliability)
-
-### 15.20, 15.66, 15.67: Test Bottleneck Hypotheses
-
-The source's combinations of GPU utilization and KV cache use are starting points for investigation. They do not prove a cause by themselves. Compare request length, queue wait, TTFT/TPOT, and CPU/network waits over the same time window. Section 15.67 assumes one Pod needs four GPUs on one node. It does not mean all forms of distributed inference across nodes are impossible. Read [GPU infrastructure](gpu-infrastructure.md) and [vLLM](vllm.md) together.
-
-### 15.37, 15.64, 15.75, Final Mental Model: Scope of the Diagrams
-
-The source diagrams do not all describe one fixed deployment or execution order. In 15.9, the backend calls LiteLLM. In 15.64, LiteLLM and the backend are listed as layers to investigate. Check the path in real request traces. Helm renders manifests and Argo CD applies the result. Do not read `Argo CD → Helm` and `Helm → Argo CD` as separate deployment engines running in a fixed sequence. [CI/CD and GitOps](cicd-gitops.md)
-
-## Supplement: Control Path and Request Path
-
-This Mermaid diagram adds context without replacing the source text diagrams. It separates desired state created through the portal from live user requests.
-
-```mermaid
-flowchart TD
-    Portal[Developer Portal] --> API[Platform API]
-    API --> Policy[Policy and validation]
-    Policy --> Infra[Terraform]
-    Policy --> Git[Deployment Git]
-    Git --> Argo[Argo CD and Helm rendering]
-    Infra --> Cluster[Kubernetes resources]
-    Argo --> Cluster
-    User[User request] --> Gateway[Gateway and LiteLLM]
-    Gateway --> Model[vLLM replica]
-    Model --> GPU[GPU compute]
-```

@@ -16,11 +16,13 @@ knowledge_ids:
 
 # Chapter 4. Redis for Platform Systems
 
-This conceptual study record preserves the source order and form. Example numbers, commands, and identifiers are teaching material, not results of execution or operational testing. Read the section-specific supplement after the source core for clarifications and conditions on simplified statements.
+The configurations and commands are study examples, not results of a deployment or failure test.
 
 <!-- SOURCE CORE START -->
 
 ## 4.1 Redis Fundamentals
+
+Redis is like keeping frequently used items in a nearby drawer. Fast access helps, but the team must define expiry, memory limits, replication, and the relationship to the source of truth.
 
 Redis is a key-value store that keeps data in memory for very fast reads and writes.
 
@@ -114,6 +116,10 @@ User sessions → Redis
 Original product information → PostgreSQL
 Product information cache → Redis
 ```
+
+**What TTL means**
+
+Expired keys are removed on access and by periodic expiry checks. TTL marks when the application should no longer treat the data as valid. It does not mean all memory is reclaimed at that exact instant. [Redis EXPIRE](https://redis.io/docs/latest/commands/expire/).
 
 ---
 
@@ -314,6 +320,16 @@ Connection Pool
 
 Then consider Redis.
 
+**Atomicity for rate limits, locks, and deduplication**
+
+A per-minute counter needs a time window and an expiry policy. An interruption between separate `INCR` and `EXPIRE` requests can leave a key without expiry. Check the atomicity conditions in the official pattern. [Redis INCR](https://redis.io/docs/latest/commands/incr/).
+
+The source's `absent → process → record` flow alone cannot guarantee one execution. Two requests may both observe absence, or processing may finish before a crash prevents recording. This is a design limitation inferred from the source flow. For external effects such as payments, design durable idempotency records in the destination store together with the processing result. A Redis marker alone is not a complete exactly-once guarantee.
+
+Review atomic acquisition, expiry, owner identifiers, and release that checks ownership together. If work exceeds the TTL, another client may acquire the lock. Failover with asynchronous replication can also break mutual exclusion. The official lock documentation explains these conditions and why a plain `DEL` may remove another owner's lock. [Redis distributed locks](https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/).
+
+`5,000 × (1 − 0.95) = 250 req/s` is a teaching calculation. It assumes one DB request per miss and no other DB traffic. It is not an adoption threshold or measured performance. Also assess the DB load from concurrent misses while rebuilding the cache.
+
 ---
 
 ## 4.3 Persistence
@@ -387,6 +403,10 @@ Key question:
 
 > Can the Redis data be rebuilt if it is lost?
 
+**Persistence and possible data loss**
+
+Enabling AOF does not eliminate all data loss. Check the `appendfsync` policy and storage conditions. With `everysec`, a failure can lose about one second of writes. Since Redis 7.0, AOF uses base and incremental files plus a manifest, so backups must preserve a consistent file set. RDB and AOF still need separate backup storage and restore checks. [Redis persistence](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/).
+
 ---
 
 ## 4.4 Replication
@@ -441,6 +461,12 @@ Replication
 ≠
 Automatic Failover
 ```
+
+**Conditions for HA and Cluster**
+
+Sentinel's failure-detection quorum differs from the Sentinel majority needed to authorize failover. Place Sentinels in independent failure domains and check client discovery and reconnection to the new primary. Sentinel cannot fully prevent the loss of acknowledged writes with asynchronous replication. [Redis Sentinel](https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/).
+
+Redis Cluster uses 16,384 hash slots. Multi-key operations have same-slot requirements, so check key design and Cluster support in the client. Adding nodes does not automatically split one hot key. Cluster can also lose writes depending on failure timing and replication state. [Redis Cluster specification](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/).
 
 ---
 
@@ -632,6 +658,12 @@ Redis is slow
 → Too many network round trips?
 ```
 
+**Memory and Kubernetes responsibilities**
+
+Do not infer a memory leak from fragmentation metrics alone. Compare data size, memory retained by the allocator, and usage reported by the OS. [Redis memory optimization](https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/).
+
+StatefulSet provides stable Pod identities and storage associations. It does not automatically configure Redis role election, replication, or backups. A PVC alone does not guarantee backup or full disaster recovery. [Kubernetes StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
+
 ---
 
 ## 4.8 Redis on Kubernetes
@@ -706,61 +738,20 @@ Redis latency depends on memory, network, command patterns, and persistence; avo
 
 ## LLM in Practice: review Redis latency causes
 
-
 **Prompt:**
 
 === "한국어"
 
     ```text {.prompt}
-    Redis 지연이나 cache miss 증가를 조사하고 DB 부하와 연결해 변경 필요성을 판단한다.
-    hot key, big key, 동시 cache miss, eviction, 복제 지연 가설을 비교하라. hit rate 하나로 원인을 확정하지 말고 Cluster 추가가 단일 hot key를 해결하는지 구분하라.
-    가설 / 근거 시각 / 반증 조회 / DB 영향 / 다음 확인 표를 작성하라. TTL·cache 정책·용량 변경 후보별 예상 효과와 실패 조건, 검증할 지표를 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    Redis 지연과 cache miss가 늘었어. key 분포, memory·eviction, replication 지표와 DB 부하를 보고 hot key, big key, 동시 miss 중 무엇이 문제인지 검토해 줘. hit rate만으로 단정하거나 설정을 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Investigate Redis latency or cache misses and decide whether a change is justified by the related DB load.
-    Compare hot keys, big keys, concurrent cache misses, eviction, and replication lag. Do not infer a cause from hit rate alone. Distinguish adding Cluster nodes from solving a single hot key.
-    Produce a table: hypothesis / evidence timestamp / falsifying check / DB impact / next check. For each TTL, cache-policy, or capacity proposal, state the expected effect, failure conditions, and metrics to verify.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Redis latency and cache misses increased. Use key distribution, memory, eviction, replication metrics, and DB load to assess hot keys, big keys, and concurrent misses. Do not conclude from hit rate alone or change settings.
     ```
 
-**Key point:** A comparison of hot/big keys, concurrent misses, eviction and replication hypotheses with DB impact, plus success/stop metrics for TTL, cache, or capacity proposals. It may assume a faster cache means faster requests overall or propose deleting data as a diagnostic step. Compare key distribution, TTLs, memory, hits/misses, and DB load over the same interval. The review must expose proposals that improve hit rate while worsening DB latency or cache-rebuild load. This is an authored work example, not a verified model result or measured improvement.
+**Key point:** A comparison of hot/big keys, concurrent misses, eviction and replication hypotheses with DB impact, plus success/stop metrics for TTL, cache, or capacity proposals. It may assume a faster cache means faster requests overall or propose deleting data as a diagnostic step. Compare key distribution, TTLs, memory, hits/misses, and DB load over the same interval. The review must expose proposals that improve hit rate while worsening DB latency or cache-rebuild load.
 
 Related: [PostgreSQL](postgresql.md) · [Kubernetes operations](kubernetes-operations.md)
-
-## Supplement and conditions
-
-Official documentation checked: 2026-10-01. These notes are separate from the unchanged source. They do not record a Redis installation, load test, failover, or restore test.
-
-### 4.1 What TTL means
-
-Expired keys are removed on access and by periodic expiry checks. TTL marks when the application should no longer treat the data as valid. It does not mean all memory is reclaimed at that exact instant. [Redis EXPIRE](https://redis.io/docs/latest/commands/expire/).
-
-### 4.2 Atomicity for rate limits, locks, and deduplication
-
-A per-minute counter needs a time window and an expiry policy. An interruption between separate `INCR` and `EXPIRE` requests can leave a key without expiry. Check the atomicity conditions in the official pattern. [Redis INCR](https://redis.io/docs/latest/commands/incr/).
-
-The source's `absent → process → record` flow alone cannot guarantee one execution. Two requests may both observe absence, or processing may finish before a crash prevents recording. This is a design limitation inferred from the source flow. For external effects such as payments, design durable idempotency records in the destination store together with the processing result. A Redis marker alone is not a complete exactly-once guarantee.
-
-Review atomic acquisition, expiry, owner identifiers, and release that checks ownership together. If work exceeds the TTL, another client may acquire the lock. Failover with asynchronous replication can also break mutual exclusion. The official lock documentation explains these conditions and why a plain `DEL` may remove another owner's lock. [Redis distributed locks](https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/).
-
-`5,000 × (1 − 0.95) = 250 req/s` is a teaching calculation. It assumes one DB request per miss and no other DB traffic. It is not an adoption threshold or measured performance. Also assess the DB load from concurrent misses while rebuilding the cache.
-
-### 4.3 Persistence and possible data loss
-
-Enabling AOF does not eliminate all data loss. Check the `appendfsync` policy and storage conditions. With `everysec`, a failure can lose about one second of writes. Since Redis 7.0, AOF uses base and incremental files plus a manifest, so backups must preserve a consistent file set. RDB and AOF still need separate backup storage and restore checks. [Redis persistence](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/).
-
-### 4.4–4.6 Conditions for HA and Cluster
-
-Sentinel's failure-detection quorum differs from the Sentinel majority needed to authorize failover. Place Sentinels in independent failure domains and check client discovery and reconnection to the new primary. Sentinel cannot fully prevent the loss of acknowledged writes with asynchronous replication. [Redis Sentinel](https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/).
-
-Redis Cluster uses 16,384 hash slots. Multi-key operations have same-slot requirements, so check key design and Cluster support in the client. Adding nodes does not automatically split one hot key. Cluster can also lose writes depending on failure timing and replication state. [Redis Cluster specification](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/).
-
-### 4.7–4.8 Memory and Kubernetes responsibilities
-
-Do not infer a memory leak from fragmentation metrics alone. Compare data size, memory retained by the allocator, and usage reported by the OS. [Redis memory optimization](https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/).
-
-StatefulSet provides stable Pod identities and storage associations. It does not automatically configure Redis role election, replication, or backups. A PVC alone does not guarantee backup or full disaster recovery. [Kubernetes StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).

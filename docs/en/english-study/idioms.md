@@ -30,7 +30,7 @@ Example source pages: [ai-model-development/qlora-training](../ai-model-developm
 
 ### instead of {#idioms-instead-of}
 
-**52 occurrences · 33 documents · neutral**
+**53 occurrences · 34 documents · neutral**
 
 **~ 대신에**
 
@@ -46,7 +46,7 @@ Example source pages: [ai-model-development/model-developer](../ai-model-develop
 
 ### rather than {#idioms-rather-than}
 
-**35 occurrences · 27 documents · neutral**
+**34 occurrences · 26 documents · neutral**
 
 **~보다는, ~하지 않고**
 

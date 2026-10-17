@@ -16,11 +16,13 @@ knowledge_ids:
 
 # Chapter 8. AI Model Developer의 역할
 
-제공된 AI Model / QLoRA Training Basic Chapter 8의 학습 기록이다. 실제 모델 학습·배포 경험을 뜻하지 않는다.
+예시 모델과 설정은 학습용이며 실제 학습·평가·배포 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 8.1 AI Model Developer의 핵심 역할
+
+모델 개발자는 학습 재료와 조리법을 바꾸며 성능을 살핀다. 어떤 데이터를 썼고 어떤 기준으로 좋아졌다고 판단했는지 남겨야 플랫폼 팀이 같은 모델을 안전하게 운영할 수 있다.
 
 기존 Foundation Model을 회사나 서비스 목적에 맞게 Fine-Tuning하는 AI Model Developer는
 단순히 Training Script를 실행하는 사람이 아니다.
@@ -99,6 +101,10 @@ Garbage Data
 
 이므로 Dataset Quality가 매우 중요하다.
 
+**·8.7–8.8: 비교에 쓴 데이터와 독립 평가**
+
+Hyperparameter와 모델 선택에 반복 사용한 데이터는 선택 과정에 영향을 준다. Golden이라는 이름만으로 독립적인 최종 평가가 보장되지 않는다. 권고: 반복 회귀 검사에 쓰는 고정 suite와 최종 선택 후 확인하는 미사용 holdout을 구분한다. 실패 유형에서 일반적인 학습 과제를 찾되, 최종 평가 정답을 training으로 복사하지 않는다. 같은 사례를 반복 확인하며 선택한 성능과 새 사례에 대한 성능을 구분한다. [교차검증과 test set 분리](https://scikit-learn.org/stable/modules/cross_validation.html)
+
 ---
 
 ## 8.4 Training Strategy 선택
@@ -126,6 +132,10 @@ Smaller Model + QLoRA
 ```
 
 같은 판단을 할 수 있다.
+
+**Training 방법의 분류축**
+
+Full Fine-Tuning과 LoRA는 주로 어떤 파라미터를 학습하는지의 차이이며, QLoRA는 양자화한 base model과 LoRA 학습을 결합한다. SFT와 preference training은 학습 목적·데이터 신호의 구분이다. 서로 배타적인 다섯 선택지가 아니므로, 예를 들어 SFT를 QLoRA 방식으로 수행할 수 있다. [PEFT quantization](https://huggingface.co/docs/peft/developer_guides/quantization), [TRL SFT Trainer](https://huggingface.co/docs/trl/sft_trainer)
 
 ---
 
@@ -184,6 +194,10 @@ Serving Quantization
 
 Serving Quantization은 AI Serving / Platform Engineer와 함께 판단할 수 있다.
 
+**Quantization과 운영 성능**
+
+학습용 양자화와 serving용 양자화는 목적뿐 아니라 지원 kernel·hardware·format도 확인해야 한다. 낮은 정밀도가 항상 더 낮은 latency나 비용을 보장하는 것은 아니다. 권고: 같은 평가 조건과 실제 목표 GPU에서 품질, TTFT/TPOT, throughput, memory를 함께 측정한다. [vLLM quantization 지원표](https://docs.vllm.ai/en/latest/features/quantization/)
+
 ---
 
 ## 8.7 Evaluation
@@ -238,21 +252,10 @@ Retraining
 
 <!-- SOURCE CORE END -->
 
-## 원문 절별 보완과 적용 조건
+## 핵심 정리
 
-2026-10-05에 공식 문서를 확인했다. 다음은 원문 밖의 보완이며 실제 모델 학습·평가 결과가 아니다.
+학습 방법, 데이터와 평가 기준을 함께 기록해야 개선을 설명할 수 있다. 모델 산출물은 플랫폼의 호환성과 운영 조건을 확인한 뒤 넘긴다.
 
-### 8.4: Training 방법의 분류축
-
-Full Fine-Tuning과 LoRA는 주로 어떤 파라미터를 학습하는지의 차이이며, QLoRA는 양자화한 base model과 LoRA 학습을 결합한다. SFT와 preference training은 학습 목적·데이터 신호의 구분이다. 서로 배타적인 다섯 선택지가 아니므로, 예를 들어 SFT를 QLoRA 방식으로 수행할 수 있다. [PEFT quantization](https://huggingface.co/docs/peft/developer_guides/quantization), [TRL SFT Trainer](https://huggingface.co/docs/trl/sft_trainer)
-
-### 8.3·8.5·8.7–8.8: 비교에 쓴 데이터와 독립 평가
-
-Hyperparameter와 모델 선택에 반복 사용한 데이터는 선택 과정에 영향을 준다. Golden이라는 이름만으로 독립적인 최종 평가가 보장되지 않는다. 권고: 반복 회귀 검사에 쓰는 고정 suite와 최종 선택 후 확인하는 미사용 holdout을 구분한다. 실패 유형에서 일반적인 학습 과제를 찾되, 최종 평가 정답을 training으로 복사하지 않는다. 같은 사례를 반복 확인하며 선택한 성능과 새 사례에 대한 성능을 구분한다. [교차검증과 test set 분리](https://scikit-learn.org/stable/modules/cross_validation.html)
-
-### 8.6–8.7: Quantization과 운영 성능
-
-학습용 양자화와 serving용 양자화는 목적뿐 아니라 지원 kernel·hardware·format도 확인해야 한다. 낮은 정밀도가 항상 더 낮은 latency나 비용을 보장하는 것은 아니다. 권고: 같은 평가 조건과 실제 목표 GPU에서 품질, TTFT/TPOT, throughput, memory를 함께 측정한다. [vLLM quantization 지원표](https://docs.vllm.ai/en/latest/features/quantization/)
 
 ## 관련 내용
 

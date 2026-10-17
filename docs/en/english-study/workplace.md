@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### X depends on Y {#workplace-depends-on}
 
-**61 occurrences · 28 documents · neutral**
+**63 occurrences · 29 documents · neutral**
 
 **X는 Y에 따라 달라진다**
 
@@ -30,7 +30,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### X does not mean Y {#workplace-does-not-mean}
 
-**46 occurrences · 32 documents · neutral**
+**47 occurrences · 32 documents · neutral**
 
 **X라고 해서 Y라는 뜻은 아니다**
 
@@ -46,7 +46,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### For example, ... {#workplace-for-example}
 
-**39 occurrences · 20 documents · neutral**
+**38 occurrences · 20 documents · neutral**
 
 **예를 들어 ...**
 
@@ -94,7 +94,7 @@ Example source pages: [data-platform/ai-ready-data](../data-platform/ai-ready-da
 
 ### Check whether ... {#workplace-check-whether}
 
-**15 occurrences · 12 documents · neutral**
+**16 occurrences · 13 documents · neutral**
 
 **...인지 확인하다**
 
@@ -123,22 +123,6 @@ Compare designs or measurements under matching criteria. Make sure the sentence 
 Counted forms: compared with.
 
 Example source pages: [ai-model-development/qlora-artifacts](../ai-model-development/qlora-artifacts.md), [data-platform/data-observability](../data-platform/data-observability.md), [data-platform/lakehouse-iceberg](../data-platform/lakehouse-iceberg.md).
-
-### The goal is to ... {#workplace-goal-is}
-
-**4 occurrences · 4 documents · neutral**
-
-**목표는 ...하는 것이다**
-
-State the purpose before explaining the implementation. Use a base-form verb after to.
-
-> The goal is to reduce recovery time without losing acknowledged writes.
->
-> 목표는 성공 응답을 보낸 쓰기를 잃지 않으면서 복구 시간을 줄이는 것이다.
-
-Counted forms: the goal is to.
-
-Example source pages: [data-platform/platform-comparison](../data-platform/platform-comparison.md), [platform-infrastructure/architecture](../platform-infrastructure/architecture.md), [platform-infrastructure/developer-platform](../platform-infrastructure/developer-platform.md).
 
 ### From a platform perspective, ... {#workplace-platform-perspective}
 
@@ -171,6 +155,22 @@ Limit a decision to the conditions just described. Make those conditions clear i
 Counted forms: in this case.
 
 Example source pages: [platform-infrastructure/developer-platform](../platform-infrastructure/developer-platform.md), [platform-infrastructure/kubernetes-operations](../platform-infrastructure/kubernetes-operations.md).
+
+### The goal is to ... {#workplace-goal-is}
+
+**3 occurrences · 3 documents · neutral**
+
+**목표는 ...하는 것이다**
+
+State the purpose before explaining the implementation. Use a base-form verb after to.
+
+> The goal is to reduce recovery time without losing acknowledged writes.
+>
+> 목표는 성공 응답을 보낸 쓰기를 잃지 않으면서 복구 시간을 줄이는 것이다.
+
+Counted forms: the goal is to.
+
+Example source pages: [data-platform/platform-comparison](../data-platform/platform-comparison.md), [platform-infrastructure/architecture](../platform-infrastructure/architecture.md), [platform-infrastructure/developer-platform](../platform-infrastructure/developer-platform.md).
 
 ### One possible cause is ... {#workplace-possible-cause}
 

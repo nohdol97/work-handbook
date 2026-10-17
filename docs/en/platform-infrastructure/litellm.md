@@ -18,11 +18,15 @@ knowledge_ids:
 
 # Chapter 8. LiteLLM
 
-These are study notes from the supplied Basic Chapter 8. They do not claim that a gateway was deployed, GPUs were operated, or an external provider was called. See [Platform and infrastructure study scope](index.md) and [Kubernetes core](kubernetes-core.md) for related material.
+The configurations and commands are study examples, not results of a deployment or failure test.
+
+Related: [Platform and infrastructure study scope](index.md)
 
 <!-- SOURCE CORE START -->
 
 ## 8.1 LiteLLM’s role
+
+A LiteLLM Gateway is like a switchboard between model providers. Routing a request and processing it quickly on a model server are different concerns.
 
 LiteLLM is an LLM gateway placed in front of multiple LLM providers and vLLM.
 
@@ -64,6 +68,10 @@ LiteLLM
 = Gateway / Control Layer
 ```
 
+**Gateway and actual request paths**
+
+LiteLLM provides a Python SDK and a gateway (proxy). This chapter focuses on gateway deployment. The diagram in 8.10 must not imply that external LLM calls pass through local `vLLM → GPU`. Self-hosted pools route to their vLLM deployments; external providers route to their APIs. The nine source steps are explanatory, and actual paths vary by endpoint and configuration. [LiteLLM request architecture](https://docs.litellm.ai/docs/proxy/architecture)
+
 ---
 
 ## 8.2 Provider Routing
@@ -102,6 +110,10 @@ Custom
 ### Session Affinity
 
 Requests in the same conversation can keep going to the same backend when possible.
+
+**Routing and session affinity**
+
+Having several criteria does not mean all are optimized automatically at once. Check the chosen routing strategy and its observations. Session affinity needs explicit configuration and a consistent session ID. Check shared storage when gateway replicas need to share a pin. An unhealthy backend can cause another route to be selected. Affinity does not replace conversation storage or model state replication. [LiteLLM routing](https://docs.litellm.ai/docs/routing)
 
 ---
 
@@ -199,6 +211,10 @@ Fallback
 = Another backend / model / provider
 ```
 
+**fallback has a separate permission boundary**
+
+The external-provider fallback in the source is a feature example, not permission to transmit data externally. Review allowed data transfers, context windows, tool formats, response quality, and cost limits first. Retries and fallbacks across multiple layers can multiply attempts. Set an overall deadline and attempt budget. These operational checks are derived from the source’s retry storm and provider switching examples.
+
 ---
 
 ## 8.5 Rate Limiting
@@ -240,6 +256,12 @@ Autoscaling
 Rate Limiting
 = Limit incoming load
 ```
+
+**prerequisites for limits and authentication**
+
+RPM/TPM, concurrency, cumulative token quotas, and monetary budgets are different policies. Do not assume that every version has the same built-in option for the source’s daily/monthly token quotas. Check supported fields, accounting periods, enforcement, resets, and over-limit requests. Current budget documentation requires database-backed spend checks; do not expect the same budget blocking in a DB-less deployment. [LiteLLM budgets and rate limits](https://docs.litellm.ai/docs/proxy/users)
+
+An API key identifies a caller; allowed models and team policies still need configuration. `<API_KEY>` is a placeholder, not a real credential. SSO/IAM is not one feature that automatically covers every kind of request authentication. First identify the required login, API authentication, or cloud access scope and check the relevant version and product tier.
 
 ---
 
@@ -361,6 +383,12 @@ GPU usage ↓
 External API costs ↓
 Throughput headroom ↑
 ```
+
+**Caching and shared state**
+
+Enable the response cache explicitly. Exact caching depends on request cache keys; semantic caching depends on embeddings and a similarity threshold. Similar meaning does not imply the same permissions, conversation, or tool state. Validate cache keys, tenant isolation, TTL/invalidation, and incorrect hits. Also distinguish response caching from provider prompt caching. [LiteLLM caching](https://docs.litellm.ai/docs/proxy/caching)
+
+A stateless gateway does not make the whole platform stateless. Current deployment documentation uses PostgreSQL for keys, teams, usage, and configuration, and Redis for cross-replica limit counters, router state, and caches. More gateway replicas do not automatically add shared-state or GPU capacity. [LiteLLM production deployment](https://docs.litellm.ai/docs/proxy/deploy)
 
 ---
 
@@ -495,6 +523,10 @@ GPU Utilization 100%
 → Insufficient compute capacity
 ```
 
+**metrics are clues to bottlenecks**
+
+`CPU 100%`, a growing queue, insufficient GPU memory, and GPU utilization are not a definitive cause table. Also inspect the observation window, input/output lengths, cache hits, retries, backend latency, and GPU memory configuration. For example, a growing queue warrants checking long requests or routing skew as well as serving capacity. This is a diagnostic principle applied to the source’s examples, not an actual performance measurement.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -511,53 +543,15 @@ LiteLLM routes requests to model providers. Distinguish routing, authentication,
 === "한국어"
 
     ```text {.prompt}
-    Gateway 지연·오류·사용액 증가 때 routing·retry·cache 설정과 backend 병목을 검토한다.
-    요청 경로를 Gateway·공유 저장소·내부 vLLM 또는 외부 API로 나누고 지연·중복 시도·비용 증가의 원인 후보를 비교하라. rate limit·concurrency·budget과 Gateway·GPU capacity를 구분하라.
-    경로 / 관측 / 원인 가설 / 반증 조회 / 다음 조치 표와 설정 PR 검토 의견을 작성하라. retry 전체 예산, session affinity 공유, cache tenant 경계·정확성, 기능별 버전·라이선스 조건을 확인하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    LiteLLM Gateway의 지연·오류·비용이 늘었어. 요청 trace와 routing·retry·cache 설정을 보고 Gateway, 공유 저장소, 내부 vLLM, 외부 API 중 병목 후보를 구분해 줘. 비밀값을 출력하거나 설정을 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review routing, retries, caching, and backend bottlenecks when gateway latency, errors, or spend increase.
-    Split the request path into gateway, shared storage, and internal vLLM or external API. Compare causes of latency, repeated attempts, and increased cost. Distinguish rate limits, concurrency, and budgets, and gateway capacity from GPU capacity.
-    Produce a table: path / observation / hypothesis / falsifying check / next step, plus configuration PR comments. Check total retry budgets, shared session affinity, cache tenant boundaries and correctness, and feature version/license conditions.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    LiteLLM Gateway latency, errors, and cost increased. Use request traces and routing, retry, and cache settings to separate gateway, shared-store, internal vLLM, and external API bottlenecks. Do not reveal secrets or change settings.
     ```
 
-**Key point:** A bottleneck/cost evidence table by gateway, store, router, and backend, plus retry, limit, and cache configuration PR comments. It may propose gateway scaling to solve a GPU queue or enable external fallback and semantic caching without evidence. Link total attempts, trace spans, and token costs for the same requests, and verify budget storage, cache isolation, and fallback approval. Recheck claims that gateway scaling alone resolves a backend queue. This is an authored work example, not a verified model result or measured improvement.
+**Key point:** A bottleneck/cost evidence table by gateway, store, router, and backend, plus retry, limit, and cache configuration PR comments. It may propose gateway scaling to solve a GPU queue or enable external fallback and semantic caching without evidence. Link total attempts, trace spans, and token costs for the same requests, and verify budget storage, cache isolation, and fallback approval. Recheck claims that gateway scaling alone resolves a backend queue.
 
 Related: [Kubernetes core](kubernetes-core.md)
-
-## Section supplements and corrections
-
-Official documentation was checked on 2026-10-01. LiteLLM documentation changes over time. Check the deployed version, configuration, and license before use. These conditions are outside the source and are not results of running these features here.
-
-### 8.1 and 8.10 Correction: gateway and actual request paths
-
-LiteLLM provides a Python SDK and a gateway (proxy). This chapter focuses on gateway deployment. The diagram in 8.10 must not imply that external LLM calls pass through local `vLLM → GPU`. Self-hosted pools route to their vLLM deployments; external providers route to their APIs. The nine source steps are explanatory, and actual paths vary by endpoint and configuration. [LiteLLM request architecture](https://docs.litellm.ai/docs/proxy/architecture)
-
-### 8.2 and 8.3 Supplement: routing and session affinity
-
-Having several criteria does not mean all are optimized automatically at once. Check the chosen routing strategy and its observations. Session affinity needs explicit configuration and a consistent session ID. Check shared storage when gateway replicas need to share a pin. An unhealthy backend can cause another route to be selected. Affinity does not replace conversation storage or model state replication. [LiteLLM routing](https://docs.litellm.ai/docs/routing)
-
-### 8.4 Supplement: fallback has a separate permission boundary
-
-The external-provider fallback in the source is a feature example, not permission to transmit data externally. Review allowed data transfers, context windows, tool formats, response quality, and cost limits first. Retries and fallbacks across multiple layers can multiply attempts. Set an overall deadline and attempt budget. These operational checks are derived from the source’s retry storm and provider switching examples.
-
-### 8.5–8.7 Supplement: prerequisites for limits and authentication
-
-RPM/TPM, concurrency, cumulative token quotas, and monetary budgets are different policies. Do not assume that every version has the same built-in option for the source’s daily/monthly token quotas. Check supported fields, accounting periods, enforcement, resets, and over-limit requests. Current budget documentation requires database-backed spend checks; do not expect the same budget blocking in a DB-less deployment. [LiteLLM budgets and rate limits](https://docs.litellm.ai/docs/proxy/users)
-
-An API key identifies a caller; allowed models and team policies still need configuration. `<API_KEY>` is a placeholder, not a real credential. SSO/IAM is not one feature that automatically covers every kind of request authentication. First identify the required login, API authentication, or cloud access scope and check the relevant version and product tier.
-
-### 8.8 and 8.9 Supplement: caching and shared state
-
-Enable the response cache explicitly. Exact caching depends on request cache keys; semantic caching depends on embeddings and a similarity threshold. Similar meaning does not imply the same permissions, conversation, or tool state. Validate cache keys, tenant isolation, TTL/invalidation, and incorrect hits. Also distinguish response caching from provider prompt caching. [LiteLLM caching](https://docs.litellm.ai/docs/proxy/caching)
-
-A stateless gateway does not make the whole platform stateless. Current deployment documentation uses PostgreSQL for keys, teams, usage, and configuration, and Redis for cross-replica limit counters, router state, and caches. More gateway replicas do not automatically add shared-state or GPU capacity. [LiteLLM production deployment](https://docs.litellm.ai/docs/proxy/deploy)
-
-### 8.10 Supplement: metrics are clues to bottlenecks
-
-`CPU 100%`, a growing queue, insufficient GPU memory, and GPU utilization are not a definitive cause table. Also inspect the observation window, input/output lengths, cache hits, retries, backend latency, and GPU memory configuration. For example, a growing queue warrants checking long requests or routing skew as well as serving capacity. This is a diagnostic principle applied to the source’s examples, not an actual performance measurement.

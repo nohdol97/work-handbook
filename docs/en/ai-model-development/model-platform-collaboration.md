@@ -11,11 +11,13 @@ knowledge_ids:
 
 # Chapter 9. AI Model Developers and AI Platform Engineers
 
-These notes preserve AI Model / QLoRA Training Basic Chapter 9. They do not claim real model-training or deployment experience.
+The models and settings are study examples, not results of training, evaluation, or deployment.
 
 <!-- SOURCE CORE START -->
 
 ## 9.1 Differences Between the Roles
+
+Handing work from model development to the platform is like passing over both a design and the finished part. A model file alone can omit its base revision, tokenizer, resource needs, and evaluation evidence.
 
 An AI model developer focuses on model quality.
 
@@ -89,6 +91,16 @@ Dataset v13
 Retraining
 ```
 
+**Execution Requests and Deployment Decisions**
+
+`Rank 32` and `3 Epoch` are example request values, not recommended defaults or quality guarantees. Recommendation: identify the exact base model revision, data and configuration versions, resource and cost limits, and evaluation criteria. Distinguish running an evaluation from passing quality criteria and having authority to enter production. Read sections 10.1 and 10.3 of [End-to-end training platform](training-platform-architecture.md) and the approval and capacity boundaries in [Developer platform](../platform-infrastructure/developer-platform.md).
+
+**The Adapter Handoff Contract**
+
+A PEFT adapter checkpoint usually does not include the entire base model. Handing over adapter files alone does not provide a complete serving model. Identify the exact base model revision, adapter configuration and weights, tokenizer and template, and compatible environment together. [PEFT checkpoint format](https://huggingface.co/docs/peft/developer_guides/checkpoint)
+
+Recommendation: model developers record quality criteria, failure categories, and the intent of data changes. Platform owners record artifact links, execution environments, deployment state, and rollback paths. The organization should assign final decision owners for quantization, GPU memory, latency, packaging, and automated evaluation. Do not infer deployment authority from a role title alone.
+
 ---
 
 ## 9.3 Responsibility Boundaries Between Model Developers and the Platform
@@ -121,19 +133,10 @@ These can be decided together.
 
 <!-- SOURCE CORE END -->
 
-## Supplements and Conditions by Source Section
+## Key points
 
-Official documents were checked on 2026-10-05. The source roles and request flow are collaboration examples. They are not an actual organization's approval rules or a record of deployment.
+Model developers provide artifacts and quality evidence; the platform team assesses deployment, capacity, and safety. The handoff must identify versions and owners.
 
-### 9.2: Execution Requests and Deployment Decisions
-
-`Rank 32` and `3 Epoch` are example request values, not recommended defaults or quality guarantees. Recommendation: identify the exact base model revision, data and configuration versions, resource and cost limits, and evaluation criteria. Distinguish running an evaluation from passing quality criteria and having authority to enter production. Read the 10.1 and 10.3 supplements in [End-to-end training platform](training-platform-architecture.md) and the approval and capacity boundaries in [Developer platform](../platform-infrastructure/developer-platform.md).
-
-### 9.2–9.3: The Adapter Handoff Contract
-
-A PEFT adapter checkpoint usually does not include the entire base model. Handing over adapter files alone does not provide a complete serving model. Identify the exact base model revision, adapter configuration and weights, tokenizer and template, and compatible environment together. [PEFT checkpoint format](https://huggingface.co/docs/peft/developer_guides/checkpoint)
-
-Recommendation: model developers record quality criteria, failure categories, and the intent of data changes. Platform owners record artifact links, execution environments, deployment state, and rollback paths. The organization should assign final decision owners for quantization, GPU memory, latency, packaging, and automated evaluation. Do not infer deployment authority from a role title alone.
 
 ## Related Topics
 

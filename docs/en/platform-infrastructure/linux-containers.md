@@ -20,13 +20,13 @@ knowledge_ids:
 
 # Chapter 1. Linux, Networking, Containers
 
-This page records concept study from Chapter 1. `studied` does not mean that Linux, Docker, or Kubernetes was deployed or tested in failure experiments. Commands, the Dockerfile, YAML, IP addresses, PIDs, and numbers are unexecuted examples. Replace `<PID>` and `<pod>` with the intended target. Use termination commands only in an isolated exercise after checking the target and permissions.
-
-The source core below translates Chapter 1 without merging its paragraphs, lists, or examples. Read **Source clarifications and applicability** after the core for simplified or incomplete claims. In particular, check the numbered notes for PID and restarts in 1.1, requests and OOM in 1.2/1.7, standard FDs in 1.3, network isolation and exposure in 1.4/1.6/1.10, PID 1 signals in 1.5, backoff in 1.8/1.9, and storage lifetime in 1.11.
+The configurations and commands are study examples, not results of a deployment or failure test.
 
 <!-- SOURCE CORE START -->
 
 ## 1.1 Linux Process
+
+A container is like a separate room in a building: processes are isolated, but they share the kernel underneath. Diagnose process, resource, file, and network boundaries separately.
 
 In Linux, **process = a running program**.
 
@@ -181,6 +181,36 @@ A zombie has exited, but its parent has not collected the result.
 Process information can be inspected through /proc.
 ```
 
+**PID 1 and graceful shutdown**
+
+PIDs are namespace-specific. A PID namespace's init has special signal rules and reaps orphaned children. Distinguish installing a handler from forwarding signals to children. “PID 1 always ignores SIGTERM” is incorrect. [Linux PID namespaces](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html)
+
+SIGTERM is the usual stop signal in the basic Pod termination model. A `preStop` hook also consumes the grace period. An image `STOPSIGNAL` or supported configuration can change the signal. Processes still running after the deadline are forcibly stopped. CrashLoopBackOff describes restart delay; inspect exit status, previous logs, and events for the cause. [Kubernetes Pod lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
+
+**Restart, FD, and image conditions**
+
+- **1.1:** Whether Kubernetes restarts a container after process exit depends on its restart policy. Exit does not always mean restart.
+- **1.3:** FDs are process-local numbers. `0/1/2` are conventional standard FDs. They can be closed or redirected. Not every process always has three open standard FDs.
+- **1.4 / 1.10:** Listening addresses, port publishing, and firewall policy are separate conditions. Communication on the same network still needs to be allowed by policy. A veth pair is a virtual connection between network namespaces.
+- **1.8:** Containers are usually lighter than VMs, but this does not guarantee actual performance across workloads and implementations.
+- **1.9:** ImagePullBackOff is a waiting state for retries after failed image pulls. A tag alone does not pin image content; a digest identifies the content.
+
+**The overall model**
+
+In practice, inspect the application process, resource control, networking, and storage together. The diagram shows how these parts connect.
+
+```mermaid
+flowchart TD
+    K[Kubernetes resource and lifecycle settings] --> R[Container runtime]
+    I[Image and filesystem] --> R
+    R --> P[Linux application process]
+    N[Namespaces: process view and network] --> P
+    C[cgroups: CPU and memory control] --> P
+    P --> F[Files and sockets via file descriptors]
+    P --> S[Signals and exit status]
+    S --> O[Observe logs, limits and restart policy]
+```
+
 ---
 
 ## 1.2 CPU / Memory
@@ -319,6 +349,12 @@ Kubernetes memory limit exceeded
 Kubernetes CPU limit exceeded
 → CPU throttling
 ```
+
+**Resource requests, limits, and exit causes**
+
+The source describes a request as the minimum resource amount desired. Treat it as an input to scheduling, not preallocated RAM or a ceiling on actual use. CPU limits commonly throttle; memory enforcement is reactive. Host free memory from `free -h` cannot rule out a container memory limit issue. [Kubernetes resource management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+
+In cgroup v2, reaching `memory.max` without reclaiming memory can trigger OOM handling in that cgroup. It does not mean every brief excess immediately kills the whole Pod. The source's `2GB` and YAML `2Gi` use different units. [Linux cgroup v2](https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html)
 
 ---
 
@@ -459,6 +495,18 @@ In operations,
 ulimit / lsof / /proc/<PID>/fd
 inspect these.
 ```
+
+**Images, cache, storage, and command limits**
+
+`python:3.12` is the source's example tag, not a tested version. `sha256:abc123...` is an abbreviated, unusable digest. Changes to `COPY . .` can invalidate the later `RUN pip install` cache. Consider copying less frequently changed dependency inputs first. [Docker build cache](https://docs.docker.com/build/cache/invalidation/)
+
+The source's image configuration and `COPY . .` are not permission to package secrets. Exclude sensitive files from the build context. Do not persist secrets in Dockerfile `ARG` or `ENV`; use build secret mounts. [Docker build secrets](https://docs.docker.com/build/building/secrets/)
+
+Deleting a writable layer differs from stopping and starting the same Docker container. A volume's separate lifetime does not guarantee a backup. [Docker storage](https://docs.docker.com/engine/storage/)
+
+A writable bind mount can change host files. Consider read-only mounts for paths that only need reads. [Docker bind mounts](https://docs.docker.com/engine/storage/bind-mounts/)
+
+`ulimit -n` shows the current shell's limit, which may differ from a service process's limit. `1024` is an example, not a fixed default. `/proc`, `lsof`, and `ss` output depends on permissions and namespaces. `kill` changes state; it is not an observation command. An exit code alone cannot establish OOM or a particular signal as the cause.
 
 ---
 
@@ -628,6 +676,18 @@ Routing = the path a packet takes
 CIDR = network range
 NAT = IP/port translation
 ```
+
+**Network addresses, isolation, and exposure**
+
+“IP equals machine; port equals program” is a beginner's model. An IP identifies an address/interface, while a port helps identify a transport endpoint. Protocol and namespace matter too. HTTP and DNS are common examples, not exclusive transport rules. UDP is not always faster. `127.0.0.1` is loopback in the current network namespace. A `0.0.0.0` bind listens on all local IPv4 interfaces.
+
+`docker run -p 8080:80 nginx` omits the host address and can expose the port on all host interfaces. The example below narrows a local exercise. Also check firewall rules, direct routing, and Docker version. Before Docker 28.0.0, another host on the same L2 network could reach ports published to localhost. [Docker port publishing](https://docs.docker.com/engine/network/port-publishing/)
+
+```bash
+docker run -p 127.0.0.1:8080:80 nginx
+```
+
+Separate network namespaces allow reuse of port numbers. Containers in a Pod normally share a network namespace; each container does not receive a separate Pod IP. Bridge/veth/NAT is one common model; host networking and other modes can differ. Kernel sharing refers to the Linux host. If Docker runs in a VM, distinguish that Linux host from the user's OS. containerd→runc is also a representative implementation, not a requirement for every Kubernetes setup. [Docker run modes](https://docs.docker.com/engine/containers/run/), [Kubernetes Pods](https://kubernetes.io/docs/concepts/workloads/pods/)
 
 ---
 
@@ -1663,83 +1723,13 @@ A container is an isolated process. Separate image, process, filesystem, and net
 === "한국어"
 
     ```text {.prompt}
-    API 지연과 컨테이너 재시작이 함께 증가했을 때 첫 장애 조사와 담당 계층 분류에 사용한다.
-    CPU throttling, cgroup OOM, FD 누수, bind/DNS 문제를 비교하라. exit 137만으로 OOM을 확정하지 말고 PID·network namespace와 실제 프로세스 한도를 구분하라.
-    장애 타임라인과 가설 / 지지·반박 증거 / 다음 읽기 전용 확인 / 기대 관측값 / 담당 계층 표를 작성하라. 재시작·limit 변경·kill 후보는 영향과 중단 조건을 별도 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    API 지연과 컨테이너 재시작이 함께 늘었어. 읽기 전용 지표와 로그로 CPU throttling, OOM, FD 누수, bind·DNS 문제를 구분해 줘. exit 137만으로 OOM을 확정하거나 프로세스를 종료하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Use this for initial incident triage when API latency and container restarts increase together.
-    Compare CPU throttling, cgroup OOM, FD leaks, and bind/DNS failures. Do not infer OOM from exit 137 alone. Distinguish PID/network namespaces and actual process limits.
-    Produce an incident timeline and a table: hypothesis / evidence for and against / next read-only check / expected signal / responsible layer. List the impact and stop conditions separately for any restart, limit change, or kill proposal.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    API latency and container restarts rose together. Use read-only metrics and logs to distinguish CPU throttling, OOM, file-descriptor leaks, and bind or DNS faults. Do not infer OOM from exit 137 alone or kill a process.
     ```
 
-**Key point:** A latency/restart timeline, evidence and responsible layers for CPU/OOM/FD/network hypotheses, and ordered next checks. It may confuse host free memory with container capacity or recommend restarts and scaling from one metric. Check that exit reasons, previous logs, and resource graphs share timestamps and namespaces. Reject an answer that rules out container OOM using host memory alone. This is an authored work example, not a verified model result or measured improvement.
-
-## Source clarifications and applicability
-
-Official documents checked: 2026-09-27. These notes clarify the concepts. They do not claim execution tests or guarantee a particular installed version. Check the actual kernel, runtime, network mode, and Kubernetes configuration.
-
-### 1.2 / 1.7 / 1.12 Resource requests, limits, and exit causes
-
-The source describes a request as the minimum resource amount desired. Treat it as an input to scheduling, not preallocated RAM or a ceiling on actual use. CPU limits commonly throttle; memory enforcement is reactive. Host free memory from `free -h` cannot rule out a container memory limit issue. [Kubernetes resource management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
-
-In cgroup v2, reaching `memory.max` without reclaiming memory can trigger OOM handling in that cgroup. It does not mean every brief excess immediately kills the whole Pod. The source's `2GB` and YAML `2Gi` use different units. [Linux cgroup v2](https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html)
-
-### 1.1 / 1.5 / 1.8 PID 1 and graceful shutdown
-
-PIDs are namespace-specific. A PID namespace's init has special signal rules and reaps orphaned children. Distinguish installing a handler from forwarding signals to children. “PID 1 always ignores SIGTERM” is incorrect. [Linux PID namespaces](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html)
-
-SIGTERM is the usual stop signal in the basic Pod termination model. A `preStop` hook also consumes the grace period. An image `STOPSIGNAL` or supported configuration can change the signal. Processes still running after the deadline are forcibly stopped. CrashLoopBackOff describes restart delay; inspect exit status, previous logs, and events for the cause. [Kubernetes Pod lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
-
-### 1.4 / 1.6 / 1.8 / 1.10 Network addresses, isolation, and exposure
-
-“IP equals machine; port equals program” is a beginner's model. An IP identifies an address/interface, while a port helps identify a transport endpoint. Protocol and namespace matter too. HTTP and DNS are common examples, not exclusive transport rules. UDP is not always faster. `127.0.0.1` is loopback in the current network namespace. A `0.0.0.0` bind listens on all local IPv4 interfaces.
-
-`docker run -p 8080:80 nginx` omits the host address and can expose the port on all host interfaces. The example below narrows a local exercise. Also check firewall rules, direct routing, and Docker version. Before Docker 28.0.0, another host on the same L2 network could reach ports published to localhost. [Docker port publishing](https://docs.docker.com/engine/network/port-publishing/)
-
-```bash
-docker run -p 127.0.0.1:8080:80 nginx
-```
-
-Separate network namespaces allow reuse of port numbers. Containers in a Pod normally share a network namespace; each container does not receive a separate Pod IP. Bridge/veth/NAT is one common model; host networking and other modes can differ. Kernel sharing refers to the Linux host. If Docker runs in a VM, distinguish that Linux host from the user's OS. containerd→runc is also a representative implementation, not a requirement for every Kubernetes setup. [Docker run modes](https://docs.docker.com/engine/containers/run/), [Kubernetes Pods](https://kubernetes.io/docs/concepts/workloads/pods/)
-
-### 1.3 / 1.9 / 1.11 / 1.12 Images, cache, storage, and command limits
-
-`python:3.12` is the source's example tag, not a tested version. `sha256:abc123...` is an abbreviated, unusable digest. Changes to `COPY . .` can invalidate the later `RUN pip install` cache. Consider copying less frequently changed dependency inputs first. [Docker build cache](https://docs.docker.com/build/cache/invalidation/)
-
-The source's image configuration and `COPY . .` are not permission to package secrets. Exclude sensitive files from the build context. Do not persist secrets in Dockerfile `ARG` or `ENV`; use build secret mounts. [Docker build secrets](https://docs.docker.com/build/building/secrets/)
-
-Deleting a writable layer differs from stopping and starting the same Docker container. A volume's separate lifetime does not guarantee a backup. [Docker storage](https://docs.docker.com/engine/storage/)
-
-A writable bind mount can change host files. Consider read-only mounts for paths that only need reads. [Docker bind mounts](https://docs.docker.com/engine/storage/bind-mounts/)
-
-`ulimit -n` shows the current shell's limit, which may differ from a service process's limit. `1024` is an example, not a fixed default. `/proc`, `lsof`, and `ss` output depends on permissions and namespaces. `kill` changes state; it is not an observation command. An exit code alone cannot establish OOM or a particular signal as the cause.
-
-### 1.1 / 1.3 / 1.4 / 1.8–1.10 Additional restart, FD, and image conditions
-
-- **1.1:** Whether Kubernetes restarts a container after process exit depends on its restart policy. Exit does not always mean restart.
-- **1.3:** FDs are process-local numbers. `0/1/2` are conventional standard FDs. They can be closed or redirected. Not every process always has three open standard FDs.
-- **1.4 / 1.10:** Listening addresses, port publishing, and firewall policy are separate conditions. Communication on the same network still needs to be allowed by policy. A veth pair is a virtual connection between network namespaces.
-- **1.8:** Containers are usually lighter than VMs, but this does not guarantee actual performance across workloads and implementations.
-- **1.9:** ImagePullBackOff is a waiting state for retries after failed image pulls. A tag alone does not pin image content; a digest identifies the content.
-
-### 1.1–1.12 Supplemental diagram of the overall model
-
-In practice, inspect the application process, resource control, networking, and storage together. This supplemental diagram visualizes the relationship separately from the original text diagrams.
-
-```mermaid
-flowchart TD
-    K[Kubernetes resource and lifecycle settings] --> R[Container runtime]
-    I[Image and filesystem] --> R
-    R --> P[Linux application process]
-    N[Namespaces: process view and network] --> P
-    C[cgroups: CPU and memory control] --> P
-    P --> F[Files and sockets via file descriptors]
-    P --> S[Signals and exit status]
-    S --> O[Observe logs, limits and restart policy]
-```
+**Key point:** A latency/restart timeline, evidence and responsible layers for CPU/OOM/FD/network hypotheses, and ordered next checks. It may confuse host free memory with container capacity or recommend restarts and scaling from one metric. Check that exit reasons, previous logs, and resource graphs share timestamps and namespaces. Reject an answer that rules out container OOM using host memory alone.

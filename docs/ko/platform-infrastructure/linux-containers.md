@@ -20,13 +20,13 @@ knowledge_ids:
 
 # Chapter 1. Linux, Networking, Containers
 
-제공된 Chapter 1의 개념 학습을 정리했다. `studied`는 Linux·Docker·Kubernetes를 실제 구축하거나 장애 실험했다는 뜻이 아니다. 명령, Dockerfile, YAML, IP, PID와 수치는 설명용이며 실행하지 않았다. `<PID>`와 `<pod>`는 실제 대상에 맞춰 바꿀 자리표시자다. 종료 명령은 대상과 권한을 확인한 격리 실습에서만 사용한다.
-
-아래 원문 본문은 제공된 1장의 문장·번호·목록·예시를 그대로 보존했다. 단순화되거나 조건이 빠진 설명은 본문 뒤 **원문 보완과 적용 조건**을 함께 읽는다. 특히 1.1의 PID·재시작, 1.2/1.7의 request·OOM, 1.3의 표준 FD, 1.4/1.6/1.10의 네트워크 격리·노출, 1.5의 PID 1 신호, 1.8/1.9의 backoff, 1.11의 저장소 수명은 해당 절 번호의 보완을 먼저 확인한다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 1.1 Linux Process
+
+컨테이너는 건물의 독립된 방처럼 프로세스를 격리하지만 커널이라는 기반은 공유한다. 문제를 볼 때 프로세스, 자원 제한, 파일과 네트워크 경계를 구분한다.
 
 Linux에서 **Process = 실행 중인 프로그램**이다.
 
@@ -181,6 +181,36 @@ Zombie는 종료됐지만 부모가 회수하지 않은 Process다.
 /proc에서 Process 정보를 확인할 수 있다.
 ```
 
+**PID 1과 graceful shutdown**
+
+PID는 namespace별 식별자다. PID namespace의 init은 특별한 signal 규칙을 가지며 고아 자식의 종료 결과를 회수하는 역할도 한다. handler 등록과 자식에게 signal 전달 여부를 구분한다. “PID 1이면 모든 SIGTERM을 무시한다”는 일반화는 틀리다. [Linux PID namespaces](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html)
+
+Pod 종료 모형의 SIGTERM은 보통의 stop signal이다. `preStop` hook도 유예 시간 안에서 실행되며 이미지의 `STOPSIGNAL` 또는 지원되는 설정이 signal을 바꿀 수 있다. 시간 안에 끝나지 않으면 강제 종료된다. CrashLoopBackOff는 반복 재시작의 대기 상태이며 원인은 exit code·이전 로그·이벤트로 확인한다. [Kubernetes Pod lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
+
+**재시작·FD·이미지의 적용 조건**
+
+- **1.1:** 프로세스 종료 뒤 재시작 여부는 Kubernetes의 restart policy에 달려 있다. 종료가 모든 경우에 재시작을 뜻하지는 않는다.
+- **1.3:** FD는 프로세스별 번호다. `0/1/2`는 관례적인 표준 FD이며 닫거나 다른 대상으로 돌릴 수 있다. 모든 프로세스가 항상 열린 표준 FD 세 개를 가진다는 뜻은 아니다.
+- **1.4 / 1.10:** listen 주소, port 게시, 방화벽 정책은 별개의 조건이다. 같은 network에서도 정책이 통신을 허용해야 한다. veth pair는 network namespace를 연결하는 가상 연결로 이해한다.
+- **1.8:** 컨테이너가 보통 VM보다 가볍다는 설명은 workload와 구현에 따른 실제 성능 차이를 보장하지 않는다.
+- **1.9:** ImagePullBackOff는 image pull 실패 후 재시도를 기다리는 상태다. Tag만으로 image content가 고정되지는 않으며 digest가 content를 식별한다.
+
+**전체 관계를 보는 보조 그림**
+
+실무에서는 애플리케이션 프로세스, 자원 제어, 네트워크, 저장소를 함께 본다. 아래 그림은 그 관계를 한눈에 보여 준다.
+
+```mermaid
+flowchart TD
+    K[Kubernetes resource and lifecycle settings] --> R[Container runtime]
+    I[Image and filesystem] --> R
+    R --> P[Linux application process]
+    N[Namespaces: process view and network] --> P
+    C[cgroups: CPU and memory control] --> P
+    P --> F[Files and sockets via file descriptors]
+    P --> S[Signals and exit status]
+    S --> O[Observe logs, limits and restart policy]
+```
+
 ---
 
 ## 1.2 CPU / Memory
@@ -319,6 +349,12 @@ Kubernetes memory limit 초과
 Kubernetes CPU limit 초과
 → CPU throttling
 ```
+
+**자원 요청, limit와 종료 원인**
+
+원문의 “request = 최소한 확보하고 싶은 자원”은 배치용 요청량으로 이해한다. scheduler가 request를 바탕으로 배치하며 RAM을 미리 할당하지는 않는다. request는 실제 사용량의 상한도 아니다. CPU limit는 보통 throttling, memory limit는 반응적 OOM 집행이다. `free -h`의 호스트 여유만으로 컨테이너 메모리 부족을 배제하지 않는다. [Kubernetes 자원 관리](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+
+cgroup v2의 `memory.max`에 도달해 회수할 수 없으면 해당 cgroup에서 OOM 처리가 일어날 수 있다. “한 번 초과하면 항상 즉시 전체 Pod가 죽는다”는 뜻이 아니다. 예시 `2GB`와 YAML `2Gi`는 서로 다른 단위다. [Linux cgroup v2](https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html)
 
 ---
 
@@ -459,6 +495,18 @@ FD가 계속 쌓이면
 ulimit / lsof / /proc/<PID>/fd
 를 확인한다.
 ```
+
+**이미지·캐시·저장소·명령의 경계**
+
+`python:3.12`는 원문의 예시 tag이며 테스트한 버전이 아니다. 축약된 `sha256:abc123...`는 실행 가능한 digest가 아니다. `COPY . .`가 바뀌면 이후 `RUN pip install` 캐시가 무효화될 수 있다. 변경 빈도가 낮은 의존성 입력을 먼저 복사하는 구조를 검토한다. [Docker build cache](https://docs.docker.com/build/cache/invalidation/)
+
+원문의 Image `Config`와 `COPY . .`를 비밀정보 포함 허가로 해석하지 않는다. build context에서 민감 파일을 제외한다. 비밀을 Dockerfile `ARG`/`ENV`에 남기지 말고 build secret mount를 사용한다. [Docker build secrets](https://docs.docker.com/build/building/secrets/)
+
+writable layer의 삭제는 같은 Docker 컨테이너의 단순 stop/start와 다르다. volume의 별도 수명도 백업을 보장하지 않는다. [Docker storage](https://docs.docker.com/engine/storage/)
+
+bind mount의 기본 쓰기 권한은 host 파일에도 영향을 준다. 읽기만 필요한 경로는 read-only 사용을 검토한다. [Docker bind mounts](https://docs.docker.com/engine/storage/bind-mounts/)
+
+`ulimit -n`은 현재 shell의 한도이며 다른 서비스 프로세스의 실제 한도와 다를 수 있다. `1024`는 예시이지 고정 기본값이 아니다. `/proc`, `lsof`, `ss`의 세부 정보는 권한과 namespace에 따라 달라진다. `kill`은 관찰 명령이 아니라 상태를 바꾼다. exit code 하나만으로 OOM이나 signal 원인을 확정하지 않는다.
 
 ---
 
@@ -628,6 +676,18 @@ Routing = 패킷이 갈 경로
 CIDR = 네트워크 범위
 NAT = IP/Port 변환
 ```
+
+**네트워크 주소·격리·노출 범위**
+
+“IP=장비, port=프로그램”은 입문 모형이다. 정확히는 IP는 주소/interface, port는 transport endpoint 식별에 쓰이며 protocol과 namespace도 고려한다. TCP/UDP의 HTTP·DNS 예시는 흔한 용도이지 모든 transport를 제한하는 규칙이 아니다. UDP가 항상 더 빠른 것도 아니다. `127.0.0.1`은 현재 network namespace의 loopback이고 `0.0.0.0` bind는 모든 로컬 IPv4 interface에서 수신한다는 뜻이다.
+
+`docker run -p 8080:80 nginx`는 host 주소를 생략해 모든 host interface에 공개될 수 있다. 로컬 실습의 범위를 줄이는 예시는 아래와 같다. 실제 방화벽·직접 routing·Docker 버전도 확인한다. Docker 28.0.0 이전에는 localhost 게시도 같은 L2 네트워크의 다른 host에서 접근 가능한 문제가 있었다. [Docker port publishing](https://docs.docker.com/engine/network/port-publishing/)
+
+```bash
+docker run -p 127.0.0.1:8080:80 nginx
+```
+
+별도 network namespace일 때 같은 port 사용이 가능하다. 같은 Pod의 컨테이너는 일반적으로 network namespace를 공유하므로 컨테이너마다 별도 Pod IP가 생기는 것은 아니다. bridge/veth/NAT는 대표 모형이며 host networking 등 모든 모드가 그 경로를 따르지는 않는다. Linux 컨테이너의 kernel 공유는 Linux host 기준이다. VM 위에서 Docker를 쓰는 경우 실제 Linux host와 사용자 OS를 구분한다. containerd→runc도 대표 구현 경로이며 모든 Kubernetes 구성의 필수 경로는 아니다. [Docker 실행 모드](https://docs.docker.com/engine/containers/run/), [Kubernetes Pods](https://kubernetes.io/docs/concepts/workloads/pods/)
 
 ---
 
@@ -1663,83 +1723,13 @@ Container
 === "한국어"
 
     ```text {.prompt}
-    API 지연과 컨테이너 재시작이 함께 증가했을 때 첫 장애 조사와 담당 계층 분류에 사용한다.
-    CPU throttling, cgroup OOM, FD 누수, bind/DNS 문제를 비교하라. exit 137만으로 OOM을 확정하지 말고 PID·network namespace와 실제 프로세스 한도를 구분하라.
-    장애 타임라인과 가설 / 지지·반박 증거 / 다음 읽기 전용 확인 / 기대 관측값 / 담당 계층 표를 작성하라. 재시작·limit 변경·kill 후보는 영향과 중단 조건을 별도 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    API 지연과 컨테이너 재시작이 함께 늘었어. 읽기 전용 지표와 로그로 CPU throttling, OOM, FD 누수, bind·DNS 문제를 구분해 줘. exit 137만으로 OOM을 확정하거나 프로세스를 종료하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Use this for initial incident triage when API latency and container restarts increase together.
-    Compare CPU throttling, cgroup OOM, FD leaks, and bind/DNS failures. Do not infer OOM from exit 137 alone. Distinguish PID/network namespaces and actual process limits.
-    Produce an incident timeline and a table: hypothesis / evidence for and against / next read-only check / expected signal / responsible layer. List the impact and stop conditions separately for any restart, limit change, or kill proposal.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    API latency and container restarts rose together. Use read-only metrics and logs to distinguish CPU throttling, OOM, file-descriptor leaks, and bind or DNS faults. Do not infer OOM from exit 137 alone or kill a process.
     ```
 
-**핵심 사항:** 지연·재시작 타임라인, CPU/OOM/FD/network 가설별 증거와 담당 계층, 다음 확인 순서. host 여유 메모리를 container 여유로 보거나 지표 하나만으로 재시작·증설을 권할 수 있다. exit reason·이전 로그·자원 그래프가 같은 시간대와 namespace를 가리키는지 확인한다. 정상 host 메모리만으로 container OOM 가설을 지운 답변은 되돌린다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다.
-
-## 원문 보완과 적용 조건
-
-공식 문서 확인일: 2026-09-27. 아래는 개념의 적용 범위를 바로잡는 보완이며, 실행 검증이나 특정 설치 버전의 보장은 아니다. 커널·runtime·네트워크 모드·Kubernetes 설정을 실제 환경에서 확인한다.
-
-### 1.2 / 1.7 / 1.12 자원 요청, limit와 종료 원인
-
-원문의 “request = 최소한 확보하고 싶은 자원”은 배치용 요청량으로 이해한다. scheduler가 request를 바탕으로 배치하며 RAM을 미리 할당하지는 않는다. request는 실제 사용량의 상한도 아니다. CPU limit는 보통 throttling, memory limit는 반응적 OOM 집행이다. `free -h`의 호스트 여유만으로 컨테이너 메모리 부족을 배제하지 않는다. [Kubernetes 자원 관리](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
-
-cgroup v2의 `memory.max`에 도달해 회수할 수 없으면 해당 cgroup에서 OOM 처리가 일어날 수 있다. “한 번 초과하면 항상 즉시 전체 Pod가 죽는다”는 뜻이 아니다. 예시 `2GB`와 YAML `2Gi`는 서로 다른 단위다. [Linux cgroup v2](https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html)
-
-### 1.1 / 1.5 / 1.8 PID 1과 graceful shutdown
-
-PID는 namespace별 식별자다. PID namespace의 init은 특별한 signal 규칙을 가지며 고아 자식의 종료 결과를 회수하는 역할도 한다. handler 등록과 자식에게 signal 전달 여부를 구분한다. “PID 1이면 모든 SIGTERM을 무시한다”는 일반화는 틀리다. [Linux PID namespaces](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html)
-
-Pod 종료 모형의 SIGTERM은 보통의 stop signal이다. `preStop` hook도 유예 시간 안에서 실행되며 이미지의 `STOPSIGNAL` 또는 지원되는 설정이 signal을 바꿀 수 있다. 시간 안에 끝나지 않으면 강제 종료된다. CrashLoopBackOff는 반복 재시작의 대기 상태이며 원인은 exit code·이전 로그·이벤트로 확인한다. [Kubernetes Pod lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
-
-### 1.4 / 1.6 / 1.8 / 1.10 네트워크의 주소·격리·노출 범위
-
-“IP=장비, port=프로그램”은 입문 모형이다. 정확히는 IP는 주소/interface, port는 transport endpoint 식별에 쓰이며 protocol과 namespace도 고려한다. TCP/UDP의 HTTP·DNS 예시는 흔한 용도이지 모든 transport를 제한하는 규칙이 아니다. UDP가 항상 더 빠른 것도 아니다. `127.0.0.1`은 현재 network namespace의 loopback이고 `0.0.0.0` bind는 모든 로컬 IPv4 interface에서 수신한다는 뜻이다.
-
-`docker run -p 8080:80 nginx`는 host 주소를 생략해 모든 host interface에 공개될 수 있다. 로컬 실습의 범위를 줄이는 예시는 아래와 같다. 실제 방화벽·직접 routing·Docker 버전도 확인한다. Docker 28.0.0 이전에는 localhost 게시도 같은 L2 네트워크의 다른 host에서 접근 가능한 문제가 있었다. [Docker port publishing](https://docs.docker.com/engine/network/port-publishing/)
-
-```bash
-docker run -p 127.0.0.1:8080:80 nginx
-```
-
-별도 network namespace일 때 같은 port 사용이 가능하다. 같은 Pod의 컨테이너는 일반적으로 network namespace를 공유하므로 컨테이너마다 별도 Pod IP가 생기는 것은 아니다. bridge/veth/NAT는 대표 모형이며 host networking 등 모든 모드가 그 경로를 따르지는 않는다. Linux 컨테이너의 kernel 공유는 Linux host 기준이다. VM 위에서 Docker를 쓰는 경우 실제 Linux host와 사용자 OS를 구분한다. containerd→runc도 대표 구현 경로이며 모든 Kubernetes 구성의 필수 경로는 아니다. [Docker 실행 모드](https://docs.docker.com/engine/containers/run/), [Kubernetes Pods](https://kubernetes.io/docs/concepts/workloads/pods/)
-
-### 1.3 / 1.9 / 1.11 / 1.12 이미지·캐시·저장소·명령의 경계
-
-`python:3.12`는 원문의 예시 tag이며 테스트한 버전이 아니다. 축약된 `sha256:abc123...`는 실행 가능한 digest가 아니다. `COPY . .`가 바뀌면 이후 `RUN pip install` 캐시가 무효화될 수 있다. 변경 빈도가 낮은 의존성 입력을 먼저 복사하는 구조를 검토한다. [Docker build cache](https://docs.docker.com/build/cache/invalidation/)
-
-원문의 Image `Config`와 `COPY . .`를 비밀정보 포함 허가로 해석하지 않는다. build context에서 민감 파일을 제외한다. 비밀을 Dockerfile `ARG`/`ENV`에 남기지 말고 build secret mount를 사용한다. [Docker build secrets](https://docs.docker.com/build/building/secrets/)
-
-writable layer의 삭제는 같은 Docker 컨테이너의 단순 stop/start와 다르다. volume의 별도 수명도 백업을 보장하지 않는다. [Docker storage](https://docs.docker.com/engine/storage/)
-
-bind mount의 기본 쓰기 권한은 host 파일에도 영향을 준다. 읽기만 필요한 경로는 read-only 사용을 검토한다. [Docker bind mounts](https://docs.docker.com/engine/storage/bind-mounts/)
-
-`ulimit -n`은 현재 shell의 한도이며 다른 서비스 프로세스의 실제 한도와 다를 수 있다. `1024`는 예시이지 고정 기본값이 아니다. `/proc`, `lsof`, `ss`의 세부 정보는 권한과 namespace에 따라 달라진다. `kill`은 관찰 명령이 아니라 상태를 바꾼다. exit code 하나만으로 OOM이나 signal 원인을 확정하지 않는다.
-
-### 1.1 / 1.3 / 1.4 / 1.8~1.10 재시작·FD·이미지의 추가 조건
-
-- **1.1:** 프로세스 종료 뒤 재시작 여부는 Kubernetes의 restart policy에 달려 있다. 종료가 모든 경우에 재시작을 뜻하지는 않는다.
-- **1.3:** FD는 프로세스별 번호다. `0/1/2`는 관례적인 표준 FD이며 닫거나 다른 대상으로 돌릴 수 있다. 모든 프로세스가 항상 열린 표준 FD 세 개를 가진다는 뜻은 아니다.
-- **1.4 / 1.10:** listen 주소, port 게시, 방화벽 정책은 별개의 조건이다. 같은 network에서도 정책이 통신을 허용해야 한다. veth pair는 network namespace를 연결하는 가상 연결로 이해한다.
-- **1.8:** 컨테이너가 보통 VM보다 가볍다는 설명은 workload와 구현에 따른 실제 성능 차이를 보장하지 않는다.
-- **1.9:** ImagePullBackOff는 image pull 실패 후 재시도를 기다리는 상태다. Tag만으로 image content가 고정되지는 않으며 digest가 content를 식별한다.
-
-### 1.1~1.12 전체 관계를 보는 보조 그림
-
-실무에서는 애플리케이션 프로세스, 자원 제어, 네트워크, 저장소를 함께 본다. 아래 그림은 원문 text 흐름도와 별도로 이 관계를 시각화한 보완이다.
-
-```mermaid
-flowchart TD
-    K[Kubernetes resource and lifecycle settings] --> R[Container runtime]
-    I[Image and filesystem] --> R
-    R --> P[Linux application process]
-    N[Namespaces: process view and network] --> P
-    C[cgroups: CPU and memory control] --> P
-    P --> F[Files and sockets via file descriptors]
-    P --> S[Signals and exit status]
-    S --> O[Observe logs, limits and restart policy]
-```
+**핵심 사항:** 지연·재시작 타임라인, CPU/OOM/FD/network 가설별 증거와 담당 계층, 다음 확인 순서. host 여유 메모리를 container 여유로 보거나 지표 하나만으로 재시작·증설을 권할 수 있다. exit reason·이전 로그·자원 그래프가 같은 시간대와 namespace를 가리키는지 확인한다. 정상 host 메모리만으로 container OOM 가설을 지운 답변은 되돌린다.

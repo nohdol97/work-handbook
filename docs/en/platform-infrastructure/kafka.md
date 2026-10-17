@@ -14,13 +14,17 @@ knowledge_ids:
 
 # Chapter 6. Kafka for Platform Systems
 
-These are study notes from the supplied Basic Chapter 6. They do not claim that a Kafka cluster was built, reassigned, or restarted. Read [Event architecture](../data-platform/event-architecture.md) for prior concepts and [Kubernetes operations](kubernetes-operations.md) for placement and maintenance.
+The configurations and commands are study examples, not results of a deployment or failure test.
+
+Related: [Event architecture](../data-platform/event-architecture.md)
 
 <!-- SOURCE CORE START -->
 
 > Broker / Topic / Partition / Producer / Consumer / Consumer Group / Offset / Ordering / basic semantics and other Kafka concepts are assumed to have been covered in Data Platform Basic. This chapter covers only Platform / Infrastructure operations.
 
 ## 6.1 Replication / ISR / Leader Election
+
+Kafka resembles a shared append-only log. To plan replay and recovery, know what producers, brokers, and consumers have written and acknowledged.
 
 Key concepts:
 
@@ -95,6 +99,10 @@ Network issues
 Slow disk
 CPU / Broker overload
 ```
+
+**offset examples and leader eligibility**
+
+The source’s `1000 / 999 / 500` illustrates lag. A fixed offset gap alone does not determine ISR membership. Check the removal conditions and actual replica state. Nor is every replica outside the ISR always unsafe. Kafka’s Eligible Leader Replicas (ELR) can provide safe election candidates tracked separately. Check the current ISR, ELR setting/state, and unclean election policy together. [Kafka ELR](https://kafka.apache.org/43/operations/eligible-leader-replicas/)
 
 ---
 
@@ -189,6 +197,10 @@ Disk utilization
 Network utilization
 ```
 
+**the capacity estimate’s scope**
+
+`2.1TB` is a study estimate of total replica data using the source’s inputs. It does not specify one broker’s needs or purchased capacity. For an operational review, measure compressed storage size, retention policy, broker skew, index/segment headroom, recovery/reassignment space, and read/replication traffic. More partitions raise the ceiling for parallelism but do not automatically fix a hot key or slow consumer. These checks are derived from the source’s estimate and partition trade-offs.
+
 ---
 
 ## 6.3 Reliability settings
@@ -246,6 +258,12 @@ Availability ↑
 → Chance of data loss ↑
 ```
 
+**acks=all and minimum ISR**
+
+`acks=all` does not mean waiting for only `min.insync.replicas` replicas. A successful acknowledgment requires the full current ISR. With three ISR members and minimum ISR two, all three are involved. The leader counts toward minimum ISR. With `acks=all`, writes fail below that minimum. Do not assume the same producer acknowledgment guarantee for `acks=1`. Also distinguish the high watermark condition for consumer visibility from producer acknowledgment. [Producer acks](https://kafka.apache.org/43/configuration/producer-configs/), [Topic min.insync.replicas](https://kafka.apache.org/43/configuration/topic-configs/)
+
+This combination alone does not guarantee deduplication or end-to-end exactly-once processing. Producer idempotence, retries, consumer processing, and offset commits need separate review. The `RF=3` example also needs an assessment of failure domains and acceptable write interruptions.
+
 ---
 
 ## 6.4 Security
@@ -289,6 +307,10 @@ Authentication
 ↓ ACL
 Permission check
 ```
+
+**configure security explicitly**
+
+TLS can provide certificate-based authentication as well as encryption. SASL provides authentication and must not be equated with transport encryption. The source flow shows one conceptual combination. Check each listener’s security protocol, authentication method, and authorizer/ACLs. Installing Kafka does not enable all of them. [Kafka security overview](https://kafka.apache.org/43/security/security-overview/)
 
 ---
 
@@ -344,6 +366,10 @@ Are the brokers healthy?
 ```
 
 Check these conditions.
+
+**reassignment and maintenance**
+
+Adding a broker generally does not redistribute existing partitions automatically. Even with automation, check the reassignment plan, target brokers, replication progress, and throttling. A healthy state before maintenance is not enough to proceed to the next broker restart. Check ISR recovery and actual availability after each step. These are conditions for applying the source checklist to an operational plan, not permission to execute it. [Kafka operations](https://kafka.apache.org/43/operations/basic-kafka-operations/)
 
 ---
 
@@ -421,6 +447,12 @@ Kafka
 
 A Kafka operator such as Strimzi can be used.
 
+**StatefulSet and operator boundaries**
+
+StatefulSet is a basic concept for understanding stateful workloads. Do not assume every Kafka operator creates StatefulSets. Current Strimzi manages its own resources, including `StrimziPodSet`. Check the chosen operator version’s resources and storage/rack placement settings. [Strimzi deployment guide](https://strimzi.io/docs/operators/latest/full/deploying.html)
+
+Placing pods on different nodes is also different from placing replicas across zones or failure domains. Having a PVC does not mean backup and recovery tests have been completed. Review placement and disruption conditions alongside [Kubernetes operations](kubernetes-operations.md).
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -437,53 +469,15 @@ Understand Kafka processing guarantees across producer, broker, consumer setting
 === "한국어"
 
     ```text {.prompt}
-    ISR이 감소한 상태에서 broker 유지보수나 partition 재할당을 진행할 수 있는지 판단한다.
-    현재 RF·acks·min.insync.replicas와 ISR로 쓰기 승인·중단 조건을 계산하라. min ISR을 기다릴 replica 수와 혼동하지 말고 한 replica가 더 이탈할 경우를 비교하라.
-    단계 / 쓰기 가용성 / 필요한 증거 / 진행·중단 조건 표와 조사 우선순위를 작성하라. lag 원인, 재할당 throttle·진행률·disk 여유, 재시작 후 ISR 회복과 client 오류 확인을 포함하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    ISR이 줄어든 상태에서 broker 정비 계획을 검토해 줘. 현재 replication factor, acks, min.insync.replicas와 ISR을 기준으로 한 replica가 더 이탈할 때 쓰기 가능 여부를 설명해 줘. 재할당이나 재시작은 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Assess whether broker maintenance or partition reassignment can proceed while ISR is reduced.
-    Use RF, acks, min.insync.replicas, and current ISR to determine write acknowledgment and outage conditions. Do not confuse minimum ISR with the number of replicas to wait for. Compare the loss of one more replica.
-    Produce a table: step / write availability / required evidence / go and stop conditions, plus investigation priorities. Include lag causes, reassignment throttling/progress/disk headroom, ISR recovery after a restart, and client errors.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review broker maintenance while ISR has shrunk. Use the current replication factor, acks, min.insync.replicas, and ISR to explain whether writes survive one more replica loss. Do not reassign partitions or restart brokers.
     ```
 
-**Key point:** A write-availability table for further ISR loss, broker-maintenance go/stop criteria, and checks after reassignment or restart. It may treat an ISR of two as sufficient reserve or hide symptoms by lowering acks or minimum ISR. Recalculate using actual settings and distinguish the full current ISR from minimum ISR. Do not give the next step a go decision without disk and replication-recovery evidence. This is an authored work example, not a verified model result or measured improvement.
+**Key point:** A write-availability table for further ISR loss, broker-maintenance go/stop criteria, and checks after reassignment or restart. It may treat an ISR of two as sufficient reserve or hide symptoms by lowering acks or minimum ISR. Recalculate using actual settings and distinguish the full current ISR from minimum ISR. Do not give the next step a go decision without disk and replication-recovery evidence.
 
 Related: [Kubernetes operations](kubernetes-operations.md)
-
-## Section supplements and corrections
-
-Official documentation was checked on 2026-10-01. These conditions supplement the source. Kafka references use the 4.3 documentation; check the target cluster’s version and feature flags separately.
-
-### 6.1 Supplement: offset examples and leader eligibility
-
-The source’s `1000 / 999 / 500` illustrates lag. A fixed offset gap alone does not determine ISR membership. Check the removal conditions and actual replica state. Nor is every replica outside the ISR always unsafe. Kafka’s Eligible Leader Replicas (ELR) can provide safe election candidates tracked separately. Check the current ISR, ELR setting/state, and unclean election policy together. [Kafka ELR](https://kafka.apache.org/43/operations/eligible-leader-replicas/)
-
-### 6.2 Supplement: the capacity estimate’s scope
-
-`2.1TB` is a study estimate of total replica data using the source’s inputs. It does not specify one broker’s needs or purchased capacity. For an operational review, measure compressed storage size, retention policy, broker skew, index/segment headroom, recovery/reassignment space, and read/replication traffic. More partitions raise the ceiling for parallelism but do not automatically fix a hot key or slow consumer. These checks are derived from the source’s estimate and partition trade-offs.
-
-### 6.3 Correction: acks=all and minimum ISR
-
-`acks=all` does not mean waiting for only `min.insync.replicas` replicas. A successful acknowledgment requires the full current ISR. With three ISR members and minimum ISR two, all three are involved. The leader counts toward minimum ISR. With `acks=all`, writes fail below that minimum. Do not assume the same producer acknowledgment guarantee for `acks=1`. Also distinguish the high watermark condition for consumer visibility from producer acknowledgment. [Producer acks](https://kafka.apache.org/43/configuration/producer-configs/), [Topic min.insync.replicas](https://kafka.apache.org/43/configuration/topic-configs/)
-
-This combination alone does not guarantee deduplication or end-to-end exactly-once processing. Producer idempotence, retries, consumer processing, and offset commits need separate review. The `RF=3` example also needs an assessment of failure domains and acceptable write interruptions.
-
-### 6.4 Supplement: configure security explicitly
-
-TLS can provide certificate-based authentication as well as encryption. SASL provides authentication and must not be equated with transport encryption. The source flow shows one conceptual combination. Check each listener’s security protocol, authentication method, and authorizer/ACLs. Installing Kafka does not enable all of them. [Kafka security overview](https://kafka.apache.org/43/security/security-overview/)
-
-### 6.5 Supplement: reassignment and maintenance
-
-Adding a broker generally does not redistribute existing partitions automatically. Even with automation, check the reassignment plan, target brokers, replication progress, and throttling. A healthy state before maintenance is not enough to proceed to the next broker restart. Check ISR recovery and actual availability after each step. These are conditions for applying the source checklist to an operational plan, not permission to execute it. [Kafka operations](https://kafka.apache.org/43/operations/basic-kafka-operations/)
-
-### 6.6 Supplement: StatefulSet and operator boundaries
-
-StatefulSet is a basic concept for understanding stateful workloads. Do not assume every Kafka operator creates StatefulSets. Current Strimzi manages its own resources, including `StrimziPodSet`. Check the chosen operator version’s resources and storage/rack placement settings. [Strimzi deployment guide](https://strimzi.io/docs/operators/latest/full/deploying.html)
-
-Placing pods on different nodes is also different from placing replicas across zones or failure domains. Having a PVC does not mean backup and recovery tests have been completed. Review placement and disruption conditions alongside [Kubernetes operations](kubernetes-operations.md).

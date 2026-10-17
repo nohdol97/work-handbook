@@ -1,8 +1,8 @@
 ---
 id: platform-terraform-iac
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - PIS4-12-01
   - PIS4-12-02
@@ -18,11 +18,13 @@ knowledge_ids:
 
 # Chapter 12. Terraform & Infrastructure as Code
 
-제공된 학습 원문의 번호·순서·예시를 그대로 보존했다. 12.3–12.5의 State 보안·S3 locking·승인된 Plan 적용 조건과 12.9의 Workspace 격리 한계는 뒤의 별도 보완에서 확인한다. 예시는 실제 인프라 실행 결과가 아니다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 12.1 IaC Fundamentals
+
+Terraform 코드는 인프라 설계도이고 state는 지금까지 만든 것의 대장과 비슷하다. 설계도만 보호해서는 부족하며 state와 plan의 비밀값, 승인된 변경 범위도 지켜야 한다.
 
 Infrastructure as Code(IaC)는 인프라를 콘솔에서 수동으로 만드는 대신 코드로 선언하고 관리하는 방식이다.
 
@@ -198,6 +200,10 @@ State가 사라지면 Terraform은 기존 리소스와의 연결을 잃을 수 �
 
 기존 Resource를 Terraform 관리 대상으로 연결할 때는 `import`를 사용할 수 있다.
 
+**State와 Plan의 민감정보**
+
+State와 저장된 Plan에는 비밀번호 같은 민감정보가 포함될 수 있다. `sensitive = true`는 표시를 숨기는 설정이며 파일에서 값을 제거하지 않는다. State·Plan을 Git이나 공개 CI 로그에 올리지 않고 저장소 접근·암호화·보존 정책을 함께 관리한다. [Terraform sensitive data](https://developer.hashicorp.com/terraform/language/manage-sensitive-data)
+
 ---
 
 ## 12.4 Remote State
@@ -227,6 +233,10 @@ State 저장소에는 다음이 중요하다.
 - Locking
 
 특히 S3 Versioning을 켜두면 State 복구에 도움이 된다.
+
+**S3 locking은 명시적으로 활성화**
+
+S3 backend의 `use_lockfile` 기본값은 `false`다. Remote State를 설정했다는 사실만으로 동시 쓰기가 보호되지는 않는다. 활성화 시 `.tflock` 객체에 필요한 읽기·쓰기·삭제 권한을 확인한다. DynamoDB locking은 공식적으로 deprecated이며, 이행 중에는 두 방식을 함께 설정할 수 있다. State 복구를 위해 bucket versioning도 확인한다. [Terraform S3 backend](https://developer.hashicorp.com/terraform/language/backend/s3)
 
 ---
 
@@ -275,6 +285,10 @@ Apply
 ```
 
 의 Gate가 존재하는 것이다.
+
+**검토한 Plan과 실제 적용**
+
+Plan 파일 없이 `terraform apply`를 실행하면 새 Plan을 만든다. 검토한 변경을 적용하려면 저장한 Plan과 승인 대상을 연결해야 한다. 저장된 Plan을 전달하면 추가 대화형 확인 없이 실행되므로 승인 Gate는 그 앞에 있어야 한다. Apply가 일부 성공한 뒤 실패해도 자동 rollback되지는 않는다. State 복구와 실제 Cloud 변경 복구를 별도로 검토한다. [Terraform apply](https://developer.hashicorp.com/terraform/cli/commands/apply)
 
 ---
 
@@ -467,6 +481,10 @@ separate state
 
 방식이 일반적으로 관리하기 쉽다.
 
+**CLI Workspace와 접근 경계**
+
+여기서 말하는 Workspace는 Terraform CLI의 State workspace다. 별도 자격증명·접근제어가 필요한 배포나 시스템 분해에는 적합하지 않다. 디렉터리만 나누어도 권한이 분리되는 것은 아니므로 backend State 위치와 실행 자격증명을 함께 확인한다. [Terraform workspaces](https://developer.hashicorp.com/terraform/language/state/workspaces)
+
 ---
 
 ## 12.10 Terraform Operations
@@ -515,25 +533,10 @@ State 직접 수정은 위험하므로 가능한 최소화한다.
 
 <!-- SOURCE CORE END -->
 
-## 보완 — State 보호와 실행 경계
+## 핵심 정리
 
-2026-10-05 공식 문서를 확인했다. Terraform 실행·Cloud 변경·State 복구는 수행하지 않았다.
+Terraform 코드와 state·plan을 함께 보호한다. 검토한 plan을 실제 적용할 때도 변경 범위, 승인과 되돌릴 방법을 확인한다.
 
-### 12.3 / 12.4 State와 Plan의 민감정보
-
-State와 저장된 Plan에는 비밀번호 같은 민감정보가 포함될 수 있다. `sensitive = true`는 표시를 숨기는 설정이며 파일에서 값을 제거하지 않는다. State·Plan을 Git이나 공개 CI 로그에 올리지 않고 저장소 접근·암호화·보존 정책을 함께 관리한다. [Terraform sensitive data](https://developer.hashicorp.com/terraform/language/manage-sensitive-data)
-
-### 12.4 S3 locking은 명시적으로 활성화
-
-S3 backend의 `use_lockfile` 기본값은 `false`다. Remote State를 설정했다는 사실만으로 동시 쓰기가 보호되지는 않는다. 활성화 시 `.tflock` 객체에 필요한 읽기·쓰기·삭제 권한을 확인한다. DynamoDB locking은 공식적으로 deprecated이며, 이행 중에는 두 방식을 함께 설정할 수 있다. State 복구를 위해 bucket versioning도 확인한다. [Terraform S3 backend](https://developer.hashicorp.com/terraform/language/backend/s3)
-
-### 12.5 / 12.10 검토한 Plan과 실제 적용
-
-Plan 파일 없이 `terraform apply`를 실행하면 새 Plan을 만든다. 검토한 변경을 적용하려면 저장한 Plan과 승인 대상을 연결해야 한다. 저장된 Plan을 전달하면 추가 대화형 확인 없이 실행되므로 승인 Gate는 그 앞에 있어야 한다. Apply가 일부 성공한 뒤 실패해도 자동 rollback되지는 않는다. State 복구와 실제 Cloud 변경 복구를 별도로 검토한다. [Terraform apply](https://developer.hashicorp.com/terraform/cli/commands/apply)
-
-### 12.9 CLI Workspace와 접근 경계
-
-여기서 말하는 Workspace는 Terraform CLI의 State workspace다. 별도 자격증명·접근제어가 필요한 배포나 시스템 분해에는 적합하지 않다. 디렉터리만 나누어도 권한이 분리되는 것은 아니므로 backend State 위치와 실행 자격증명을 함께 확인한다. [Terraform workspaces](https://developer.hashicorp.com/terraform/language/state/workspaces)
 
 ## 관련 문서
 

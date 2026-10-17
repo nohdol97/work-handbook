@@ -16,11 +16,13 @@ knowledge_ids:
 
 # Chapter 4. Storage & Database
 
-최신 compact 원문의 번호·순서·통합 비교를 보존했다. 4.3–4.4의 EFS 공유·DB 동시 쓰기와 4.5–4.7의 DB 배치·읽기·복제 조건은 뒤의 별도 보완에서 확인한다. 실제 AWS 운영·복구 시험 기록이 아니다.
+예시 구성은 학습용이며 실제 AWS 환경에서 실행한 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 4.1 EBS
+
+저장소 선택은 물건을 개인 사물함, 공동 서가, 거래 장부 중 어디에 둘지 고르는 일과 비슷하다. 데이터의 쓰기 주체, 공유 범위, 장애 복구 요구가 선택을 결정한다.
 
 Block Storage.
 
@@ -101,6 +103,9 @@ Prefix = Bucket 내부 논리적 분류
 ### VPC Endpoint
 Private Subnet에서 NAT 없이 S3 접근에 사용할 수 있다.
 
+
+S3 endpoint가 존재하는 것만으로 접근 권한이 생기지는 않는다. Gateway endpoint의 route table 연결과 endpoint·IAM·bucket policy를 함께 확인한다. [S3 Gateway Endpoint](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html)
+
 ---
 
 ## 4.3 EFS
@@ -130,6 +135,9 @@ Pod 전용 Persistent Disk → EBS
 Dataset / Model / Object → S3
 ```
 
+
+여러 AZ client의 접근과 데이터의 Multi-AZ 저장은 다르다. EFS Regional은 여러 AZ에 저장하고 One Zone은 하나의 AZ에 저장하므로 그 AZ 손실에 대한 내성이 없다. 공유 mount 자체가 동시 쓰기 조정을 제공하지 않으며 file lock은 advisory다. [EFS 유형·일관성](https://docs.aws.amazon.com/efs/latest/ug/features.html)
+
 ---
 
 ## 4.4 PostgreSQL 여러 Pod와 EFS
@@ -158,6 +166,9 @@ Replica
 ```
 
 EFS는 DB 실시간 데이터 디렉터리보다 Shared File / Dump / Export에 더 적합하고, 백업은 S3를 많이 고려한다.
+
+
+경고의 대상은 독립 PostgreSQL 서버들이 동일 `PGDATA`를 동시에 수정하는 구성이다. 모든 NFS 사용을 금지하는 뜻은 아니다. PostgreSQL은 NFS 사용 조건을 별도로 설명한다. 전용 PVC를 나눈 뒤에도 DB replication·failover를 따로 구성해야 한다. [PostgreSQL 파일시스템 조건](https://www.postgresql.org/docs/current/creating-cluster.html), [PostgreSQL 학습](../platform-infrastructure/postgresql.md)
 
 ---
 
@@ -211,6 +222,11 @@ Read Replica = Read Scaling
 Pod 수가 늘면 DB Connection도 증가하므로 Connection Pool 관리가 중요하다.
 필요 시 RDS Proxy를 고려할 수 있다.
 
+
+DB subnet group은 subnet 집합이며 반드시 private만 가능한 것은 아니다. 원문은 private 배치 예시로 읽는다. 실제 공개 여부는 public accessibility·경로·보안 설정도 확인한다. [RDS VPC 배치](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html)
+
+Multi-AZ DB instance의 standby는 읽기를 제공하지 않지만 Multi-AZ DB cluster의 두 standby는 읽기도 제공한다. HA와 read scaling의 구분은 배포 유형별로 적용한다. [RDS Multi-AZ 유형](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html)
+
 ---
 
 ## 4.6 Aurora
@@ -244,6 +260,9 @@ Writer 장애 시 Reader를 새 Writer로 승격할 수 있다.
 
 Aurora가 항상 더 좋은 것은 아니다.
 비용, AWS Lock-in, PostgreSQL Extension/Version 호환성 등을 고려한다.
+
+
+Aurora reader endpoint는 query가 아니라 연결을 분산한다. Reader가 없으면 writer로 연결되며 writer도 읽기를 처리할 수 있다. [Aurora reader endpoint](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Endpoints.Reader.html)
 
 ---
 
@@ -284,6 +303,9 @@ Cache는 stale data 문제가 있으므로 TTL, Delete, Update 정책이 필요�
 
 Redis는 무조건 도입하는 것이 아니라 실제 DB 부하나 Latency 문제가 있을 때 도입하는 것이 좋다.
 
+
+원문의 역할 구분은 일반적인 cache 사용 모델이다. Valkey/Redis OSS의 비동기 복제는 최근 쓰기를 잃을 수 있고 일부 Valkey 구성은 별도 durability를 제공한다. 엔진·버전·설정별 복구 조건을 확인하며 TTL만으로 즉시 정합성을 가정하지 않는다. [ElastiCache 복제 조건](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Replication.html)
+
 ---
 
 ## Chapter 4 통합 비교
@@ -304,6 +326,8 @@ Redis는 무조건 도입하는 것이 아니라 실제 DB 부하나 Latency 문
 
 S3, 블록·파일 스토리지, 데이터베이스와 캐시는 저장 형태, 공유 방식, 읽기 패턴에 맞춰 선택한다.
 
+서비스가 어디에서 실행되는지는 [컴퓨트](compute.md)와 함께 본다.
+
 ## LLM in Practice
 
 **프롬프트:**
@@ -311,33 +335,13 @@ S3, 블록·파일 스토리지, 데이터베이스와 캐시는 저장 형태, 
 === "한국어"
 
     ```text {.prompt}
-    DB 또는 모델 파일 저장소를 바꾸는 설계·PVC PR에서 공유 방식과 복구 조건을 검토한다.
-    현재 설계를 먼저 평가하라. 독립 PostgreSQL 서버의 같은 PGDATA 동시 쓰기와 읽기 중심 모델 파일 공유를 구분하고 전용 volume·DB replication·공유 mount의 책임을 나눠라.
-    데이터 / 접근·동시 writer / 장애 영역 / 위험·근거 / 변경 후보 / 복구 검증 표를 작성하라. 모든 NFS를 금지하지 말고 EFS Regional/One Zone, RDS Multi-AZ 유형, Aurora 연결 분산을 실제 구성에 맞춰 구분하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    DB와 모델 파일 저장소를 바꾸는 설계안을 검토해 줘. PostgreSQL의 같은 PGDATA를 독립 서버가 동시에 쓰는 경우와 읽기 중심 모델 파일 공유를 구분하고, 저장 방식별 복구 조건을 설명해 줘. 실제 스토리지나 DB는 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review sharing and recovery requirements in a design or PVC PR that changes DB or model-file storage.
-    Assess the existing design first. Distinguish independent PostgreSQL servers writing the same PGDATA from sharing mostly read-only model files. Separate dedicated volumes, DB replication, and shared-mount responsibilities.
-    Produce a table: data / access and concurrent writers / failure domain / risk and evidence / proposal / recovery check. Do not ban all NFS use. Distinguish EFS Regional/One Zone, RDS Multi-AZ types, and Aurora connection distribution for the actual setup.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review a proposal to change database and model-file storage. Separate independent PostgreSQL servers writing one PGDATA from sharing mostly read-only model files, and explain recovery requirements for each option. Do not change storage or databases.
     ```
 
-**핵심 사항:** DB·모델 파일별 writer/volume 관계, 장애 영역·정합성 위험, 변경 후보와 RPO/RTO 복원 검증표. 공유 mount를 DB 복제로 보거나 여러 AZ에서 읽을 수 있다는 이유로 One Zone을 AZ 장애에 안전하다고 판단할 수 있다. 동일 PGDATA의 독립 writer 여부와 실제 복제·backup을 확인한다. EFS 유형·DB 배포 유형별 장애/읽기 조건과 모델 파일 갱신의 정합성을 별도로 검증할 수 있어야 한다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다. 관련: [4.3–4.4](#43-efs)
-
-## 별도 보완: 공유·배치·읽기의 조건
-
-공식 문서 확인일: 2026-10-04.
-
-- **4.2:** S3 endpoint가 존재하는 것만으로 접근 권한이 생기지는 않는다. Gateway endpoint의 route table 연결과 endpoint·IAM·bucket policy를 함께 확인한다. [S3 Gateway Endpoint](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html)
-- **4.3:** 여러 AZ client의 접근과 데이터의 Multi-AZ 저장은 다르다. EFS Regional은 여러 AZ에 저장하고 One Zone은 하나의 AZ에 저장하므로 그 AZ 손실에 대한 내성이 없다. 공유 mount 자체가 동시 쓰기 조정을 제공하지 않으며 file lock은 advisory다. [EFS 유형·일관성](https://docs.aws.amazon.com/efs/latest/ug/features.html)
-- **4.4:** 경고의 대상은 독립 PostgreSQL 서버들이 동일 `PGDATA`를 동시에 수정하는 구성이다. 모든 NFS 사용을 금지하는 뜻은 아니다. PostgreSQL은 NFS 사용 조건을 별도로 설명한다. 전용 PVC를 나눈 뒤에도 DB replication·failover를 따로 구성해야 한다. [PostgreSQL 파일시스템 조건](https://www.postgresql.org/docs/current/creating-cluster.html), [PostgreSQL 학습](../platform-infrastructure/postgresql.md)
-- **4.5:** DB subnet group은 subnet 집합이며 반드시 private만 가능한 것은 아니다. 원문은 private 배치 예시로 읽는다. 실제 공개 여부는 public accessibility·경로·보안 설정도 확인한다. [RDS VPC 배치](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html)
-- **4.5:** Multi-AZ DB instance의 standby는 읽기를 제공하지 않지만 Multi-AZ DB cluster의 두 standby는 읽기도 제공한다. HA와 read scaling의 구분은 배포 유형별로 적용한다. [RDS Multi-AZ 유형](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html)
-- **4.6:** Aurora reader endpoint는 query가 아니라 연결을 분산한다. Reader가 없으면 writer로 연결되며 writer도 읽기를 처리할 수 있다. [Aurora reader endpoint](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Endpoints.Reader.html)
-- **4.7:** 원문의 역할 구분은 일반적인 cache 사용 모델이다. Valkey/Redis OSS의 비동기 복제는 최근 쓰기를 잃을 수 있고 일부 Valkey 구성은 별도 durability를 제공한다. 엔진·버전·설정별 복구 조건을 확인하며 TTL만으로 즉시 정합성을 가정하지 않는다. [ElastiCache 복제 조건](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Replication.html)
-
-읽기 순서: 4.1–4.3의 접근 방식을 비교하고 4.4에서 동시 writer의 제약을 확인한다. 4.5–4.7은 저장 장치가 아니라 관리형 데이터 서비스의 역할로 읽는다. [Compute](compute.md)와 배치 관계를 연결한다.
+**핵심 사항:** DB·모델 파일별 writer/volume 관계, 장애 영역·정합성 위험, 변경 후보와 RPO/RTO 복원 검증표. 공유 mount를 DB 복제로 보거나 여러 AZ에서 읽을 수 있다는 이유로 One Zone을 AZ 장애에 안전하다고 판단할 수 있다. 동일 PGDATA의 독립 writer 여부와 실제 복제·backup을 확인한다. EFS 유형·DB 배포 유형별 장애/읽기 조건과 모델 파일 갱신의 정합성을 별도로 검증할 수 있어야 한다. 관련: [4.3–4.4](#43-efs)

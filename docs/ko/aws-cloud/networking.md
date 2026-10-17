@@ -17,11 +17,13 @@ knowledge_ids:
 
 # Chapter 2. Networking
 
-제공된 compact 원문의 순서와 예시를 보존한 학습 기록이다. 실제 AWS 운영 결과가 아니다.
+예시 구성은 학습용이며 실제 AWS 환경에서 실행한 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 2.1 VPC
+
+VPC의 통신 경로는 도로망처럼 출발지, 다음 경로, 목적지를 함께 봐야 한다. 주소가 있고 보안 그룹이 허용해도 route나 gateway가 없으면 연결되지 않는다.
 
 VPC = Virtual Private Cloud.
 
@@ -127,6 +129,9 @@ AWS는 각 Subnet에서 일부 IP를 예약한다.
 
 등도 사용하므로 `/24 = Node+Pod 256개`라고 계산하면 안 된다.
 
+
+`/24`의 251개는 AWS가 5개 주소를 예약하는 일반 IPv4 subnet 기준이다. BYOIP에는 예외가 있다. CIDR 표의 `/32`, `/0`은 주소 범위 설명이며, VPC IPv4 subnet의 허용 크기는 `/16`~`/28`이다. [AWS subnet 크기](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html).
+
 ---
 
 ## 2.3 Public IP / Private IP
@@ -181,6 +186,9 @@ Public Subnet
 Private Subnet
 → EKS Node / EC2 App / RDS / ElastiCache / MSK
 ```
+
+
+원문의 Public IP와 `0.0.0.0/0` 설명은 IPv4 기준이다. Public subnet이어도 리소스의 public IPv4, 라우팅, SG·NACL, 실제 수신 서비스 조건이 충족되어야 통신한다. IPv6는 주소와 `::/0` 경로를 별도로 확인한다. [AWS Internet Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html).
 
 ---
 
@@ -274,6 +282,9 @@ Production Multi-AZ에서는 AZ별 NAT Gateway를 고려한다.
 
 AWS 내부 서비스(S3/ECR 등)는 VPC Endpoint를 통해 NAT를 우회할 수 있는 경우도 있다.
 
+
+Public subnet의 AZ별 NAT는 **public zonal NAT Gateway** 구성이다. 이 경우 각 private subnet에서 같은 AZ의 NAT로 라우팅해야 AZ 간 의존을 줄인다. 현재 regional NAT Gateway도 지원하며 public subnet 없이 구성하고 자동 또는 수동 AZ 모드를 선택한다. Regional 방식은 private NAT를 지원하지 않는다. Private NAT는 IGW를 통한 인터넷 출구가 아니다. Endpoint로 우회하려면 대상 서비스와 필요한 endpoint·DNS·정책을 따로 확인한다. [Regional NAT](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html), [NAT 유형](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html).
+
 ---
 
 ## 2.8 Security Group
@@ -316,6 +327,9 @@ DB-SG
 | Allow | O | O |
 | Explicit Deny | X | O |
 
+
+참조는 상대 SG의 규칙을 복사하지 않고 연결된 네트워크 인터페이스의 private IP에 적용된다. 여러 SG를 연결하면 허용 규칙을 합친다. SG의 허용만으로 경로가 만들어지지는 않는다. [AWS SG 규칙](https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html).
+
 ---
 
 ## 2.9 Multi-AZ VPC 기본 구조
@@ -352,31 +366,13 @@ VPC와 서브넷은 배치 공간을 나누고, 라우트·게이트웨이·보�
 === "한국어"
 
     ```text {.prompt}
-    private 앱의 인터넷 연결 실패나 AZ별 의존성을 조사하고 route 변경 PR을 검토한다.
-    정상 경로와 AZ A 장애 경로를 나눠 추적하라. public zonal NAT가 A/B에 있지만 두 private subnet이 NAT A로 향하는 경우 AZ B의 의존성을 설명하고 같은 AZ NAT 사용안을 검토하라.
-    출발 subnet / route·다음 hop / 실패 경계 / 근거 / 변경·복귀 후보 표를 작성하라. NAT B·DNS·IGW·SG/NACL 상태를 가정하지 말고 regional/private NAT나 endpoint이면 그 구성의 경로를 따로 검토하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    두 AZ의 private 앱이 NAT A에 의존하는지 route 변경안을 검토해 줘. 각 subnet의 실제 route와 NAT 유형을 보고 정상 경로와 AZ A 장애 경로를 설명해 줘. 확인하지 않은 DNS·SG 상태를 가정하거나 route를 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Investigate private-app internet failures or cross-zone dependencies and review a route-change PR.
-    Trace the normal path and the path during an AZ A outage. If public zonal NATs exist in A/B but both private subnets route through NAT A, explain AZ B dependence and review using each zone’s own NAT.
-    Produce a table: source subnet / route and next hop / failure boundary / evidence / change and recovery proposal. Do not assume NAT B, DNS, IGW, or SG/NACL state. Review regional/private NAT or endpoints according to their actual configuration.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review whether private apps in two AZs depend on NAT A. Use each subnet’s actual routes and NAT type to explain normal traffic and an AZ A failure. Do not assume unverified DNS or security-group state, and do not change routes.
     ```
 
-**핵심 사항:** 정상/AZ 장애의 subnet별 다음 hop, 실패 경계와 route 변경·복귀 후보 및 검증 목록. SG 허용을 경로 존재로 보거나 NAT를 통해 인터넷에서 새 연결을 시작할 수 있다고 설명할 수 있다. NAT 유형·AZ·실제 route와 flow/DNS 증거를 대조한다. SG 허용과 경로 존재를 구분하고 변경 후 다른 AZ에 남는 의존성을 확인할 수 있어야 한다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다.
-
-## 보완: 2.2~2.9의 적용 조건
-
-공식 문서 확인일: 2026-10-04.
-
-**2.2 CIDR:** `/24`의 251개는 AWS가 5개 주소를 예약하는 일반 IPv4 subnet 기준이다. BYOIP에는 예외가 있다. CIDR 표의 `/32`, `/0`은 주소 범위 설명이며, VPC IPv4 subnet의 허용 크기는 `/16`~`/28`이다. [AWS subnet 크기](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html).
-
-**2.4~2.6 인터넷 경로:** 원문의 Public IP와 `0.0.0.0/0` 설명은 IPv4 기준이다. Public subnet이어도 리소스의 public IPv4, 라우팅, SG·NACL, 실제 수신 서비스 조건이 충족되어야 통신한다. IPv6는 주소와 `::/0` 경로를 별도로 확인한다. [AWS Internet Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html).
-
-**2.7·2.9 NAT:** Public subnet의 AZ별 NAT는 **public zonal NAT Gateway** 구성이다. 이 경우 각 private subnet에서 같은 AZ의 NAT로 라우팅해야 AZ 간 의존을 줄인다. 현재 regional NAT Gateway도 지원하며 public subnet 없이 구성하고 자동 또는 수동 AZ 모드를 선택한다. Regional 방식은 private NAT를 지원하지 않는다. Private NAT는 IGW를 통한 인터넷 출구가 아니다. Endpoint로 우회하려면 대상 서비스와 필요한 endpoint·DNS·정책을 따로 확인한다. [Regional NAT](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html), [NAT 유형](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html).
-
-**2.8 SG 참조:** 참조는 상대 SG의 규칙을 복사하지 않고 연결된 네트워크 인터페이스의 private IP에 적용된다. 여러 SG를 연결하면 허용 규칙을 합친다. SG의 허용만으로 경로가 만들어지지는 않는다. [AWS SG 규칙](https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html).
+**핵심 사항:** 정상/AZ 장애의 subnet별 다음 hop, 실패 경계와 route 변경·복귀 후보 및 검증 목록. SG 허용을 경로 존재로 보거나 NAT를 통해 인터넷에서 새 연결을 시작할 수 있다고 설명할 수 있다. NAT 유형·AZ·실제 route와 flow/DNS 증거를 대조한다. SG 허용과 경로 존재를 구분하고 변경 후 다른 AZ에 남는 의존성을 확인할 수 있어야 한다.

@@ -17,11 +17,13 @@ knowledge_ids:
 
 # Chapter 11. CI/CD, Helm, Argo CD & GitOps
 
-The supplied study notes retain their numbering, order, examples, and GPU supplement. Example versions, placements, and commands are not execution results. See the separate supplement for Helm release and Argo CD rollback conditions in 11.3/11.6, the meaning of Healthy, and traffic migration and GPU headroom conditions in 11.7–11.8.
+The configurations and commands are study examples, not results of a deployment or failure test.
 
 <!-- SOURCE CORE START -->
 
 ## 11.1 CI/CD Fundamentals
+
+CI/CD is an assembly line for checking and delivering changes; GitOps records the desired deployment state. Check test results, deployment state, and service readiness separately.
 
 CI/CD:
 
@@ -220,6 +222,10 @@ Security Scan
 Registry Push
 ```
 
+**version names and artifact identity**
+
+Even an explicit tag can be moved to different content. Record the image digest and check the deployed target to promote the same artifact and reproduce an earlier build. Using a Git commit as a tag does not itself make the registry tag immutable. [Kubernetes Images](https://kubernetes.io/docs/concepts/containers/images/)
+
 ---
 
 ## 11.3 Helm
@@ -400,6 +406,14 @@ Chart Version
 Image Tag
 → Application code version
 ```
+
+**the boundary between Helm releases and Argo CD**
+
+Secrets are the default Helm 3 storage backend; `HELM_DRIVER` can select another backend. Release records include chart and values data. Keeping secrets out of values therefore matters for release access as well as Git access. [Helm 3 storage backends](https://helm.sh/docs/v3/topics/advanced/)
+
+In `helm rollback my-api 2`, `2` is a release revision, not an image tag. Check the actual context, namespace, and release history first. This command changes the cluster; it does not restore a database or external state to the past. [Helm 3 rollback](https://helm.sh/docs/v3/helm/helm_rollback/)
+
+Normal Argo CD Helm integration uses `helm template` to generate manifests, while Argo CD manages the lifecycle. The Helm release Secret/history in 11.3 is therefore different from Application deployment history in 11.6. The source's `path` example selects a chart; it does not automatically select `env/prod/values.yaml`. Check the required `helm.valueFiles` and actual values precedence. [Argo CD Helm](https://argo-cd.readthedocs.io/en/stable/user-guide/helm/)
 
 ---
 
@@ -682,6 +696,14 @@ events
 
 These may be more direct.
 
+**sync, Healthy, and rollback**
+
+Enabling automated sync does not automatically enable both live-drift repair and deletion. Check `selfHeal` and `prune` separately. **Direct rollback cannot be performed on an Application with automated sync enabled.** Commit the desired earlier state to Git and sync it, or adjust automated sync and Git desired state together under an approved recovery procedure. [Argo CD automated sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/)
+
+`Healthy` is the result of resource-specific health checks. It does not guarantee successful user requests, model response quality, or TTFT/TPOT targets. Separate request validation and metrics are needed. [Argo CD resource health](https://argo-cd.readthedocs.io/en/stable/operator-manual/health/)
+
+In the command list in 11.5, `exec` can execute arbitrary commands inside a container, and `port-forward` opens an access path. `cordon` and `drain` change placement and availability. Do not treat the entire diagnostic list as read-only. No such commands were run for this page.
+
 ---
 
 ## 11.6 Argo CD
@@ -930,6 +952,16 @@ Output format
 ```
 
 Validate these differences with a small share of traffic first.
+
+**AI serving rollout and GPU capacity conditions**
+
+Ratios such as 95/5 are example traffic targets. The LiteLLM router selects backends using the configured strategy and weights. Measure actual short-window distribution, retries, and fallbacks separately. Before returning 100% of traffic to the old version, check its replicas' health, capacity, and compatibility, and consider requests already in progress. [LiteLLM routing](https://docs.litellm.ai/docs/routing)
+
+The 4+4=8 and 12+4=16 GPU calculations assume adding a new replica while keeping existing replicas. If a canary consumes all spare GPUs, those same GPUs cannot also be counted as failure reserve. Check suitable node placement and failure domains as well as weights, KV cache, and runtime memory per GPU. [GPU capacity planning](gpu-infrastructure.md)
+
+Extra Pod count and allowed disruption during rolling updates depend on settings such as `maxSurge` and `maxUnavailable`. The source's temporary extra capacity assumes validation while retaining existing capacity. It does not mean every strategy always needs the same number of extra GPUs. [Kubernetes Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+
+`vllm:0.x` and `glm-5.3-fp4-v1` are illustrative names. Pin and check actual image/model revisions and serving settings. VRAM on another replica's GPUs does not automatically form a shared pool; separate sharing/offload mechanisms are outside this example's assumptions. [vLLM study](vllm.md)
 
 ---
 
@@ -1219,55 +1251,13 @@ Connect deployed versions with running state, and assess rollback across models,
 === "한국어"
 
     ```text {.prompt}
-    모델 canary 오류가 증가했을 때 배포 변경과 트래픽 복귀 계획을 검토한다.
-    canary 전후 변경과 오류 시각을 대조하고 v1 복귀의 실행 가능성을 평가하라. Helm release rollback·Argo CD rollback·Git revert·routing 전환을 구분하고 automated sync 조건을 확인하라.
-    원인 가설·증거 표와 단계 / v1 부하 수용·호환성 / GPU 여유 / 진행·중단 기준 / 확인할 지표 표를 작성하라. 16 GPU 중 기존12+canary4 같은 경우 장애 여유를 중복 계산하지 마라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    모델 canary에서 오류가 늘었어. 배포 diff, Argo CD 상태, traffic routing과 GPU 여유를 보고 이전 버전으로 돌아갈 수 있는지 검토해 줘. Git revert, Helm rollback, routing 전환의 역할을 구분하고 실제 rollback은 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review deployment changes and traffic recovery when errors increase during a model canary.
-    Compare changes and errors before and after the canary and assess whether recovery to v1 is feasible. Distinguish Helm release rollback, Argo CD rollback, Git revert, and routing changes. Check automated-sync conditions.
-    Produce a hypothesis/evidence table and a table: step / v1 load capacity and compatibility / spare GPUs / go-stop criteria / metrics to check. Do not double-count failure reserve when, for example, existing replicas use 12 of 16 GPUs and the canary uses 4.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Errors increased during a model canary. Review the deployment diff, Argo CD state, traffic routing, and spare GPU capacity to assess a return to the previous version. Separate Git revert, Helm rollback, and routing changes; do not perform a rollback.
     ```
 
-**Key point:** Canary-failure hypotheses and a stepwise v1 traffic-recovery table covering load, compatibility, GPU reserve, and go/stop decisions. It may treat Synced/Healthy as proof of response quality or assume a mutable tag reproduces the old artifact. Compare Git, digest, model revision and Argo CD policy with actual routing/request metrics. Defer recovery plans that count canary GPUs as failure reserve or lack evidence for full load on the old version. This is an authored work example, not a verified model result or measured improvement. Related: [GPU capacity planning](gpu-infrastructure.md) · [LiteLLM](litellm.md)
-
-## Supplement — version tracking and rollback conditions
-
-Official documentation checked on 2026-10-03. The source's Helm 3 statements were checked against Helm 3 documentation. Argo CD and LiteLLM links refer to stable documentation at review time. No installation, deployment, rollback, or load test was run.
-
-### 11.2 / 11.4 version names and artifact identity
-
-Even an explicit tag can be moved to different content. Record the image digest and check the deployed target to promote the same artifact and reproduce an earlier build. Using a Git commit as a tag does not itself make the registry tag immutable. [Kubernetes Images](https://kubernetes.io/docs/concepts/containers/images/)
-
-### 11.3 / 11.6 the boundary between Helm releases and Argo CD
-
-Secrets are the default Helm 3 storage backend; `HELM_DRIVER` can select another backend. Release records include chart and values data. Keeping secrets out of values therefore matters for release access as well as Git access. [Helm 3 storage backends](https://helm.sh/docs/v3/topics/advanced/)
-
-In `helm rollback my-api 2`, `2` is a release revision, not an image tag. Check the actual context, namespace, and release history first. This command changes the cluster; it does not restore a database or external state to the past. [Helm 3 rollback](https://helm.sh/docs/v3/helm/helm_rollback/)
-
-Normal Argo CD Helm integration uses `helm template` to generate manifests, while Argo CD manages the lifecycle. The Helm release Secret/history in 11.3 is therefore different from Application deployment history in 11.6. The source's `path` example selects a chart; it does not automatically select `env/prod/values.yaml`. Check the required `helm.valueFiles` and actual values precedence. [Argo CD Helm](https://argo-cd.readthedocs.io/en/stable/user-guide/helm/)
-
-### 11.5 / 11.6 sync, Healthy, and rollback
-
-Enabling automated sync does not automatically enable both live-drift repair and deletion. Check `selfHeal` and `prune` separately. **Direct rollback cannot be performed on an Application with automated sync enabled.** Commit the desired earlier state to Git and sync it, or adjust automated sync and Git desired state together under an approved recovery procedure. [Argo CD automated sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/)
-
-`Healthy` is the result of resource-specific health checks. It does not guarantee successful user requests, model response quality, or TTFT/TPOT targets. Separate request validation and metrics are needed. [Argo CD resource health](https://argo-cd.readthedocs.io/en/stable/operator-manual/health/)
-
-In the command list in 11.5, `exec` can execute arbitrary commands inside a container, and `port-forward` opens an access path. `cordon` and `drain` change placement and availability. Do not treat the entire diagnostic list as read-only. No such commands were run for this page.
-
-### 11.7 / 11.8 and GPU supplement migration conditions
-
-Ratios such as 95/5 are example traffic targets. The LiteLLM router selects backends using the configured strategy and weights. Measure actual short-window distribution, retries, and fallbacks separately. Before returning 100% of traffic to the old version, check its replicas' health, capacity, and compatibility, and consider requests already in progress. [LiteLLM routing](https://docs.litellm.ai/docs/routing)
-
-The 4+4=8 and 12+4=16 GPU calculations assume adding a new replica while keeping existing replicas. If a canary consumes all spare GPUs, those same GPUs cannot also be counted as failure reserve. Check suitable node placement and failure domains as well as weights, KV cache, and runtime memory per GPU. [GPU capacity planning](gpu-infrastructure.md)
-
-Extra Pod count and allowed disruption during rolling updates depend on settings such as `maxSurge` and `maxUnavailable`. The source's temporary extra capacity assumes validation while retaining existing capacity. It does not mean every strategy always needs the same number of extra GPUs. [Kubernetes Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
-
-`vllm:0.x` and `glm-5.3-fp4-v1` are illustrative names. Pin and check actual image/model revisions and serving settings. VRAM on another replica's GPUs does not automatically form a shared pool; separate sharing/offload mechanisms are outside this example's assumptions. [vLLM study](vllm.md)
-
-Reading guide: separate artifacts from environment settings in 11.1–11.4, then identify desired state and controller responsibilities in 11.5–11.6. In 11.7–11.8 and the GPU supplement, calculate new-version validation, traffic rollback, and failure reserve separately.
+**Key point:** Canary-failure hypotheses and a stepwise v1 traffic-recovery table covering load, compatibility, GPU reserve, and go/stop decisions. It may treat Synced/Healthy as proof of response quality or assume a mutable tag reproduces the old artifact. Compare Git, digest, model revision and Argo CD policy with actual routing/request metrics. Defer recovery plans that count canary GPUs as failure reserve or lack evidence for full load on the old version. Related: [GPU capacity planning](gpu-infrastructure.md) · [LiteLLM](litellm.md)

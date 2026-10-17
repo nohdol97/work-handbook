@@ -1,8 +1,8 @@
 ---
 id: handbook-home
 status: overview
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids: []
 ---
 
@@ -26,14 +26,14 @@ There are 83 Korean/English pairs in total. Each area's study status lists compl
 ## Use it at work
 
 1. Choose a case in the [practical prompt library](prompts/index.md) that matches the decision you need to make. There are 100 library examples and 45 on topic pages, for 145 in total.
-2. Replace bracketed inputs with shareable, sanitized SQL, configuration, logs, metrics, and changes. Mark missing evidence explicitly.
+2. Provide the needed SQL, configuration, logs, metrics, and changes as sanitized materials. Mark missing evidence explicitly.
 3. Copy the prompt from the Korean or English tab. Check its evidence and acceptance criteria against real materials. Execution and changes follow separate workplace permissions and procedures.
 
-These templates apply studied concepts to work. They are not a record of measured model performance or proven workplace results.
+These examples connect studied concepts to real work questions. They are not records of measured model performance or proven workplace results.
 
-## Source and supplements
+## Source and practical explanation
 
-Study pages retain the supplied Markdown headings, numbers, order, paragraphs, lists, and examples. The original language stays verbatim; the other language follows the same structure. Corrections, conditions, and extra examples follow the source and refer to its sections.
+Study pages trace the supplied headings, numbering, order, and core technical knowledge. Difficult ideas and conditions for real use appear beside the concept they explain. The original material stays available as evidence; sections explicitly requested verbatim keep their original form.
 
 ## How to read
 

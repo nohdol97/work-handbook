@@ -16,11 +16,15 @@ knowledge_ids:
 
 # Chapter 10. Platform Security
 
-These are study notes from the supplied Basic Chapter 10. They do not claim operational experience configuring security policies, certificates, or secrets, or performing penetration or recovery tests. Connect them with the deployment and service boundaries in [Kubernetes core](kubernetes-core.md) and [LiteLLM](litellm.md).
+The configurations and commands are study examples, not results of a deployment or failure test.
+
+Related: [Kubernetes core](kubernetes-core.md), [LiteLLM](litellm.md)
 
 <!-- SOURCE CORE START -->
 
 ## 10.1 Authentication / Authorization
+
+Platform security is more than one locked door. Check image provenance, runtime permissions, networking, service authentication, and secret access as separate layers.
 
 The first distinction to make in security is between:
 
@@ -204,6 +208,10 @@ Service Identity
 Least Privilege
 = Grant only the minimum permissions needed
 ```
+
+**Scope of Kubernetes permissions**
+
+A ClusterRole is a cluster-scoped **object**, but does not always grant permissions in every namespace. A RoleBinding grants its permissions within that namespace; a ClusterRoleBinding grants them cluster-wide. Kubernetes RBAC controls Kubernetes API permissions. Having a ServiceAccount does not itself configure application authentication or authorization for PostgreSQL, LiteLLM, or vLLM. [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
 
 ---
 
@@ -529,6 +537,12 @@ Secret Rotation
 = Replace secret values periodically
 ```
 
+**Secret storage, access, and rotation**
+
+A Secret's base64 representation is not encryption. By default, Secrets in etcd are not encrypted without additional configuration. Configure encryption at rest and least privilege together. Even without Secret API read access, someone who can create a Pod using that Secret in the same namespace can expose its value. ServiceAccount API permissions alone therefore do not complete Secret isolation. [Secret security practices](https://kubernetes.io/docs/concepts/security/secrets-good-practices/)
+
+Secrets injected as environment variables do not update automatically in running containers. Ordinary Secret volume updates can be delayed, and `subPath` mounts do not update automatically. Verify rotation including application reloads or restarts and revocation of old credentials. Check these conditions even when an external store synchronizes to a Kubernetes Secret. The source's `password123` is an intentionally bad hardcoding example. [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/)
+
 ---
 
 ## 10.4 Network Security
@@ -760,6 +774,10 @@ Default Deny
 = Deny by default, then allow only required communication
 ```
 
+**Check NetworkPolicy enforcement conditions**
+
+A network plugin that enforces NetworkPolicy is required. A direction not selected by policies is not isolated by default. Allow rules form a union; they are not sequential firewall deny rules. Communication must be allowed by both an isolated source's egress and an isolated destination's ingress policies; reply traffic for an allowed connection is implicitly allowed. Review required dependencies such as DNS when introducing default deny. These policies alone do not provide TLS encryption or application authorization. [Kubernetes NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+
 ---
 
 ## 10.5 TLS / mTLS
@@ -914,6 +932,10 @@ Certificate Rotation
 = Renew certificates periodically
 ```
 
+**Distinguish mTLS authentication from service authorization**
+
+mTLS verifies peer identity according to certificates and trust configuration. A separate authorization policy determines whether that identity may perform a service operation. Do not read the source's “Are you really an allowed LiteLLM service?” as meaning that installing certificates also settles every access permission. Check certificate renewal and whether renewed certificates actually take effect. [Istio authentication and authorization](https://istio.io/latest/docs/concepts/security/)
+
 ---
 
 ## 10.6 Container Security
@@ -1044,6 +1066,10 @@ Read-only Filesystem
 = Limit changes inside the container
 ```
 
+**securityContext location and filesystem scope**
+
+The source's two-field example is not a complete Pod manifest. `readOnlyRootFilesystem` is a container field under `.spec.containers[*].securityContext`, not the Pod-level `.spec.securityContext`. Making the root filesystem read-only does not remove write permissions on separate mounts. `runAsNonRoot` does not automatically choose an arbitrary non-root UID; also check the image and execution UID. [Kubernetes security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+
 ---
 
 ## 10.7 Supply Chain Security
@@ -1171,6 +1197,10 @@ Registry
 ↓
 Kubernetes Deploy
 ```
+
+**A signature is not a safety verdict**
+
+Image signature verification must check a trusted key or signer identity and issuer, together with the digest that will actually be deployed. A signature or pinned digest alone does not establish the absence of vulnerabilities. An SBOM is an inventory, and a scan reports results within its detection coverage. This distinction is a reasoning aid for reading the source's supply-chain stages together. [Sigstore signature verification](https://docs.sigstore.dev/cosign/verifying/verify/)
 
 ---
 
@@ -1361,6 +1391,10 @@ Supply Chain Security
 Multi-tenant Isolation
 ```
 
+**Limits of namespace separation**
+
+A namespace is a logical boundary, not a guarantee of an independent security sandbox. Review RBAC, networking, Pod security, and node or cluster separation according to mutual trust. Quotas limit resource consumption; they do not guarantee performance or GPU fault isolation. [Kubernetes multi-tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/), [GPU infrastructure](gpu-infrastructure.md)
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -1377,53 +1411,13 @@ Platform security checks image supply chains, runtime permissions, networks, and
 === "한국어"
 
     ```text {.prompt}
-    서비스 배포 PR에서 Kubernetes 권한·Secret 주입·네트워크·서비스 인증의 경계를 검토한다.
-    현재 구성과 변경 diff에서 identity→권한→Secret→통신→서비스 인가 경로를 검토하라. ClusterRole binding 범위, Secret API 읽기와 Pod를 통한 간접 접근, 환경변수·volume 갱신 차이를 구분하라.
-    파일·필드 / 노출 경로 / 근거 / 최소 수정 후보 / 정상·거부·회전 검증 표를 작성하라. DNS 등 정상 의존 경로와 ingress/egress, mTLS 인증과 인가, securityContext 위치, namespace 격리 한계를 포함하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    서비스 배포 PR의 Kubernetes 권한, Secret 주입, 네트워크와 서비스 인증을 검토해 줘. 변경 diff에서 과도한 접근이나 회전 실패 위험을 찾아 최소 수정안을 제안해 줘. 실제 Secret 값을 요구하지 말고 정책도 적용하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review Kubernetes permissions, Secret injection, networking, and service authentication in a deployment PR.
-    Review identity, permissions, Secrets, communication, and service authorization in the current setup and diff. Distinguish ClusterRole binding scope, direct Secret API reads from access through Pods, and environment-variable from volume updates.
-    Produce a table: file/field / exposure path / evidence / minimal fix / allow-deny-rotation checks. Include legitimate dependencies such as DNS, ingress/egress, mTLS authentication versus authorization, securityContext placement, and namespace isolation limits.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review Kubernetes permissions, Secret injection, networking, and service authentication in this deployment PR. Find excessive access and secret-rotation risks in the diff, then suggest minimal changes. Do not request real secret values or apply policies.
     ```
 
-**Key point:** Exposure paths for permissions, Secrets, and communication by manifest field, minimal fixes, and an allow/deny/rotation test matrix. It may treat the presence of a policy as successful enforcement or assume denying Secret reads also blocks Pod mounts. Check binding scope, Secret access through Pods, both NetworkPolicy directions, and mTLS authorization against actual settings. Test conditions must retain legitimate DNS dependencies and cover Secret updates. This is an authored work example, not a verified model result or measured improvement.
-
-## Supplements and corrections by source section
-
-These notes were checked against official documentation on 2026-10-03. They are not results of applying the source code or policies, or of conducting security tests.
-
-### 10.1 and 10.2: Scope of Kubernetes permissions
-
-A ClusterRole is a cluster-scoped **object**, but does not always grant permissions in every namespace. A RoleBinding grants its permissions within that namespace; a ClusterRoleBinding grants them cluster-wide. Kubernetes RBAC controls Kubernetes API permissions. Having a ServiceAccount does not itself configure application authentication or authorization for PostgreSQL, LiteLLM, or vLLM. [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
-
-### 10.3 and 10.8: Conditions for Secret storage, access, and rotation
-
-A Secret's base64 representation is not encryption. By default, Secrets in etcd are not encrypted without additional configuration. Configure encryption at rest and least privilege together. Even without Secret API read access, someone who can create a Pod using that Secret in the same namespace can expose its value. ServiceAccount API permissions alone therefore do not complete Secret isolation. [Secret security practices](https://kubernetes.io/docs/concepts/security/secrets-good-practices/)
-
-Secrets injected as environment variables do not update automatically in running containers. Ordinary Secret volume updates can be delayed, and `subPath` mounts do not update automatically. Verify rotation including application reloads or restarts and revocation of old credentials. Check these conditions even when an external store synchronizes to a Kubernetes Secret. The source's `password123` is an intentionally bad hardcoding example. [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/)
-
-### 10.4: Check NetworkPolicy enforcement conditions
-
-A network plugin that enforces NetworkPolicy is required. A direction not selected by policies is not isolated by default. Allow rules form a union; they are not sequential firewall deny rules. Communication must be allowed by both an isolated source's egress and an isolated destination's ingress policies; reply traffic for an allowed connection is implicitly allowed. Review required dependencies such as DNS when introducing default deny. These policies alone do not provide TLS encryption or application authorization. [Kubernetes NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
-
-### 10.5: Distinguish mTLS authentication from service authorization
-
-mTLS verifies peer identity according to certificates and trust configuration. A separate authorization policy determines whether that identity may perform a service operation. Do not read the source's “Are you really an allowed LiteLLM service?” as meaning that installing certificates also settles every access permission. Check certificate renewal and whether renewed certificates actually take effect. [Istio authentication and authorization](https://istio.io/latest/docs/concepts/security/)
-
-### 10.6: securityContext location and filesystem scope
-
-The source's two-field example is not a complete Pod manifest. `readOnlyRootFilesystem` is a container field under `.spec.containers[*].securityContext`, not the Pod-level `.spec.securityContext`. Making the root filesystem read-only does not remove write permissions on separate mounts. `runAsNonRoot` does not automatically choose an arbitrary non-root UID; also check the image and execution UID. [Kubernetes security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
-
-### 10.7: A signature is not a safety verdict
-
-Image signature verification must check a trusted key or signer identity and issuer, together with the digest that will actually be deployed. A signature or pinned digest alone does not establish the absence of vulnerabilities. An SBOM is an inventory, and a scan reports results within its detection coverage. This distinction is a reasoning aid for reading the source's supply-chain stages together. [Sigstore signature verification](https://docs.sigstore.dev/cosign/verifying/verify/)
-
-### 10.8: Limits of namespace separation
-
-A namespace is a logical boundary, not a guarantee of an independent security sandbox. Review RBAC, networking, Pod security, and node or cluster separation according to mutual trust. Quotas limit resource consumption; they do not guarantee performance or GPU fault isolation. [Kubernetes multi-tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/), [GPU infrastructure](gpu-infrastructure.md)
+**Key point:** Exposure paths for permissions, Secrets, and communication by manifest field, minimal fixes, and an allow/deny/rotation test matrix. It may treat the presence of a policy as successful enforcement or assume denying Secret reads also blocks Pod mounts. Check binding scope, Secret access through Pods, both NetworkPolicy directions, and mTLS authorization against actual settings. Test conditions must retain legitimate DNS dependencies and cover Secret updates.

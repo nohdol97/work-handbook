@@ -18,11 +18,15 @@ knowledge_ids:
 
 # Chapter 8. LiteLLM
 
-제공된 Basic Chapter 8의 학습 기록이다. 실제 Gateway 구축·GPU 운영·외부 Provider 호출을 완료했다는 뜻은 아니다. 관련 내용은 [플랫폼·인프라 학습 범위](index.md)와 [Kubernetes 핵심](kubernetes-core.md)에서 연결해 읽는다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
+
+관련: [플랫폼·인프라 학습 범위](index.md)
 
 <!-- SOURCE CORE START -->
 
 ## 8.1 LiteLLM 역할
+
+LiteLLM Gateway는 여러 모델 제공 경로를 연결하는 교환대와 비슷하다. 요청을 어디로 보낼지와 실제 모델 서버가 얼마나 빨리 처리하는지는 다른 문제다.
 
 LiteLLM은 여러 LLM Provider와 vLLM 앞에 두는 LLM Gateway다.
 
@@ -64,6 +68,10 @@ LiteLLM
 = Gateway / Control Layer
 ```
 
+**Gateway와 실제 요청 경로**
+
+LiteLLM은 Python SDK와 Gateway(Proxy)를 제공한다. 이 장은 Gateway 배치를 중심으로 설명한다. 8.10의 도식에서 외부 LLM 호출까지 로컬 `vLLM → GPU`를 통과한다고 읽으면 잘못이다. 자체 호스팅 pool은 해당 vLLM으로, 외부 provider는 해당 API로 갈라진다. 원문의 9단계도 설명용 순서이며 endpoint·설정에 따라 실제 경로가 달라진다. [LiteLLM request architecture](https://docs.litellm.ai/docs/proxy/architecture)
+
 ---
 
 ## 8.2 Provider Routing
@@ -102,6 +110,10 @@ Custom
 ### Session Affinity
 
 같은 Conversation을 가능하면 같은 Backend에 계속 보낼 수 있다.
+
+**routing과 session affinity**
+
+여러 판단 기준이 존재한다고 모든 기준을 동시에 자동 최적화하는 것은 아니다. 선택한 routing strategy와 관측값을 확인한다. Session affinity도 명시적인 설정과 일관된 session ID가 필요하며, 여러 Gateway replica에서 같은 pin을 공유하려면 공유 저장소 구성을 확인해야 한다. 건강하지 않은 backend에는 다른 경로가 선택될 수 있다. Affinity가 대화 이력 저장이나 모델 상태 복제를 대신하지 않는다. [LiteLLM routing](https://docs.litellm.ai/docs/routing)
 
 ---
 
@@ -199,6 +211,10 @@ Fallback
 = 다른 Backend / Model / Provider
 ```
 
+**fallback은 별도 허용 범위**
+
+원문의 외부 provider fallback은 기능 예시이며 외부 전송의 승인이 아니다. 적용 전 데이터 반출 허용 범위, 모델의 context window·tool 형식·응답 품질, 비용 한도를 검토한다. Retry와 fallback을 여러 계층에서 중첩하면 시도 횟수가 증가할 수 있으므로 전체 deadline·시도 예산을 정한다. 이 항목들은 원문의 retry storm과 provider 전환에서 도출한 운영 검토 조건이다.
+
 ---
 
 ## 8.5 Rate Limiting
@@ -240,6 +256,12 @@ Autoscaling
 Rate Limiting
 = 들어오는 부하 제한
 ```
+
+**한도와 인증 기능의 전제**
+
+RPM·TPM, concurrency, 누적 token quota, 금액 budget은 서로 다른 정책이다. 원문의 일간·월간 token quota 예를 모든 버전에서 같은 기본 옵션으로 설정할 수 있다고 단정하지 않는다. 실제 지원 필드·집계 기간·강제 방식·리셋과 초과 요청을 확인한다. 현재 문서의 budget 기능은 DB에 저장된 사용액을 검사하므로 DB 없는 배포에 동일한 budget 차단을 기대하지 않는다. [LiteLLM budgets and rate limits](https://docs.litellm.ai/docs/proxy/users)
+
+API key는 식별 수단이고 허용 모델·팀 정책의 구성이 별도로 필요하다. `<API_KEY>`는 자리표시자이며 실제 credential이 아니다. SSO/IAM도 모든 종류의 요청 인증에 자동 적용되는 단일 기능이 아니다. 원하는 로그인·API 인증·클라우드 접근의 범위와 해당 버전·제품 등급을 먼저 확인한다.
 
 ---
 
@@ -361,6 +383,12 @@ GPU 사용량 ↓
 외부 API 비용 ↓
 Throughput 여유 ↑
 ```
+
+**cache와 공유 상태**
+
+Response cache는 명시적으로 활성화해야 한다. Exact cache는 요청의 cache key, semantic cache는 embedding과 유사도 기준에 의존한다. 의미가 비슷하다는 이유만으로 권한·대화·tool 상태까지 같은 것은 아니므로 cache key와 tenant 격리, TTL·무효화, 부정확한 hit를 검증한다. Response cache와 provider의 prompt cache도 구분한다. [LiteLLM caching](https://docs.litellm.ai/docs/proxy/caching)
+
+Stateless Gateway는 플랫폼 전체에 상태가 없다는 뜻이 아니다. 현재 배포 문서는 PostgreSQL에 key·team·사용량·설정을, Redis에 replica 간 limit counter·router·cache 상태를 두는 구성을 설명한다. Gateway replica 수만 늘려도 공유 상태나 GPU capacity가 자동으로 늘어나지는 않는다. [LiteLLM production deployment](https://docs.litellm.ai/docs/proxy/deploy)
 
 ---
 
@@ -495,6 +523,10 @@ GPU Utilization 100%
 → Compute 부족
 ```
 
+**지표는 병목의 증거 후보**
+
+`CPU 100%`, queue 증가, GPU memory 부족, GPU utilization은 원인 확정표가 아니다. 관측 구간과 요청의 input/output 길이, cache hit, retry, backend별 latency, GPU 메모리 구성을 함께 본다. 예를 들어 queue 증가는 serving capacity 부족뿐 아니라 긴 요청이나 routing 편중도 조사할 이유가 된다. 이것은 원문 병목 예에 대한 진단 원칙이며 실제 성능 측정 결과가 아니다.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -511,53 +543,15 @@ LiteLLM은 요청을 모델 제공 경로로 연결한다. 라우팅, 인증, �
 === "한국어"
 
     ```text {.prompt}
-    Gateway 지연·오류·사용액 증가 때 routing·retry·cache 설정과 backend 병목을 검토한다.
-    요청 경로를 Gateway·공유 저장소·내부 vLLM 또는 외부 API로 나누고 지연·중복 시도·비용 증가의 원인 후보를 비교하라. rate limit·concurrency·budget과 Gateway·GPU capacity를 구분하라.
-    경로 / 관측 / 원인 가설 / 반증 조회 / 다음 조치 표와 설정 PR 검토 의견을 작성하라. retry 전체 예산, session affinity 공유, cache tenant 경계·정확성, 기능별 버전·라이선스 조건을 확인하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    LiteLLM Gateway의 지연·오류·비용이 늘었어. 요청 trace와 routing·retry·cache 설정을 보고 Gateway, 공유 저장소, 내부 vLLM, 외부 API 중 병목 후보를 구분해 줘. 비밀값을 출력하거나 설정을 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review routing, retries, caching, and backend bottlenecks when gateway latency, errors, or spend increase.
-    Split the request path into gateway, shared storage, and internal vLLM or external API. Compare causes of latency, repeated attempts, and increased cost. Distinguish rate limits, concurrency, and budgets, and gateway capacity from GPU capacity.
-    Produce a table: path / observation / hypothesis / falsifying check / next step, plus configuration PR comments. Check total retry budgets, shared session affinity, cache tenant boundaries and correctness, and feature version/license conditions.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    LiteLLM Gateway latency, errors, and cost increased. Use request traces and routing, retry, and cache settings to separate gateway, shared-store, internal vLLM, and external API bottlenecks. Do not reveal secrets or change settings.
     ```
 
-**핵심 사항:** Gateway·저장소·router·backend별 병목/비용 근거표와 retry·limit·cache 설정 PR 검토 의견. Gateway 증설을 GPU queue 해결로 보거나 외부 fallback·semantic cache를 자료 없이 활성화하라고 제안할 수 있다. 같은 요청의 전체 시도 횟수·trace 구간·token 비용을 연결하고 budget 저장소·cache 격리·fallback 허용 근거를 확인한다. backend queue를 Gateway 증설로 해결한다고 단정한 답변은 재검토한다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다.
+**핵심 사항:** Gateway·저장소·router·backend별 병목/비용 근거표와 retry·limit·cache 설정 PR 검토 의견. Gateway 증설을 GPU queue 해결로 보거나 외부 fallback·semantic cache를 자료 없이 활성화하라고 제안할 수 있다. 같은 요청의 전체 시도 횟수·trace 구간·token 비용을 연결하고 budget 저장소·cache 격리·fallback 허용 근거를 확인한다. backend queue를 Gateway 증설로 해결한다고 단정한 답변은 재검토한다.
 
 관련: [Kubernetes 핵심](kubernetes-core.md)
-
-## 원문 절별 보완과 정정
-
-2026-10-01 공식 문서를 확인했다. LiteLLM 문서는 계속 갱신되므로 실제 적용 전 배포 버전·설정·라이선스의 지원 범위를 확인한다. 아래는 원문 밖의 적용 조건이며 이 환경에서 기능을 실행한 결과가 아니다.
-
-### 8.1·8.10 정정: Gateway와 실제 요청 경로
-
-LiteLLM은 Python SDK와 Gateway(Proxy)를 제공한다. 이 장은 Gateway 배치를 중심으로 설명한다. 8.10의 도식에서 외부 LLM 호출까지 로컬 `vLLM → GPU`를 통과한다고 읽으면 잘못이다. 자체 호스팅 pool은 해당 vLLM으로, 외부 provider는 해당 API로 갈라진다. 원문의 9단계도 설명용 순서이며 endpoint·설정에 따라 실제 경로가 달라진다. [LiteLLM request architecture](https://docs.litellm.ai/docs/proxy/architecture)
-
-### 8.2·8.3 보완: routing과 session affinity
-
-여러 판단 기준이 존재한다고 모든 기준을 동시에 자동 최적화하는 것은 아니다. 선택한 routing strategy와 관측값을 확인한다. Session affinity도 명시적인 설정과 일관된 session ID가 필요하며, 여러 Gateway replica에서 같은 pin을 공유하려면 공유 저장소 구성을 확인해야 한다. 건강하지 않은 backend에는 다른 경로가 선택될 수 있다. Affinity가 대화 이력 저장이나 모델 상태 복제를 대신하지 않는다. [LiteLLM routing](https://docs.litellm.ai/docs/routing)
-
-### 8.4 보완: fallback은 별도 허용 범위
-
-원문의 외부 provider fallback은 기능 예시이며 외부 전송의 승인이 아니다. 적용 전 데이터 반출 허용 범위, 모델의 context window·tool 형식·응답 품질, 비용 한도를 검토한다. Retry와 fallback을 여러 계층에서 중첩하면 시도 횟수가 증가할 수 있으므로 전체 deadline·시도 예산을 정한다. 이 항목들은 원문의 retry storm과 provider 전환에서 도출한 운영 검토 조건이다.
-
-### 8.5~8.7 보완: 한도와 인증 기능의 전제
-
-RPM·TPM, concurrency, 누적 token quota, 금액 budget은 서로 다른 정책이다. 원문의 일간·월간 token quota 예를 모든 버전에서 같은 기본 옵션으로 설정할 수 있다고 단정하지 않는다. 실제 지원 필드·집계 기간·강제 방식·리셋과 초과 요청을 확인한다. 현재 문서의 budget 기능은 DB에 저장된 사용액을 검사하므로 DB 없는 배포에 동일한 budget 차단을 기대하지 않는다. [LiteLLM budgets and rate limits](https://docs.litellm.ai/docs/proxy/users)
-
-API key는 식별 수단이고 허용 모델·팀 정책의 구성이 별도로 필요하다. `<API_KEY>`는 자리표시자이며 실제 credential이 아니다. SSO/IAM도 모든 종류의 요청 인증에 자동 적용되는 단일 기능이 아니다. 원하는 로그인·API 인증·클라우드 접근의 범위와 해당 버전·제품 등급을 먼저 확인한다.
-
-### 8.8·8.9 보완: cache와 공유 상태
-
-Response cache는 명시적으로 활성화해야 한다. Exact cache는 요청의 cache key, semantic cache는 embedding과 유사도 기준에 의존한다. 의미가 비슷하다는 이유만으로 권한·대화·tool 상태까지 같은 것은 아니므로 cache key와 tenant 격리, TTL·무효화, 부정확한 hit를 검증한다. Response cache와 provider의 prompt cache도 구분한다. [LiteLLM caching](https://docs.litellm.ai/docs/proxy/caching)
-
-Stateless Gateway는 플랫폼 전체에 상태가 없다는 뜻이 아니다. 현재 배포 문서는 PostgreSQL에 key·team·사용량·설정을, Redis에 replica 간 limit counter·router·cache 상태를 두는 구성을 설명한다. Gateway replica 수만 늘려도 공유 상태나 GPU capacity가 자동으로 늘어나지는 않는다. [LiteLLM production deployment](https://docs.litellm.ai/docs/proxy/deploy)
-
-### 8.10 보완: 지표는 병목의 증거 후보
-
-`CPU 100%`, queue 증가, GPU memory 부족, GPU utilization은 원인 확정표가 아니다. 관측 구간과 요청의 input/output 길이, cache hit, retry, backend별 latency, GPU 메모리 구성을 함께 본다. 예를 들어 queue 증가는 serving capacity 부족뿐 아니라 긴 요청이나 routing 편중도 조사할 이유가 된다. 이것은 원문 병목 예에 대한 진단 원칙이며 실제 성능 측정 결과가 아니다.

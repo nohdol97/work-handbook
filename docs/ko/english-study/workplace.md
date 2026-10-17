@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### X depends on Y {#workplace-depends-on}
 
-**61회 · 28개 문서 · 중립**
+**63회 · 29개 문서 · 중립**
 
 **X는 Y에 따라 달라진다**
 
@@ -30,7 +30,7 @@ knowledge_ids: []
 
 ### X does not mean Y {#workplace-does-not-mean}
 
-**46회 · 32개 문서 · 중립**
+**47회 · 32개 문서 · 중립**
 
 **X라고 해서 Y라는 뜻은 아니다**
 
@@ -46,7 +46,7 @@ knowledge_ids: []
 
 ### For example, ... {#workplace-for-example}
 
-**39회 · 20개 문서 · 중립**
+**38회 · 20개 문서 · 중립**
 
 **예를 들어 ...**
 
@@ -94,7 +94,7 @@ knowledge_ids: []
 
 ### Check whether ... {#workplace-check-whether}
 
-**15회 · 12개 문서 · 중립**
+**16회 · 13개 문서 · 중립**
 
 **...인지 확인하다**
 
@@ -123,22 +123,6 @@ knowledge_ids: []
 집계한 형태: compared with.
 
 본문 예: [ai-model-development/qlora-artifacts](../ai-model-development/qlora-artifacts.md), [data-platform/data-observability](../data-platform/data-observability.md), [data-platform/lakehouse-iceberg](../data-platform/lakehouse-iceberg.md).
-
-### The goal is to ... {#workplace-goal-is}
-
-**4회 · 4개 문서 · 중립**
-
-**목표는 ...하는 것이다**
-
-구현 방법을 설명하기 전에 작업 목적을 밝힌다. To 뒤에는 동사원형을 쓴다.
-
-> The goal is to reduce recovery time without losing acknowledged writes.
->
-> 목표는 성공 응답을 보낸 쓰기를 잃지 않으면서 복구 시간을 줄이는 것이다.
-
-집계한 형태: the goal is to.
-
-본문 예: [data-platform/platform-comparison](../data-platform/platform-comparison.md), [platform-infrastructure/architecture](../platform-infrastructure/architecture.md), [platform-infrastructure/developer-platform](../platform-infrastructure/developer-platform.md).
 
 ### From a platform perspective, ... {#workplace-platform-perspective}
 
@@ -171,6 +155,22 @@ knowledge_ids: []
 집계한 형태: in this case.
 
 본문 예: [platform-infrastructure/developer-platform](../platform-infrastructure/developer-platform.md), [platform-infrastructure/kubernetes-operations](../platform-infrastructure/kubernetes-operations.md).
+
+### The goal is to ... {#workplace-goal-is}
+
+**3회 · 3개 문서 · 중립**
+
+**목표는 ...하는 것이다**
+
+구현 방법을 설명하기 전에 작업 목적을 밝힌다. To 뒤에는 동사원형을 쓴다.
+
+> The goal is to reduce recovery time without losing acknowledged writes.
+>
+> 목표는 성공 응답을 보낸 쓰기를 잃지 않으면서 복구 시간을 줄이는 것이다.
+
+집계한 형태: the goal is to.
+
+본문 예: [data-platform/platform-comparison](../data-platform/platform-comparison.md), [platform-infrastructure/architecture](../platform-infrastructure/architecture.md), [platform-infrastructure/developer-platform](../platform-infrastructure/developer-platform.md).
 
 ### One possible cause is ... {#workplace-possible-cause}
 

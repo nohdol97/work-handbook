@@ -16,11 +16,13 @@ knowledge_ids:
 
 # Chapter 5. PostgreSQL for Platform Systems
 
-This conceptual study record preserves the source order and form. Example numbers, commands, and identifiers are teaching material, not results of execution or operational testing. Read the section-specific supplement after the source core for clarifications and conditions on simplified statements.
+The configurations and commands are study examples, not results of a deployment or failure test.
 
 <!-- SOURCE CORE START -->
 
 ## 5.1 PostgreSQL Architecture
+
+PostgreSQL records changes in WAL before the related data pages are durable, much like keeping a transaction log. Recovery and replication use that log, while query latency can also come from locks, connections, or I/O.
 
 PostgreSQL is a relational database.
 
@@ -80,6 +82,10 @@ Uses:
 - Crash recovery
 - Replication
 - PITR
+
+**The precise WAL ordering**
+
+The key WAL guarantee is that the relevant WAL records must reach durable storage before changed pages are persisted in data files. The source flow is conceptual. It does not mean that a WAL disk write happens before every in-memory change. [PostgreSQL WAL](https://www.postgresql.org/docs/18/wal-intro.html).
 
 ---
 
@@ -179,6 +185,10 @@ PostgreSQL connections 100
 
 It is especially useful in Kubernetes and autoscaling environments.
 
+**What connection pooling covers**
+
+`1,000 → 100` is an example configuration. A pooler does not automatically multiply processing capacity by ten. PgBouncer transaction pooling assigns a server connection only for a transaction, then returns it to the pool. Compatibility with session-dependent features differs from session pooling. Check the driver and the features actually used. [PgBouncer features](https://www.pgbouncer.org/features.html).
+
 ---
 
 ## 5.3 Transactions / MVCC
@@ -255,6 +265,12 @@ Read + Write
 Write + Write
 → Lock contention is possible
 ```
+
+**Vacuum and 5.4 execution plans**
+
+Regular `VACUUM` makes space reusable, but usually does not shrink files and return space to the OS. It also cannot arbitrarily remove row versions that another transaction can still see. Check long transactions and autovacuum state together. [PostgreSQL routine vacuuming](https://www.postgresql.org/docs/18/routine-vacuuming.html).
+
+`EXPLAIN ANALYZE` actually runs the target statement. Even SELECT can create load or function side effects, so review the statement and execution environment first. Distinguish an estimated `EXPLAIN` plan from runtime statistics. [PostgreSQL EXPLAIN](https://www.postgresql.org/docs/18/sql-explain.html).
 
 ---
 
@@ -400,6 +416,10 @@ Can be used to distribute read load.
 
 Asynchronous replication may return slightly stale data.
 
+**What synchronous commits wait for**
+
+Standby acknowledgment depends on configuration. Check `synchronous_standby_names` together with `synchronous_commit`. `on` waits for durable WAL flush on the selected synchronous standbys. `remote_apply` also waits for replay that makes the transaction visible to queries. `remote_write` does not provide the same durability guarantee. Commit waits may grow when a synchronous standby does not respond. [PostgreSQL synchronous_commit](https://www.postgresql.org/docs/18/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT).
+
 ---
 
 ## 5.6 Backup / Recovery
@@ -475,6 +495,10 @@ Backup / PITR
 → Prepare for operational mistakes / data corruption
 ```
 
+**Requirements for PITR**
+
+PITR needs a valid base backup and an unbroken WAL sequence through the recovery target. Adding WAL to a `pg_dump` result is not physical PITR. The source's 10:44 recovery is an example target that assumes the required backup, WAL, and timeline are available. Check the restored result in a separate environment. [PostgreSQL continuous archiving](https://www.postgresql.org/docs/18/continuous-archiving.html).
+
 ---
 
 ## 5.7 Operational Tuning
@@ -532,6 +556,10 @@ Checkpoint
 5. Autovacuum
 6. Disk I/O
 ```
+
+**Total memory and work_mem**
+
+`work_mem` is a baseline for individual operations such as sorts and hashes, not a fixed limit for a whole connection or query. One query can contain multiple operations, and many sessions can run concurrently. Hash operations also use `hash_mem_multiplier`. Therefore, `connection count × work_mem` alone does not give the total memory ceiling. [PostgreSQL resource consumption](https://www.postgresql.org/docs/18/runtime-config-resource.html).
 
 ---
 
@@ -659,6 +687,12 @@ RDS PostgreSQL
 
 This architecture is also very common.
 
+**StatefulSet and Operators**
+
+`postgres-0 → Primary` is an example. The ordinal itself does not guarantee the PostgreSQL primary role, and roles can change after failover. StatefulSet provides stable identities and storage associations. Database roles and recovery logic need separate configuration. [Kubernetes StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
+
+The Operator pattern implements operational logic through custom resources and a controller. The source installation sequence is conceptual. Follow the selected Operator's installation documentation for the actual CRD and controller installation order, supported PostgreSQL versions, and backup features. [Kubernetes Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -669,63 +703,20 @@ Explain PostgreSQL latency by checking queries, locks, I/O, and resources alongs
 
 ## LLM in Practice: review connection growth and DB latency
 
-
 **Prompt:**
 
 === "한국어"
 
     ```text {.prompt}
-    앱 Pod 확장 뒤 DB connection과 지연이 증가했을 때 pool 설정 또는 query 변경을 검토한다.
-    connection 상한과 실제 동시 작업을 구분하고 pool 대기·lock·느린 query·vacuum 지연 가설을 비교하라. transaction pooling의 session 기능 호환성과 work_mem의 연산별 사용을 검토하라.
-    가설 / 근거 / 반증할 읽기 전용 자료 / 제안 변경 / 검증·복귀 조건 표를 작성하라. max_connections 증가나 Redis 도입을 먼저 결론 내리지 말고 EXPLAIN 추정치와 실행 통계를 구분하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    앱 Pod 확장 뒤 PostgreSQL 연결 수와 지연이 늘었어. pool 대기, lock, 느린 query, vacuum 지표를 보고 가능한 원인을 구분해 줘. max_connections 증가나 Redis 도입을 먼저 결론 내리지 말고 DB 설정은 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review pooling or query changes when DB connections and latency rise after application Pods scale out.
-    Distinguish connection limits from actual concurrent work. Compare pool waits, locks, slow queries, and delayed vacuum. Review session-feature compatibility with transaction pooling and work_mem use per operation.
-    Produce a table: hypothesis / evidence / read-only material that could disprove it / proposed change / validation and recovery conditions. Do not start by recommending higher max_connections or Redis. Distinguish EXPLAIN estimates from execution statistics.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    PostgreSQL connections and latency rose after scaling app Pods. Use pool waits, locks, slow queries, and vacuum metrics to separate possible causes. Do not jump to raising max_connections or adding Redis, and do not change DB settings.
     ```
 
-**Key point:** Evidence separating pool, query, lock, and vacuum hypotheses and connection limits from concurrency, plus configuration/SQL review comments. It may treat EXPLAIN ANALYZE as read-only or use connection count × work_mem as the total memory ceiling. Compare pool waits with DB lock/query evidence and check memory and connection impacts of proposed settings. Without execution statistics, estimated plans must not be described as measurements. This is an authored work example, not a verified model result or measured improvement.
+**Key point:** Evidence separating pool, query, lock, and vacuum hypotheses and connection limits from concurrency, plus configuration/SQL review comments. It may treat EXPLAIN ANALYZE as read-only or use connection count × work_mem as the total memory ceiling. Compare pool waits with DB lock/query evidence and check memory and connection impacts of proposed settings. Without execution statistics, estimated plans must not be described as measurements.
 
 Related: [Redis](redis.md) · [Kubernetes operations](kubernetes-operations.md)
-
-## Supplement and conditions
-
-Official documentation checked: 2026-10-01. The PostgreSQL references were read against version 18, which was current when checked. This does not claim runtime validation of an installed version, the SQL examples, or recovery procedures.
-
-### 5.1 The precise WAL ordering
-
-The key WAL guarantee is that the relevant WAL records must reach durable storage before changed pages are persisted in data files. The source flow is conceptual. It does not mean that a WAL disk write happens before every in-memory change. [PostgreSQL WAL](https://www.postgresql.org/docs/18/wal-intro.html).
-
-### 5.2 What connection pooling covers
-
-`1,000 → 100` is an example configuration. A pooler does not automatically multiply processing capacity by ten. PgBouncer transaction pooling assigns a server connection only for a transaction, then returns it to the pool. Compatibility with session-dependent features differs from session pooling. Check the driver and the features actually used. [PgBouncer features](https://www.pgbouncer.org/features.html).
-
-### 5.3 Vacuum and 5.4 execution plans
-
-Regular `VACUUM` makes space reusable, but usually does not shrink files and return space to the OS. It also cannot arbitrarily remove row versions that another transaction can still see. Check long transactions and autovacuum state together. [PostgreSQL routine vacuuming](https://www.postgresql.org/docs/18/routine-vacuuming.html).
-
-`EXPLAIN ANALYZE` actually runs the target statement. Even SELECT can create load or function side effects, so review the statement and execution environment first. Distinguish an estimated `EXPLAIN` plan from runtime statistics. [PostgreSQL EXPLAIN](https://www.postgresql.org/docs/18/sql-explain.html).
-
-### 5.5 What synchronous commits wait for
-
-Standby acknowledgment depends on configuration. Check `synchronous_standby_names` together with `synchronous_commit`. `on` waits for durable WAL flush on the selected synchronous standbys. `remote_apply` also waits for replay that makes the transaction visible to queries. `remote_write` does not provide the same durability guarantee. Commit waits may grow when a synchronous standby does not respond. [PostgreSQL synchronous_commit](https://www.postgresql.org/docs/18/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT).
-
-### 5.6 Requirements for PITR
-
-PITR needs a valid base backup and an unbroken WAL sequence through the recovery target. Adding WAL to a `pg_dump` result is not physical PITR. The source's 10:44 recovery is an example target that assumes the required backup, WAL, and timeline are available. Check the restored result in a separate environment. [PostgreSQL continuous archiving](https://www.postgresql.org/docs/18/continuous-archiving.html).
-
-### 5.7 Total memory and work_mem
-
-`work_mem` is a baseline for individual operations such as sorts and hashes, not a fixed limit for a whole connection or query. One query can contain multiple operations, and many sessions can run concurrently. Hash operations also use `hash_mem_multiplier`. Therefore, `connection count × work_mem` alone does not give the total memory ceiling. [PostgreSQL resource consumption](https://www.postgresql.org/docs/18/runtime-config-resource.html).
-
-### 5.8 StatefulSet and Operators
-
-`postgres-0 → Primary` is an example. The ordinal itself does not guarantee the PostgreSQL primary role, and roles can change after failover. StatefulSet provides stable identities and storage associations. Database roles and recovery logic need separate configuration. [Kubernetes StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
-
-The Operator pattern implements operational logic through custom resources and a controller. The source installation sequence is conceptual. Follow the selected Operator's installation documentation for the actual CRD and controller installation order, supported PostgreSQL versions, and backup features. [Kubernetes Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).

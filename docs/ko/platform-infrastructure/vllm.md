@@ -22,13 +22,13 @@ knowledge_ids:
 
 # Chapter 7. vLLM
 
-제공된 학습 원문의 번호·순서·예시를 보존했다. 아래 수치·환경 설명은 원문 기록이며 이 문서가 실제 운영 환경이나 실측 성능을 검증했다는 뜻은 아니다. 모델·GPU 사양, 메모리 계산의 조건과 운영상 정정은 뒤의 보완 절에서 해당 절 번호와 함께 확인한다. 코드·명령은 실행하지 않았다.
-
-특히 744B/40B·FP4 Weight 크기의 모델별 차이와 1M token의 단위 조건을 보완에서 확인한다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 7.1 LLM Serving Fundamentals
+
+vLLM은 여러 추론 요청을 한 GPU의 제한된 작업 공간에서 함께 처리한다. 좌석 배치처럼 batch와 KV cache가 메모리를 나눠 쓰므로 처리량과 지연을 함께 계산한다.
 
 vLLM은 LLM Inference Server다.
 
@@ -145,6 +145,13 @@ GPU VRAM
 ├─ Activation
 └─ Runtime
 ```
+
+**VRAM과 용량 계산의 가정**
+
+- **「GLM-5.3 / B200 / B300 실무 계산」:** 744B/40B는 [GLM-5 공식 모델 카드](https://huggingface.co/zai-org/GLM-5)의 수치다. [vLLM GLM-5.3 레시피](https://recipes.vllm.ai/zai-org/GLM-5.3)는 약 743B/39B로 표기한다. 원문의 744B 가정 계산은 유지하되 GLM-5.3의 확정 parameter 수로 읽지 않는다. 같은 레시피는 기본 checkpoint를 FP8, 별도 Inferact NVFP4 checkpoint를 약 465GB로 설명한다. 따라서 372GB와 400GB 전후는 실제 checkpoint 크기를 검증한 값이 아니다.
+- **같은 절 및 「B300 2대 / GLM-5.3 FP4 3개 관련 실무 연결」:** [NVIDIA HGX 사양](https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html)은 B200 SXM 180GB, B300 SXM 288GB와 8 GPU 구성을 명시한다. `744×4/180`의 올림인 17은 Weight만의 산술 하한이다. 지원되는 TP/PP 배치나 실행 가능한 서버 수가 아니다. GB/TB와 GiB/TiB를 섞지 않고 GPU별 가용량·통신 buffer·가중치 분할을 확인한다. 2대/3 replica/TP=4는 확인되지 않은 예시 배치다.
+- **「KV Cache와 Context Length」:** 320KiB/token 계산은 제시한 dense-attention 차원 가정에 맞는다. 1K=1,024, 128K=131,072 token일 때 표의 MiB/GiB가 성립한다. Prefix 공유·sliding window·압축 방식에 따라 실제 메모리는 달라진다. MoE의 전체 Weight 필요 설명은 전체 모델을 GPU에 상주시킬 때의 가정이며 offload나 expert 배치에 따라 GPU별 양은 달라진다.
+- **「GLM-5.3의 1M Context와 KV Cache」:** [공식 GLM-5.3 config](https://huggingface.co/zai-org/GLM-5.3/blob/main/config.json)는 `kv_lora_rank=512`, `qk_rope_head_dim=64`, `num_hidden_layers=78`, `max_position_embeddings=1048576`을 명시한다. 제시한 계산은 `89,856 bytes/token = 87.75 KiB/token`이다. 1M=1,048,576 token이면 87.75GiB, 1,000,000 token이면 약 83.685GiB다. 30배인 약 2.57TiB는 전자의 BF16 core cache 가정이다. Indexer/MTP/블록 overhead·복제와 실제 backend의 저장 형식은 제외되어 있으므로 전체 serving 용량이나 30명 SLA 보장이 아니다.
 
 ---
 
@@ -632,6 +639,14 @@ Token ... ← TPOT / tok/s
 
 Concurrency 증가 시 Throughput은 올라갈 수 있지만 어느 시점부터 Queue와 Latency가 급격히 악화된다.
 
+**운영 조건**
+
+50ms의 역수인 20tok/s는 token 간 간격의 근사이며 첫 token 대기와 서버 전체 throughput을 포함하지 않는다. [vLLM KV cache 문서](https://docs.vllm.ai/en/latest/features/quantization/quantized_kvcache/)처럼 FP8 KV는 별도 설정이고 scale calibration 및 attention backend 조건을 확인해야 한다. 메모리 절감만으로 정확도나 latency 개선을 보장하지 않는다.
+
+7.9의 `limits`만 있는 GPU 예시는 request에도 같은 값이 적용된다. 둘 다 지정하면 같아야 한다. GPU가 비어 있어도 affinity·taint·CPU/RAM 등 다른 제약을 만족해야 배치된다. [Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)
+
+이 절의 용량 수치는 가정에 따른 학습 계산이며 실제 GPU·모델 실행이나 성능 측정 결과가 아니다.
+
 ---
 
 ## 7.6 Parallelism
@@ -942,38 +957,13 @@ vLLM의 처리량과 지연은 배치, KV cache, 모델 크기와 GPU 메모리 
 === "한국어"
 
     ```text {.prompt}
-    모델 변경·context 한도·동시 요청 증가 전에 GPU 용량과 serving 목표를 검토한다.
-    Weight·core KV·overhead와 GPU별 배치를 계산하라. 1M이 1,000,000인지 1,048,576인지, GB/GiB를 확인하고 30명×1M 같은 제안은 실제 동시 sequence와 구분하라.
-    가정 / 산식·단위 / 근거 / GPU별 부족량 표, 가능한 배치 후보와 격리 부하 시험표를 작성하라. 744B·372GB 같은 원문 단순값을 실제 checkpoint 크기로 사용하지 말고 목표 TTFT/TPOT·품질·비용 비교에 필요한 관측을 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    모델 변경과 동시 요청 증가 전에 vLLM GPU 용량을 검토해 줘. Weight, KV cache, overhead를 GPU별로 계산하고 token 수의 M 단위와 GB/GiB를 명시해 줘. 원문 예시 수치를 실제 checkpoint 크기로 단정하거나 배포를 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review GPU capacity and serving targets before changing a model, context limit, or concurrency.
-    Calculate weights, core KV, overhead, and placement per GPU. Check whether 1M means 1,000,000 or 1,048,576 and use consistent GB/GiB units. Distinguish a proposal such as 30 users × 1M from actual concurrent sequences.
-    Produce a table: assumption / formula and units / evidence / shortfall per GPU, plus candidate placements and an isolated load-test matrix. Do not treat source examples such as 744B or 372GB as actual checkpoint sizes. List evidence needed to compare TTFT/TPOT, quality, and cost.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review vLLM GPU capacity before changing models or increasing concurrency. Calculate weights, KV cache, and overhead per GPU, and state the M-token and GB/GiB units. Do not treat study numbers as checkpoint sizes or deploy anything.
     ```
 
-**핵심 사항:** GPU별 Weight·KV·overhead·부족량 표와 context/concurrency별 TTFT·TPOT·품질·비용을 확인할 부하 시험표. FP4를 모든 tensor에 적용하거나 1M 단위를 섞고, 메모리 적합을 latency·throughput 목표 충족으로 오해할 수 있다. checkpoint/config와 startup 할당을 대조해 단위·tensor dtype·KV overhead 누락을 확인한다. 통제된 요청 길이·동시성의 TTFT/TPOT 관측이 없으면 용량 적합과 성능 목표 충족을 분리해 보류한다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다. 관련: [GPU 용량 계획](gpu-infrastructure.md)
-
-## 보완 — 원문 계산과 적용 조건
-
-검토일: 2026-10-01. 원문은 학습 기록이며 아래는 별도 기술 검토다.
-
-### 7.2 및 네 개의 무번호 계산 절
-
-- **「GLM-5.3 / B200 / B300 실무 계산」:** 744B/40B는 [GLM-5 공식 모델 카드](https://huggingface.co/zai-org/GLM-5)의 수치다. [vLLM GLM-5.3 레시피](https://recipes.vllm.ai/zai-org/GLM-5.3)는 약 743B/39B로 표기한다. 원문의 744B 가정 계산은 유지하되 GLM-5.3의 확정 parameter 수로 읽지 않는다. 같은 레시피는 기본 checkpoint를 FP8, 별도 Inferact NVFP4 checkpoint를 약 465GB로 설명한다. 따라서 372GB와 400GB 전후는 실제 checkpoint 크기를 검증한 값이 아니다.
-- **같은 절 및 「B300 2대 / GLM-5.3 FP4 3개 관련 실무 연결」:** [NVIDIA HGX 사양](https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html)은 B200 SXM 180GB, B300 SXM 288GB와 8 GPU 구성을 명시한다. `744×4/180`의 올림인 17은 Weight만의 산술 하한이다. 지원되는 TP/PP 배치나 실행 가능한 서버 수가 아니다. GB/TB와 GiB/TiB를 섞지 않고 GPU별 가용량·통신 buffer·가중치 분할을 확인한다. 2대/3 replica/TP=4는 확인되지 않은 예시 배치다.
-- **「KV Cache와 Context Length」:** 320KiB/token 계산은 제시한 dense-attention 차원 가정에 맞는다. 1K=1,024, 128K=131,072 token일 때 표의 MiB/GiB가 성립한다. Prefix 공유·sliding window·압축 방식에 따라 실제 메모리는 달라진다. MoE의 전체 Weight 필요 설명은 전체 모델을 GPU에 상주시킬 때의 가정이며 offload나 expert 배치에 따라 GPU별 양은 달라진다.
-- **「GLM-5.3의 1M Context와 KV Cache」:** [공식 GLM-5.3 config](https://huggingface.co/zai-org/GLM-5.3/blob/main/config.json)는 `kv_lora_rank=512`, `qk_rope_head_dim=64`, `num_hidden_layers=78`, `max_position_embeddings=1048576`을 명시한다. 제시한 계산은 `89,856 bytes/token = 87.75 KiB/token`이다. 1M=1,048,576 token이면 87.75GiB, 1,000,000 token이면 약 83.685GiB다. 30배인 약 2.57TiB는 전자의 BF16 core cache 가정이다. Indexer/MTP/블록 overhead·복제와 실제 backend의 저장 형식은 제외되어 있으므로 전체 serving 용량이나 30명 SLA 보장이 아니다.
-
-### 7.5 / 7.7–7.10 운영 조건
-
-50ms의 역수인 20tok/s는 token 간 간격의 근사이며 첫 token 대기와 서버 전체 throughput을 포함하지 않는다. [vLLM KV cache 문서](https://docs.vllm.ai/en/latest/features/quantization/quantized_kvcache/)처럼 FP8 KV는 별도 설정이고 scale calibration 및 attention backend 조건을 확인해야 한다. 메모리 절감만으로 정확도나 latency 개선을 보장하지 않는다.
-
-7.9의 `limits`만 있는 GPU 예시는 request에도 같은 값이 적용된다. 둘 다 지정하면 같아야 한다. GPU가 비어 있어도 affinity·taint·CPU/RAM 등 다른 제약을 만족해야 배치된다. [Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)
-
-읽기 순서: 먼저 7.1–7.2의 prefill/decode와 memory 구분을 읽고, 계산 절은 가정·단위를 적어 다시 계산한다. 이어 7.3–7.10으로 batching, 측정, 배치, 복구를 연결한다. 실제 GPU·모델 실행이나 성능 측정은 하지 않았다.
+**핵심 사항:** GPU별 Weight·KV·overhead·부족량 표와 context/concurrency별 TTFT·TPOT·품질·비용을 확인할 부하 시험표. FP4를 모든 tensor에 적용하거나 1M 단위를 섞고, 메모리 적합을 latency·throughput 목표 충족으로 오해할 수 있다. checkpoint/config와 startup 할당을 대조해 단위·tensor dtype·KV overhead 누락을 확인한다. 통제된 요청 길이·동시성의 TTFT/TPOT 관측이 없으면 용량 적합과 성능 목표 충족을 분리해 보류한다. 관련: [GPU 용량 계획](gpu-infrastructure.md)

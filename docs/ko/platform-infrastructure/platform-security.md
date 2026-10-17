@@ -16,11 +16,15 @@ knowledge_ids:
 
 # Chapter 10. Platform Security
 
-제공된 Basic Chapter 10의 학습 기록이다. 실제 보안 정책·인증서·Secret을 설정하거나 침투·복구 시험을 수행한 운영 경험을 뜻하지 않는다. [Kubernetes 핵심](kubernetes-core.md)과 [LiteLLM](litellm.md)의 배치·서비스 경계와 연결해 읽는다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
+
+관련: [Kubernetes 핵심](kubernetes-core.md), [LiteLLM](litellm.md)
 
 <!-- SOURCE CORE START -->
 
 ## 10.1 Authentication / Authorization
+
+플랫폼 보안은 건물의 출입문 하나가 아니라 여러 층의 문과 기록을 함께 두는 일이다. 이미지 출처, 실행 권한, 네트워크, 서비스 인증과 Secret 경계를 각각 확인한다.
 
 보안에서 가장 먼저 구분해야 하는 것은:
 
@@ -204,6 +208,10 @@ Service Identity
 Least Privilege
 = 필요한 권한만 최소한으로 부여
 ```
+
+**Kubernetes 권한의 적용 범위**
+
+ClusterRole은 클러스터 범위의 **객체**이지만 항상 모든 namespace에 권한을 주는 것은 아니다. RoleBinding으로 연결하면 그 namespace의 권한을 부여하고, ClusterRoleBinding으로 연결하면 클러스터 범위에서 부여한다. Kubernetes RBAC은 Kubernetes API 권한을 제어한다. ServiceAccount가 있다는 사실만으로 PostgreSQL·LiteLLM·vLLM의 애플리케이션 인증·인가가 구성되지는 않는다. [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
 
 ---
 
@@ -529,6 +537,12 @@ Secret Rotation
 = Secret 값을 주기적으로 교체
 ```
 
+**Secret 저장·접근·회전의 조건**
+
+Secret의 base64 표현은 암호화가 아니며, 기본적으로 etcd의 Secret은 별도 설정 없이 암호화되어 저장되지 않는다. 저장 암호화와 최소 권한을 함께 설정해야 한다. Secret API 읽기를 막아도 같은 namespace에서 그 Secret을 사용하는 Pod를 만들 수 있다면 값을 노출할 수 있다. 따라서 ServiceAccount별 API 권한만으로 Secret 격리가 완성되지 않는다. [Secret 보안 권장 사항](https://kubernetes.io/docs/concepts/security/secrets-good-practices/)
+
+환경변수로 주입한 Secret은 실행 중인 컨테이너에 자동 갱신되지 않는다. 일반 Secret volume 갱신은 지연될 수 있고 `subPath` 마운트는 자동 갱신되지 않는다. 애플리케이션의 재읽기·재시작과 구 자격 증명 폐기를 포함해 회전을 검증해야 한다. 외부 저장소에서 Kubernetes Secret으로 동기화한 경우에도 이 조건을 확인한다. 원문의 `password123`은 의도적으로 잘못된 하드코딩 예이다. [Kubernetes Secret](https://kubernetes.io/docs/concepts/configuration/secret/)
+
 ---
 
 ## 10.4 Network Security
@@ -760,6 +774,10 @@ Default Deny
 = 기본 차단 후 필요한 통신만 허용
 ```
 
+**NetworkPolicy는 적용 조건을 확인한다**
+
+NetworkPolicy를 집행하는 네트워크 플러그인이 필요하다. 정책이 선택하지 않은 방향은 기본적으로 격리되지 않는다. 허용 규칙은 순서대로 차단하는 방화벽 규칙이 아니라 합집합으로 적용된다. 통신하려면 격리된 출발지의 egress와 목적지의 ingress 모두 허용해야 하며, 허용된 연결의 응답 트래픽은 암묵적으로 허용된다. Default deny를 도입할 때 DNS 등 필요한 의존 경로도 검토한다. 이 정책만으로 TLS 암호화나 애플리케이션 인가가 생기지는 않는다. [Kubernetes NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+
 ---
 
 ## 10.5 TLS / mTLS
@@ -914,6 +932,10 @@ Certificate Rotation
 = Certificate를 주기적으로 갱신
 ```
 
+**mTLS 인증과 서비스 인가를 구분한다**
+
+mTLS는 인증서와 신뢰 설정에 따라 통신 상대의 신원을 확인한다. 그 신원이 특정 서비스의 작업을 수행해도 되는지는 별도 인가 정책으로 결정한다. 원문의 “너 진짜 허용된 LiteLLM 맞아?”는 인증서만 설치하면 모든 접근 권한까지 해결된다는 뜻으로 읽지 않는다. 인증서 갱신과 실제 적용도 확인해야 한다. [Istio 인증·인가](https://istio.io/latest/docs/concepts/security/)
+
 ---
 
 ## 10.6 Container Security
@@ -1044,6 +1066,10 @@ Read-only Filesystem
 = Container 내부 변조 제한
 ```
 
+**securityContext의 위치와 파일시스템 범위**
+
+원문의 두 필드 예는 완전한 Pod manifest가 아니다. `readOnlyRootFilesystem`은 `.spec.containers[*].securityContext`에 설정하는 컨테이너 필드이며 Pod 수준 `.spec.securityContext`에는 넣지 않는다. 루트 파일시스템을 읽기 전용으로 만들어도 별도 마운트의 쓰기 권한까지 제거하지는 않는다. `runAsNonRoot`는 임의의 비-root UID를 자동으로 선택해 주는 설정이 아니므로 이미지와 실행 UID도 확인한다. [Kubernetes security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+
 ---
 
 ## 10.7 Supply Chain Security
@@ -1171,6 +1197,10 @@ Registry
 ↓
 Kubernetes Deploy
 ```
+
+**서명과 안전성은 같은 판정이 아니다**
+
+이미지 서명 검증은 신뢰하는 키 또는 서명자 신원·issuer와 실제 배포할 digest를 대조해야 한다. 서명이 있다는 사실이나 digest 고정만으로 취약점이 없다고 결론 내릴 수 없다. SBOM은 구성 목록이고 스캔은 탐지 범위 안의 결과이므로, 이 구분은 원문의 공급망 단계들을 함께 읽기 위한 판단 기준이다. [Sigstore 서명 검증](https://docs.sigstore.dev/cosign/verifying/verify/)
 
 ---
 
@@ -1361,6 +1391,10 @@ Supply Chain Security
 Multi-tenant Isolation
 ```
 
+**namespace 분리의 한계**
+
+Namespace는 논리적 경계이며 독립적인 보안 샌드박스를 보장하지 않는다. 상호 신뢰 수준에 따라 RBAC·네트워크·Pod 보안과 노드 또는 클러스터 분리를 함께 검토한다. Quota는 자원 사용량 제한이지 성능이나 GPU 장애 격리의 보장이 아니다. [Kubernetes 멀티테넌시](https://kubernetes.io/docs/concepts/security/multi-tenancy/), [GPU 인프라](gpu-infrastructure.md)
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -1377,53 +1411,13 @@ Multi-tenant Isolation
 === "한국어"
 
     ```text {.prompt}
-    서비스 배포 PR에서 Kubernetes 권한·Secret 주입·네트워크·서비스 인증의 경계를 검토한다.
-    현재 구성과 변경 diff에서 identity→권한→Secret→통신→서비스 인가 경로를 검토하라. ClusterRole binding 범위, Secret API 읽기와 Pod를 통한 간접 접근, 환경변수·volume 갱신 차이를 구분하라.
-    파일·필드 / 노출 경로 / 근거 / 최소 수정 후보 / 정상·거부·회전 검증 표를 작성하라. DNS 등 정상 의존 경로와 ingress/egress, mTLS 인증과 인가, securityContext 위치, namespace 격리 한계를 포함하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    서비스 배포 PR의 Kubernetes 권한, Secret 주입, 네트워크와 서비스 인증을 검토해 줘. 변경 diff에서 과도한 접근이나 회전 실패 위험을 찾아 최소 수정안을 제안해 줘. 실제 Secret 값을 요구하지 말고 정책도 적용하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review Kubernetes permissions, Secret injection, networking, and service authentication in a deployment PR.
-    Review identity, permissions, Secrets, communication, and service authorization in the current setup and diff. Distinguish ClusterRole binding scope, direct Secret API reads from access through Pods, and environment-variable from volume updates.
-    Produce a table: file/field / exposure path / evidence / minimal fix / allow-deny-rotation checks. Include legitimate dependencies such as DNS, ingress/egress, mTLS authentication versus authorization, securityContext placement, and namespace isolation limits.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review Kubernetes permissions, Secret injection, networking, and service authentication in this deployment PR. Find excessive access and secret-rotation risks in the diff, then suggest minimal changes. Do not request real secret values or apply policies.
     ```
 
-**핵심 사항:** manifest 필드별 권한·Secret·통신 노출 경로, 최소 수정 후보와 허용·거부·회전 시험표. 정책 파일 존재를 집행 성공으로 보거나 Secret 읽기 금지만으로 Pod mount도 차단됐다고 판단할 수 있다. binding 범위와 Pod를 통한 Secret 접근, 양쪽 NetworkPolicy, mTLS 인가를 실제 설정에 대조한다. 정상 DNS 의존성을 유지하고 Secret 갱신 방식까지 시험 조건에 있어야 한다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다.
-
-## 원문 절별 보완과 정정
-
-아래는 2026-10-03에 공식 문서와 대조한 보완이며, 원문의 코드·정책을 적용하거나 보안 시험을 수행한 결과가 아니다.
-
-### 10.1·10.2: Kubernetes 권한의 적용 범위
-
-ClusterRole은 클러스터 범위의 **객체**이지만 항상 모든 namespace에 권한을 주는 것은 아니다. RoleBinding으로 연결하면 그 namespace의 권한을 부여하고, ClusterRoleBinding으로 연결하면 클러스터 범위에서 부여한다. Kubernetes RBAC은 Kubernetes API 권한을 제어한다. ServiceAccount가 있다는 사실만으로 PostgreSQL·LiteLLM·vLLM의 애플리케이션 인증·인가가 구성되지는 않는다. [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
-
-### 10.3·10.8: Secret 저장·접근·회전의 조건
-
-Secret의 base64 표현은 암호화가 아니며, 기본적으로 etcd의 Secret은 별도 설정 없이 암호화되어 저장되지 않는다. 저장 암호화와 최소 권한을 함께 설정해야 한다. Secret API 읽기를 막아도 같은 namespace에서 그 Secret을 사용하는 Pod를 만들 수 있다면 값을 노출할 수 있다. 따라서 ServiceAccount별 API 권한만으로 Secret 격리가 완성되지 않는다. [Secret 보안 권장 사항](https://kubernetes.io/docs/concepts/security/secrets-good-practices/)
-
-환경변수로 주입한 Secret은 실행 중인 컨테이너에 자동 갱신되지 않는다. 일반 Secret volume 갱신은 지연될 수 있고 `subPath` 마운트는 자동 갱신되지 않는다. 애플리케이션의 재읽기·재시작과 구 자격 증명 폐기를 포함해 회전을 검증해야 한다. 외부 저장소에서 Kubernetes Secret으로 동기화한 경우에도 이 조건을 확인한다. 원문의 `password123`은 의도적으로 잘못된 하드코딩 예이다. [Kubernetes Secret](https://kubernetes.io/docs/concepts/configuration/secret/)
-
-### 10.4: NetworkPolicy는 적용 조건을 확인한다
-
-NetworkPolicy를 집행하는 네트워크 플러그인이 필요하다. 정책이 선택하지 않은 방향은 기본적으로 격리되지 않는다. 허용 규칙은 순서대로 차단하는 방화벽 규칙이 아니라 합집합으로 적용된다. 통신하려면 격리된 출발지의 egress와 목적지의 ingress 모두 허용해야 하며, 허용된 연결의 응답 트래픽은 암묵적으로 허용된다. Default deny를 도입할 때 DNS 등 필요한 의존 경로도 검토한다. 이 정책만으로 TLS 암호화나 애플리케이션 인가가 생기지는 않는다. [Kubernetes NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
-
-### 10.5: mTLS 인증과 서비스 인가를 구분한다
-
-mTLS는 인증서와 신뢰 설정에 따라 통신 상대의 신원을 확인한다. 그 신원이 특정 서비스의 작업을 수행해도 되는지는 별도 인가 정책으로 결정한다. 원문의 “너 진짜 허용된 LiteLLM 맞아?”는 인증서만 설치하면 모든 접근 권한까지 해결된다는 뜻으로 읽지 않는다. 인증서 갱신과 실제 적용도 확인해야 한다. [Istio 인증·인가](https://istio.io/latest/docs/concepts/security/)
-
-### 10.6: securityContext의 위치와 파일시스템 범위
-
-원문의 두 필드 예는 완전한 Pod manifest가 아니다. `readOnlyRootFilesystem`은 `.spec.containers[*].securityContext`에 설정하는 컨테이너 필드이며 Pod 수준 `.spec.securityContext`에는 넣지 않는다. 루트 파일시스템을 읽기 전용으로 만들어도 별도 마운트의 쓰기 권한까지 제거하지는 않는다. `runAsNonRoot`는 임의의 비-root UID를 자동으로 선택해 주는 설정이 아니므로 이미지와 실행 UID도 확인한다. [Kubernetes security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
-
-### 10.7: 서명과 안전성은 같은 판정이 아니다
-
-이미지 서명 검증은 신뢰하는 키 또는 서명자 신원·issuer와 실제 배포할 digest를 대조해야 한다. 서명이 있다는 사실이나 digest 고정만으로 취약점이 없다고 결론 내릴 수 없다. SBOM은 구성 목록이고 스캔은 탐지 범위 안의 결과이므로, 이 구분은 원문의 공급망 단계들을 함께 읽기 위한 판단 기준이다. [Sigstore 서명 검증](https://docs.sigstore.dev/cosign/verifying/verify/)
-
-### 10.8: namespace 분리의 한계
-
-Namespace는 논리적 경계이며 독립적인 보안 샌드박스를 보장하지 않는다. 상호 신뢰 수준에 따라 RBAC·네트워크·Pod 보안과 노드 또는 클러스터 분리를 함께 검토한다. Quota는 자원 사용량 제한이지 성능이나 GPU 장애 격리의 보장이 아니다. [Kubernetes 멀티테넌시](https://kubernetes.io/docs/concepts/security/multi-tenancy/), [GPU 인프라](gpu-infrastructure.md)
+**핵심 사항:** manifest 필드별 권한·Secret·통신 노출 경로, 최소 수정 후보와 허용·거부·회전 시험표. 정책 파일 존재를 집행 성공으로 보거나 Secret 읽기 금지만으로 Pod mount도 차단됐다고 판단할 수 있다. binding 범위와 Pod를 통한 Secret 접근, 양쪽 NetworkPolicy, mTLS 인가를 실제 설정에 대조한다. 정상 DNS 의존성을 유지하고 Secret 갱신 방식까지 시험 조건에 있어야 한다.

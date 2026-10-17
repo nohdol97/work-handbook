@@ -1,8 +1,8 @@
 ---
 id: ai-model-development-qlora-artifacts
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - AIMFT-01-01
   - AIMFT-01-02
@@ -16,11 +16,13 @@ knowledge_ids:
 
 # Chapter 1. QLoRA and Training Artifacts
 
-This page preserves the source numbering, order, and examples. **The A/B matrix dimensions in 1.2 do not match the `B × A` formula.** See the correction after the source, along with precision in 1.3, saved files in 1.4, and serving/merge conditions in 1.7–1.8. No training, model saving, or deployment was performed.
+The models and settings are study examples, not results of training, evaluation, or deployment.
 
 <!-- SOURCE CORE START -->
 
 ## 1.1 QLoRA Fundamentals
+
+QLoRA is like keeping a large book unchanged and storing the needed edits in a separate notebook. Base weights and adapter files have different roles, so track their versions together when saving or serving.
 
 QLoRA does not directly train all the base model weights.
 It trains only small LoRA adapters while keeping the base model quantized.
@@ -53,6 +55,10 @@ LoRA Adapter Weight
 The result of QLoRA training is therefore usually not a new full model,
 but **an adapter used together with the base model**.
 
+**Frozen Weights and Storage/Compute Precision**
+
+The QLoRA paper passes gradients through a frozen 4-bit base model into LoRA adapters. “Mostly frozen” in the source does not mean that standard QLoRA updates base weights. NF4, double quantization, and paged optimizers are also part of the paper's memory-saving design. Four-bit storage does not mean every operation uses four bits. Check settings such as bitsandbytes `bnb_4bit_compute_dtype` separately. [QLoRA paper](https://arxiv.org/abs/2305.14314), [Transformers BitsAndBytesConfig](https://huggingface.co/docs/transformers/main_classes/quantization#transformers.BitsAndBytesConfig)
+
 ---
 
 ## 1.2 What LoRA Learns
@@ -76,11 +82,13 @@ Original Weight
 4096 x 4096
 
 LoRA
-A: 4096 x 16
-B: 16 x 4096
+A: 16 x 4096
+B: 4096 x 16
 ```
 
 This can greatly reduce the number of trainable parameters compared with training all the weights again.
+
+At rank 16, `A` reduces the input dimension to 16 and `B` expands it back to 4096. Their product `B × A` therefore has the same `4096 × 4096` shape as `W`. A practical LoRA update usually includes `α/r` scaling; the formula above omits it for clarity. [LoRA paper §4.1](https://arxiv.org/html/2106.09685)
 
 ---
 
@@ -144,6 +152,10 @@ adapter_model.safetensors
 ```
 
 This file stores the trained LoRA adapter weights.
+
+**Saved Files and Merging**
+
+A PEFT adapter primarily needs adapter weights and `adapter_config.json`. Tokenizer files, training arguments, and custom metadata depend on separate saving steps. The source list is not every tool's automatic output. Merge support varies by method and quantization settings. The result of `merge_and_unload()` does not retain PEFT adapter switching. [PEFT checkpoint](https://huggingface.co/docs/peft/main/en/developer_guides/checkpoint)
 
 ---
 
@@ -241,6 +253,10 @@ Base Model ─────────┼─ Coding Adapter
 
 This can reduce the cost of storing or loading the base model onto GPUs multiple times.
 
+**Check Serving Support**
+
+With vLLM, check model LoRA support and settings such as `enable_lora`, `max_loras`, and `max_lora_rank`. Having multiple adapter files does not guarantee per-request switching or target throughput under concurrency. [vLLM LoRA](https://docs.vllm.ai/en/latest/features/lora/)
+
 ---
 
 ## 1.8 Merging an Adapter into a Full Model
@@ -285,25 +301,10 @@ managing base models and adapters separately is often efficient.
 
 <!-- SOURCE CORE END -->
 
-## Supplement — Matrix Correction and Artifact Conditions
+## Key points
 
-LoRA and QLoRA papers and official PEFT, Transformers, and vLLM documentation checked on 2026-10-05. `main`/`latest` documentation can change; pin the actual installed versions separately. Nothing was executed for this page.
+QLoRA stores a frozen base model and a trained adapter separately. Track both versions, matrix dimensions, and serving compatibility.
 
-### 1.1–1.3 Frozen Weights and Storage/Compute Precision
-
-The QLoRA paper passes gradients through a frozen 4-bit base model into LoRA adapters. “Mostly frozen” in the source does not mean that standard QLoRA updates base weights. NF4, double quantization, and paged optimizers are also part of the paper's memory-saving design. Four-bit storage does not mean every operation uses four bits. Check settings such as bitsandbytes `bnb_4bit_compute_dtype` separately. [QLoRA paper](https://arxiv.org/abs/2305.14314), [Transformers BitsAndBytesConfig](https://huggingface.co/docs/transformers/main_classes/quantization#transformers.BitsAndBytesConfig)
-
-### 1.2 Correcting A/B Dimensions
-
-For a `4096 × 4096` weight `W` and `ΔW = B × A`, standard LoRA notation uses `A: 16 × 4096` and `B: 4096 × 16`. With the source's dimensions, `B × A` instead produces `16 × 16`, which cannot be added to `W`. Keeping those dimensions would require `A × B`. Basic LoRA also uses `α/r` scaling; the source's conceptual formula omits that factor. [LoRA paper §4.1](https://arxiv.org/html/2106.09685)
-
-### 1.4 / 1.8 Saved Files and Merging
-
-A PEFT adapter primarily needs adapter weights and `adapter_config.json`. Tokenizer files, training arguments, and custom metadata depend on separate saving steps. The source list is not every tool's automatic output. Merge support varies by method and quantization settings. The result of `merge_and_unload()` does not retain PEFT adapter switching. [PEFT checkpoint](https://huggingface.co/docs/peft/main/en/developer_guides/checkpoint)
-
-### 1.7 Check Serving Support
-
-With vLLM, check model LoRA support and settings such as `enable_lora`, `max_loras`, and `max_lora_rank`. Having multiple adapter files does not guarantee per-request switching or target throughput under concurrency. [vLLM LoRA](https://docs.vllm.ai/en/latest/features/lora/)
 
 ## Related Topics
 

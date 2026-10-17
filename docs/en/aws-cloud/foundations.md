@@ -12,11 +12,13 @@ knowledge_ids:
 
 # Chapter 1. AWS Foundation
 
-These study notes preserve the supplied compact source’s order and examples in translation. They are not actual AWS operating results.
+The configurations are study examples, not results from a running AWS environment.
 
 <!-- SOURCE CORE START -->
 
 ## 1.1 Region / Availability Zone
+
+An AWS account is like a building management boundary; IAM controls who may enter each room. Separating accounts and granting only the actions a role needs are different design decisions.
 
 ### Region
 A large geographic area where AWS operates.
@@ -63,6 +65,9 @@ Region = A large geographic area
 AZ = An independent failure domain within a Region
 Basic operating pattern = Single Region + Multi-AZ
 ```
+
+
+Deploying across AZs still requires verification of application and data replication, failure routing, and remaining capacity. Multi-AZ alone does not guarantee recovery from a Region-wide outage.
 
 ---
 
@@ -121,6 +126,9 @@ SCP = Limit the maximum permissions allowed by the organization
 ```
 
 An SCP does not grant permissions by itself.
+
+
+SCPs require an organization with all features enabled and apply to member-account root users. They do not apply to management-account users and roles or service-linked roles. Prefer federation and temporary credentials for routine human access, and use MFA. [AWS SCP documentation](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html), [IAM security best practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
 
 ---
 
@@ -206,6 +214,9 @@ Pod → Kubernetes API = Kubernetes RBAC
 Pod → S3 / SQS / Secrets Manager = AWS IAM
 ```
 
+
+The source JSON is one statement, not a complete policy. Wrap it in `Statement` and specify the policy language `Version` in an actual policy document. `Condition` is optional. A Trust Policy that permits a principal to assume a role does not replace its Permission Policy's service permissions. Temporary credentials are also secrets and must be refreshed securely before expiration. The ARN account number `123456789012` is illustrative. [IAM policy elements](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html), [IAM roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html).
+
 ---
 
 ## 1.4 AWS Resource / ARN
@@ -240,29 +251,13 @@ Accounts set management boundaries, while IAM sets permission boundaries. Separa
 === "한국어"
 
     ```text {.prompt}
-    S3 접근 권한 요청이나 IAM 정책 PR에서 최소 권한과 역할 수임 조건을 검토한다.
-    예를 들어 example-study-bucket/reports/* 읽기 요구를 실제 요청 범위와 대조하라. role 수임과 서비스 권한, SCP 제한을 나누고 필요한 최소 statement를 검토하라.
-    정책 위치 / 허용할 action·resource / 현재 과다·누락 권한 / 근거 / 추가 질문 표와 JSON 초안을 작성하라. statement와 전체 정책 문서를 구분하고 trust/SCP가 권한 부여의 충분조건이라고 쓰지 마라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    S3의 example-study-bucket/reports/* 읽기 요청을 위한 IAM 정책 PR을 검토해 줘. 역할 수임 조건, 서비스 권한, SCP 제한을 구분하고 필요한 최소 권한을 제안해 줘. 비밀값은 다루지 말고 정책을 적용하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review least privilege and role-assumption conditions in an S3 access request or IAM policy PR.
-    Compare a requirement such as reading example-study-bucket/reports/* with the actual request scope. Review role assumption, service permissions, and SCP restrictions separately, then assess the minimum required statement.
-    Produce a table: policy location / required action-resource / excess or missing permissions / evidence / follow-up question, plus a JSON draft. Distinguish a statement from a complete policy. Do not treat trust or an SCP as sufficient to grant service access.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review an IAM policy PR for reading example-study-bucket/reports/*. Separate role assumption, service permissions, and SCP restrictions, then suggest the minimum needed permissions. Do not handle secrets or apply the policy.
     ```
 
-**Key point:** A minimal IAM JSON draft for required actions/resources and a review of excess/missing permissions by trust, SCP, and account scope. It may respond to AccessDenied with Resource:* or administrator access, or treat an SCP as a permission grant. Check the complete policy structure and object ARN against expected allowed/denied action-resource cases. Reject access-allowed verdicts that assume missing trust or SCP content. This is an authored work example, not a verified model result or measured improvement.
-
-## Supplement: conditions for 1.1–1.4
-
-Official documentation checked: 2026-10-04.
-
-**1.1 Multi-AZ:** Deploying across AZs still requires verification of application and data replication, failure routing, and remaining capacity. Multi-AZ alone does not guarantee recovery from a Region-wide outage.
-
-**1.2 Accounts and SCPs:** SCPs require an organization with all features enabled and apply to member-account root users. They do not apply to management-account users and roles or service-linked roles. Prefer federation and temporary credentials for routine human access, and use MFA. [AWS SCP documentation](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html), [IAM security best practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
-
-**1.3–1.4 Policy example:** The source JSON is one statement, not a complete policy. Wrap it in `Statement` and specify the policy language `Version` in an actual policy document. `Condition` is optional. A Trust Policy that permits a principal to assume a role does not replace its Permission Policy's service permissions. Temporary credentials are also secrets and must be refreshed securely before expiration. The ARN account number `123456789012` is illustrative. [IAM policy elements](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html), [IAM roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html).
+**Key point:** A minimal IAM JSON draft for required actions/resources and a review of excess/missing permissions by trust, SCP, and account scope. It may respond to AccessDenied with Resource:* or administrator access, or treat an SCP as a permission grant. Check the complete policy structure and object ARN against expected allowed/denied action-resource cases. Reject access-allowed verdicts that assume missing trust or SCP content.

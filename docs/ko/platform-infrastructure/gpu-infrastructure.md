@@ -17,13 +17,13 @@ knowledge_ids:
 
 # Chapter 9. GPU Infrastructure & Scheduling
 
-제공된 학습 원문의 번호·순서·예시를 보존했다. 아래 수치·환경 설명은 원문 기록이며 이 문서가 실제 운영 환경이나 실측 성능을 검증했다는 뜻은 아니다. 모델·GPU 사양, 메모리 계산의 조건과 운영상 정정은 뒤의 보완 절에서 해당 절 번호와 함께 확인한다. 코드·명령은 실행하지 않았다.
-
-특히 GPU Util 100%만으로 compute 병목을 확정할 수 없고 spare GPU 합계만으로 Node 장애 복구를 보장할 수 없다는 정정을 보완에서 확인한다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 9.1 GPU Fundamentals
+
+GPU 용량은 빈 좌석 수만으로 계산할 수 없다. 한 모델이 여러 GPU를 같은 Node에서 필요로 한다면 배치 모양과 장애 후 남는 자리까지 함께 봐야 한다.
 
 GPU는 대규모 병렬 연산을 빠르게 처리하는 가속기다.
 
@@ -95,6 +95,12 @@ VRAM 60%
 GPU Util 100%
 → Compute 병목
 ```
+
+**사용률과 용량의 해석**
+
+**`GPU Util 100% → Compute 병목`은 단정할 수 없다.** [NVIDIA nvidia-smi 문서](https://docs.nvidia.com/deploy/nvidia-smi/index.html)의 GPU utilization은 표본 구간에 kernel이 실행된 시간 비율이다. 연산기의 최대 처리량을 얼마나 썼는지를 직접 뜻하지 않는다. Memory bandwidth, 통신, kernel 효율, clock 제한, CPU 공급 지연을 함께 확인한다. 낮은 사용률도 무조건 여유 compute를 뜻하지 않는다.
+
+9.8의 8 concurrent/replica와 peak 24로 3개를 구하는 것은 선형 확장 가정이다. 실제 request 길이 분포, 큐, 라우팅 편향, 장애 중 SLO를 부하 시험으로 확인한다. GLM/B300 수치와 단위별 계산 조건은 [vLLM](vllm.md)의 7.2와 용량 계산 절에 있다.
 
 ---
 
@@ -209,6 +215,12 @@ Device Plugin
 Container Toolkit
 → Container가 실제 GPU를 사용하게 함
 ```
+
+**GPU 요청·배치·공유**
+
+[Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)에서 GPU `limits`만 지정하면 request도 그 값이 되고, 둘 다 있으면 동일해야 한다. Node 전체 여유 합계가 아니라 해당 Pod가 배치될 한 Node의 자원과 제약을 본다. 9.4의 toleration은 taint를 허용할 뿐 특정 Node로 배치를 보장하지 않으며, taint 효과와 required/preferred affinity도 구분한다.
+
+[NVIDIA GPU sharing 문서](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/gpu-sharing.html)에 따르면 time slicing은 replica 사이 memory/fault isolation을 제공하지 않고 request 수에 비례한 compute도 보장하지 않는다. MIG는 지원되는 GPU와 profile에 한해 분할한다. Dedicated/time slicing/MIG/MPS는 원문의 선택 감각만으로 서로 대체할 수 없다.
 
 ---
 
@@ -699,6 +711,12 @@ Queue 증가
 → Compute Capacity 문제
 ```
 
+**장애 여유와 복구**
+
+16장 중 4장이 spare라는 합계만으로 Node 장애 후 복구를 보장하지 않는다. 원문의 8장짜리 Node 두 개에서 12장을 사용한다면 Node 하나가 사라진 뒤 남는 전체 GPU는 8장이다. 12장의 기존 serving 용량을 모두 복구할 수 없다. 살아 있는 적합한 Node 하나에 4-GPU 배치가 가능해야 단일 4-GPU replica를 재생성한다. CPU/RAM·affinity·taint·장치 health·모델 준비 시간까지 확인한다.
+
+Cordon/drain 순서는 계획된 정비의 개요다. 실제 drain은 중단 허용 범위·PodDisruptionBudget·대체 capacity를 검토한 뒤 실행한다. 이 페이지에서는 GPU 명령, drain, 부하 시험을 실행하지 않았다. 
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -718,41 +736,13 @@ GPU 운영은 할당량뿐 아니라 메모리, 모델 적재, 노드 상태와 
 === "한국어"
 
     ```text {.prompt}
-    GPU Node 정비·증설 전에 현재 replica 배치가 Node 장애와 serving 최소 용량을 견디는지 검토한다.
-    각 Node가 사라지는 경우 남는 총 GPU, 기존 replica 사용량, 재배치 가능한 GPU를 따로 계산하라. 8-GPU Node 2개·4-GPU replica 3개 같은 합계로 전체 12-GPU 복구를 보장하지 마라.
-    장애 Node / 살아남은 배치 / 복구 가능한 replica / 부족 제약 / 최소 용량 충족 여부 표를 작성하라. canary·정비·장애 예비 용량을 중복 계산하지 말고 증설 또는 배치 변경 후보와 필요한 검증을 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    GPU Node 정비 전에 replica를 다른 Node로 옮길 수 있는지 계산해 줘. Node별 실제 배치와 모델의 GPU 묶음 요구를 사용하고, canary·정비·장애 예비 용량을 중복 계산하지 마. Node 작업은 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review whether current replica placement can survive node failure and meet minimum serving capacity before GPU-node maintenance or expansion.
-    For the loss of each node, calculate surviving GPUs, existing replica use, and GPUs available for replacement separately. Totals such as two 8-GPU nodes with three 4-GPU replicas do not guarantee recovery of all 12 serving GPUs.
-    Produce a table: failed node / surviving placement / recoverable replicas / missing capacity or constraints / minimum capacity met. Do not count canary, maintenance, and failure reserves twice. List expansion or placement proposals and the checks they require.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Before GPU node maintenance, calculate whether replicas can move to other nodes. Use actual placement and each model’s grouped GPU requirement; do not double-count canary, maintenance, or failure reserve. Do not operate nodes.
     ```
 
-**핵심 사항:** Node 장애별 생존 replica·재배치 가능량·최소 serving 용량 충족 여부와 증설/배치 변경 후보. spare GPU 합계를 한 Node의 가용량으로 보거나 GPU Util 100%만으로 compute 병목을 확정할 수 있다. 합계 GPU뿐 아니라 한 Node에 배치 가능한 GPU·CPU/RAM·affinity·taint와 생존 replica 사용량을 다시 계산한다. 복구 시간에는 모델 준비와 readiness를 포함해야 한다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다. 관련: [Kubernetes 운영](kubernetes-operations.md)
-
-## 보완 — 원문 해석과 운영 조건
-
-검토일: 2026-10-01. 원문 예시는 운영 환경을 확인한 결과가 아니다.
-
-### 9.1 / 9.8 / 9.9 사용률과 용량
-
-**`GPU Util 100% → Compute 병목`은 단정할 수 없다.** [NVIDIA nvidia-smi 문서](https://docs.nvidia.com/deploy/nvidia-smi/index.html)의 GPU utilization은 표본 구간에 kernel이 실행된 시간 비율이다. 연산기의 최대 처리량을 얼마나 썼는지를 직접 뜻하지 않는다. Memory bandwidth, 통신, kernel 효율, clock 제한, CPU 공급 지연을 함께 확인한다. 낮은 사용률도 무조건 여유 compute를 뜻하지 않는다.
-
-9.8의 8 concurrent/replica와 peak 24로 3개를 구하는 것은 선형 확장 가정이다. 실제 request 길이 분포, 큐, 라우팅 편향, 장애 중 SLO를 부하 시험으로 확인한다. GLM/B300 수치와 단위별 계산 조건은 [vLLM 보완](vllm.md)의 7.2 및 무번호 계산 절에 있다.
-
-### 9.3–9.5 GPU 요청·배치·공유
-
-[Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)에서 GPU `limits`만 지정하면 request도 그 값이 되고, 둘 다 있으면 동일해야 한다. Node 전체 여유 합계가 아니라 해당 Pod가 배치될 한 Node의 자원과 제약을 본다. 9.4의 toleration은 taint를 허용할 뿐 특정 Node로 배치를 보장하지 않으며, taint 효과와 required/preferred affinity도 구분한다.
-
-[NVIDIA GPU sharing 문서](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/gpu-sharing.html)에 따르면 time slicing은 replica 사이 memory/fault isolation을 제공하지 않고 request 수에 비례한 compute도 보장하지 않는다. MIG는 지원되는 GPU와 profile에 한해 분할한다. Dedicated/time slicing/MIG/MPS는 원문의 선택 감각만으로 서로 대체할 수 없다.
-
-### 9.9 장애 여유와 복구
-
-16장 중 4장이 spare라는 합계만으로 Node 장애 후 복구를 보장하지 않는다. 원문의 8장짜리 Node 두 개에서 12장을 사용한다면 Node 하나가 사라진 뒤 남는 전체 GPU는 8장이다. 12장의 기존 serving 용량을 모두 복구할 수 없다. 살아 있는 적합한 Node 하나에 4-GPU 배치가 가능해야 단일 4-GPU replica를 재생성한다. CPU/RAM·affinity·taint·장치 health·모델 준비 시간까지 확인한다.
-
-Cordon/drain 순서는 계획된 정비의 개요다. 실제 drain은 중단 허용 범위·PodDisruptionBudget·대체 capacity를 검토한 뒤 실행한다. 이 페이지에서는 GPU 명령, drain, 부하 시험을 실행하지 않았다. 읽기 순서: 9.1–9.3의 계층을 구분한 뒤 9.4–9.7에서 배치·공유·통신을 확인하고 9.8–9.9에서 용량·장애 가정을 검증한다.
+**핵심 사항:** Node 장애별 생존 replica·재배치 가능량·최소 serving 용량 충족 여부와 증설/배치 변경 후보. spare GPU 합계를 한 Node의 가용량으로 보거나 GPU Util 100%만으로 compute 병목을 확정할 수 있다. 합계 GPU뿐 아니라 한 Node에 배치 가능한 GPU·CPU/RAM·affinity·taint와 생존 replica 사용량을 다시 계산한다. 복구 시간에는 모델 준비와 readiness를 포함해야 한다. 관련: [Kubernetes 운영](kubernetes-operations.md)

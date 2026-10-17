@@ -1,8 +1,8 @@
 ---
 id: platform-multitenancy-cost
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - PIS4-13-01
   - PIS4-13-02
@@ -18,11 +18,13 @@ knowledge_ids:
 
 # Chapter 13. Multi-tenancy, Quotas & Cost Control
 
-This page preserves the supplied study source’s numbering, order, and examples. Read the isolation layers, quotas, and LimitRange in 13.1–13.4, and the LLM limits and cost examples in 13.6–13.9, with the separate supplement. The examples are not results of policy deployment or load tests.
+The configurations and commands are study examples, not results of a deployment or failure test.
 
 <!-- SOURCE CORE START -->
 
 ## 13.1 Multi-tenancy Models
+
+Multi-tenancy resembles several teams sharing one building. Space separation, access rights, usage limits, and cost metering are different controls.
 
 Several teams can share one platform at different levels.
 
@@ -51,6 +53,12 @@ Quota
 ```
 
 Use this as the baseline, and separate node pools or clusters when stronger isolation is needed.
+
+**Isolation is not one ranking of strength**
+
+The source's arrows are a learning model. Namespaces, RBAC, NetworkPolicy, and quotas address different problems; one does not replace another. NetworkPolicy needs a supporting CNI. Dedicated nodes do not solve every isolation issue in a shared control plane. [Kubernetes multi-tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/)
+
+A toleration permits a taint; it does not force placement on a particular node. Dedicated placement also needs controls such as node affinity. Check policies that prevent tenants from crossing boundaries with arbitrary tolerations or placement settings. [Taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
 
 ---
 
@@ -120,6 +128,10 @@ GPU quota = 8
 
 Even with this quota, a Pod stays Pending if the cluster has no available GPUs.
 
+**Quotas do not cap live utilization or reserve capacity**
+
+ResourceQuota mainly limits declared request/limit totals and object counts at admission. For the GPU device-plugin resource `nvidia.com/gpu`, the quota key is `requests.nvidia.com/gpu`. Distinguish creation rejected for exceeding quota from a created Pod that stays Pending because no suitable GPU is available. [Kubernetes ResourceQuota](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
+
 ---
 
 ## 13.4 LimitRange
@@ -146,6 +158,10 @@ LimitRange
 ```
 
 They are often used together.
+
+**When LimitRange applies**
+
+LimitRange supplies default Container requests/limits. It can also constrain Pod/Container minimums and maximums, and PVC storage requests. A new policy does not reconfigure existing running Pods. Check that the final requests/limits after defaults are consistent and fit the quota. [Kubernetes LimitRange](https://kubernetes.io/docs/concepts/policy/limit-range/)
 
 ---
 
@@ -212,6 +228,10 @@ Context Length
 ```
 
 Limit these per tenant.
+
+**Example numbers and cost models**
+
+`2M TPM`, `10` concurrent requests, and `128K` context are source policy examples, not LiteLLM defaults or validated recommendations. Check actual [LiteLLM](litellm.md) settings and [vLLM](vllm.md) capacity. Dividing cost by requests or tokens is an allocation rule, not a direct measurement of GPU execution time. When applying this study example, define how shared, idle, and failure-reserve costs are handled and reconcile allocated totals with actual bills.
 
 ---
 
@@ -369,27 +389,10 @@ These are some ways to allocate them.
 
 <!-- SOURCE CORE END -->
 
-## Supplement — What isolation and usage limits actually cover
+## Key points
 
-Official documentation checked on 2026-10-05. No cluster policies were deployed, and no load tests or cost measurements were performed.
+Namespaces, RBAC, NetworkPolicy, and quotas solve different isolation and limit problems. Cost allocation also needs explicit rules for measured usage and shared expense.
 
-### 13.1 / 13.2 Isolation is not one ranking of strength
-
-The source's arrows are a learning model. Namespaces, RBAC, NetworkPolicy, and quotas address different problems; one does not replace another. NetworkPolicy needs a supporting CNI. Dedicated nodes do not solve every isolation issue in a shared control plane. [Kubernetes multi-tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/)
-
-A toleration permits a taint; it does not force placement on a particular node. Dedicated placement also needs controls such as node affinity. Check policies that prevent tenants from crossing boundaries with arbitrary tolerations or placement settings. [Taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
-
-### 13.3 / 13.7 Quotas do not cap live utilization or reserve capacity
-
-ResourceQuota mainly limits declared request/limit totals and object counts at admission. For the GPU device-plugin resource `nvidia.com/gpu`, the quota key is `requests.nvidia.com/gpu`. Distinguish creation rejected for exceeding quota from a created Pod that stays Pending because no suitable GPU is available. [Kubernetes ResourceQuota](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
-
-### 13.4 When LimitRange applies
-
-LimitRange supplies default Container requests/limits. It can also constrain Pod/Container minimums and maximums, and PVC storage requests. A new policy does not reconfigure existing running Pods. Check that the final requests/limits after defaults are consistent and fit the quota. [Kubernetes LimitRange](https://kubernetes.io/docs/concepts/policy/limit-range/)
-
-### 13.6–13.9 Example numbers and cost models
-
-`2M TPM`, `10` concurrent requests, and `128K` context are source policy examples, not LiteLLM defaults or validated recommendations. Check actual [LiteLLM](litellm.md) settings and [vLLM](vllm.md) capacity. Dividing cost by requests or tokens is an allocation rule, not a direct measurement of GPU execution time. When applying this study example, define how shared, idle, and failure-reserve costs are handled and reconcile allocated totals with actual bills.
 
 ## Related topics
 

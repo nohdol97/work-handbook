@@ -17,11 +17,13 @@ knowledge_ids:
 
 # Chapter 2. Networking
 
-These study notes preserve the supplied compact source’s order and examples in translation. They are not actual AWS operating results.
+The configurations are study examples, not results from a running AWS environment.
 
 <!-- SOURCE CORE START -->
 
 ## 2.1 VPC
+
+A VPC path works like a road network: check the source, next hop, and destination. An address and an allow rule do not create a route or gateway.
 
 VPC = Virtual Private Cloud.
 
@@ -127,6 +129,9 @@ EKS also uses:
 
 These also consume addresses, so do not calculate `/24 = 256 combined nodes and Pods`.
 
+
+The 251 usable addresses in a `/24` assume an ordinary IPv4 subnet where AWS reserves five addresses; BYOIP has an exception. The CIDR table's `/32` and `/0` describe address ranges, while VPC IPv4 subnets permit `/16` through `/28`. [AWS subnet sizing](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html).
+
 ---
 
 ## 2.3 Public IP / Private IP
@@ -181,6 +186,9 @@ Public Subnet
 Private Subnet
 → EKS Node / EC2 App / RDS / ElastiCache / MSK
 ```
+
+
+The source's public IP and `0.0.0.0/0` explanation assumes IPv4. A public subnet still requires a resource's public IPv4 address, routing, SG and NACL rules, and a listening service for communication. Check IPv6 addresses and `::/0` routing separately. [AWS Internet Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html).
 
 ---
 
@@ -274,6 +282,9 @@ Consider a NAT Gateway in each AZ for production Multi-AZ deployments.
 
 Some AWS services, such as S3/ECR, can bypass NAT through VPC endpoints.
 
+
+Per-AZ NAT in public subnets describes **public zonal NAT Gateways**. Route each private subnet through its own AZ's NAT to reduce cross-AZ dependencies. Regional NAT Gateways are also supported, require no public subnet, and offer automatic or manual AZ modes. Regional NAT does not support private NAT. Private NAT is not an internet exit through an IGW. To bypass NAT with endpoints, verify the target service and required endpoints, DNS, and policies separately. [Regional NAT](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html), [NAT types](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html).
+
 ---
 
 ## 2.8 Security Group
@@ -316,6 +327,9 @@ DB-SG
 | Allow | O | O |
 | Explicit Deny | X | O |
 
+
+A reference does not copy the other SG's rules; it applies to private IPs of associated network interfaces. Rules from multiple attached SGs are combined. An SG allow rule does not create a route. [AWS SG rules](https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html).
+
 ---
 
 ## 2.9 Basic Multi-AZ VPC structure
@@ -352,31 +366,13 @@ VPCs and subnets divide placement; routes, gateways, and security groups determi
 === "한국어"
 
     ```text {.prompt}
-    private 앱의 인터넷 연결 실패나 AZ별 의존성을 조사하고 route 변경 PR을 검토한다.
-    정상 경로와 AZ A 장애 경로를 나눠 추적하라. public zonal NAT가 A/B에 있지만 두 private subnet이 NAT A로 향하는 경우 AZ B의 의존성을 설명하고 같은 AZ NAT 사용안을 검토하라.
-    출발 subnet / route·다음 hop / 실패 경계 / 근거 / 변경·복귀 후보 표를 작성하라. NAT B·DNS·IGW·SG/NACL 상태를 가정하지 말고 regional/private NAT나 endpoint이면 그 구성의 경로를 따로 검토하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    두 AZ의 private 앱이 NAT A에 의존하는지 route 변경안을 검토해 줘. 각 subnet의 실제 route와 NAT 유형을 보고 정상 경로와 AZ A 장애 경로를 설명해 줘. 확인하지 않은 DNS·SG 상태를 가정하거나 route를 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Investigate private-app internet failures or cross-zone dependencies and review a route-change PR.
-    Trace the normal path and the path during an AZ A outage. If public zonal NATs exist in A/B but both private subnets route through NAT A, explain AZ B dependence and review using each zone’s own NAT.
-    Produce a table: source subnet / route and next hop / failure boundary / evidence / change and recovery proposal. Do not assume NAT B, DNS, IGW, or SG/NACL state. Review regional/private NAT or endpoints according to their actual configuration.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review whether private apps in two AZs depend on NAT A. Use each subnet’s actual routes and NAT type to explain normal traffic and an AZ A failure. Do not assume unverified DNS or security-group state, and do not change routes.
     ```
 
-**Key point:** Per-subnet next hops during normal operation and an AZ outage, failure boundaries, route-change/recovery proposals, and validation checks. It may equate SG permission with an existing route or claim that the internet can initiate connections through NAT. Compare NAT type, zone, and actual routes with flow/DNS evidence. Distinguish SG permission from route existence and make remaining cross-zone dependencies testable after the change. This is an authored work example, not a verified model result or measured improvement.
-
-## Supplement: conditions for 2.2–2.9
-
-Official documentation checked: 2026-10-04.
-
-**2.2 CIDR:** The 251 usable addresses in a `/24` assume an ordinary IPv4 subnet where AWS reserves five addresses; BYOIP has an exception. The CIDR table's `/32` and `/0` describe address ranges, while VPC IPv4 subnets permit `/16` through `/28`. [AWS subnet sizing](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html).
-
-**2.4–2.6 Internet paths:** The source's public IP and `0.0.0.0/0` explanation assumes IPv4. A public subnet still requires a resource's public IPv4 address, routing, SG and NACL rules, and a listening service for communication. Check IPv6 addresses and `::/0` routing separately. [AWS Internet Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html).
-
-**2.7 and 2.9 NAT:** Per-AZ NAT in public subnets describes **public zonal NAT Gateways**. Route each private subnet through its own AZ's NAT to reduce cross-AZ dependencies. Regional NAT Gateways are also supported, require no public subnet, and offer automatic or manual AZ modes. Regional NAT does not support private NAT. Private NAT is not an internet exit through an IGW. To bypass NAT with endpoints, verify the target service and required endpoints, DNS, and policies separately. [Regional NAT](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html), [NAT types](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html).
-
-**2.8 SG references:** A reference does not copy the other SG's rules; it applies to private IPs of associated network interfaces. Rules from multiple attached SGs are combined. An SG allow rule does not create a route. [AWS SG rules](https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html).
+**Key point:** Per-subnet next hops during normal operation and an AZ outage, failure boundaries, route-change/recovery proposals, and validation checks. It may equate SG permission with an existing route or claim that the internet can initiate connections through NAT. Compare NAT type, zone, and actual routes with flow/DNS evidence. Distinguish SG permission from route existence and make remaining cross-zone dependencies testable after the change.

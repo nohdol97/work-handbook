@@ -14,13 +14,17 @@ knowledge_ids:
 
 # Chapter 6. Kafka for Platform Systems
 
-제공된 Basic Chapter 6의 학습 기록이다. 실제 Kafka 클러스터 구축·재할당·재시작을 수행한 운영 실적이 아니다. 선행 개념은 [이벤트 아키텍처](../data-platform/event-architecture.md), Kubernetes 배치와 유지보수는 [Kubernetes 운영](kubernetes-operations.md)에서 연결해 읽는다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
+
+관련: [이벤트 아키텍처](../data-platform/event-architecture.md)
 
 <!-- SOURCE CORE START -->
 
 > Kafka의 Broker / Topic / Partition / Producer / Consumer / Consumer Group / Offset / Ordering / 기본 semantics 등 개념은 Data Platform Basic에서 이미 학습한 것으로 간주한다. 이 Chapter에서는 Platform / Infrastructure 운영 관점만 다룬다.
 
 ## 6.1 Replication / ISR / Leader Election
+
+Kafka는 메시지를 순서대로 적는 공동 기록장과 비슷하다. 생산자, 브로커, 소비자가 각각 어디까지 기록·확인했는지 알아야 재처리와 장애 복구 범위를 판단할 수 있다.
 
 핵심:
 
@@ -95,6 +99,10 @@ Network 문제
 Disk 느림
 CPU / Broker overload
 ```
+
+**offset 예와 선출 자격**
+
+원문의 `1000 / 999 / 500`은 뒤처짐을 설명하는 예이며 고정된 offset 차이만으로 ISR 여부를 판정하지 않는다. ISR 이탈 조건과 실제 replica 상태를 확인한다. 또한 ISR 밖의 모든 replica가 항상 안전하지 않은 것은 아니다. Kafka의 Eligible Leader Replicas(ELR)는 별도 추적한 replica를 안전한 선출 후보로 사용할 수 있다. 현재 ISR, ELR 설정·상태, unclean election 정책을 함께 확인한다. [Kafka ELR](https://kafka.apache.org/43/operations/eligible-leader-replicas/)
 
 ---
 
@@ -189,6 +197,10 @@ Disk 사용률
 Network 사용률
 ```
 
+**용량 산식의 범위**
+
+`2.1TB`는 원문 입력을 곱한 전체 replica 데이터량의 학습 추정값이다. 단일 broker 요구량이나 실제 구매 용량을 확정하지 않는다. 운영 검토에서는 압축 후 저장량, retention 정책, broker별 편중, index·segment 여유, 장애 복구·재할당 중 추가 공간과 읽기·복제 트래픽을 측정한다. Partition 증가는 병렬성의 상한을 높이지만 hot key나 느린 consumer를 자동으로 해결하지 않는다. 이는 원문 산식과 partition trade-off에서 도출한 점검 항목이다.
+
 ---
 
 ## 6.3 Reliability 설정
@@ -246,6 +258,12 @@ Availability ↑
 → 데이터 유실 가능성 ↑
 ```
 
+**acks=all과 min ISR**
+
+`acks=all`은 `min.insync.replicas` 수만큼만 기다린다는 뜻이 아니다. 성공 응답에는 현재 ISR 전체의 확인이 필요하다. ISR이 3개이고 min ISR이 2여도 ISR 3개 모두가 대상이다. min ISR에는 leader가 포함되며, `acks=all`에서 ISR이 기준보다 적으면 쓰기가 실패한다. `acks=1`에도 같은 producer 승인 보장이 적용된다고 해석하지 않는다. Consumer에게 데이터가 보이는 high watermark 조건과 producer 응답 조건도 구분한다. [Producer acks](https://kafka.apache.org/43/configuration/producer-configs/), [Topic min.insync.replicas](https://kafka.apache.org/43/configuration/topic-configs/)
+
+이 조합만으로 중복 제거·end-to-end exactly-once가 보장되지는 않는다. Producer idempotence, retry와 consumer 처리·offset commit은 별도 검토 대상이다. 위의 `RF=3` 예는 배치 장애 영역과 허용 가능한 쓰기 중단도 함께 평가해야 한다.
+
 ---
 
 ## 6.4 Security
@@ -289,6 +307,10 @@ Client
 ↓ ACL
 권한 확인
 ```
+
+**보안 기능은 명시적으로 구성**
+
+TLS는 암호화뿐 아니라 인증서 기반 인증에도 사용할 수 있다. SASL은 인증 수단이며 자체를 전송 암호화와 동일시하지 않는다. 원문 흐름은 한 가지 개념 조합이다. 실제 listener의 보안 프로토콜, 인증 방식, authorizer·ACL을 확인해야 하며 Kafka를 설치했다고 모두 활성화되지는 않는다. [Kafka security overview](https://kafka.apache.org/43/security/security-overview/)
 
 ---
 
@@ -344,6 +366,10 @@ Broker 상태 정상?
 ```
 
 확인.
+
+**재할당과 유지보수**
+
+일반적인 broker 추가는 기존 partition을 자동 재분배하지 않는다. 자동화 도구가 있더라도 재할당 계획·대상 broker·복제 진행률·throttle을 확인한다. 작업 전 상태가 정상이었다는 사실만으로 다음 broker 재시작을 진행하지 않는다. 각 단계 후 ISR 회복과 실제 가용성을 확인한다. 이것은 원문 점검 절차를 운영 계획에 적용하기 위한 조건이며 작업 실행 승인이 아니다. [Kafka operations](https://kafka.apache.org/43/operations/basic-kafka-operations/)
 
 ---
 
@@ -421,6 +447,12 @@ Kafka
 
 대표적으로 Strimzi 같은 Kafka Operator를 사용할 수 있다.
 
+**StatefulSet과 Operator의 경계**
+
+StatefulSet은 stateful workload를 이해하는 기본 개념이다. 모든 Kafka Operator가 StatefulSet을 생성한다고 단정하면 안 된다. 현재 Strimzi는 `StrimziPodSet` 등 자체 리소스를 관리한다. 선택한 Operator 버전의 리소스와 storage·rack 배치 구성을 확인한다. [Strimzi deployment guide](https://strimzi.io/docs/operators/latest/full/deploying.html)
+
+Pod를 서로 다른 Node에 놓는 것과 서로 다른 Zone·장애 영역에 replica를 배치하는 것도 다르다. PVC가 있다는 사실은 백업·복구 시험 완료를 의미하지 않는다. 관련 배치·중단 조건은 [Kubernetes 운영](kubernetes-operations.md)과 함께 검토한다.
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -437,53 +469,15 @@ Kafka의 처리 보장은 생산자, 브로커, 소비자의 설정과 재처리
 === "한국어"
 
     ```text {.prompt}
-    ISR이 감소한 상태에서 broker 유지보수나 partition 재할당을 진행할 수 있는지 판단한다.
-    현재 RF·acks·min.insync.replicas와 ISR로 쓰기 승인·중단 조건을 계산하라. min ISR을 기다릴 replica 수와 혼동하지 말고 한 replica가 더 이탈할 경우를 비교하라.
-    단계 / 쓰기 가용성 / 필요한 증거 / 진행·중단 조건 표와 조사 우선순위를 작성하라. lag 원인, 재할당 throttle·진행률·disk 여유, 재시작 후 ISR 회복과 client 오류 확인을 포함하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    ISR이 줄어든 상태에서 broker 정비 계획을 검토해 줘. 현재 replication factor, acks, min.insync.replicas와 ISR을 기준으로 한 replica가 더 이탈할 때 쓰기 가능 여부를 설명해 줘. 재할당이나 재시작은 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Assess whether broker maintenance or partition reassignment can proceed while ISR is reduced.
-    Use RF, acks, min.insync.replicas, and current ISR to determine write acknowledgment and outage conditions. Do not confuse minimum ISR with the number of replicas to wait for. Compare the loss of one more replica.
-    Produce a table: step / write availability / required evidence / go and stop conditions, plus investigation priorities. Include lag causes, reassignment throttling/progress/disk headroom, ISR recovery after a restart, and client errors.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review broker maintenance while ISR has shrunk. Use the current replication factor, acks, min.insync.replicas, and ISR to explain whether writes survive one more replica loss. Do not reassign partitions or restart brokers.
     ```
 
-**핵심 사항:** ISR 추가 감소 시 쓰기 가용성표, broker 작업의 진행·중단 기준과 재할당/재시작 후 확인 목록. ISR 2개면 여유가 충분하다고 보거나 acks·min ISR을 낮춰 증상을 숨길 수 있다. 현재 ISR 전체와 min ISR 역할을 구분했는지 실제 설정으로 재계산한다. broker별 disk·복제 상태 회복을 확인하지 못하면 다음 단계의 진행 판정을 남기지 않는다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다.
+**핵심 사항:** ISR 추가 감소 시 쓰기 가용성표, broker 작업의 진행·중단 기준과 재할당/재시작 후 확인 목록. ISR 2개면 여유가 충분하다고 보거나 acks·min ISR을 낮춰 증상을 숨길 수 있다. 현재 ISR 전체와 min ISR 역할을 구분했는지 실제 설정으로 재계산한다. broker별 disk·복제 상태 회복을 확인하지 못하면 다음 단계의 진행 판정을 남기지 않는다.
 
 관련: [Kubernetes 운영](kubernetes-operations.md)
-
-## 원문 절별 보완과 정정
-
-2026-10-01 공식 문서를 확인했다. 아래는 원문을 대체하지 않는 적용 조건이다. Kafka 자료는 4.3 문서 기준이며 대상 클러스터의 버전·기능 플래그는 별도로 확인해야 한다.
-
-### 6.1 보완: offset 예와 선출 자격
-
-원문의 `1000 / 999 / 500`은 뒤처짐을 설명하는 예이며 고정된 offset 차이만으로 ISR 여부를 판정하지 않는다. ISR 이탈 조건과 실제 replica 상태를 확인한다. 또한 ISR 밖의 모든 replica가 항상 안전하지 않은 것은 아니다. Kafka의 Eligible Leader Replicas(ELR)는 별도 추적한 replica를 안전한 선출 후보로 사용할 수 있다. 현재 ISR, ELR 설정·상태, unclean election 정책을 함께 확인한다. [Kafka ELR](https://kafka.apache.org/43/operations/eligible-leader-replicas/)
-
-### 6.2 보완: 용량 산식의 범위
-
-`2.1TB`는 원문 입력을 곱한 전체 replica 데이터량의 학습 추정값이다. 단일 broker 요구량이나 실제 구매 용량을 확정하지 않는다. 운영 검토에서는 압축 후 저장량, retention 정책, broker별 편중, index·segment 여유, 장애 복구·재할당 중 추가 공간과 읽기·복제 트래픽을 측정한다. Partition 증가는 병렬성의 상한을 높이지만 hot key나 느린 consumer를 자동으로 해결하지 않는다. 이는 원문 산식과 partition trade-off에서 도출한 점검 항목이다.
-
-### 6.3 정정: acks=all과 min ISR
-
-`acks=all`은 `min.insync.replicas` 수만큼만 기다린다는 뜻이 아니다. 성공 응답에는 현재 ISR 전체의 확인이 필요하다. ISR이 3개이고 min ISR이 2여도 ISR 3개 모두가 대상이다. min ISR에는 leader가 포함되며, `acks=all`에서 ISR이 기준보다 적으면 쓰기가 실패한다. `acks=1`에도 같은 producer 승인 보장이 적용된다고 해석하지 않는다. Consumer에게 데이터가 보이는 high watermark 조건과 producer 응답 조건도 구분한다. [Producer acks](https://kafka.apache.org/43/configuration/producer-configs/), [Topic min.insync.replicas](https://kafka.apache.org/43/configuration/topic-configs/)
-
-이 조합만으로 중복 제거·end-to-end exactly-once가 보장되지는 않는다. Producer idempotence, retry와 consumer 처리·offset commit은 별도 검토 대상이다. 위의 `RF=3` 예는 배치 장애 영역과 허용 가능한 쓰기 중단도 함께 평가해야 한다.
-
-### 6.4 보완: 보안 기능은 명시적으로 구성
-
-TLS는 암호화뿐 아니라 인증서 기반 인증에도 사용할 수 있다. SASL은 인증 수단이며 자체를 전송 암호화와 동일시하지 않는다. 원문 흐름은 한 가지 개념 조합이다. 실제 listener의 보안 프로토콜, 인증 방식, authorizer·ACL을 확인해야 하며 Kafka를 설치했다고 모두 활성화되지는 않는다. [Kafka security overview](https://kafka.apache.org/43/security/security-overview/)
-
-### 6.5 보완: 재할당과 유지보수
-
-일반적인 broker 추가는 기존 partition을 자동 재분배하지 않는다. 자동화 도구가 있더라도 재할당 계획·대상 broker·복제 진행률·throttle을 확인한다. 작업 전 상태가 정상이었다는 사실만으로 다음 broker 재시작을 진행하지 않는다. 각 단계 후 ISR 회복과 실제 가용성을 확인한다. 이것은 원문 점검 절차를 운영 계획에 적용하기 위한 조건이며 작업 실행 승인이 아니다. [Kafka operations](https://kafka.apache.org/43/operations/basic-kafka-operations/)
-
-### 6.6 보완: StatefulSet과 Operator의 경계
-
-StatefulSet은 stateful workload를 이해하는 기본 개념이다. 모든 Kafka Operator가 StatefulSet을 생성한다고 단정하면 안 된다. 현재 Strimzi는 `StrimziPodSet` 등 자체 리소스를 관리한다. 선택한 Operator 버전의 리소스와 storage·rack 배치 구성을 확인한다. [Strimzi deployment guide](https://strimzi.io/docs/operators/latest/full/deploying.html)
-
-Pod를 서로 다른 Node에 놓는 것과 서로 다른 Zone·장애 영역에 replica를 배치하는 것도 다르다. PVC가 있다는 사실은 백업·복구 시험 완료를 의미하지 않는다. 관련 배치·중단 조건은 [Kubernetes 운영](kubernetes-operations.md)과 함께 검토한다.

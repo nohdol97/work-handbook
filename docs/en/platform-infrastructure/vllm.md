@@ -22,13 +22,13 @@ knowledge_ids:
 
 # Chapter 7. vLLM
 
-The supplied study notes retain their numbering, order, and examples. Numbers and environment descriptions below are source statements; this page does not verify an actual deployment or measured performance. See the supplement for model and GPU specifications, memory assumptions, and operational corrections tied to the original sections. Code and commands were not executed.
-
-In particular, check the supplement for model-specific differences in 744B/40B and FP4 weight sizes, and the units behind 1M tokens.
+The configurations and commands are study examples, not results of a deployment or failure test.
 
 <!-- SOURCE CORE START -->
 
 ## 7.1 LLM Serving Fundamentals
+
+vLLM serves several inference requests in limited GPU memory. Like seating a group, batching and KV cache share space, so capacity and latency must be assessed together.
 
 vLLM is an LLM inference server.
 
@@ -145,6 +145,13 @@ GPU VRAM
 ├─ Activation
 └─ Runtime
 ```
+
+**VRAM and capacity assumptions**
+
+- **“Practical GLM-5.3 / B200 / B300 calculations”:** 744B/40B comes from the [official GLM-5 model card](https://huggingface.co/zai-org/GLM-5). The [vLLM GLM-5.3 recipe](https://recipes.vllm.ai/zai-org/GLM-5.3) lists about 743B/39B. Keep calculations using the source's 744B assumption, but do not read it as a confirmed GLM-5.3 parameter count. That recipe describes the default checkpoint as FP8 and a separate Inferact NVFP4 checkpoint as about 465GB. Thus 372GB and around 400GB are not verified checkpoint sizes.
+- **That section and “Practical connection: 2 B300 servers / 3 GLM-5.3 FP4 models”:** [NVIDIA HGX specifications](https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html) list B200 SXM at 180GB, B300 SXM at 288GB, and 8-GPU configurations. Rounding up `744×4/180` gives 17, a weights-only arithmetic lower bound. It is not a supported TP/PP layout or a runnable server count. Keep GB/TB separate from GiB/TiB and check per-GPU available memory, communication buffers, and weight partitioning. The 2-server/3-replica/TP=4 layout is an unverified example.
+- **“KV cache and context length”:** 320KiB/token matches the given dense-attention dimensions. The MiB/GiB table assumes 1K=1,024 and 128K=131,072 tokens. Prefix sharing, sliding windows, and compression change actual memory use. The statement that MoE needs all weights assumes full GPU residency; offload and expert placement change per-GPU requirements.
+- **“GLM-5.3 1M context and KV cache”:** The [official GLM-5.3 config](https://huggingface.co/zai-org/GLM-5.3/blob/main/config.json) lists `kv_lora_rank=512`, `qk_rope_head_dim=64`, `num_hidden_layers=78`, and `max_position_embeddings=1048576`. The formula gives `89,856 bytes/token = 87.75 KiB/token`. At 1M=1,048,576 tokens this is 87.75GiB; at 1,000,000 tokens it is about 83.685GiB. Multiplying the former BF16 core-cache estimate by 30 gives about 2.57TiB. Indexer/MTP/block overhead, replication, and backend storage formats are excluded. This is not total serving capacity or an SLA guarantee for 30 users.
 
 ---
 
@@ -632,6 +639,14 @@ Token ... ← TPOT / tok/s
 
 Increasing concurrency may improve throughput, but queues and latency worsen sharply beyond a certain point.
 
+**Operating conditions**
+
+The reciprocal of 50ms gives 20tok/s as an approximate token rate. It excludes first-token waiting and total server throughput. As the [vLLM KV cache documentation](https://docs.vllm.ai/en/latest/features/quantization/quantized_kvcache/) explains, FP8 KV is a separate setting with scale calibration and attention-backend conditions. Memory savings alone do not guarantee accuracy or lower latency.
+
+The GPU example in 7.9 specifies only `limits`; the same value becomes the request. If both are specified, they must match. Free GPUs are insufficient if affinity, taints, CPU/RAM, or other placement constraints fail. [Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)
+
+The capacity figures in this section are study calculations based on assumptions, not results from running a GPU or model.
+
 ---
 
 ## 7.6 Parallelism
@@ -942,38 +957,13 @@ Assess vLLM throughput and latency across batching, KV cache, model size, and GP
 === "한국어"
 
     ```text {.prompt}
-    모델 변경·context 한도·동시 요청 증가 전에 GPU 용량과 serving 목표를 검토한다.
-    Weight·core KV·overhead와 GPU별 배치를 계산하라. 1M이 1,000,000인지 1,048,576인지, GB/GiB를 확인하고 30명×1M 같은 제안은 실제 동시 sequence와 구분하라.
-    가정 / 산식·단위 / 근거 / GPU별 부족량 표, 가능한 배치 후보와 격리 부하 시험표를 작성하라. 744B·372GB 같은 원문 단순값을 실제 checkpoint 크기로 사용하지 말고 목표 TTFT/TPOT·품질·비용 비교에 필요한 관측을 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    모델 변경과 동시 요청 증가 전에 vLLM GPU 용량을 검토해 줘. Weight, KV cache, overhead를 GPU별로 계산하고 token 수의 M 단위와 GB/GiB를 명시해 줘. 원문 예시 수치를 실제 checkpoint 크기로 단정하거나 배포를 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review GPU capacity and serving targets before changing a model, context limit, or concurrency.
-    Calculate weights, core KV, overhead, and placement per GPU. Check whether 1M means 1,000,000 or 1,048,576 and use consistent GB/GiB units. Distinguish a proposal such as 30 users × 1M from actual concurrent sequences.
-    Produce a table: assumption / formula and units / evidence / shortfall per GPU, plus candidate placements and an isolated load-test matrix. Do not treat source examples such as 744B or 372GB as actual checkpoint sizes. List evidence needed to compare TTFT/TPOT, quality, and cost.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review vLLM GPU capacity before changing models or increasing concurrency. Calculate weights, KV cache, and overhead per GPU, and state the M-token and GB/GiB units. Do not treat study numbers as checkpoint sizes or deploy anything.
     ```
 
-**Key point:** A per-GPU weight/KV/overhead/shortfall table and a load-test matrix for TTFT, TPOT, quality, and cost by context length and concurrency. It may apply FP4 to every tensor, mix 1M units, or mistake fitting in memory for meeting latency and throughput targets. Check checkpoint/config against startup allocations for unit errors, tensor dtypes, and missing KV overhead. Without TTFT/TPOT observations at controlled request lengths and concurrency, separate memory fit from unverified performance targets. This is an authored work example, not a verified model result or measured improvement. Related: [GPU capacity planning](gpu-infrastructure.md)
-
-## Supplement — calculation assumptions and operating conditions
-
-Reviewed on 2026-10-01. The source is a study record; this is a separate technical review.
-
-### 7.2 and the four unnumbered calculation sections
-
-- **“Practical GLM-5.3 / B200 / B300 calculations”:** 744B/40B comes from the [official GLM-5 model card](https://huggingface.co/zai-org/GLM-5). The [vLLM GLM-5.3 recipe](https://recipes.vllm.ai/zai-org/GLM-5.3) lists about 743B/39B. Keep calculations using the source's 744B assumption, but do not read it as a confirmed GLM-5.3 parameter count. That recipe describes the default checkpoint as FP8 and a separate Inferact NVFP4 checkpoint as about 465GB. Thus 372GB and around 400GB are not verified checkpoint sizes.
-- **That section and “Practical connection: 2 B300 servers / 3 GLM-5.3 FP4 models”:** [NVIDIA HGX specifications](https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html) list B200 SXM at 180GB, B300 SXM at 288GB, and 8-GPU configurations. Rounding up `744×4/180` gives 17, a weights-only arithmetic lower bound. It is not a supported TP/PP layout or a runnable server count. Keep GB/TB separate from GiB/TiB and check per-GPU available memory, communication buffers, and weight partitioning. The 2-server/3-replica/TP=4 layout is an unverified example.
-- **“KV cache and context length”:** 320KiB/token matches the given dense-attention dimensions. The MiB/GiB table assumes 1K=1,024 and 128K=131,072 tokens. Prefix sharing, sliding windows, and compression change actual memory use. The statement that MoE needs all weights assumes full GPU residency; offload and expert placement change per-GPU requirements.
-- **“GLM-5.3 1M context and KV cache”:** The [official GLM-5.3 config](https://huggingface.co/zai-org/GLM-5.3/blob/main/config.json) lists `kv_lora_rank=512`, `qk_rope_head_dim=64`, `num_hidden_layers=78`, and `max_position_embeddings=1048576`. The formula gives `89,856 bytes/token = 87.75 KiB/token`. At 1M=1,048,576 tokens this is 87.75GiB; at 1,000,000 tokens it is about 83.685GiB. Multiplying the former BF16 core-cache estimate by 30 gives about 2.57TiB. Indexer/MTP/block overhead, replication, and backend storage formats are excluded. This is not total serving capacity or an SLA guarantee for 30 users.
-
-### 7.5 / 7.7–7.10 operating conditions
-
-The reciprocal of 50ms gives 20tok/s as an approximate token rate. It excludes first-token waiting and total server throughput. As the [vLLM KV cache documentation](https://docs.vllm.ai/en/latest/features/quantization/quantized_kvcache/) explains, FP8 KV is a separate setting with scale calibration and attention-backend conditions. Memory savings alone do not guarantee accuracy or lower latency.
-
-The GPU example in 7.9 specifies only `limits`; the same value becomes the request. If both are specified, they must match. Free GPUs are insufficient if affinity, taints, CPU/RAM, or other placement constraints fail. [Kubernetes GPU scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)
-
-Reading guide: start with prefill/decode and memory in 7.1–7.2, then recalculate the examples with explicit assumptions and units. Continue through 7.3–7.10 to connect batching, measurement, placement, and recovery. No GPU/model execution or performance measurement was performed.
+**Key point:** A per-GPU weight/KV/overhead/shortfall table and a load-test matrix for TTFT, TPOT, quality, and cost by context length and concurrency. It may apply FP4 to every tensor, mix 1M units, or mistake fitting in memory for meeting latency and throughput targets. Check checkpoint/config against startup allocations for unit errors, tensor dtypes, and missing KV overhead. Without TTFT/TPOT observations at controlled request lengths and concurrency, separate memory fit from unverified performance targets. Related: [GPU capacity planning](gpu-infrastructure.md)

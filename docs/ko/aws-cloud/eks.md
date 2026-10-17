@@ -16,11 +16,13 @@ knowledge_ids:
 
 # Chapter 5. EKS on AWS
 
-최신 compact 자료의 Chapter 5를 원문 형태로 보존했다. 5.2의 Karpenter 동작, 5.3의 IP 용량, 5.4의 Controller·Service, 5.5의 CSI와 5.7의 권한 연결 조건은 뒤의 **보완 및 적용 조건**을 함께 읽는다. Basic 개념 학습이며 실제 EKS 구축·AWS 권한 변경·명령 실행의 기록이 아니다.
+예시 구성은 학습용이며 실제 AWS 환경에서 실행한 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 5.1 EKS 구조
+
+EKS는 컨테이너가 일할 자리를 배정하는 운영 체계다. 관리형 제어 영역이 있어도 Node 자원, Pod 네트워크, image, 저장소와 애플리케이션 권한은 각각 준비해야 한다.
 
 EKS = Elastic Kubernetes Service.
 
@@ -49,6 +51,10 @@ EC2 Node
  ↓
 Pod
 ```
+
+**Managed 범위와 Autoscaler**
+
+원문은 EC2 worker node 중심 구조다. Managed control plane이 애플리케이션·node 용량·가용성 설계를 대신하지 않는다. Cluster Autoscaler는 Auto Scaling Group을 조절하지만, Karpenter는 workload 요구에 맞춰 node를 직접 provision한다. 따라서 원문의 `Karpenter → Node Group Scale Out`을 기존 Managed Node Group 증설로 해석하지 않는다. EKS Auto Mode의 compute 자동화도 별도 운영 방식이다. [AWS EKS autoscaling](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html).
 
 ---
 
@@ -146,6 +152,10 @@ IP 고갈 가능
 
 이미 만든 Subnet을 단순히 `/24 → /20`으로 확장하는 방식은 사용할 수 없으므로 초기 CIDR 설계가 중요하다.
 
+**IP 주소 수와 실제 Pod 용량**
+
+`251`은 일반 IPv4 `/24` subnet에서 AWS 예약 5개를 뺀 주소 수이지 Pod 251개 실행 보장이 아니다. Node·ENI·다른 리소스·CNI의 미리 확보한 주소와 instance별 ENI/IP·maxPods 한도를 함께 본다. Prefix delegation도 남은 subnet 공간과 설정 조건을 확인해야 한다. 원문의 IPv4 계산을 IPv6에 그대로 적용하지 않는다. [VPC CNI](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html), [Prefix와 Pod IP 용량](https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html).
+
 ---
 
 ## 5.4 AWS Load Balancer Controller
@@ -177,6 +187,12 @@ ALB
 NLB
 = TCP/UDP/TLS L4 Routing
 ```
+
+**Controller와 Service가 담당하는 범위**
+
+Ingress·LoadBalancer Service를 만들기만 하면 항상 ALB·NLB가 생기는 것은 아니다. 해당 리소스를 처리할 controller·class·IAM 권한·subnet 설정이 필요하다. Auto Mode와 직접 설치한 AWS Load Balancer Controller의 관리 방식을 구분한다. [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html).
+
+원문의 Service 역할은 일반적인 Service 설명이다. Headless Service는 cluster IP와 플랫폼의 proxy/load balancing을 제공하지 않는다. Controller의 AWS API 호출은 제어 흐름이며 매 요청이 controller를 통과한다는 뜻이 아니다. [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/).
 
 ---
 
@@ -222,6 +238,10 @@ Pod 전용 Disk → EBS
 Object / Dataset / Model → S3
 ```
 
+**CSI 권한과 저장소 제약**
+
+PVC 선언만으로 모든 저장소가 자동 연결되지는 않는다. 호환되는 CSI driver와 IAM 권한을 갖추고, StorageClass/PV 설정과 static·dynamic provisioning 방식을 확인한다. EBS의 AZ topology와 scheduling을 함께 확인하며 EBS 볼륨은 Fargate Pod에 mount할 수 없다. EFS는 Fargate에서 사용할 수 있지만 dynamic provisioning은 지원하지 않아 static provisioning을 사용한다. 원문의 전용 disk·공유 file 구분은 역할 설명이며 filesystem 동시 쓰기 정합성이나 backup 보장이 아니다. [EBS CSI](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html), [EFS CSI](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html).
+
 ---
 
 ## 5.6 ECR
@@ -256,6 +276,16 @@ EKS Node 또는 관련 AWS Identity에 ECR Image Pull 권한이 필요하다.
 ECR = 실행 코드 / Container Image
 S3 = Model Weight / Dataset / Artifact
 ```
+
+**Image pull과 애플리케이션 IAM 분리**
+
+EC2 node 기반 ECR image pull 권한은 node IAM role에서 확인한다. Fargate는 pod execution role을 사용한다. 애플리케이션에 연결한 Pod Identity/IRSA role을 image pull 권한과 혼동하지 않는다. [ECR on EKS](https://docs.aws.amazon.com/AmazonECR/latest/userguide/ECR_on_EKS.html).
+
+Pod Identity는 cluster·namespace·ServiceAccount와 IAM role의 association이다. 일반 EC2 node 구성에서는 Pod Identity Agent, 지원 SDK credential chain, 올바른 role trust·permission이 필요하다. Auto Mode에는 agent 기능이 포함된다. IRSA는 cluster OIDC provider와 ServiceAccount token을 사용하는 다른 연결 방식이다. ServiceAccount 이름만 같다고 권한이 자동 부여되지는 않는다. [Pod Identity](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html), [Agent 설정](https://docs.aws.amazon.com/eks/latest/userguide/pod-id-agent-setup.html), [IRSA](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
+
+Pod에 별도 role을 연결해도 node IMDS 접근을 제한하지 않으면 node 자격 증명 접근이 남을 수 있다. Pod Identity는 container를 독립 보안 경계로 바꾸지 않는다. 최종 구조도의 공통 `IAM Role`은 역할 연결을 나타내며 모든 workload에 하나의 광범위한 role을 공유하라는 뜻이 아니다. [Pod Identity 격리 조건](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html).
+
+[기존 Kubernetes 운영](../platform-infrastructure/kubernetes-operations.md) · [플랫폼 보안](../platform-infrastructure/platform-security.md)
 
 ---
 
@@ -375,57 +405,18 @@ EKS 문제는 제어 평면, 노드, Pod, 이미지, 스토리지와 권한을 �
 
 ## LLM 실무: EKS Pod 시작 실패를 계층별로 검토
 
-
 **프롬프트:**
 
 === "한국어"
 
     ```text {.prompt}
-    EKS Pod 시작 실패를 조사할 때 IP·image pull·volume·애플리케이션 IAM 계층을 구분한다.
-    Pod 시작 단계를 event 순서로 추적하고 각 실패를 IP·image·volume·IAM 가설로 분류하라. Pending을 node 부족으로 단정하지 말고 EC2 node role/Fargate execution role과 앱 role을 구분하라.
-    실패 단계 / 오류·시각 / 책임 identity 또는 구성 / 누락 증거 / 다음 확인 표를 작성하라. CNI 주소·ENI/maxPods, CSI 권한·AZ, agent/SDK·OIDC·trust 조건을 관련 오류에 연결하고 최소 수정 후보와 재검증 기준을 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    EKS Pod가 시작되지 않아. Pod event와 관련 설정을 보고 IP 할당, image pull, volume, 애플리케이션 IAM 중 어디에서 실패했는지 분류해 줘. Node·Fargate 실행 권한과 앱 권한을 구분하고 비밀값이나 리소스는 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Separate IP, image-pull, volume, and application-IAM failures when investigating EKS Pod startup.
-    Trace startup stages in event order and classify failures into IP, image, volume, and IAM hypotheses. Do not infer node shortage from Pending. Distinguish the EC2 node/Fargate execution role from the application role.
-    Produce a table: failed stage / error and time / responsible identity or setting / missing evidence / next check. Link CNI addresses and ENI/maxPods, CSI permissions and zones, and agent/SDK, OIDC and trust conditions to the relevant error. Give minimal proposals and recheck criteria.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    An EKS Pod cannot start. Use Pod events and configuration to identify whether IP allocation, image pull, volume setup, or application IAM failed. Separate node or Fargate execution permissions from application permissions. Do not reveal secrets or change resources.
     ```
 
-**핵심 사항:** 시작 event 순서별 IP·image·volume·IAM 실패 계층, 책임 identity/설정과 최소 수정·재검증 조건. Pod role 하나를 바꾸면 image pull·volume까지 해결된다고 보거나 IAM을 Kubernetes RBAC과 혼동할 수 있다. events·CNI/CSI/controller 로그 시각과 IAM association을 맞춰 본다. image pull identity와 앱 role을 분리하고 IP/ENI·AZ·agent/SDK·trust 조건을 해당 오류 근거와 연결해야 한다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다.
-
-## 보완 및 적용 조건
-
-공식 문서 확인일: 2026-10-04. 아래 조건은 원문 밖 보완이며 실제 클러스터에서 시험한 결과가 아니다.
-
-### 5.1~5.2: Managed 범위와 Autoscaler
-
-원문은 EC2 worker node 중심 구조다. Managed control plane이 애플리케이션·node 용량·가용성 설계를 대신하지 않는다. Cluster Autoscaler는 Auto Scaling Group을 조절하지만, Karpenter는 workload 요구에 맞춰 node를 직접 provision한다. 따라서 원문의 `Karpenter → Node Group Scale Out`을 기존 Managed Node Group 증설로 해석하지 않는다. EKS Auto Mode의 compute 자동화도 별도 운영 방식이다. [AWS EKS autoscaling](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html).
-
-### 5.3: IP 주소 수와 실제 Pod 용량
-
-`251`은 일반 IPv4 `/24` subnet에서 AWS 예약 5개를 뺀 주소 수이지 Pod 251개 실행 보장이 아니다. Node·ENI·다른 리소스·CNI의 미리 확보한 주소와 instance별 ENI/IP·maxPods 한도를 함께 본다. Prefix delegation도 남은 subnet 공간과 설정 조건을 확인해야 한다. 원문의 IPv4 계산을 IPv6에 그대로 적용하지 않는다. [VPC CNI](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html), [Prefix와 Pod IP 용량](https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html).
-
-### 5.4: Controller와 Service가 담당하는 범위
-
-Ingress·LoadBalancer Service를 만들기만 하면 항상 ALB·NLB가 생기는 것은 아니다. 해당 리소스를 처리할 controller·class·IAM 권한·subnet 설정이 필요하다. Auto Mode와 직접 설치한 AWS Load Balancer Controller의 관리 방식을 구분한다. [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html).
-
-원문의 Service 역할은 일반적인 Service 설명이다. Headless Service는 cluster IP와 플랫폼의 proxy/load balancing을 제공하지 않는다. Controller의 AWS API 호출은 제어 흐름이며 매 요청이 controller를 통과한다는 뜻이 아니다. [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/).
-
-### 5.5: CSI 권한과 저장소 제약
-
-PVC 선언만으로 모든 저장소가 자동 연결되지는 않는다. 호환되는 CSI driver와 IAM 권한을 갖추고, StorageClass/PV 설정과 static·dynamic provisioning 방식을 확인한다. EBS의 AZ topology와 scheduling을 함께 확인하며 EBS 볼륨은 Fargate Pod에 mount할 수 없다. EFS는 Fargate에서 사용할 수 있지만 dynamic provisioning은 지원하지 않아 static provisioning을 사용한다. 원문의 전용 disk·공유 file 구분은 역할 설명이며 filesystem 동시 쓰기 정합성이나 backup 보장이 아니다. [EBS CSI](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html), [EFS CSI](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html).
-
-### 5.6~5.7: Image pull과 애플리케이션 IAM 분리
-
-EC2 node 기반 ECR image pull 권한은 node IAM role에서 확인한다. Fargate는 pod execution role을 사용한다. 애플리케이션에 연결한 Pod Identity/IRSA role을 image pull 권한과 혼동하지 않는다. [ECR on EKS](https://docs.aws.amazon.com/AmazonECR/latest/userguide/ECR_on_EKS.html).
-
-Pod Identity는 cluster·namespace·ServiceAccount와 IAM role의 association이다. 일반 EC2 node 구성에서는 Pod Identity Agent, 지원 SDK credential chain, 올바른 role trust·permission이 필요하다. Auto Mode에는 agent 기능이 포함된다. IRSA는 cluster OIDC provider와 ServiceAccount token을 사용하는 다른 연결 방식이다. ServiceAccount 이름만 같다고 권한이 자동 부여되지는 않는다. [Pod Identity](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html), [Agent 설정](https://docs.aws.amazon.com/eks/latest/userguide/pod-id-agent-setup.html), [IRSA](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
-
-Pod에 별도 role을 연결해도 node IMDS 접근을 제한하지 않으면 node 자격 증명 접근이 남을 수 있다. Pod Identity는 container를 독립 보안 경계로 바꾸지 않는다. 최종 구조도의 공통 `IAM Role`은 역할 연결을 나타내며 모든 workload에 하나의 광범위한 role을 공유하라는 뜻이 아니다. [Pod Identity 격리 조건](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html).
-
-[기존 Kubernetes 운영](../platform-infrastructure/kubernetes-operations.md) · [플랫폼 보안](../platform-infrastructure/platform-security.md)
+**핵심 사항:** 시작 event 순서별 IP·image·volume·IAM 실패 계층, 책임 identity/설정과 최소 수정·재검증 조건. Pod role 하나를 바꾸면 image pull·volume까지 해결된다고 보거나 IAM을 Kubernetes RBAC과 혼동할 수 있다. events·CNI/CSI/controller 로그 시각과 IAM association을 맞춰 본다. image pull identity와 앱 role을 분리하고 IP/ENI·AZ·agent/SDK·trust 조건을 해당 오류 근거와 연결해야 한다.

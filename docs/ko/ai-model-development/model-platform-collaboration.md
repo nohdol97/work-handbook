@@ -11,11 +11,13 @@ knowledge_ids:
 
 # Chapter 9. AI Model Developer와 AI Platform Engineer
 
-제공된 AI Model / QLoRA Training Basic Chapter 9의 학습 기록이다. 실제 모델 학습·배포 경험을 뜻하지 않는다.
+예시 모델과 설정은 학습용이며 실제 학습·평가·배포 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 9.1 역할 차이
+
+모델 개발과 플랫폼 운영의 인계는 설계도와 완성품을 함께 넘기는 일과 비슷하다. 모델 파일만 전달하면 필요한 base revision, tokenizer, 자원 요구와 평가 근거가 빠질 수 있다.
 
 AI Model Developer는 모델 품질을 중심으로 본다.
 
@@ -89,6 +91,16 @@ Dataset v13
 Retraining
 ```
 
+**실행 요청과 배포 결정**
+
+`Rank 32`와 `3 Epoch`는 요청 예시이며 권장 기본값이나 품질 보장이 아니다. 권고: 요청은 base model의 정확한 revision, 데이터·설정 버전, 자원·비용 한도, 평가 기준까지 식별한다. 평가를 실행했다는 사실과 품질 기준 통과, 운영 전환 권한을 구분한다. [학습 플랫폼 전체 구조](training-platform-architecture.md)의 10.1·10.3절과 [개발자 플랫폼](../platform-infrastructure/developer-platform.md)의 승인·용량 경계를 함께 읽는다.
+
+**Adapter 전달 계약**
+
+PEFT adapter checkpoint는 보통 base model 전체를 포함하지 않는다. 학습팀이 adapter 파일만 넘겼다고 serving 가능한 model이 완성되는 것은 아니다. 정확한 base model revision과 adapter config·weights, tokenizer와 template, 호환 환경을 함께 식별한다. [PEFT checkpoint format](https://huggingface.co/docs/peft/developer_guides/checkpoint)
+
+권고: 모델 개발자는 품질 기준·실패 범주·데이터 변경 의도를, 플랫폼 담당자는 artifact 추적·실행 환경·배포 상태·rollback 경로를 기록한다. Quantization, GPU memory, latency, packaging과 평가 자동화의 최종 판단 담당자를 실제 조직에서 정한다. 역할 이름만으로 배포 권한을 추론하지 않는다.
+
 ---
 
 ## 9.3 Model Developer와 Platform의 책임 경계
@@ -121,19 +133,10 @@ Evaluation Automation
 
 <!-- SOURCE CORE END -->
 
-## 원문 절별 보완과 적용 조건
+## 핵심 정리
 
-2026-10-05에 공식 문서를 확인했다. 원문의 역할 구분과 요청 흐름은 협업 예시이며 실제 조직의 승인 규칙이나 배포 실행 기록이 아니다.
+모델 개발자는 품질 근거와 산출물을 전달하고, 플랫폼은 배포·용량·안전 조건을 판단한다. 전달 계약에는 버전과 책임자가 빠지면 안 된다.
 
-### 9.2: 실행 요청과 배포 결정
-
-`Rank 32`와 `3 Epoch`는 요청 예시이며 권장 기본값이나 품질 보장이 아니다. 권고: 요청은 base model의 정확한 revision, 데이터·설정 버전, 자원·비용 한도, 평가 기준까지 식별한다. 평가를 실행했다는 사실과 품질 기준 통과, 운영 전환 권한을 구분한다. [학습 플랫폼 전체 구조](training-platform-architecture.md)의 10.1·10.3 보완과 [개발자 플랫폼](../platform-infrastructure/developer-platform.md)의 승인·용량 경계를 함께 읽는다.
-
-### 9.2–9.3: Adapter 전달 계약
-
-PEFT adapter checkpoint는 보통 base model 전체를 포함하지 않는다. 학습팀이 adapter 파일만 넘겼다고 serving 가능한 model이 완성되는 것은 아니다. 정확한 base model revision과 adapter config·weights, tokenizer와 template, 호환 환경을 함께 식별한다. [PEFT checkpoint format](https://huggingface.co/docs/peft/developer_guides/checkpoint)
-
-권고: 모델 개발자는 품질 기준·실패 범주·데이터 변경 의도를, 플랫폼 담당자는 artifact 추적·실행 환경·배포 상태·rollback 경로를 기록한다. Quantization, GPU memory, latency, packaging과 평가 자동화의 최종 판단 담당자를 실제 조직에서 정한다. 역할 이름만으로 배포 권한을 추론하지 않는다.
 
 ## 관련 내용
 

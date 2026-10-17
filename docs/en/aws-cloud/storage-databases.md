@@ -16,11 +16,13 @@ knowledge_ids:
 
 # Chapter 4. Storage & Database
 
-The latest compact source keeps its numbering, order, and combined comparison. See the separate supplement for EFS sharing and concurrent DB writes in 4.3–4.4, and DB placement, reads, and replication in 4.5–4.7. This is not a record of AWS operations or recovery tests.
+The configurations are study examples, not results from a running AWS environment.
 
 <!-- SOURCE CORE START -->
 
 ## 4.1 EBS
+
+Choosing storage is like choosing a private locker, shared shelf, or transaction ledger. Writers, sharing needs, and recovery requirements determine the right service.
 
 Block Storage.
 
@@ -101,6 +103,9 @@ It is mainly accessed through APIs (GetObject / PutObject).
 ### VPC Endpoint
 Can provide S3 access from a private subnet without NAT.
 
+
+An S3 endpoint's existence does not grant access. Check gateway-endpoint route table associations alongside endpoint, IAM, and bucket policies. [S3 Gateway Endpoint](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html)
+
 ---
 
 ## 4.3 EFS
@@ -130,6 +135,9 @@ File system shared by multiple Pods → EFS
 Dataset / Model / Object → S3
 ```
 
+
+Access by clients in multiple AZs differs from Multi-AZ data storage. EFS Regional stores data across AZs. One Zone stores it in one AZ and is not resilient to that AZ's loss. A shared mount does not coordinate concurrent writes by itself; file locks are advisory. [EFS types and consistency](https://docs.aws.amazon.com/efs/latest/ug/features.html)
+
 ---
 
 ## 4.4 Multiple PostgreSQL Pods and EFS
@@ -158,6 +166,9 @@ Replica
 ```
 
 EFS is more suitable for shared files / dumps / exports than a live DB data directory. S3 is often considered for backups.
+
+
+The warning concerns independent PostgreSQL servers modifying the same `PGDATA` concurrently. It does not ban all NFS use. PostgreSQL documents NFS requirements separately. Dedicated PVCs still need separate DB replication and failover configuration. [PostgreSQL file system requirements](https://www.postgresql.org/docs/current/creating-cluster.html), [PostgreSQL study](../platform-infrastructure/postgresql.md)
 
 ---
 
@@ -211,6 +222,11 @@ Read Replica = Read Scaling
 As the Pod count grows, DB connections also increase, so connection pool management matters.
 Consider RDS Proxy if needed.
 
+
+A DB subnet group is a collection of subnets; it is not restricted to private ones. Read the source as a private-placement example. Also check public accessibility, routes, and security settings. [RDS VPC placement](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html)
+
+A Multi-AZ DB instance standby does not serve reads, while the two standbys in a Multi-AZ DB cluster do. Apply the HA/read-scaling distinction by deployment type. [RDS Multi-AZ types](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html)
+
 ---
 
 ## 4.6 Aurora
@@ -244,6 +260,9 @@ A way to adjust DB compute capacity elastically with demand.
 
 Aurora is not always the better choice.
 Consider cost, AWS lock-in, PostgreSQL extension/version compatibility, and other factors.
+
+
+The Aurora reader endpoint balances connections, not individual queries. Without readers it connects to the writer, which can also serve reads. [Aurora reader endpoint](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Endpoints.Reader.html)
 
 ---
 
@@ -284,6 +303,9 @@ Caches can hold stale data, so TTL, delete, and update policies are needed.
 
 Redis is not required in every system. Consider it when there is an actual DB load or latency problem.
 
+
+The source roles describe a common cache model. Asynchronous Valkey/Redis OSS replication can lose recent writes, and some Valkey configurations offer separate durability. Check recovery conditions by engine, version, and settings. Do not infer immediate consistency from TTL alone. [ElastiCache replication conditions](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Replication.html)
+
 ---
 
 ## Chapter 4 combined comparison
@@ -304,6 +326,8 @@ Redis is not required in every system. Consider it when there is an actual DB lo
 
 Choose S3, block or file storage, databases, and caches according to data shape, sharing needs, and read patterns.
 
+Read this with [Compute](compute.md) to connect storage choices with service placement.
+
 ## LLM in Practice
 
 **Prompt:**
@@ -311,33 +335,13 @@ Choose S3, block or file storage, databases, and caches according to data shape,
 === "한국어"
 
     ```text {.prompt}
-    DB 또는 모델 파일 저장소를 바꾸는 설계·PVC PR에서 공유 방식과 복구 조건을 검토한다.
-    현재 설계를 먼저 평가하라. 독립 PostgreSQL 서버의 같은 PGDATA 동시 쓰기와 읽기 중심 모델 파일 공유를 구분하고 전용 volume·DB replication·공유 mount의 책임을 나눠라.
-    데이터 / 접근·동시 writer / 장애 영역 / 위험·근거 / 변경 후보 / 복구 검증 표를 작성하라. 모든 NFS를 금지하지 말고 EFS Regional/One Zone, RDS Multi-AZ 유형, Aurora 연결 분산을 실제 구성에 맞춰 구분하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    DB와 모델 파일 저장소를 바꾸는 설계안을 검토해 줘. PostgreSQL의 같은 PGDATA를 독립 서버가 동시에 쓰는 경우와 읽기 중심 모델 파일 공유를 구분하고, 저장 방식별 복구 조건을 설명해 줘. 실제 스토리지나 DB는 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review sharing and recovery requirements in a design or PVC PR that changes DB or model-file storage.
-    Assess the existing design first. Distinguish independent PostgreSQL servers writing the same PGDATA from sharing mostly read-only model files. Separate dedicated volumes, DB replication, and shared-mount responsibilities.
-    Produce a table: data / access and concurrent writers / failure domain / risk and evidence / proposal / recovery check. Do not ban all NFS use. Distinguish EFS Regional/One Zone, RDS Multi-AZ types, and Aurora connection distribution for the actual setup.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review a proposal to change database and model-file storage. Separate independent PostgreSQL servers writing one PGDATA from sharing mostly read-only model files, and explain recovery requirements for each option. Do not change storage or databases.
     ```
 
-**Key point:** Writer/volume relationships for DB and model files, failure-domain and consistency risks, proposals, and a restore-check matrix for RPO/RTO. It may equate shared mounts with DB replication or assume One Zone survives an AZ failure because clients in multiple zones can read it. Check for independent writers to the same PGDATA and actual replication/backups. Require separate checks for EFS/DB deployment failure and read behavior and for consistent model-file updates. This is an authored work example, not a verified model result or measured improvement. Related: [4.3–4.4](#43-efs)
-
-## Separate supplement: sharing, placement, and reads
-
-Official documentation checked: 2026-10-04.
-
-- **4.2:** An S3 endpoint's existence does not grant access. Check gateway-endpoint route table associations alongside endpoint, IAM, and bucket policies. [S3 Gateway Endpoint](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html)
-- **4.3:** Access by clients in multiple AZs differs from Multi-AZ data storage. EFS Regional stores data across AZs. One Zone stores it in one AZ and is not resilient to that AZ's loss. A shared mount does not coordinate concurrent writes by itself; file locks are advisory. [EFS types and consistency](https://docs.aws.amazon.com/efs/latest/ug/features.html)
-- **4.4:** The warning concerns independent PostgreSQL servers modifying the same `PGDATA` concurrently. It does not ban all NFS use. PostgreSQL documents NFS requirements separately. Dedicated PVCs still need separate DB replication and failover configuration. [PostgreSQL file system requirements](https://www.postgresql.org/docs/current/creating-cluster.html), [PostgreSQL study](../platform-infrastructure/postgresql.md)
-- **4.5:** A DB subnet group is a collection of subnets; it is not restricted to private ones. Read the source as a private-placement example. Also check public accessibility, routes, and security settings. [RDS VPC placement](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html)
-- **4.5:** A Multi-AZ DB instance standby does not serve reads, while the two standbys in a Multi-AZ DB cluster do. Apply the HA/read-scaling distinction by deployment type. [RDS Multi-AZ types](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html)
-- **4.6:** The Aurora reader endpoint balances connections, not individual queries. Without readers it connects to the writer, which can also serve reads. [Aurora reader endpoint](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Endpoints.Reader.html)
-- **4.7:** The source roles describe a common cache model. Asynchronous Valkey/Redis OSS replication can lose recent writes, and some Valkey configurations offer separate durability. Check recovery conditions by engine, version, and settings. Do not infer immediate consistency from TTL alone. [ElastiCache replication conditions](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Replication.html)
-
-Reading guide: compare access methods in 4.1–4.3, then concurrent-writer limits in 4.4. Read 4.5–4.7 as managed data-service roles rather than storage devices. Connect their placement to [Compute](compute.md).
+**Key point:** Writer/volume relationships for DB and model files, failure-domain and consistency risks, proposals, and a restore-check matrix for RPO/RTO. It may equate shared mounts with DB replication or assume One Zone survives an AZ failure because clients in multiple zones can read it. Check for independent writers to the same PGDATA and actual replication/backups. Require separate checks for EFS/DB deployment failure and read behavior and for consistent model-file updates. Related: [4.3–4.4](#43-efs)

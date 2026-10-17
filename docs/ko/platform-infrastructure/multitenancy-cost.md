@@ -1,8 +1,8 @@
 ---
 id: platform-multitenancy-cost
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - PIS4-13-01
   - PIS4-13-02
@@ -18,11 +18,13 @@ knowledge_ids:
 
 # Chapter 13. Multi-tenancy, Quotas & Cost Control
 
-제공된 학습 원문의 번호·순서·예시를 그대로 보존했다. 13.1–13.4의 격리 계층·Quota·LimitRange와 13.6–13.9의 LLM 제한·비용 수치는 뒤의 별도 보완 조건과 함께 읽는다. 예시는 실제 정책 적용이나 부하 실험 결과가 아니다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 13.1 Multi-tenancy 모델
+
+멀티테넌시는 한 건물을 여러 팀이 함께 쓰는 상황과 비슷하다. 방을 나누는 정책, 출입 권한, 사용량 한도와 비용 계량은 서로 다른 장치다.
 
 여러 팀이 하나의 Platform을 함께 쓰는 방식에는 여러 수준이 있다.
 
@@ -51,6 +53,12 @@ Quota
 ```
 
 를 기본으로 하고, 더 강한 격리가 필요할 때 Node Pool 또는 Cluster까지 분리한다.
+
+**격리는 단일 강도 순서가 아니다**
+
+원문의 화살표는 학습용 개념도다. Namespace, RBAC, NetworkPolicy, Quota는 서로 다른 문제를 다루며 하나가 다른 것을 대체하지 않는다. NetworkPolicy는 지원하는 CNI가 있어야 적용된다. Dedicated node도 공유 control plane의 격리 문제를 모두 해결하지는 않는다. [Kubernetes multi-tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/)
+
+Toleration은 해당 taint를 허용할 뿐 특정 node로 배치를 강제하지 않는다. 전용 배치에는 node affinity 등도 필요하며, tenant가 임의의 toleration이나 배치 설정으로 경계를 넘지 못하도록 정책을 확인한다. [Taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
 
 ---
 
@@ -120,6 +128,10 @@ GPU quota = 8
 
 이어도 Cluster에 GPU가 없으면 Pod는 Pending이다.
 
+**Quota는 실시간 사용률 제한이나 예약이 아니다**
+
+ResourceQuota는 주로 선언한 requests/limits의 합계와 object 수를 admission 시 제한한다. GPU device-plugin 자원 이름이 `nvidia.com/gpu`이면 quota 항목은 `requests.nvidia.com/gpu`다. Quota 초과로 생성이 거절된 경우와, 생성은 됐지만 배치 가능한 GPU가 없어 Pending인 경우를 구분한다. [Kubernetes ResourceQuota](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
+
 ---
 
 ## 13.4 LimitRange
@@ -146,6 +158,10 @@ LimitRange
 ```
 
 둘은 함께 사용하는 경우가 많다.
+
+**LimitRange의 적용 시점**
+
+LimitRange의 기본값 주입은 Container의 requests/limits에 적용되며 Pod·Container 최소/최대와 PVC 저장 요청 범위도 제약할 수 있다. 새 정책이 기존 실행 Pod를 다시 설정하지는 않는다. 기본값을 넣은 최종 requests/limits가 서로 일관되고 Quota 내에 있는지 확인한다. [Kubernetes LimitRange](https://kubernetes.io/docs/concepts/policy/limit-range/)
 
 ---
 
@@ -212,6 +228,10 @@ Context Length
 ```
 
 등을 Tenant별로 제한해야 한다.
+
+**예시 수치와 비용 모델**
+
+`2M TPM`, 동시 요청 `10`, `128K` context는 원문의 정책 예시이며 LiteLLM의 기본값이나 검증된 권장값이 아니다. 실제 [LiteLLM](litellm.md) 설정과 [vLLM](vllm.md) 용량을 확인해야 한다. 요청 수나 token 비율로 나눈 비용은 배분 규칙이며 실제 GPU 실행 시간을 그대로 측정한 값은 아니다. 공유비·유휴비·장애 여유비의 처리 방식을 명시하고 합계가 실제 청구액과 맞는지 확인하는 것은 이 학습 예시를 적용할 때의 검토 기준이다.
 
 ---
 
@@ -369,27 +389,10 @@ Shared Resource 비용은:
 
 <!-- SOURCE CORE END -->
 
-## 보완 — 격리와 사용량 제한의 실제 범위
+## 핵심 정리
 
-2026-10-05 공식 문서를 확인했다. Cluster 정책 배포·부하 시험·비용 측정은 수행하지 않았다.
+Namespace, RBAC, NetworkPolicy와 Quota는 다른 격리·제한 문제를 푼다. 비용 배분에는 실제 사용량과 공유 비용의 기준을 분명히 둔다.
 
-### 13.1 / 13.2 격리는 단일 강도 순서가 아니다
-
-원문의 화살표는 학습용 개념도다. Namespace, RBAC, NetworkPolicy, Quota는 서로 다른 문제를 다루며 하나가 다른 것을 대체하지 않는다. NetworkPolicy는 지원하는 CNI가 있어야 적용된다. Dedicated node도 공유 control plane의 격리 문제를 모두 해결하지는 않는다. [Kubernetes multi-tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/)
-
-Toleration은 해당 taint를 허용할 뿐 특정 node로 배치를 강제하지 않는다. 전용 배치에는 node affinity 등도 필요하며, tenant가 임의의 toleration이나 배치 설정으로 경계를 넘지 못하도록 정책을 확인한다. [Taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
-
-### 13.3 / 13.7 Quota는 실시간 사용률 제한이나 예약이 아니다
-
-ResourceQuota는 주로 선언한 requests/limits의 합계와 object 수를 admission 시 제한한다. GPU device-plugin 자원 이름이 `nvidia.com/gpu`이면 quota 항목은 `requests.nvidia.com/gpu`다. Quota 초과로 생성이 거절된 경우와, 생성은 됐지만 배치 가능한 GPU가 없어 Pending인 경우를 구분한다. [Kubernetes ResourceQuota](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
-
-### 13.4 LimitRange의 적용 시점
-
-LimitRange의 기본값 주입은 Container의 requests/limits에 적용되며 Pod·Container 최소/최대와 PVC 저장 요청 범위도 제약할 수 있다. 새 정책이 기존 실행 Pod를 다시 설정하지는 않는다. 기본값을 넣은 최종 requests/limits가 서로 일관되고 Quota 내에 있는지 확인한다. [Kubernetes LimitRange](https://kubernetes.io/docs/concepts/policy/limit-range/)
-
-### 13.6–13.9 예시 수치와 비용 모델
-
-`2M TPM`, 동시 요청 `10`, `128K` context는 원문의 정책 예시이며 LiteLLM의 기본값이나 검증된 권장값이 아니다. 실제 [LiteLLM](litellm.md) 설정과 [vLLM](vllm.md) 용량을 확인해야 한다. 요청 수나 token 비율로 나눈 비용은 배분 규칙이며 실제 GPU 실행 시간을 그대로 측정한 값은 아니다. 공유비·유휴비·장애 여유비의 처리 방식을 명시하고 합계가 실제 청구액과 맞는지 확인하는 것은 이 학습 예시를 적용할 때의 검토 기준이다.
 
 ## 관련 문서
 

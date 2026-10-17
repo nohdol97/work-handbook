@@ -22,9 +22,13 @@ knowledge_ids:
 
 # Chapter 4. QLoRA Training Process
 
+The models and settings are study examples, not results of training, evaluation, or deployment.
+
 <!-- SOURCE CORE START -->
 
 ## 4.1 Overall Training Flow
+
+QLoRA trains a small set of adjustment knobs instead of rebuilding a whole machine. It reduces resource needs, but data format, loss scope, and saving conditions still determine what the model learns.
 
 The overall flow of QLoRA-based SFT is as follows.
 
@@ -150,6 +154,12 @@ Lower GPU Memory use
 Keep the Base Model Weights Frozen
 and train only the LoRA Adapter Parameters.
 
+**, 4.10: Storage Precision and Trainable Parameters**
+
+QLoRA trains adapters by passing gradients through a frozen 4-bit base. Frozen means the optimizer does not update base weights. It does not mean wrapping all base operations in `no_grad`. Weight storage precision and compute dtype are separate. [QLoRA paper](https://arxiv.org/abs/2305.14314), [PEFT quantization](https://huggingface.co/docs/peft/main/developer_guides/quantization)
+
+Names such as `q_proj` and `v_proj` depend on the architecture. PEFT offers `target_modules="all-linear"` for QLoRA-style targeting. Rank 16 and alpha 32 are examples. Check actual modules and trainable parameters; evaluate performance separately. [PEFT quantization](https://huggingface.co/docs/peft/main/developer_guides/quantization)
+
 ---
 
 ## 4.6 Step 4 — Set LoRA Target Modules
@@ -210,6 +220,12 @@ Example:
 ```
 
 The result takes this form.
+
+**Tokenizers and the Meaning of Loss**
+
+The token IDs are illustrative, not universal IDs for that sentence. Use the tokenizer and chat template for the base model. Check roles, special tokens, and EOS handling in training samples. [Chat templates](https://huggingface.co/docs/transformers/main/chat_templating)
+
+Typical causal SFT loss uses predictions for target tokens. It is not a simple comparison of two output sentences. TRL settings such as `assistant_only_loss` change which tokens contribute to loss and require supported templates. Inspect the actual labels and masks. [TRL SFT Trainer](https://huggingface.co/docs/trl/main/sft_trainer)
 
 ---
 
@@ -317,6 +333,12 @@ One pass through the entire Dataset is an Epoch.
 
 In actual Training, Samples are processed in Batches and Parameters are updated.
 
+**Microbatches and Optimizer Steps**
+
+Gradient accumulation combines gradients from several microbatches before an optimizer update. “Update by Batch” does not mean every microbatch updates parameters. In standard data parallelism, effective batch size is `per-device batch × data-parallel workers × accumulation steps`; check incomplete final batches separately. [Transformers Trainer](https://huggingface.co/docs/transformers/main/main_classes/trainer)
+
+Review recommendation: Experiments A and B change both learning rate and rank. Do not attribute a result to one variable alone. Also record the dataset, lengths, masks, seed, and evaluation conditions. Low loss alone does not establish better quality.
+
 ---
 
 ## 4.12 Key Training Parameters
@@ -401,6 +423,10 @@ S3
 
 It can then be linked to Metadata in the Model Registry.
 
+**Adapter Saving and Training Resume**
+
+PEFT adapter checkpoints do not contain base model weights. Saving the two source files does not create a standalone full model. To resume training, also check optimizer, scheduler, RNG, and other resume state. [PEFT checkpoint](https://huggingface.co/docs/peft/main/developer_guides/checkpoint), [Transformers Trainer](https://huggingface.co/docs/transformers/main/main_classes/trainer)
+
 ---
 
 <!-- SOURCE CORE END -->
@@ -415,54 +441,18 @@ QLoRA freezes the base model and trains a small adapter to reduce resource needs
 
 ## LLM in Practice: Review a QLoRA Training Configuration
 
-
 **Prompt:**
 
 === "한국어"
 
     ```text {.prompt}
-    새 QLoRA 학습의 설정·데이터·저장 계획을 실행 전에 검토하는 가상 사례다.
-    원문의 4.5–4.14를 기준으로 quantization, target module, tokenization, loss, update, 저장을 검토하라.
-    유효 batch와 optimizer step을 구분하고 모든 microbatch가 update한다고 가정하지 마라.
-    관측·가정·가설을 나누고 필수 근거가 없으면 우선순위 질문 최대 3개를 제시하라.
-    설정 / 확인된 근거 / 위험 또는 미확인 조건 / 최소 수정 후보 / 검증 방법 표를 작성하라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    이 저장소의 QLoRA 학습 설정과 저장 계획을 검토해 줘. Base Model 버전, quantization, target module, tokenization, loss 범위, 유효 batch와 optimizer step이 서로 맞는지 확인하고 근거가 부족한 설정은 질문으로 남겨 줘. 비밀값을 노출하거나 학습을 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review a hypothetical new QLoRA run's settings, data, and saving plan before execution.
-    Review quantization, target modules, tokenization, loss, updates, and saving against source sections 4.5–4.14.
-    Distinguish effective batch size and optimizer steps. Do not assume every microbatch updates parameters.
-    Make a table: setting / confirmed evidence / risk or unknown condition / minimal change candidate / verification method.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Review this repository’s QLoRA training configuration and saving plan. Check whether the base-model version, quantization, target modules, tokenization, loss scope, effective batch, and optimizer steps fit together. Flag missing evidence as questions. Do not reveal secrets or run training.
     ```
 
 **Key point:** A review table by training stage, an effective batch calculation of 32 under standard data-parallel assumptions, essential unknowns, and checks for training and promotion decisions. It may guarantee memory fit or quality from rank alone, assume all models use the same target names, or recommend deployment based only on low loss. Compare actual modules, label masks, installed versions, and settings. In an authorized small test, check updates, saving, and reloading; then use separate evaluation. This page does not record running that test or training.
-
-## Supplements and Conditions by Source Section
-
-The official sources below were checked on 2026-10-05. These are conditions to check before implementation, not execution results. The `main` docs may include APIs under development; compare them with your installed version.
-
-### 4.5–4.6, 4.10: Storage Precision and Trainable Parameters
-
-QLoRA trains adapters by passing gradients through a frozen 4-bit base. Frozen means the optimizer does not update base weights. It does not mean wrapping all base operations in `no_grad`. Weight storage precision and compute dtype are separate. [QLoRA paper](https://arxiv.org/abs/2305.14314), [PEFT quantization](https://huggingface.co/docs/peft/main/developer_guides/quantization)
-
-Names such as `q_proj` and `v_proj` depend on the architecture. PEFT offers `target_modules="all-linear"` for QLoRA-style targeting. Rank 16 and alpha 32 are examples. Check actual modules and trainable parameters; evaluate performance separately. [PEFT quantization](https://huggingface.co/docs/peft/main/developer_guides/quantization)
-
-### 4.7–4.9: Tokenizers and the Meaning of Loss
-
-The token IDs are illustrative, not universal IDs for that sentence. Use the tokenizer and chat template for the base model. Check roles, special tokens, and EOS handling in training samples. [Chat templates](https://huggingface.co/docs/transformers/main/chat_templating)
-
-Typical causal SFT loss uses predictions for target tokens. It is not a simple comparison of two output sentences. TRL settings such as `assistant_only_loss` change which tokens contribute to loss and require supported templates. Inspect the actual labels and masks. [TRL SFT Trainer](https://huggingface.co/docs/trl/main/sft_trainer)
-
-### 4.11–4.13: Microbatches and Optimizer Steps
-
-Gradient accumulation combines gradients from several microbatches before an optimizer update. “Update by Batch” does not mean every microbatch updates parameters. In standard data parallelism, effective batch size is `per-device batch × data-parallel workers × accumulation steps`; check incomplete final batches separately. [Transformers Trainer](https://huggingface.co/docs/transformers/main/main_classes/trainer)
-
-Review recommendation: Experiments A and B change both learning rate and rank. Do not attribute a result to one variable alone. Also record the dataset, lengths, masks, seed, and evaluation conditions. Low loss alone does not establish better quality.
-
-### 4.14: Adapter Saving and Training Resume
-
-PEFT adapter checkpoints do not contain base model weights. Saving the two source files does not create a standalone full model. To resume training, also check optimizer, scheduler, RNG, and other resume state. [PEFT checkpoint](https://huggingface.co/docs/peft/main/developer_guides/checkpoint), [Transformers Trainer](https://huggingface.co/docs/transformers/main/main_classes/trainer)

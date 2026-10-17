@@ -16,11 +16,13 @@ knowledge_ids:
 
 # Chapter 5. EKS on AWS
 
-This page preserves Chapter 5 of the latest compact source in its original structure. Read the **Supplement and conditions** for Karpenter behavior in 5.2, IP capacity in 5.3, controllers and Services in 5.4, CSI in 5.5, and permission associations in 5.7. This is Basic conceptual study, not a record of building EKS, changing AWS permissions, or running commands.
+The configurations are study examples, not results from a running AWS environment.
 
 <!-- SOURCE CORE START -->
 
 ## 5.1 EKS structure
+
+EKS organizes where containers run. A managed control plane still depends on node capacity, Pod networking, images, storage, and application permissions.
 
 EKS = Elastic Kubernetes Service.
 
@@ -49,6 +51,10 @@ EC2 Node
  ↓
 Pod
 ```
+
+**Managed scope and autoscalers**
+
+The source focuses on EC2 worker nodes. A managed control plane does not replace application, node-capacity, or availability design. Cluster Autoscaler adjusts Auto Scaling Groups, while Karpenter provisions nodes directly for workload requirements. Do not read the source's `Karpenter → Node Group Scale Out` as increasing an existing Managed Node Group. EKS Auto Mode compute automation is another operating model. [AWS EKS autoscaling](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html).
 
 ---
 
@@ -146,6 +152,10 @@ Example:
 
 An existing subnet cannot simply be expanded from `/24 → /20`, so initial CIDR planning matters.
 
+**IP counts and actual Pod capacity**
+
+`251` is the address count after subtracting 5 AWS-reserved addresses from an ordinary IPv4 `/24` subnet. It does not guarantee room for 251 Pods. Account for nodes, ENIs, other resources, CNI address reservations, and instance ENI/IP and maxPods limits. Prefix delegation also requires checking free subnet space and configuration. Do not apply the source's IPv4 arithmetic directly to IPv6. [VPC CNI](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html), [Prefixes and Pod IP capacity](https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html).
+
 ---
 
 ## 5.4 AWS Load Balancer Controller
@@ -177,6 +187,12 @@ ALB
 NLB
 = TCP/UDP/TLS L4 Routing
 ```
+
+**Controller and Service responsibilities**
+
+Creating an Ingress or LoadBalancer Service does not always create an ALB or NLB. A controller that handles it, the right class, IAM permissions, and subnet settings are required. Distinguish Auto Mode management from an AWS Load Balancer Controller you install. [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html).
+
+The source describes a typical Service. A headless Service has no cluster IP or platform proxy/load balancing. Controller calls to AWS APIs are control flow; each application request does not pass through the controller. [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/).
 
 ---
 
@@ -222,6 +238,10 @@ File system shared by multiple Pods → EFS
 Object / Dataset / Model → S3
 ```
 
+**CSI permissions and storage constraints**
+
+Declaring a PVC does not automatically connect every storage system. Provide a compatible CSI driver and IAM permissions, and check StorageClass/PV settings and static or dynamic provisioning. Check EBS AZ topology with scheduling; EBS volumes cannot be mounted by Fargate Pods. EFS works with Fargate, but dynamic provisioning is unsupported there, so use static provisioning. The source's dedicated-disk/shared-file distinction describes roles, not guarantees of concurrent filesystem-write consistency or backups. [EBS CSI](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html), [EFS CSI](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html).
+
 ---
 
 ## 5.6 ECR
@@ -256,6 +276,16 @@ The EKS node or relevant AWS identity needs permission to pull ECR images.
 ECR = Executable code / Container image
 S3 = Model Weight / Dataset / Artifact
 ```
+
+**Separate image pulls from application IAM**
+
+For ECR image pulls on EC2 nodes, check the node IAM role. Fargate uses the pod execution role. Do not confuse the application's Pod Identity/IRSA role with image-pull permissions. [ECR on EKS](https://docs.aws.amazon.com/AmazonECR/latest/userguide/ECR_on_EKS.html).
+
+Pod Identity associates a cluster, namespace, and ServiceAccount with an IAM role. A standard EC2-node setup needs the Pod Identity Agent, a supported SDK credential chain, and correct role trust and permissions. Auto Mode includes agent functionality. IRSA uses a cluster OIDC provider and ServiceAccount tokens instead. A matching ServiceAccount name alone does not grant permissions. [Pod Identity](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html), [Agent setup](https://docs.aws.amazon.com/eks/latest/userguide/pod-id-agent-setup.html), [IRSA](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
+
+Even with a separate Pod role, node credentials may remain accessible unless node IMDS access is restricted. Pod Identity does not make containers an independent security boundary. The shared `IAM Role` box in the final diagram shows role association; it is not a recommendation to share one broad role across every workload. [Pod Identity isolation conditions](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html).
+
+[Existing Kubernetes operations](../platform-infrastructure/kubernetes-operations.md) · [Platform security](../platform-infrastructure/platform-security.md)
 
 ---
 
@@ -375,57 +405,18 @@ Diagnose EKS failures by separating control plane, node, Pod, image, storage, an
 
 ## LLM in Practice: review EKS Pod startup failures by layer
 
-
 **Prompt:**
 
 === "한국어"
 
     ```text {.prompt}
-    EKS Pod 시작 실패를 조사할 때 IP·image pull·volume·애플리케이션 IAM 계층을 구분한다.
-    Pod 시작 단계를 event 순서로 추적하고 각 실패를 IP·image·volume·IAM 가설로 분류하라. Pending을 node 부족으로 단정하지 말고 EC2 node role/Fargate execution role과 앱 role을 구분하라.
-    실패 단계 / 오류·시각 / 책임 identity 또는 구성 / 누락 증거 / 다음 확인 표를 작성하라. CNI 주소·ENI/maxPods, CSI 권한·AZ, agent/SDK·OIDC·trust 조건을 관련 오류에 연결하고 최소 수정 후보와 재검증 기준을 적어라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    EKS Pod가 시작되지 않아. Pod event와 관련 설정을 보고 IP 할당, image pull, volume, 애플리케이션 IAM 중 어디에서 실패했는지 분류해 줘. Node·Fargate 실행 권한과 앱 권한을 구분하고 비밀값이나 리소스는 변경하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Separate IP, image-pull, volume, and application-IAM failures when investigating EKS Pod startup.
-    Trace startup stages in event order and classify failures into IP, image, volume, and IAM hypotheses. Do not infer node shortage from Pending. Distinguish the EC2 node/Fargate execution role from the application role.
-    Produce a table: failed stage / error and time / responsible identity or setting / missing evidence / next check. Link CNI addresses and ENI/maxPods, CSI permissions and zones, and agent/SDK, OIDC and trust conditions to the relevant error. Give minimal proposals and recheck criteria.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    An EKS Pod cannot start. Use Pod events and configuration to identify whether IP allocation, image pull, volume setup, or application IAM failed. Separate node or Fargate execution permissions from application permissions. Do not reveal secrets or change resources.
     ```
 
-**Key point:** IP, image, volume, and IAM failure layers in startup-event order, responsible identities/settings, and minimal fixes with recheck criteria. It may assume one Pod-role change fixes image pulls and volumes, or confuse IAM with Kubernetes RBAC. Align event and CNI/CSI/controller-log timestamps with IAM associations. Separate image-pull identity from application roles and link IP/ENI, zone, agent/SDK, and trust conditions to the relevant errors. This is an authored work example, not a verified model result or measured improvement.
-
-## Supplement and conditions
-
-Official documentation checked: 2026-10-04. These conditions are separate from the source and were not tested on a real cluster.
-
-### 5.1–5.2: Managed scope and autoscalers
-
-The source focuses on EC2 worker nodes. A managed control plane does not replace application, node-capacity, or availability design. Cluster Autoscaler adjusts Auto Scaling Groups, while Karpenter provisions nodes directly for workload requirements. Do not read the source's `Karpenter → Node Group Scale Out` as increasing an existing Managed Node Group. EKS Auto Mode compute automation is another operating model. [AWS EKS autoscaling](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html).
-
-### 5.3: IP counts and actual Pod capacity
-
-`251` is the address count after subtracting 5 AWS-reserved addresses from an ordinary IPv4 `/24` subnet. It does not guarantee room for 251 Pods. Account for nodes, ENIs, other resources, CNI address reservations, and instance ENI/IP and maxPods limits. Prefix delegation also requires checking free subnet space and configuration. Do not apply the source's IPv4 arithmetic directly to IPv6. [VPC CNI](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html), [Prefixes and Pod IP capacity](https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html).
-
-### 5.4: Controller and Service responsibilities
-
-Creating an Ingress or LoadBalancer Service does not always create an ALB or NLB. A controller that handles it, the right class, IAM permissions, and subnet settings are required. Distinguish Auto Mode management from an AWS Load Balancer Controller you install. [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html).
-
-The source describes a typical Service. A headless Service has no cluster IP or platform proxy/load balancing. Controller calls to AWS APIs are control flow; each application request does not pass through the controller. [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/).
-
-### 5.5: CSI permissions and storage constraints
-
-Declaring a PVC does not automatically connect every storage system. Provide a compatible CSI driver and IAM permissions, and check StorageClass/PV settings and static or dynamic provisioning. Check EBS AZ topology with scheduling; EBS volumes cannot be mounted by Fargate Pods. EFS works with Fargate, but dynamic provisioning is unsupported there, so use static provisioning. The source's dedicated-disk/shared-file distinction describes roles, not guarantees of concurrent filesystem-write consistency or backups. [EBS CSI](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html), [EFS CSI](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html).
-
-### 5.6–5.7: Separate image pulls from application IAM
-
-For ECR image pulls on EC2 nodes, check the node IAM role. Fargate uses the pod execution role. Do not confuse the application's Pod Identity/IRSA role with image-pull permissions. [ECR on EKS](https://docs.aws.amazon.com/AmazonECR/latest/userguide/ECR_on_EKS.html).
-
-Pod Identity associates a cluster, namespace, and ServiceAccount with an IAM role. A standard EC2-node setup needs the Pod Identity Agent, a supported SDK credential chain, and correct role trust and permissions. Auto Mode includes agent functionality. IRSA uses a cluster OIDC provider and ServiceAccount tokens instead. A matching ServiceAccount name alone does not grant permissions. [Pod Identity](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html), [Agent setup](https://docs.aws.amazon.com/eks/latest/userguide/pod-id-agent-setup.html), [IRSA](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
-
-Even with a separate Pod role, node credentials may remain accessible unless node IMDS access is restricted. Pod Identity does not make containers an independent security boundary. The shared `IAM Role` box in the final diagram shows role association; it is not a recommendation to share one broad role across every workload. [Pod Identity isolation conditions](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html).
-
-[Existing Kubernetes operations](../platform-infrastructure/kubernetes-operations.md) · [Platform security](../platform-infrastructure/platform-security.md)
+**Key point:** IP, image, volume, and IAM failure layers in startup-event order, responsible identities/settings, and minimal fixes with recheck criteria. It may assume one Pod-role change fixes image pulls and volumes, or confuse IAM with Kubernetes RBAC. Align event and CNI/CSI/controller-log timestamps with IAM associations. Separate image-pull identity from application roles and link IP/ENI, zone, agent/SDK, and trust conditions to the relevant errors.

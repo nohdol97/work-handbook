@@ -223,63 +223,81 @@
       "source": "sources/platform-infrastructure-basic-2026-09-27/source.md",
       "start": "# Chapter 1. Linux, Networking, Containers",
       "end": "# Chapter 2. Kubernetes Core",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/kubernetes-core.md",
       "source": "sources/platform-infrastructure-basic-2026-09-27/source.md",
       "start": "# Chapter 2. Kubernetes Core",
       "end": "# Chapter 3. Kubernetes Production Operations",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/kubernetes-operations.md",
       "source": "sources/platform-infrastructure-basic-2026-09-27/source.md",
       "start": "# Chapter 3. Kubernetes Production Operations",
       "end": "# 현재까지 학습 완료 상태",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/redis.md",
       "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
       "start": "# Chapter 4. Redis for Platform Systems",
       "end": "# Chapter 5. PostgreSQL for Platform Systems",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/postgresql.md",
       "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
       "start": "# Chapter 5. PostgreSQL for Platform Systems",
       "end": "# Chapter 6. Kafka for Platform Systems",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/kafka.md",
       "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
       "start": "# Chapter 6. Kafka for Platform Systems",
       "end": "# Chapter 7. vLLM",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/vllm.md",
       "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
       "start": "# Chapter 7. vLLM",
       "end": "# Chapter 8. LiteLLM",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/litellm.md",
       "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
       "start": "# Chapter 8. LiteLLM",
       "end": "# Chapter 9. GPU Infrastructure & Scheduling",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/gpu-infrastructure.md",
       "source": "sources/platform-infrastructure-basic-ch4-9-2026-10-01/source.md",
       "start": "# Chapter 9. GPU Infrastructure & Scheduling",
       "end": "# Chapter 4 ~ 9 전체 연결",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/index.md",
@@ -313,14 +331,18 @@
       "verbatim_language": "ko",
       "page": "platform-infrastructure/platform-security.md",
       "start": "# Chapter 10. Platform Security",
-      "end": "# Chapter 11. CI/CD, Helm, Argo CD & GitOps"
+      "end": "# Chapter 11. CI/CD, Helm, Argo CD & GitOps",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "source": "sources/platform-infrastructure-basic-ch10-11-2026-10-03/source.md",
       "verbatim_language": "ko",
       "page": "platform-infrastructure/cicd-gitops.md",
       "start": "# Chapter 11. CI/CD, Helm, Argo CD & GitOps",
-      "end": "# Chapter 10 ~ 11 전체 연결"
+      "end": "# Chapter 10 ~ 11 전체 연결",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "source": "sources/platform-infrastructure-basic-ch10-11-2026-10-03/source.md",
@@ -354,35 +376,45 @@
       "verbatim_language": "ko",
       "page": "aws-cloud/foundations.md",
       "start": "# Chapter 1. AWS Foundation",
-      "end": "# Chapter 2. Networking"
+      "end": "# Chapter 2. Networking",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
       "verbatim_language": "ko",
       "page": "aws-cloud/networking.md",
       "start": "# Chapter 2. Networking",
-      "end": "# Chapter 3. Compute & Load Balancing"
+      "end": "# Chapter 3. Compute & Load Balancing",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
       "verbatim_language": "ko",
       "page": "aws-cloud/compute.md",
       "start": "# Chapter 3. Compute & Load Balancing",
-      "end": "# Chapter 4. Storage & Database"
+      "end": "# Chapter 4. Storage & Database",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
       "verbatim_language": "ko",
       "page": "aws-cloud/storage-databases.md",
       "start": "# Chapter 4. Storage & Database",
-      "end": "# Chapter 5. EKS on AWS"
+      "end": "# Chapter 5. EKS on AWS",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
       "verbatim_language": "ko",
       "page": "aws-cloud/eks.md",
       "start": "# Chapter 5. EKS on AWS",
-      "end": "# Chapter 1~5 최종 요약"
+      "end": "# Chapter 1~5 최종 요약",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "source": "sources/aws-cloud-basic-compact-ch1-5-2026-10-04/source.md",
@@ -416,28 +448,36 @@
       "source": "sources/platform-infrastructure-basic-ch12-15-2026-10-05/source.md",
       "start": "# Chapter 12. Terraform & Infrastructure as Code",
       "end": "# Chapter 13. Multi-tenancy, Quotas & Cost Control",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/multitenancy-cost.md",
       "source": "sources/platform-infrastructure-basic-ch12-15-2026-10-05/source.md",
       "start": "# Chapter 13. Multi-tenancy, Quotas & Cost Control",
       "end": "# Chapter 14. Internal Developer Platform / Self-Service",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/developer-platform.md",
       "source": "sources/platform-infrastructure-basic-ch12-15-2026-10-05/source.md",
       "start": "# Chapter 14. Internal Developer Platform / Self-Service",
       "end": "# Chapter 15. End-to-End AI Platform Architecture",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/architecture.md",
       "source": "sources/platform-infrastructure-basic-ch12-15-2026-10-05/source.md",
       "start": "# Chapter 15. End-to-End AI Platform Architecture",
       "end": null,
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "platform-infrastructure/index.md",
@@ -453,14 +493,18 @@
       "source": "sources/aws-cloud-basic-ch6-7-2026-10-05/source.md",
       "start": "# Chapter 6. AWS Managed Services",
       "end": "# Chapter 7. AI/GPU + End-to-End",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "aws-cloud/ai-gpu-architecture.md",
       "source": "sources/aws-cloud-basic-ch6-7-2026-10-05/source.md",
       "start": "# Chapter 7. AI/GPU + End-to-End",
       "end": "# Chapter 6~7 최종 요약",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "aws-cloud/index.md",
@@ -494,70 +538,90 @@
       "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
       "start": "# Chapter 1. QLoRA와 학습 결과물",
       "end": "# Chapter 2. Adapter 재사용과 Base Model 변경",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "ai-model-development/adapter-compatibility.md",
       "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
       "start": "# Chapter 2. Adapter 재사용과 Base Model 변경",
       "end": "# Chapter 3. Training Dataset과 Golden Dataset",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "ai-model-development/training-datasets.md",
       "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
       "start": "# Chapter 3. Training Dataset과 Golden Dataset",
       "end": "# Chapter 4. QLoRA 학습 과정",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "ai-model-development/qlora-training.md",
       "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
       "start": "# Chapter 4. QLoRA 학습 과정",
       "end": "# Chapter 5. Evaluation과 Model Promotion",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "ai-model-development/evaluation-promotion.md",
       "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
       "start": "# Chapter 5. Evaluation과 Model Promotion",
       "end": "# Chapter 6. Model Change와 Re-Training",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "ai-model-development/model-retraining.md",
       "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
       "start": "# Chapter 6. Model Change와 Re-Training",
       "end": "# Chapter 7. Model / Dataset Artifact 관리",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "ai-model-development/artifact-lineage.md",
       "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
       "start": "# Chapter 7. Model / Dataset Artifact 관리",
       "end": "# Chapter 8. AI Model Developer의 역할",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "ai-model-development/model-developer.md",
       "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
       "start": "# Chapter 8. AI Model Developer의 역할",
       "end": "# Chapter 9. AI Model Developer와 AI Platform Engineer",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "ai-model-development/model-platform-collaboration.md",
       "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
       "start": "# Chapter 9. AI Model Developer와 AI Platform Engineer",
       "end": "# Chapter 10. End-to-End Fine-Tuning Platform Architecture",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "ai-model-development/training-platform-architecture.md",
       "source": "sources/ai-model-qlora-basic-2026-10-05/source.md",
       "start": "# Chapter 10. End-to-End Fine-Tuning Platform Architecture",
       "end": "# Final Summary",
-      "verbatim_language": "ko"
+      "verbatim_language": "ko",
+      "preservation_mode": "editable",
+      "user_request": "2026-10-18 사용자 상시 지시와 현재 요청: data-platform 외 학습 문서 전체의 기존 원문 설명을 쉽게 고치고 필요한 보완은 해당 절에 녹이되 원본 목차·형식과 핵심 기술 내용을 유지."
     },
     {
       "page": "ai-model-development/index.md",

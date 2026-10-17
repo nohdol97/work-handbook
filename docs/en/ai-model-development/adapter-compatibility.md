@@ -1,8 +1,8 @@
 ---
 id: ai-model-development-adapter-compatibility
 status: studied
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - AIMFT-02-01
   - AIMFT-02-02
@@ -12,11 +12,13 @@ knowledge_ids:
 
 # Chapter 2. Adapter Reuse and Base Model Changes
 
-This page preserves the source numbering, order, and examples. For compatibility in 2.1–2.4, distinguish successful loading from actual quality. Read the separate supplement for model revisions, module settings, and tokenizer conditions. No adapter transfer or retraining was performed.
+The models and settings are study examples, not results of training, evaluation, or deployment.
 
 <!-- SOURCE CORE START -->
 
 ## 2.1 Can an Adapter Be Applied Unchanged to Another Model?
+
+An adapter is like a lens fitted to a specific camera body. A matching mount alone does not ensure the same result when the body changes, so check both loading compatibility and model quality.
 
 As a general rule, assume that an existing LoRA adapter cannot be applied unchanged to a different base model.
 
@@ -39,6 +41,12 @@ LoRA adapter for Llama
 ```
 
 The adapter was trained for the layer structure and dimensions of a specific base model.
+
+**The Same Structure Does Not Guarantee the Same Result**
+
+Record the base model name and revision with the adapter configuration. A PEFT checkpoint does not contain the base weights themselves. [PEFT checkpoint](https://huggingface.co/docs/peft/main/en/developer_guides/checkpoint)
+
+Review recommendation: matching dimensions may allow loading, but weights from another revision may differ from those used in training. Do not judge compatibility from names or successful loading alone. Check the actual base revision, tokenizer, chat template, and evaluation results together. [Evaluation data and model versions](../data-platform/ai-evaluation.md)
 
 ---
 
@@ -70,6 +78,10 @@ target_modules:
 ```
 
 The same adapter weights cannot be applied if the target model's layer structure or dimensions differ.
+
+**Target Module Names Depend on the Model**
+
+Names such as `q_proj` and `v_proj` are examples. PEFT `target_modules` accepts name lists, patterns, or supported broad selections, and must match the model structure. Implementations can extend LoRA beyond linear layers, so the source is not a list of every supported layer type. [PEFT LoRA configuration](https://huggingface.co/docs/peft/main/package_reference/lora)
 
 ---
 
@@ -137,27 +149,18 @@ Experiment History
 
 Manage these assets together.
 
+**Review Input Format When Reusing Data**
+
+Even when training samples keep the same meaning, models may use different tokenizers, special tokens, and chat templates. “The same dataset” in the source does not mean reusing the old model's token IDs unchanged. Check inputs and outputs processed for the new base model and keep evaluation conditions explicit. [Transformers chat templates](https://huggingface.co/docs/transformers/chat_templating)
+
 ---
 
 <!-- SOURCE CORE END -->
 
-## Supplement — Loading Compatibility and Quality Checks
+## Key points
 
-Official PEFT and Transformers documentation checked on 2026-10-05. These explanations and review recommendations are separate from the source; no transfer experiment was run. Check differences between `main` documentation and installed versions.
+An adapter is tied to the exact base-model revision and structure used in training. Check loading, tokenizer and template compatibility, and actual quality separately.
 
-### 2.1 / 2.3 The Same Structure Does Not Guarantee the Same Result
-
-Record the base model name and revision with the adapter configuration. A PEFT checkpoint does not contain the base weights themselves. [PEFT checkpoint](https://huggingface.co/docs/peft/main/en/developer_guides/checkpoint)
-
-Review recommendation: matching dimensions may allow loading, but weights from another revision may differ from those used in training. Do not judge compatibility from names or successful loading alone. Check the actual base revision, tokenizer, chat template, and evaluation results together. [Evaluation data and model versions](../data-platform/ai-evaluation.md)
-
-### 2.2 Target Module Names Depend on the Model
-
-Names such as `q_proj` and `v_proj` are examples. PEFT `target_modules` accepts name lists, patterns, or supported broad selections, and must match the model structure. Implementations can extend LoRA beyond linear layers, so the source is not a list of every supported layer type. [PEFT LoRA configuration](https://huggingface.co/docs/peft/main/package_reference/lora)
-
-### 2.4 Review Input Format When Reusing Data
-
-Even when training samples keep the same meaning, models may use different tokenizers, special tokens, and chat templates. “The same dataset” in the source does not mean reusing the old model's token IDs unchanged. Check inputs and outputs processed for the new base model and keep evaluation conditions explicit. [Transformers chat templates](https://huggingface.co/docs/transformers/chat_templating)
 
 ## Related Topics
 

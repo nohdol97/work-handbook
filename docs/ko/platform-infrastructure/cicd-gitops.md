@@ -17,11 +17,13 @@ knowledge_ids:
 
 # Chapter 11. CI/CD, Helm, Argo CD & GitOps
 
-제공된 학습 원문의 번호·순서·예시와 GPU 보충 절을 보존했다. 예시 버전·배치·명령은 실제 실행 결과가 아니다. 11.3/11.6의 Helm release와 Argo CD rollback 조건, Healthy의 의미, 11.7–11.8의 트래픽 전환·GPU 여유 조건은 뒤의 별도 보완에서 확인한다.
+예시 구성과 명령은 학습용이며 실제 배포·장애 실험 결과가 아니다.
 
 <!-- SOURCE CORE START -->
 
 ## 11.1 CI/CD Fundamentals
+
+CI/CD는 변경을 검사하고 전달하는 조립 라인, GitOps는 원하는 배포 상태를 적어 둔 작업 지시서와 비슷하다. 검사 통과, 배포 상태, 실제 서비스 준비를 각각 확인한다.
 
 CI/CD:
 
@@ -220,6 +222,10 @@ Security Scan
 Registry Push
 ```
 
+**버전 이름과 artifact 동일성**
+
+명확한 tag도 다시 가리키는 대상이 바뀔 수 있다. 같은 artifact를 승격하고 이전 실행물을 재현하려면 image digest를 기록하고 배포 대상을 확인한다. Git commit을 tag로 썼다는 사실만으로 registry에서 불변성이 보장되지는 않는다. [Kubernetes Images](https://kubernetes.io/docs/concepts/containers/images/)
+
 ---
 
 ## 11.3 Helm
@@ -400,6 +406,14 @@ Chart Version
 Image Tag
 → Application 코드 버전
 ```
+
+**Helm release와 Argo CD의 경계**
+
+Helm 3의 Secret 저장은 기본 backend이며 `HELM_DRIVER`로 다른 backend를 선택할 수 있다. Release 정보에는 chart·values가 들어가므로 values에 비밀값을 넣지 않는 원칙은 Git뿐 아니라 release 접근 권한에도 연결된다. [Helm 3 storage backends](https://helm.sh/docs/v3/topics/advanced/)
+
+`helm rollback my-api 2`의 `2`는 image tag가 아니라 release revision이다. 실제 context·namespace·release history를 먼저 확인한다. 이 명령은 cluster를 변경하며, DB나 외부 상태를 과거로 복구하는 명령이 아니다. [Helm 3 rollback](https://helm.sh/docs/v3/helm/helm_rollback/)
+
+Argo CD의 일반적인 Helm 통합은 `helm template`로 manifest를 만들고 Argo CD가 lifecycle을 관리한다. 그러므로 11.3의 Helm release Secret/history와 11.6의 Application 배포 history는 같은 기록이 아니다. 원문의 `path` 예시는 chart 선택을 보여줄 뿐 `env/prod/values.yaml`을 자동 선택하지 않는다. 필요한 `helm.valueFiles`와 실제 values 우선순위를 확인한다. [Argo CD Helm](https://argo-cd.readthedocs.io/en/stable/user-guide/helm/)
 
 ---
 
@@ -682,6 +696,14 @@ events
 
 가 더 직접적일 수 있다.
 
+**Sync·Healthy·rollback**
+
+자동 sync를 켜도 live drift 복구와 삭제가 모두 자동 활성화되는 것은 아니다. `selfHeal`과 `prune`을 따로 확인한다. **Automated sync가 활성화된 Application에는 직접 rollback을 수행할 수 없다.** Git에 원하는 이전 상태를 새 commit으로 반영해 sync하거나, 승인된 복구 절차에 따라 automated sync 설정과 Git desired state를 함께 조정한다. [Argo CD automated sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/)
+
+`Healthy`는 resource별 health 평가 결과다. 사용자 요청 성공, 모델의 응답 품질, TTFT/TPOT 목표 충족까지 보장하지 않는다. 별도 요청 검증과 지표가 필요하다. [Argo CD resource health](https://argo-cd.readthedocs.io/en/stable/operator-manual/health/)
+
+11.5의 명령 목록 중 `exec`는 container 안에서 임의 명령을 실행할 수 있고 `port-forward`는 접근 경로를 연다. `cordon`·`drain`은 실제 배치·가용성을 변경한다. 진단 명령 전체를 읽기 전용으로 취급하지 않는다. 이 문서는 해당 명령을 실행하지 않았다.
+
 ---
 
 ## 11.6 Argo CD
@@ -930,6 +952,16 @@ Tool Calling
 ```
 
 등이 달라질 수 있으므로 일부 트래픽으로 먼저 검증.
+
+**AI Serving 전환과 GPU 용량 조건**
+
+95/5 등은 목표 트래픽 비율의 예시다. LiteLLM router는 구성된 전략과 weight로 backend를 선택하며, 짧은 구간의 실제 분포·retry·fallback은 별도로 관측해야 한다. 구 버전으로 100%를 돌리기 전에 구 replica의 health·capacity·호환성을 확인하고 진행 중인 요청도 고려한다. [LiteLLM routing](https://docs.litellm.ai/docs/routing)
+
+4+4=8, 12+4=16 GPU 계산은 기존 replica를 유지하며 새 replica를 추가하는 예시다. 이 여유를 canary가 모두 쓰면 같은 GPU를 장애 복구 여유로 다시 계산할 수 없다. GPU별 Weight·KV·runtime뿐 아니라 적합한 Node 배치와 장애 영역을 확인한다. [GPU 용량 계획](gpu-infrastructure.md)
+
+Rolling update의 실제 추가 Pod 수와 허용 중단은 `maxSurge`·`maxUnavailable` 등에 달려 있다. 원문의 “일시적 추가 capacity”는 기존 용량을 유지한 채 검증하는 조건이며, 모든 전략이 항상 같은 추가 GPU 수를 요구한다는 뜻은 아니다. [Kubernetes Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+
+`vllm:0.x`, `glm-5.3-fp4-v1`은 설명용 이름이다. 실제 image/model revision·serving 설정을 고정해 확인한다. 다른 replica GPU의 VRAM이 자동 공용 pool이 되지는 않으며, 별도 공유/offload 기술은 이 예시의 가정 밖이다. [vLLM 학습](vllm.md)
 
 ---
 
@@ -1219,55 +1251,13 @@ TTFT / TPOT SLA 가능한가?
 === "한국어"
 
     ```text {.prompt}
-    모델 canary 오류가 증가했을 때 배포 변경과 트래픽 복귀 계획을 검토한다.
-    canary 전후 변경과 오류 시각을 대조하고 v1 복귀의 실행 가능성을 평가하라. Helm release rollback·Argo CD rollback·Git revert·routing 전환을 구분하고 automated sync 조건을 확인하라.
-    원인 가설·증거 표와 단계 / v1 부하 수용·호환성 / GPU 여유 / 진행·중단 기준 / 확인할 지표 표를 작성하라. 16 GPU 중 기존12+canary4 같은 경우 장애 여유를 중복 계산하지 마라.
-    비밀값은 요구하거나 출력하지 말고, 검토안만 작성해 줘. 변경은 실행하지 마.
+    모델 canary에서 오류가 늘었어. 배포 diff, Argo CD 상태, traffic routing과 GPU 여유를 보고 이전 버전으로 돌아갈 수 있는지 검토해 줘. Git revert, Helm rollback, routing 전환의 역할을 구분하고 실제 rollback은 실행하지 마.
     ```
 
 === "English"
 
     ```text {.prompt}
-    Review deployment changes and traffic recovery when errors increase during a model canary.
-    Compare changes and errors before and after the canary and assess whether recovery to v1 is feasible. Distinguish Helm release rollback, Argo CD rollback, Git revert, and routing changes. Check automated-sync conditions.
-    Produce a hypothesis/evidence table and a table: step / v1 load capacity and compatibility / spare GPUs / go-stop criteria / metrics to check. Do not double-count failure reserve when, for example, existing replicas use 12 of 16 GPUs and the canary uses 4.
-    Do not request or reveal secrets. Draft a review only; do not apply changes.
+    Errors increased during a model canary. Review the deployment diff, Argo CD state, traffic routing, and spare GPU capacity to assess a return to the previous version. Separate Git revert, Helm rollback, and routing changes; do not perform a rollback.
     ```
 
-**핵심 사항:** canary 실패 가설, v1 트래픽 복귀 단계별 부하·호환성·GPU 여유와 진행/중단 판정표. Synced/Healthy를 응답 품질 보장으로 보거나 변경 가능한 tag로 이전 실행물이 재현된다고 판단할 수 있다. Git·digest·model revision과 Argo CD 정책, 실제 라우팅/요청 지표를 대조한다. canary GPU를 장애 예비로 세거나 구 버전 100% 부하 근거가 없는 복귀안은 보류한다. 업무용 작성 예시이며 실제 모델 응답·개선 효과를 검증한 기록은 아니다. 관련: [GPU 용량 계획](gpu-infrastructure.md) · [LiteLLM](litellm.md)
-
-## 보완 — 버전 추적과 rollback의 적용 조건
-
-공식 문서 확인일: 2026-10-03. 원문의 Helm 3 설명은 Helm 3 문서로 확인했다. Argo CD·LiteLLM의 링크는 확인 시점 stable 문서다. 설치·배포·rollback·부하 시험은 실행하지 않았다.
-
-### 11.2 / 11.4 버전 이름과 artifact 동일성
-
-명확한 tag도 다시 가리키는 대상이 바뀔 수 있다. 같은 artifact를 승격하고 이전 실행물을 재현하려면 image digest를 기록하고 배포 대상을 확인한다. Git commit을 tag로 썼다는 사실만으로 registry에서 불변성이 보장되지는 않는다. [Kubernetes Images](https://kubernetes.io/docs/concepts/containers/images/)
-
-### 11.3 / 11.6 Helm release와 Argo CD의 경계
-
-Helm 3의 Secret 저장은 기본 backend이며 `HELM_DRIVER`로 다른 backend를 선택할 수 있다. Release 정보에는 chart·values가 들어가므로 values에 비밀값을 넣지 않는 원칙은 Git뿐 아니라 release 접근 권한에도 연결된다. [Helm 3 storage backends](https://helm.sh/docs/v3/topics/advanced/)
-
-`helm rollback my-api 2`의 `2`는 image tag가 아니라 release revision이다. 실제 context·namespace·release history를 먼저 확인한다. 이 명령은 cluster를 변경하며, DB나 외부 상태를 과거로 복구하는 명령이 아니다. [Helm 3 rollback](https://helm.sh/docs/v3/helm/helm_rollback/)
-
-Argo CD의 일반적인 Helm 통합은 `helm template`로 manifest를 만들고 Argo CD가 lifecycle을 관리한다. 그러므로 11.3의 Helm release Secret/history와 11.6의 Application 배포 history는 같은 기록이 아니다. 원문의 `path` 예시는 chart 선택을 보여줄 뿐 `env/prod/values.yaml`을 자동 선택하지 않는다. 필요한 `helm.valueFiles`와 실제 values 우선순위를 확인한다. [Argo CD Helm](https://argo-cd.readthedocs.io/en/stable/user-guide/helm/)
-
-### 11.5 / 11.6 Sync·Healthy·rollback
-
-자동 sync를 켜도 live drift 복구와 삭제가 모두 자동 활성화되는 것은 아니다. `selfHeal`과 `prune`을 따로 확인한다. **Automated sync가 활성화된 Application에는 직접 rollback을 수행할 수 없다.** Git에 원하는 이전 상태를 새 commit으로 반영해 sync하거나, 승인된 복구 절차에 따라 automated sync 설정과 Git desired state를 함께 조정한다. [Argo CD automated sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/)
-
-`Healthy`는 resource별 health 평가 결과다. 사용자 요청 성공, 모델의 응답 품질, TTFT/TPOT 목표 충족까지 보장하지 않는다. 별도 요청 검증과 지표가 필요하다. [Argo CD resource health](https://argo-cd.readthedocs.io/en/stable/operator-manual/health/)
-
-11.5의 명령 목록 중 `exec`는 container 안에서 임의 명령을 실행할 수 있고 `port-forward`는 접근 경로를 연다. `cordon`·`drain`은 실제 배치·가용성을 변경한다. 진단 명령 전체를 읽기 전용으로 취급하지 않는다. 이 문서는 해당 명령을 실행하지 않았다.
-
-### 11.7 / 11.8 및 GPU 보충 절의 전환 조건
-
-95/5 등은 목표 트래픽 비율의 예시다. LiteLLM router는 구성된 전략과 weight로 backend를 선택하며, 짧은 구간의 실제 분포·retry·fallback은 별도로 관측해야 한다. 구 버전으로 100%를 돌리기 전에 구 replica의 health·capacity·호환성을 확인하고 진행 중인 요청도 고려한다. [LiteLLM routing](https://docs.litellm.ai/docs/routing)
-
-4+4=8, 12+4=16 GPU 계산은 기존 replica를 유지하며 새 replica를 추가하는 예시다. 이 여유를 canary가 모두 쓰면 같은 GPU를 장애 복구 여유로 다시 계산할 수 없다. GPU별 Weight·KV·runtime뿐 아니라 적합한 Node 배치와 장애 영역을 확인한다. [GPU 용량 계획](gpu-infrastructure.md)
-
-Rolling update의 실제 추가 Pod 수와 허용 중단은 `maxSurge`·`maxUnavailable` 등에 달려 있다. 원문의 “일시적 추가 capacity”는 기존 용량을 유지한 채 검증하는 조건이며, 모든 전략이 항상 같은 추가 GPU 수를 요구한다는 뜻은 아니다. [Kubernetes Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
-
-`vllm:0.x`, `glm-5.3-fp4-v1`은 설명용 이름이다. 실제 image/model revision·serving 설정을 고정해 확인한다. 다른 replica GPU의 VRAM이 자동 공용 pool이 되지는 않으며, 별도 공유/offload 기술은 이 예시의 가정 밖이다. [vLLM 학습](vllm.md)
-
-읽기 순서: 11.1–11.4에서 artifact와 환경 설정을 나누고, 11.5–11.6에서 desired state와 controller의 책임을 확인한다. 11.7–11.8과 GPU 보충을 읽을 때는 새 버전 검증·트래픽 복귀·장애 여유를 각각 계산한다.
+**핵심 사항:** canary 실패 가설, v1 트래픽 복귀 단계별 부하·호환성·GPU 여유와 진행/중단 판정표. Synced/Healthy를 응답 품질 보장으로 보거나 변경 가능한 tag로 이전 실행물이 재현된다고 판단할 수 있다. Git·digest·model revision과 Argo CD 정책, 실제 라우팅/요청 지표를 대조한다. canary GPU를 장애 예비로 세거나 구 버전 100% 부하 근거가 없는 복귀안은 보류한다. 관련: [GPU 용량 계획](gpu-infrastructure.md) · [LiteLLM](litellm.md)

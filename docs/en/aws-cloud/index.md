@@ -1,8 +1,8 @@
 ---
 id: aws-cloud-overview
 status: overview
-last_updated: 2026-10-05
-last_reviewed: 2026-10-05
+last_updated: 2026-10-18
+last_reviewed: 2026-10-18
 knowledge_ids:
   - AWSC-00-01
   - AWSC-00-02
@@ -17,7 +17,7 @@ knowledge_ids:
 
 This section covers the **full compact seven-chapter curriculum**. **Basic conceptual study of Chapters 1–7 is complete**, from accounts, networking, compute, storage/databases, and EKS to managed services, security, observability, GPU serving, and the final AWS architecture. Completed means Basic conceptual study, not actual AWS implementation, operations, load tests, or recovery tests.
 
-The source numbering, order, tables, diagrams, and examples are preserved in translation. Read the short supplement after each chapter for product-specific conditions.
+The source numbering, order, tables, diagrams, and examples remain traceable. Product-specific conditions now sit beside the concepts they qualify.
 
 | Completed chapter | Canonical topic | Main scope |
 |---|---|---|

@@ -14,9 +14,13 @@ knowledge_ids:
 
 # Chapter 5. Evaluation and Model Promotion
 
+The models and settings are study examples, not results of training, evaluation, or deployment.
+
 <!-- SOURCE CORE START -->
 
 ## 5.1 Training Complete Does Not Mean Production Ready
+
+Passing evaluation is like passing a product inspection. Before release, check compatibility, capacity, and safe traffic switching separately.
 
 Do not deploy to Production just because Fine-Tuning is complete.
 
@@ -58,6 +62,12 @@ Important:
 > Low Training Loss alone does not mean a model is good.
 
 Evaluate with Metrics required for the actual task.
+
+**Example Values and Passing Criteria**
+
+The changes in 5.2—76%→89%, 81%→97%, 9%→4%, and 120ms→135ms—are hypothetical. If the 5.4 criteria apply to this candidate, accuracy of 89% is below 90%, format pass of 97% is below 98%, and hallucination of 4% exceeds 3%. All three fail. The latency target is missing, so its result is unknown. Improvement over the base and passing an absolute gate are separate questions.
+
+Design recommendation: fix the evaluation dataset, rubric, prompt, and generation settings. Record the correct chat template for each model. Measure latency under the same hardware, load, and input/output lengths, and name the percentile. Keep sample counts and failure distributions by category. See [AI Evaluation](../data-platform/ai-evaluation.md) for operational evaluation design.
 
 ---
 
@@ -141,6 +151,12 @@ Re-evaluate
 
 Fine-Tuning is an iterative improvement Loop, not a one-time task.
 
+**Development Evaluation and a Final Holdout**
+
+If golden-set failures repeatedly guide datasets and settings, that score has influenced model selection. Do not call it an unused final test. Improve with validation and use a separate holdout for final checks. Manage duplicate and similar samples across training and evaluation. This applies general leakage prevention to this improvement loop. [scikit-learn evaluation splits](https://scikit-learn.org/stable/modules/cross_validation.html), [Data leakage](https://scikit-learn.org/stable/common_pitfalls.html)
+
+“Too few complex incident samples” is one possible cause. Check label errors, templates, truncation, and base-model capability before adding data. Do not copy failed test questions into training and report gains on those same questions as generalization.
+
 ---
 
 ## 5.6 Model Improvement Loop
@@ -167,30 +183,6 @@ Retraining
 
 This is why Datasets and Evaluation matter in model development.
 
----
-
-<!-- SOURCE CORE END -->
-
-## Supplements and Conditions by Source Section
-
-The official evaluation sources below were checked on 2026-10-05. These notes interpret source examples and recommend evaluation design. They are not measured results.
-
-### 5.2–5.4: Example Values and Passing Criteria
-
-The changes in 5.2—76%→89%, 81%→97%, 9%→4%, and 120ms→135ms—are hypothetical. If the 5.4 criteria apply to this candidate, accuracy of 89% is below 90%, format pass of 97% is below 98%, and hallucination of 4% exceeds 3%. All three fail. The latency target is missing, so its result is unknown. Improvement over the base and passing an absolute gate are separate questions.
-
-Design recommendation: fix the evaluation dataset, rubric, prompt, and generation settings. Record the correct chat template for each model. Measure latency under the same hardware, load, and input/output lengths, and name the percentile. Keep sample counts and failure distributions by category. See [AI Evaluation](../data-platform/ai-evaluation.md) for operational evaluation design.
-
-### 5.5–5.6: Development Evaluation and a Final Holdout
-
-If golden-set failures repeatedly guide datasets and settings, that score has influenced model selection. Do not call it an unused final test. Improve with validation and use a separate holdout for final checks. Manage duplicate and similar samples across training and evaluation. This applies general leakage prevention to this improvement loop. [scikit-learn evaluation splits](https://scikit-learn.org/stable/modules/cross_validation.html), [Data leakage](https://scikit-learn.org/stable/common_pitfalls.html)
-
-“Too few complex incident samples” is one possible cause. Check label errors, templates, truncation, and base-model capability before adding data. Do not copy failed test questions into training and report gains on those same questions as generalization.
-
-## Supplemental Diagram: Evaluation and Deployment Checks
-
-This design example adds a final holdout and deployment checks to the source text flow. Being a promotion candidate does not mean deployment is complete.
-
 ```mermaid
 flowchart TD
     A[Training result] --> B[Validation and error analysis]
@@ -204,6 +196,15 @@ flowchart TD
     H --> I[Deployment checks and rollback preparation]
     I --> J[Release decision]
 ```
+
+---
+
+<!-- SOURCE CORE END -->
+
+## Key points
+
+Compare metrics under the same conditions and use independent data for the final decision. Passing evaluation and being ready for deployment are different gates.
+
 
 ## Related Pages
 
