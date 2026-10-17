@@ -15,9 +15,7 @@ knowledge_ids:
 
 # Chapter 11 — Data Quality Engineering
 
-This Learn page covers studied concepts and hypothetical operations. It does not claim hands-on implementation or incident response. Data quality asks, “Can we trust and use this data?” A service can respond while its data is wrong. That is still a data incident.
-
-**Reading note:** The chapter below keeps the source numbering, outline, technical content, and examples while explaining them in simpler language. Check the section-specific conditions and additions in the supplement after the chapter.
+This chapter covers data quality concepts and hypothetical operations. It does not claim hands-on implementation or incident response. Data quality asks, “Can we trust and use this data?” A service can respond while its data is wrong. That is still a data incident.
 
 <!-- SOURCE CORE START -->
 
@@ -124,7 +122,7 @@ Final
 
 ## 11.3 Quarantine Patterns
 
-Quarantine is a separate holding area for records that fail a rule. It supports investigation and reprocessing. Silently dropping a bad order makes its absence hard to explain later. Keep the source record and error reason, while limiting access and retention for sensitive data.
+Quarantine is a separate holding area for records that fail a rule. It supports investigation and reprocessing. Think of holding a parcel with an unclear address at a service desk until someone checks it. Silently dropping a bad order makes its absence hard to explain later. Keep the source record and error reason, while limiting access and retention for sensitive data.
 
 Keep records that fail a rule in a separate area instead of silently dropping them.
 

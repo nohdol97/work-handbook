@@ -17,9 +17,7 @@ knowledge_ids:
 
 # Chapter 14 — Data Governance
 
-This Learn page covers studied concepts of ownership, policy, access, and audit. Durations and datasets are hypothetical. It does not claim that security policies were deployed or legal duties were verified. Governance asks, “Who may use this data, and under which conditions?”
-
-**Reading note:** The chapter below keeps the source numbering, outline, technical content, and examples while explaining them in simpler language. Check the section-specific conditions and additions in the supplement after the chapter.
+This chapter covers ownership, policy, access, and audit. Durations and datasets are hypothetical. It does not claim that security policies were deployed or legal duties were verified. Governance asks, “Who may use this data, and under which conditions?”
 
 <!-- SOURCE CORE START -->
 
@@ -227,7 +225,7 @@ Audit
 
 ## 14.8 Data Contracts
 
-A data contract is an agreement between producers and consumers about format, meaning, quality, and ownership. Calling `latency_ms` an integer does not say which unit it uses or whether negative values are valid. Check the contract before changes so consumers are less likely to receive unexpected results.
+A data contract is an agreement between producers and consumers about format, meaning, quality, and ownership. A delivery slip that lists only box size but omits the contents, quantity, and owner leaves the recipient guessing. Calling `latency_ms` an integer does not say which unit it uses or whether negative values are valid. Check the contract before changes so consumers are less likely to receive unexpected results.
 
 It can include:
 

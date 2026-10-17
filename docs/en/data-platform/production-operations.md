@@ -28,12 +28,9 @@ knowledge_ids:
   - DPE2-20-22
 ---
 
-
 # Chapter 20 — Production Data Platform Engineering
 
 This page follows the outline and technical content of Chapter 20, with prose rewritten for beginners. Examples and diagrams describe studied concepts, not completed implementation, production recovery, or tests.
-
-**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
 
 <!-- SOURCE CORE START -->
 
@@ -670,7 +667,7 @@ The fastest recovery depends on the failure type.
 
 ## 20.19 Checkpoint Loss
 
-A **checkpoint** records a stream job's progress and needed state for recovery. If it is lost, start by checking how much source history remains.
+A **checkpoint** records a stream job's progress and needed state for recovery. It is like keeping both a bookmark and the running totals on that page so you can continue the calculation. If it is lost, start by checking how much source history remains.
 
 If Spark/Flink checkpoint is lost:
 

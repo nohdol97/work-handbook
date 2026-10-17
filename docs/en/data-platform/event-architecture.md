@@ -14,10 +14,6 @@ knowledge_ids:
 
 # Chapter 2 — Event Data Architecture
 
-Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run. Kafka broker, ISR, and replica operations are outside this page. The focus is event meaning for data engineering.
-
-**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
-
 An **event** records something that already happened, such as “an order was created.” Like a parcel label with a unique number and time, an event needs an identity and a clear time basis. Sections 2.1–2.6 show how to define its meaning and keep that meaning during replay and delivery to several destinations.
 
 <!-- SOURCE CORE START -->
@@ -180,7 +176,7 @@ Provides an explicit schema and a compact binary format.
 
 ### Schema Registry
 
-A Schema Registry keeps event schema versions in one place and checks the configured compatibility rules.
+A Schema Registry keeps event schema versions in one place and checks the configured compatibility rules. It resembles checking a shared form before teams change its required fields. This check does not guarantee that field values have the right business meaning.
 
 Role:
 

@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### check {#vocab-check}
 
-**662회 · 76개 문서 · 중립**
+**651회 · 76개 문서 · 중립**
 
 **확인하다; 점검**
 
@@ -46,7 +46,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### change {#vocab-change}
 
-**421회 · 72개 문서 · 중립**
+**424회 · 72개 문서 · 중립**
 
 **변경하다; 변경 사항**
 
@@ -110,7 +110,7 @@ separate A from B로 분리 대상을 표현한다. 형용사로는 a separate t
 
 ### manage {#vocab-manage}
 
-**229회 · 46개 문서 · 중립**
+**230회 · 46개 문서 · 중립**
 
 **관리하다; 해내다**
 
@@ -158,7 +158,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### actual {#vocab-actual}
 
-**207회 · 59개 문서 · 중립**
+**206회 · 59개 문서 · 중립**
 
 **실제의**
 
@@ -174,7 +174,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### access {#vocab-access}
 
-**194회 · 38개 문서 · 중립**
+**193회 · 38개 문서 · 중립**
 
 **접근하다; 접근 권한**
 
@@ -206,7 +206,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### record {#vocab-record}
 
-**169회 · 56개 문서 · 중립**
+**163회 · 55개 문서 · 중립**
 
 **기록하다; 기록**
 
@@ -238,7 +238,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### require {#vocab-require}
 
-**143회 · 55개 문서 · 중립**
+**144회 · 55개 문서 · 중립**
 
 **필요로 하다; 요구하다**
 
@@ -302,7 +302,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 ### scope {#vocab-scope}
 
-**102회 · 38개 문서 · 중립**
+**101회 · 38개 문서 · 중립**
 
 **범위**
 
@@ -336,7 +336,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 ### workload {#vocab-workload}
 
-**94회 · 29개 문서 · 중립**
+**93회 · 29개 문서 · 중립**
 
 **시스템이 처리해야 하는 작업량과 작업의 종류**
 
@@ -349,22 +349,6 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 집계한 형태: workload, workloads.
 
 본문 예: [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md).
-
-### preserve {#vocab-preserve}
-
-**82회 · 50개 문서 · 중립**
-
-**보존하다; 유지하다**
-
-변경 과정에서도 중요한 내용이나 성질을 유지한다는 뜻으로 쓴다.
-
-> The migration must preserve the original event timestamps.
->
-> 마이그레이션은 원래 이벤트 시각을 보존해야 합니다.
-
-집계한 형태: preserve, preserves, preserved, preserving.
-
-본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md).
 
 ### provide {#vocab-provide}
 
@@ -397,6 +381,22 @@ reduce by는 감소한 양, reduce to는 감소 후 값을 나타낸다. 수치�
 집계한 형태: reduce, reduces, reduced, reducing.
 
 본문 예: [ai-model-development/qlora-artifacts](../ai-model-development/qlora-artifacts.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
+
+### preserve {#vocab-preserve}
+
+**73회 · 46개 문서 · 중립**
+
+**보존하다; 유지하다**
+
+변경 과정에서도 중요한 내용이나 성질을 유지한다는 뜻으로 쓴다.
+
+> The migration must preserve the original event timestamps.
+>
+> 마이그레이션은 원래 이벤트 시각을 보존해야 합니다.
+
+집계한 형태: preserve, preserves, preserved, preserving.
+
+본문 예: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md).
 
 ### handle {#vocab-handle}
 
@@ -578,6 +578,22 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/foundations](../aws-cloud/foundations.md).
 
+### improve {#vocab-improve}
+
+**23회 · 14개 문서 · 중립**
+
+**개선하다; 나아지다**
+
+목적어가 있으면 무엇을 개선했는지, 없으면 무엇이 나아졌는지 표현한다.
+
+> We want to improve response time without increasing error rates.
+>
+> 오류율을 높이지 않으면서 응답 시간을 개선하고 싶습니다.
+
+집계한 형태: improve, improves, improved, improving.
+
+본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
+
 ### approach {#vocab-approach}
 
 **22회 · 11개 문서 · 중립**
@@ -609,22 +625,6 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 집계한 형태: avoid, avoids, avoided, avoiding.
 
 본문 예: [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [aws-cloud/foundations](../aws-cloud/foundations.md), [data-platform/ai-evaluation](../data-platform/ai-evaluation.md).
-
-### improve {#vocab-improve}
-
-**22회 · 14개 문서 · 중립**
-
-**개선하다; 나아지다**
-
-목적어가 있으면 무엇을 개선했는지, 없으면 무엇이 나아졌는지 표현한다.
-
-> We want to improve response time without increasing error rates.
->
-> 오류율을 높이지 않으면서 응답 시간을 개선하고 싶습니다.
-
-집계한 형태: improve, improves, improved, improving.
-
-본문 예: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
 
 ### constraint {#vocab-constraint}
 

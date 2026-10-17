@@ -19,8 +19,6 @@ knowledge_ids:
 
 This page records conceptual study. The flows and recovery steps are examples, not records of production work or incident recovery. Product behavior was checked against official documentation on 2026-09-24. Check connector and database versions and settings in the actual environment.
 
-**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
-
 **CDC (Change Data Capture)** sends database row changes to other systems. **Debezium** reads those changes and emits events. It is like receiving each amendment to a shop ledger instead of copying the whole ledger every time. Sections 6.1–6.9 follow the path from an initial copy to change application and recovery.
 
 <!-- SOURCE CORE START -->
@@ -102,7 +100,7 @@ A snapshot initially reads rows that existed before CDC started.
 
 ## 6.3 Initial Snapshot
 
-An initial snapshot captures rows that existed before CDC began. Rows can change during the snapshot, so continue from the recorded log position and check for gaps or duplicate effects.
+An initial snapshot captures rows that existed before CDC began. A shop may keep selling items while staff count its opening inventory, so the sales record must connect to that count. Rows can change during the snapshot, so continue from the recorded log position and check for gaps or duplicate effects.
 
 Data already exists when CDC starts for the first time.
 

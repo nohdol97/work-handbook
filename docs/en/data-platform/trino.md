@@ -18,8 +18,6 @@ knowledge_ids:
 
 This page records conceptual study of Trino. It does not claim verified query performance or production results. Official documentation was checked on 2026-09-24.
 
-**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
-
 **Trino** is a distributed SQL query engine that can read several data sources. Imagine one desk searching inventory across warehouses while accounting for what must be moved. Sections 10.1–10.8 connect connectors, query execution, pushdown, joins, and memory.
 
 <!-- SOURCE CORE START -->

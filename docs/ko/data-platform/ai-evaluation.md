@@ -23,8 +23,6 @@ knowledge_ids:
 
 이 페이지는 16.1–16.12의 개념 학습 기록이다. 아래 데이터·점수·비용·버전·게이트는 설명용 가상 예시이며 실제 운영 측정값이나 구현 결과가 아니다. 온라인 평가는 실제 실행을 관찰하고, offline 평가는 고정 사례로 변경을 비교한다. 실패를 회귀 사례로 전환하고 실행에 버전 묶음을 연결하는 것이 두 흐름의 접점이다.
 
-**본문 안내:** 아래 본문은 원본의 번호·목차·핵심 기술 내용과 예시를 유지하면서 처음 배우는 독자가 이해하기 쉽게 다시 썼다. 원본의 적용 조건과 보충 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
-
 <!-- SOURCE CORE START -->
 
 ## 16.1 Online Evaluation Events
@@ -1296,7 +1294,6 @@ Offline Test에서 드러나지 않는:
 
 ---
 
-
 **Tool 평가 조건:** 예상 schema 준수와 tool 권한 준수는 별도 검사다. 선택한 tool이 적절한지와 그 사용이 허용됐는지를 각각 확인한다. 점수만으로 근본 원인을 증명할 수는 없다.
 
 Online 평가는 실제 traffic에 평가를 붙이고, offline 평가는 고정한 입력으로 변경을 비교한다. 사람의 feedback, 규칙, LLM judge는 서로 다른 신호이며 점수 하나를 절대적인 정답으로 취급하지 않는다. [Langfuse evaluation concepts](https://langfuse.com/docs/evaluation/core-concepts).
@@ -1422,7 +1419,6 @@ Source of truth의 설명용 분리는 Git의 agent code/workflow/config, Langfu
 공식 문서 확인일은 2026-09-26이며 설치·실행 검증은 하지 않았다. Langfuse dataset item 변경은 timestamp 기반 버전을 만들지만 dataset schema 변경은 같은 버전 관리에 포함되지 않는다. 평가에 사용한 item 버전과 schema 정의를 구분하여 기록한다. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
 
 MLflow prompt version은 변경 불가능한 버전이며 alias는 가리키는 버전이 바뀔 수 있다. Model Registry도 alias로 모델 버전을 참조할 수 있다. 따라서 재현 기록에는 움직이는 alias만 남기지 말고 실제 사용한 버전을 저장한다. [Prompt Registry](https://mlflow.org/docs/latest/genai/prompt-registry/), [Model Registry workflow](https://mlflow.org/docs/latest/ml/model-registry/workflow/).
-
 
 ### 보완 흐름도
 

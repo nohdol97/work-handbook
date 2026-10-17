@@ -49,12 +49,9 @@ knowledge_ids:
   - DPE2-22-08
 ---
 
-
 # Chapter 21 — Final End-to-End Data Platform Architecture
 
 This page follows the outline and technical content of Chapter 21, with prose rewritten for beginners. Examples and diagrams describe studied concepts, not completed implementation, production recovery, or tests.
-
-**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
 
 <!-- SOURCE CORE START -->
 

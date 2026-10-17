@@ -19,10 +19,6 @@ knowledge_ids:
 
 # Chapter 3 — Lakehouse / Iceberg
 
-Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run.
-
-**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
-
 <!-- SOURCE CORE START -->
 
 ## 3.1 Lakehouse Architecture

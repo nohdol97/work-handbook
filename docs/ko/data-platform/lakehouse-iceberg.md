@@ -19,10 +19,6 @@ knowledge_ids:
 
 # Chapter 3 — Lakehouse / Iceberg
 
-문서 유형: Learn. 제공된 학습 자료의 개념과 설계 예시를 정리했다. `studied`는 개념 학습을 뜻하며, 직접 구현하거나 운영 검증했다는 뜻이 아니다. SQL과 수치는 설명용 예시이며 실행하지 않았다.
-
-**본문 안내:** 아래 구역은 원문의 목차와 기술 내용을 유지하면서 입문자가 읽기 쉽게 문장을 다듬은 본문이다. 제품별 적용 조건과 추가 설명은 뒤의 보완 구역에서 해당 절 번호와 함께 확인한다.
-
 <!-- SOURCE CORE START -->
 
 ## 3.1 Lakehouse Architecture

@@ -21,10 +21,6 @@ knowledge_ids:
 
 # Chapter 18 — Snowflake Deep Dive (Condensed)
 
-문서 유형: Learn. 원문 18장은 한 번 요약하고 넘어간 학습 범위다. `studied`는 이 요약 개념의 학습이며 상세 구현·운영 경험이나 심화 실습 완료를 뜻하지 않는다. 예시는 실행하지 않았다. 제품 동작은 2026-09-26 공식 문서로 확인했으며 edition, cloud, region, table type, feature 상태에 따라 달라진다.
-
-**본문 안내:** 아래 구역은 원문의 목차와 기술 내용을 유지하면서 입문자가 읽기 쉽게 문장을 다듬은 본문이다. 제품별 적용 조건과 추가 설명은 뒤의 보완 구역에서 해당 절 번호와 함께 확인한다.
-
 <!-- SOURCE CORE START -->
 
 > 원문 학습에서는 사용자가 Snowflake를 한 번 요약한 뒤 넘어가도록 명시적으로 요청했다.

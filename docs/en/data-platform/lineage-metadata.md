@@ -16,9 +16,7 @@ knowledge_ids:
 
 # Chapter 13 — Lineage & Metadata Platform
 
-This Learn page covers the studied roles of metadata, lineage, and catalogs. The datasets are hypothetical. It does not claim that collectors or platforms were built and tested. Metadata describes data. Lineage describes how data is created and used.
-
-**Reading note:** The chapter below keeps the source numbering, outline, technical content, and examples while explaining them in simpler language. Check the section-specific conditions and additions in the supplement after the chapter.
+This chapter covers the roles of metadata, lineage, and catalogs. The datasets are hypothetical. It does not claim that collectors or platforms were built and tested. Metadata describes data. Lineage describes how data is created and used.
 
 <!-- SOURCE CORE START -->
 
@@ -127,7 +125,7 @@ A semantic layer turns business meaning into **calculation definitions** that qu
 
 ## 13.2 Dataset Lineage
 
-Lineage records the route from source data through jobs to the outputs that use it. If daily user counts look wrong on a dashboard, trace that route backward to source events and transformations. Before a change, follow it forward to likely consumers.
+Lineage records the route from source data through jobs to the outputs that use it. If water from a tap looks wrong, trace the pipes backward; before changing a pipe, check which taps it serves. If daily user counts look wrong on a dashboard, trace that route backward to source events and transformations. Before a change, follow it forward to likely consumers.
 
 Dataset lineage shows:
 

@@ -20,10 +20,6 @@ knowledge_ids:
 
 # Chapter 17 — Databricks Deep Dive
 
-Page type: Learn. This page records concept study from Chapter 17. `studied` does not mean hands-on implementation or production experience. Examples are hypothetical and were not run. Product scope was checked against official documentation on 2026-09-26. Availability depends on cloud, region, Runtime, access mode, and table features.
-
-**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
-
 <!-- SOURCE CORE START -->
 
 ## 17.1 Lakehouse Architecture

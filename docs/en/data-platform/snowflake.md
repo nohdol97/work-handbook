@@ -21,10 +21,6 @@ knowledge_ids:
 
 # Chapter 18 — Snowflake Deep Dive (Condensed)
 
-Page type: Learn. Chapter 18 was intentionally summarized once and then skipped in the source study. `studied` refers to these condensed concepts. It does not mean detailed implementation, production experience, or completed deep-dive exercises. Examples were not run. Product behavior was checked against official documentation on 2026-09-26. It depends on edition, cloud, region, table type, and feature status.
-
-**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
-
 <!-- SOURCE CORE START -->
 
 > The user explicitly requested that Snowflake be summarized once and then skipped.

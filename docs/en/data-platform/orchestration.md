@@ -18,8 +18,6 @@ knowledge_ids:
 
 This page records conceptual study of orchestration, with Airflow as the main example. It does not claim that a DAG was deployed or operated. Official documentation was checked on 2026-09-24.
 
-**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
-
 **Orchestration** manages the order of data jobs and what happens when they fail. Think of a cooking plan that waits for ingredients before starting the next step. Sections 7.1–7.8 cover DAGs, retries, historical reruns, and waiting conditions.
 
 <!-- SOURCE CORE START -->

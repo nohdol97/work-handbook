@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### check {#vocab-check}
 
-**662 occurrences · 76 documents · neutral**
+**651 occurrences · 76 documents · neutral**
 
 **확인하다; 점검**
 
@@ -46,7 +46,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### change {#vocab-change}
 
-**421 occurrences · 72 documents · neutral**
+**424 occurrences · 72 documents · neutral**
 
 **변경하다; 변경 사항**
 
@@ -110,7 +110,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### manage {#vocab-manage}
 
-**229 occurrences · 46 documents · neutral**
+**230 occurrences · 46 documents · neutral**
 
 **관리하다; 해내다**
 
@@ -158,7 +158,7 @@ Example source pages: [ai-model-development/evaluation-promotion](../ai-model-de
 
 ### actual {#vocab-actual}
 
-**207 occurrences · 59 documents · neutral**
+**206 occurrences · 59 documents · neutral**
 
 **실제의**
 
@@ -174,7 +174,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### access {#vocab-access}
 
-**194 occurrences · 38 documents · neutral**
+**193 occurrences · 38 documents · neutral**
 
 **접근하다; 접근 권한**
 
@@ -206,7 +206,7 @@ Example source pages: [ai-model-development/qlora-training](../ai-model-developm
 
 ### record {#vocab-record}
 
-**169 occurrences · 56 documents · neutral**
+**163 occurrences · 55 documents · neutral**
 
 **기록하다; 기록**
 
@@ -238,7 +238,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### require {#vocab-require}
 
-**143 occurrences · 55 documents · neutral**
+**144 occurrences · 55 documents · neutral**
 
 **필요로 하다; 요구하다**
 
@@ -302,7 +302,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### scope {#vocab-scope}
 
-**102 occurrences · 38 documents · neutral**
+**101 occurrences · 38 documents · neutral**
 
 **범위**
 
@@ -336,7 +336,7 @@ Usage references: [1](https://dictionaryblog.cambridge.org/2018/03/21/countable-
 
 ### workload {#vocab-workload}
 
-**94 occurrences · 29 documents · neutral**
+**93 occurrences · 29 documents · neutral**
 
 **시스템이 처리해야 하는 작업량과 작업의 종류**
 
@@ -349,22 +349,6 @@ Use workload for the jobs a system must handle, including their volume and patte
 Counted forms: workload, workloads.
 
 Example source pages: [aws-cloud/ai-gpu-architecture](../aws-cloud/ai-gpu-architecture.md), [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/eks](../aws-cloud/eks.md).
-
-### preserve {#vocab-preserve}
-
-**82 occurrences · 50 documents · neutral**
-
-**보존하다; 유지하다**
-
-Use preserve when important content or properties should remain intact through a change.
-
-> The migration must preserve the original event timestamps.
->
-> 마이그레이션은 원래 이벤트 시각을 보존해야 합니다.
-
-Counted forms: preserve, preserves, preserved, preserving.
-
-Example source pages: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md).
 
 ### provide {#vocab-provide}
 
@@ -397,6 +381,22 @@ Reduce by gives the amount of reduction; reduce to gives the final value. Keep t
 Counted forms: reduce, reduces, reduced, reducing.
 
 Example source pages: [ai-model-development/qlora-artifacts](../ai-model-development/qlora-artifacts.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
+
+### preserve {#vocab-preserve}
+
+**73 occurrences · 46 documents · neutral**
+
+**보존하다; 유지하다**
+
+Use preserve when important content or properties should remain intact through a change.
+
+> The migration must preserve the original event timestamps.
+>
+> 마이그레이션은 원래 이벤트 시각을 보존해야 합니다.
+
+Counted forms: preserve, preserves, preserved, preserving.
+
+Example source pages: [ai-model-development/adapter-compatibility](../ai-model-development/adapter-compatibility.md), [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md).
 
 ### handle {#vocab-handle}
 
@@ -578,6 +578,22 @@ Counted forms: deploy, deploys, deployed, deploying.
 
 Example source pages: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/training-platform-architecture](../ai-model-development/training-platform-architecture.md), [aws-cloud/foundations](../aws-cloud/foundations.md).
 
+### improve {#vocab-improve}
+
+**23 occurrences · 14 documents · neutral**
+
+**개선하다; 나아지다**
+
+With an object, improve names what you make better. Without an object, it describes something becoming better.
+
+> We want to improve response time without increasing error rates.
+>
+> 오류율을 높이지 않으면서 응답 시간을 개선하고 싶습니다.
+
+Counted forms: improve, improves, improved, improving.
+
+Example source pages: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
+
 ### approach {#vocab-approach}
 
 **22 occurrences · 11 documents · neutral**
@@ -609,22 +625,6 @@ Use avoid doing for an action you want not to take. Avoid to do is not the usual
 Counted forms: avoid, avoids, avoided, avoiding.
 
 Example source pages: [ai-model-development/training-datasets](../ai-model-development/training-datasets.md), [aws-cloud/foundations](../aws-cloud/foundations.md), [data-platform/ai-evaluation](../data-platform/ai-evaluation.md).
-
-### improve {#vocab-improve}
-
-**22 occurrences · 14 documents · neutral**
-
-**개선하다; 나아지다**
-
-With an object, improve names what you make better. Without an object, it describes something becoming better.
-
-> We want to improve response time without increasing error rates.
->
-> 오류율을 높이지 않으면서 응답 시간을 개선하고 싶습니다.
-
-Counted forms: improve, improves, improved, improving.
-
-Example source pages: [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md).
 
 ### constraint {#vocab-constraint}
 

@@ -20,8 +20,6 @@ knowledge_ids:
 
 원문의 Chapter 15를 개념별로 정리했다. `studied`는 개념 학습을 뜻하며 실제 구축·운영 또는 실행 검증을 뜻하지 않는다. 예시의 버전과 숫자는 설명용이다.
 
-**본문 안내:** 아래 본문은 원본의 번호·목차·핵심 기술 내용과 예시를 유지하면서 처음 배우는 독자가 이해하기 쉽게 다시 썼다. 원본의 적용 조건과 보충 설명은 문서 뒤 보완 구역에서 해당 절 번호와 함께 확인한다.
-
 <!-- SOURCE CORE START -->
 
 ## 15.1 What Makes Data AI-Ready
@@ -293,7 +291,7 @@ LLM은 같은 조건에서도 다른 표현을 만들 수 있다. 따라서 재�
 
 ## 15.5 Evaluation Dataset Construction
 
-Evaluation dataset(평가 데이터셋)은 prompt·model·agent의 변경을 같은 사례로 반복 점검할 때 쓴다. 실제 실패를 고친 뒤 그 사례를 회귀(regression) 사례로 추가하면 다음 릴리스에서 같은 문제가 되살아나는지 볼 수 있다.
+Evaluation dataset(평가 데이터셋)은 prompt·model·agent의 변경을 같은 사례로 반복 점검할 때 쓴다. 시험지를 매번 바꾸면 학생의 실력이 달라진 건지 문제 난도가 달라진 건지 알기 어려운 것과 같다. 실제 실패를 고친 뒤 그 사례를 회귀(regression) 사례로 추가하면 다음 릴리스에서 같은 문제가 되살아나는지 볼 수 있다.
 
 Evaluation Dataset:
 

@@ -20,8 +20,6 @@ knowledge_ids:
 
 This page records conceptual study of dbt and model layers. It does not claim project execution, performance testing, or production experience. Official documentation was checked on 2026-09-24.
 
-**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
-
 **dbt** organizes SQL transformations as models and manages their dependencies, tests, and documentation. It is like a recipe that says which ingredient each step produces for the next. Sections 8.1–8.10 follow data from sources to analytical marts.
 
 <!-- SOURCE CORE START -->

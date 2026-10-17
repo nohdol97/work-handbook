@@ -20,8 +20,6 @@ knowledge_ids:
 
 This page organizes the concepts from source Chapter 15. `studied` means conceptual study, not a deployed or tested system. Version names and numbers below are examples.
 
-**Reading note:** The chapter below keeps the source numbering, outline, technical content, and examples while explaining them in simpler language. Check the section-specific conditions and additions in the supplement after the chapter.
-
 <!-- SOURCE CORE START -->
 
 ## 15.1 What Makes Data AI-Ready
@@ -293,7 +291,7 @@ An LLM can use different wording under the same conditions. Reproducibility mean
 
 ## 15.5 Evaluation Dataset Construction
 
-An evaluation dataset lets teams test prompt, model, and agent changes repeatedly on the same cases. After fixing a real failure, add it as a regression case to check that the issue does not return in later releases.
+An evaluation dataset lets teams test prompt, model, and agent changes repeatedly on the same cases. If you change the exam questions every time, you cannot tell whether the student improved or the questions became easier. After fixing a real failure, add it as a regression case to check that the issue does not return in later releases.
 
 Evaluation Dataset:
 

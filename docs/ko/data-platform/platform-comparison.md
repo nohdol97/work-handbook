@@ -23,10 +23,6 @@ knowledge_ids:
 
 # Chapter 19 — Databricks vs Snowflake vs Open Lakehouse
 
-문서 유형: Decision guide. 제공된 19장의 비교 개념을 정리한 학습 문서다. 실제 도입 결정·benchmark·운영 경험은 아니다. 표의 적합성은 가설이며 workload 검증이 필요하다. 제품 세부 범위는 2026-09-26 공식 문서로 확인했다.
-
-**본문 안내:** 아래 구역은 원문의 목차와 기술 내용을 유지하면서 입문자가 읽기 쉽게 문장을 다듬은 본문이다. 제품별 적용 조건과 추가 설명은 뒤의 보완 구역에서 해당 절 번호와 함께 확인한다.
-
 <!-- SOURCE CORE START -->
 
 이 장은 제품별 설명보다 비교에 초점을 맞춘다.

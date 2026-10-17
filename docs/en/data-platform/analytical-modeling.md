@@ -18,8 +18,6 @@ knowledge_ids:
 
 This page records study of grain, facts, dimensions, and metrics. The AI platform schema is a hypothetical design. It contains no real user or company data and does not claim implementation experience.
 
-**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
-
 **Analytical data modeling** defines what rows mean and how they relate so a question can be answered correctly. Before adding a receipt total, decide whether one row means one item or one whole order. Sections 9.1–9.8 move from this row unit, or grain, to facts, dimensions, and metrics.
 
 <!-- SOURCE CORE START -->
@@ -138,7 +136,7 @@ Benefits:
 
 ## 9.5 SCD
 
-SCD (Slowly Changing Dimension) handles descriptive values that change over time. Choose Type 1 or Type 2 based on whether you need only the current customer tier or also the tier at an order's time.
+SCD (Slowly Changing Dimension) handles descriptive values that change over time. Think of an address book: you can keep only a new address or also retain the old address with its dates. Choose Type 1 or Type 2 based on whether you need only the current customer tier or also the tier at an order's time.
 
 ### Type 1
 

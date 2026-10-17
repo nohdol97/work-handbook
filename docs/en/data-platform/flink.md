@@ -22,10 +22,6 @@ knowledge_ids:
 
 # Chapter 5 — Flink
 
-Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run.
-
-**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
-
 **Flink** processes events as they continue to arrive and keeps state between them. Picture a clerk updating a ledger whenever an order comes in. Sections 5.1–5.14 connect event time, late arrivals, state recovery, and writing results to external stores.
 
 <!-- SOURCE CORE START -->

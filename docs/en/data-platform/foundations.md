@@ -15,10 +15,6 @@ knowledge_ids:
 
 # Chapter 1 — Data Engineering Foundations
 
-Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. SQL and numbers are illustrative and were not run.
-
-**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
-
 Think of a checkout that records each sale and a ledger used to study a month of sales. **OLTP** handles individual transactions; **OLAP** analyzes many records together. Read Sections 1.1–1.7 as a path from the question you need to answer to the storage format and file layout that support it.
 
 <!-- SOURCE CORE START -->
@@ -520,7 +516,7 @@ Account for this cost when designing file layout and choosing a table format.
 
 ## 1.6 Partitioning Fundamentals
 
-A partition groups data by a field that queries often filter, such as a date. It can narrow a read, but too many small partitions may add files and metadata, so choose it from actual query patterns.
+A partition groups data by a field that queries often filter, such as a date. Filing papers in monthly drawers lets you open only the needed month; giving every person a drawer makes the drawers hard to manage. A partition can narrow a read, but too many small partitions may add files and metadata, so choose it from actual query patterns.
 
 Partitioning divides data physically or logically according to a rule.
 

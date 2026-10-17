@@ -23,8 +23,6 @@ knowledge_ids:
 
 This page records conceptual study of sections 16.1–16.12. All data, scores, costs, versions, and gates below are hypothetical teaching examples, not production measurements or implemented results. Online evaluation observes real executions. Offline evaluation compares changes with fixed cases. Turning failures into regression cases and linking executions to version bundles connects the two flows.
 
-**Reading note:** The chapter below keeps the source numbering, outline, technical content, and examples while explaining them in simpler language. Check the section-specific conditions and additions in the supplement after the chapter.
-
 <!-- SOURCE CORE START -->
 
 ## 16.1 Online Evaluation Events
@@ -1419,7 +1417,6 @@ These links provide evidence for reproduction and explanation. IDs alone do not 
 Official documentation was checked on 2026-09-26. No installation or runtime test was performed. Langfuse dataset item changes create timestamp-based versions. Dataset schema changes are not part of that versioning. Record the item version and schema definition separately. [Langfuse datasets](https://langfuse.com/docs/evaluation/experiments/datasets).
 
 MLflow prompt versions are immutable, while aliases can move to another version. Model Registry aliases can also refer to model versions. Record the version actually used, not just a moving alias. [Prompt Registry](https://mlflow.org/docs/latest/genai/prompt-registry/), [Model Registry workflow](https://mlflow.org/docs/latest/ml/model-registry/workflow/).
-
 
 ### Additional flow diagrams
 

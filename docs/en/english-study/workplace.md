@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### X depends on Y {#workplace-depends-on}
 
-**62 occurrences · 27 documents · neutral**
+**60 occurrences · 27 documents · neutral**
 
 **X는 Y에 따라 달라진다**
 
@@ -30,7 +30,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### X does not mean Y {#workplace-does-not-mean}
 
-**48 occurrences · 32 documents · neutral**
+**46 occurrences · 32 documents · neutral**
 
 **X라고 해서 Y라는 뜻은 아니다**
 
@@ -78,7 +78,7 @@ Example source pages: [aws-cloud/compute](../aws-cloud/compute.md), [aws-cloud/e
 
 ### X does not guarantee Y {#workplace-does-not-guarantee}
 
-**32 occurrences · 25 documents · neutral**
+**33 occurrences · 25 documents · neutral**
 
 **X가 Y를 보장하지는 않는다**
 

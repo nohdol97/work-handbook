@@ -23,10 +23,6 @@ knowledge_ids:
 
 # Chapter 19 — Databricks vs Snowflake vs Open Lakehouse
 
-Page type: Decision guide. This page records comparative concepts from Chapter 19. It is not an actual adoption decision, benchmark, or production report. Suitability statements are hypotheses to test with workloads. Product details were checked against official documentation on 2026-09-26.
-
-**Reading note:** The section below keeps the source outline and technical content while rewriting the prose for beginners. Check the section-specific conditions and additions in the supplement.
-
 <!-- SOURCE CORE START -->
 
 This chapter is intentionally comparative rather than product-by-product.

@@ -22,10 +22,6 @@ knowledge_ids:
 
 # Chapter 4 — Spark
 
-Page type: Learn. This page records concepts and design examples from the supplied study material. `studied` means conceptual study, not hands-on implementation or production validation. Examples were not run.
-
-**Reading note:** This chapter keeps the source outline, section numbers, and core technical content while rewriting its explanations for beginners. The source remains preserved separately. See the later supplement for version and operational conditions.
-
 **Spark** divides large data work among many workers. Imagine several people reading different parts of a ledger, then combining their results. Sections 4.1–4.14 connect task allocation, data movement, storage formats, batch work, and streaming.
 
 <!-- SOURCE CORE START -->
