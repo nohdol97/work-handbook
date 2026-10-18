@@ -1,8 +1,8 @@
 ---
 id: english-study-vocabulary
 status: studied
-last_updated: 2026-10-18
-last_reviewed: 2026-10-18
+last_updated: 2026-10-19
+last_reviewed: 2026-10-19
 knowledge_ids: []
 ---
 
@@ -30,7 +30,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### use {#vocab-use}
 
-**537 occurrences · 75 documents · neutral**
+**541 occurrences · 75 documents · neutral**
 
 **사용하다; 사용**
 
@@ -142,7 +142,7 @@ Example source pages: [ai-model-development/model-platform-collaboration](../ai-
 
 ### actual {#vocab-actual}
 
-**206 occurrences · 65 documents · neutral**
+**208 occurrences · 65 documents · neutral**
 
 **실제의**
 
@@ -208,7 +208,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### record {#vocab-record}
 
-**161 occurrences · 54 documents · neutral**
+**163 occurrences · 54 documents · neutral**
 
 **기록하다; 기록**
 
@@ -224,7 +224,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### support {#vocab-support}
 
-**154 occurrences · 50 documents · neutral**
+**155 occurrences · 50 documents · neutral**
 
 **지원하다; 뒷받침하다**
 
@@ -304,7 +304,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### scope {#vocab-scope}
 
-**96 occurrences · 45 documents · neutral**
+**97 occurrences · 46 documents · neutral**
 
 **범위**
 
@@ -368,7 +368,7 @@ Example source pages: [ai-model-development/artifact-lineage](../ai-model-develo
 
 ### handle {#vocab-handle}
 
-**69 occurrences · 31 documents · neutral**
+**70 occurrences · 31 documents · neutral**
 
 **처리하다; 대응하다**
 
@@ -384,7 +384,7 @@ Example source pages: [ai-model-development/qlora-training](../ai-model-developm
 
 ### allow {#vocab-allow}
 
-**63 occurrences · 31 documents · neutral**
+**64 occurrences · 32 documents · neutral**
 
 **허용하다; 가능하게 하다**
 
@@ -690,22 +690,6 @@ Counted forms: validate, validates, validated, validating.
 
 Example source pages: [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
 
-### determine {#vocab-determine}
-
-**14 occurrences · 13 documents · formal**
-
-**판단하다; 알아내다; 결정하다**
-
-Use determine for finding something out from evidence or deciding what the result will be. This sense of finding a fact is formal; find out is a conversational alternative.
-
-> We need the original logs to determine when the failure began.
->
-> 실패가 시작된 시점을 알아내려면 원본 로그가 필요합니다.
-
-Counted forms: determine, determines, determined, determining.
-
-Example source pages: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/compute](../aws-cloud/compute.md).
-
 ### estimate {#vocab-estimate}
 
 **14 occurrences · 8 documents · neutral**
@@ -722,9 +706,25 @@ Counted forms: estimate, estimates, estimated, estimating.
 
 Example source pages: [data-platform/lineage-metadata](../data-platform/lineage-metadata.md), [data-platform/production-operations](../data-platform/production-operations.md), [glossary/index](../glossary/index.md).
 
+### determine {#vocab-determine}
+
+**13 occurrences · 12 documents · formal**
+
+**판단하다; 알아내다; 결정하다**
+
+Use determine for finding something out from evidence or deciding what the result will be. This sense of finding a fact is formal; find out is a conversational alternative.
+
+> We need the original logs to determine when the failure began.
+>
+> 실패가 시작된 시점을 알아내려면 원본 로그가 필요합니다.
+
+Counted forms: determine, determines, determined, determining.
+
+Example source pages: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/compute](../aws-cloud/compute.md).
+
 ### resolve {#vocab-resolve}
 
-**12 occurrences · 8 documents · neutral**
+**13 occurrences · 9 documents · neutral**
 
 **해결하다**
 
@@ -736,7 +736,7 @@ Use resolve for settling a problem, conflict, or uncertainty. Support a claim th
 
 Counted forms: resolve, resolves, resolved, resolving.
 
-Example source pages: [data-platform/ai-evaluation](../data-platform/ai-evaluation.md), [data-platform/dbt](../data-platform/dbt.md), [data-platform/orchestration](../data-platform/orchestration.md).
+Example source pages: [data-platform/ai-evaluation](../data-platform/ai-evaluation.md), [data-platform/dbt](../data-platform/dbt.md), [data-platform/lakehouse-iceberg](../data-platform/lakehouse-iceberg.md).
 
 ### maintain {#vocab-maintain}
 

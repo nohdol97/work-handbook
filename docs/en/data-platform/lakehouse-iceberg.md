@@ -1,8 +1,8 @@
 ---
 id: data-platform-lakehouse-iceberg
 status: studied
-last_updated: 2026-10-18
-last_reviewed: 2026-10-18
+last_updated: 2026-10-19
+last_reviewed: 2026-10-19
 knowledge_ids:
   - DPE-03-01
   - DPE-03-02
@@ -104,7 +104,9 @@ Manifest Files
 Data Files
 ```
 
-An **Iceberg table** is not one large file. It is a **logical table**: a registered name such as `prod.db.orders`, the current metadata file found through that name, and the files referenced by that metadata. SQL shows rows and columns, while object storage may look like this. These paths and names are illustrative; actual layouts depend on the catalog and engine.
+A SQL query sees `prod.db.orders` as one orders table. The storage system does not hold one large file with that name. Instead, an engine follows **the registered table name → current metadata → data files** and reads them as one **logical table**.
+
+Follow the orders example below. The paths and names are illustrative; actual layouts depend on the catalog and engine.
 
 ```text
 Catalog: prod.db.orders
@@ -118,7 +120,9 @@ s3://lake/orders/
   data/orders-a.parquet           rows and columns
 ```
 
-Not every file in this directory belongs to the current table. The **reference path starting at the current metadata** determines which files to read. A directory listing alone can miss references from retained older snapshots.
+Here, the catalog points to `v2.metadata.json`. The `v1` and `v2` in these example filenames label metadata revisions, not Iceberg table format versions.
+
+**The directory listing is not the current table’s file list.** The engine follows references from the current metadata to choose files. Older snapshots may still use older files, so a directory listing alone is not enough to decide what to delete or what the table contains.
 
 ---
 
@@ -126,7 +130,9 @@ Not every file in this directory belongs to the current table. The **reference p
 
 Metadata JSON describes the current schema, partition rules, and snapshots. It acts like an index that an engine checks before reading data files.
 
-In this example, `v2.metadata.json` is a JSON file. This **illustrative excerpt** shows only the fields needed to follow the links. A snapshot is an object inside `snapshots`, not a separate JSON file.
+Opening `v2.metadata.json` reveals information like the example below. **A snapshot is a record inside this file’s `snapshots` array, not a separate JSON file.**
+
+This illustrative JSON excerpt keeps only the fields needed to follow the links.
 
 ```json
 {
@@ -152,7 +158,11 @@ Information can include:
 
 The current snapshot points to the consistent set of files in the table now.
 
-`current-snapshot-id: 202` selects the object with `snapshot-id: 202` in `snapshots`. Its `manifest-list` URI points to the next file. This is the path used by Iceberg format v1–v3.
+Read the JSON above in this order. This example uses Iceberg table format v2.
+
+1. `current-snapshot-id` is `202`, so snapshot 202 is current.
+2. Find the record whose `snapshot-id` is `202` in the `snapshots` array.
+3. Follow its `manifest-list` path to `snap-202-1.avro`.
 
 ---
 
@@ -190,17 +200,37 @@ Data File
 
 The intermediate lists organize file paths and statistics, so an engine can choose useful files without opening every file in a large table.
 
-In format v1–v3, a **Manifest List** is an Avro file written for each snapshot. Each record points to one Manifest File through `manifest_path` and carries summaries such as `manifest_length`, `partition_spec_id`, file counts, and partition ranges. A **Manifest File** is also Avro. Each entry's `data_file.file_path` points to a data or delete file. This table presents decoded Avro records for reading; it is not the literal text stored in the binary files.
+The `snap-202-1.avro` file found above is the **Manifest List**. It holds a **list of Manifest Files**, not the order rows. Follow a Manifest File to find the paths of the actual data files.
 
-| File being read | Main fields in a record | Next reference |
-|---|---|---|
-| `snap-202-1.avro` (Manifest List) | `manifest_path`, `manifest_length`, `partition_spec_id` | `manifest-a.avro` |
-| `manifest-a.avro` (Manifest File) | `status=ADDED`, `snapshot_id=202`, `data_file.file_path`, `data_file.record_count` | `orders-a.parquet` |
-| `orders-a.parquet` (Data File) | Actual order rows and columns | Query result |
+| Step | Example file | Contents |
+| --- | --- | --- |
+| Manifest List | `snap-202-1.avro` | Manifest File paths and summaries |
+| Manifest File | `manifest-a.avro` | Data or delete file paths and statistics |
+| Data File | `orders-a.parquet` | Actual order rows and columns used to produce query results |
 
-The manifest entry's `status` marks a file as added, existing, or deleted. A data-file entry also includes its path, format, row count, size, and optional column statistics. A later snapshot can reuse unchanged manifests and data files. Format v4 uses a separate Parquet **Root Manifest** instead of a Manifest List, so the Avro chain above does not describe every version. [Iceberg specification: snapshots and manifests](https://iceberg.apache.org/spec/#snapshots), [manifest lists](https://iceberg.apache.org/spec/#manifest-lists), [manifest schema](https://iceberg.apache.org/spec/#manifest-schema)
+**Following the fields inside each file**
 
-To inspect a real table in Spark, query its metadata tables. `.snapshots` exposes the `manifest_list` path, `.manifests` the manifest paths, and `.entries` their entries. Check the available tables for your engine and Iceberg version. [Iceberg Spark metadata tables](https://iceberg.apache.org/docs/latest/spark-queries/#metadata-tables)
+In format v1–v3, both Manifest Lists and Manifest Files are **Avro binary files**. The descriptions below explain decoded records, not literal text in those files.
+
+- **One Manifest List record** points to a Manifest File through `manifest_path`: `manifest-a.avro` in this example. It also summarizes the file size (`manifest_length`), partition spec ID (`partition_spec_id`), file counts, and partition ranges. A Manifest List is written for each snapshot.
+- **One Manifest File entry** points to a data or delete file through `data_file.file_path`: `orders-a.parquet` here. It also stores the format, row count (`data_file.record_count`), size, and optional column statistics.
+- An entry’s `status` distinguishes added, existing, and deleted files. For example, `status=1` (ADDED) with `snapshot_id=202` marks a file added in snapshot 202.
+
+These separate lists and statistics help an engine choose the files it needs. Later snapshots can reuse unchanged manifests and data files.
+
+**Version scope**
+
+The example uses format v2; this reference structure is available in v1–v3. However, v1 also allows a snapshot to list manifest paths directly in its `manifests` array without a Manifest List.
+
+Format v4 uses a Parquet **Root Manifest** instead of a Manifest List. The Avro chain above therefore does not describe every version. [Snapshot specification](https://iceberg.apache.org/spec/#snapshots), [Manifest List specification](https://iceberg.apache.org/spec/#manifest-lists), [Manifest field specification](https://iceberg.apache.org/spec/#manifest-schema)
+
+**Inspecting a real table**
+
+In Spark, use these metadata tables to inspect reference paths. Check support for your engine and Iceberg version. [Spark metadata table documentation](https://iceberg.apache.org/docs/latest/spark-queries/#metadata-tables)
+
+- `.snapshots`: the snapshot’s `manifest_list` path
+- `.manifests`: Manifest File paths
+- `.entries`: individual entries inside Manifest Files
 
 ```sql
 SELECT * FROM prod.db.orders.snapshots;
@@ -314,7 +344,7 @@ If files are created but the commit fails, files not referenced by table metadat
 
 These files can become candidates for later cleanup.
 
-The catalog supplies the atomic commit operation. Not every conflict can be retried successfully. Updates must store new values in data files. Position and equality deletes mainly describe the v2 model. Newer format versions include other representations, such as deletion vectors. Check engine and format support. A partition-spec change does not rearrange old files. [Iceberg specification](https://iceberg.apache.org/spec/)
+The catalog supplies the atomic commit operation. Retrying does not resolve every conflict. Check the cause of the conflict and how the catalog handles it. [Iceberg specification](https://iceberg.apache.org/spec/)
 
 ---
 
@@ -363,7 +393,7 @@ Before: day(event_time)
 After: hour(event_time)
 ```
 
-Metadata can manage old and new data even when they use different partition specs.
+Metadata can manage old and new data even when they use different partition specs. Changing the rule alone does not rearrange existing files to match it.
 
 ---
 
@@ -466,6 +496,8 @@ Disadvantages:
 
 ### Position Delete
 
+The position and equality deletes below mainly describe the v2 model. Later formats include other representations, such as deletion vectors. Check support in your engine and table version. [Iceberg specification](https://iceberg.apache.org/spec/)
+
 A position delete marks a row at a specific location in a data file; readers skip that location.
 
 ### Equality Delete
@@ -484,7 +516,7 @@ Delete the old row
 Insert the new row
 ```
 
-This is a useful conceptual model.
+This is a useful conceptual model. Recording a deletion alone does not store the new value; updates must also write new values to data files.
 
 ### MERGE
 
@@ -618,9 +650,6 @@ For example, changing an orders table writes new data or delete files. The [3.4]
 
 ## LLM in practice: Commit failure analysis
 
-Expect conflict hypotheses, reference checks, and an ordered investigation.
-Check all retained snapshots and in-flight writes, then compare catalog behavior with official docs and logs.
-
 **Prompt:**
 
 === "English"
@@ -642,7 +671,7 @@ Check all retained snapshots and in-flight writes, then compare catalog behavior
     자료를 검토하되 실제 변경은 실행하지 마.
     ```
 
-**Key point:** The LLM may call every file absent from the current snapshot an orphan.
+**Key point:** The LLM may wrongly classify a file as an orphan just because it is absent from the current snapshot. Before treating a file as a deletion candidate, check all retained snapshots and in-flight writes. Compare conflict hypotheses with the catalog’s documented behavior and actual logs.
 
 [See six more practical prompts for this topic](../prompts/lakehouse-iceberg.md)
 

@@ -1,8 +1,8 @@
 ---
 id: english-study-workplace
 status: studied
-last_updated: 2026-10-18
-last_reviewed: 2026-10-18
+last_updated: 2026-10-19
+last_reviewed: 2026-10-19
 knowledge_ids: []
 ---
 
@@ -46,7 +46,7 @@ knowledge_ids: []
 
 ### For example, ... {#workplace-for-example}
 
-**38회 · 20개 문서 · 중립**
+**39회 · 20개 문서 · 중립**
 
 **예를 들어 ...**
 

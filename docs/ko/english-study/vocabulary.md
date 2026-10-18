@@ -1,8 +1,8 @@
 ---
 id: english-study-vocabulary
 status: studied
-last_updated: 2026-10-18
-last_reviewed: 2026-10-18
+last_updated: 2026-10-19
+last_reviewed: 2026-10-19
 knowledge_ids: []
 ---
 
@@ -30,7 +30,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### use {#vocab-use}
 
-**537회 · 75개 문서 · 중립**
+**541회 · 75개 문서 · 중립**
 
 **사용하다; 사용**
 
@@ -142,7 +142,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### actual {#vocab-actual}
 
-**206회 · 65개 문서 · 중립**
+**208회 · 65개 문서 · 중립**
 
 **실제의**
 
@@ -208,7 +208,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### record {#vocab-record}
 
-**161회 · 54개 문서 · 중립**
+**163회 · 54개 문서 · 중립**
 
 **기록하다; 기록**
 
@@ -224,7 +224,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### support {#vocab-support}
 
-**154회 · 50개 문서 · 중립**
+**155회 · 50개 문서 · 중립**
 
 **지원하다; 뒷받침하다**
 
@@ -304,7 +304,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 ### scope {#vocab-scope}
 
-**96회 · 45개 문서 · 중립**
+**97회 · 46개 문서 · 중립**
 
 **범위**
 
@@ -368,7 +368,7 @@ provide A for B 또는 provide B with A로 제공 대상과 받는 대상을 표
 
 ### handle {#vocab-handle}
 
-**69회 · 31개 문서 · 중립**
+**70회 · 31개 문서 · 중립**
 
 **처리하다; 대응하다**
 
@@ -384,7 +384,7 @@ provide A for B 또는 provide B with A로 제공 대상과 받는 대상을 표
 
 ### allow {#vocab-allow}
 
-**63회 · 31개 문서 · 중립**
+**64회 · 32개 문서 · 중립**
 
 **허용하다; 가능하게 하다**
 
@@ -690,22 +690,6 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 
 본문 예: [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
 
-### determine {#vocab-determine}
-
-**14회 · 13개 문서 · 격식**
-
-**판단하다; 알아내다; 결정하다**
-
-근거를 바탕으로 원인이나 상태를 알아내거나 결과를 결정하는 맥락에 쓴다. 사실을 알아내는 이 뜻은 격식 있는 표현이며 일상 대화에서는 find out도 쓸 수 있다.
-
-> We need the original logs to determine when the failure began.
->
-> 실패가 시작된 시점을 알아내려면 원본 로그가 필요합니다.
-
-집계한 형태: determine, determines, determined, determining.
-
-본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/compute](../aws-cloud/compute.md).
-
 ### estimate {#vocab-estimate}
 
 **14회 · 8개 문서 · 중립**
@@ -722,9 +706,25 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 
 본문 예: [data-platform/lineage-metadata](../data-platform/lineage-metadata.md), [data-platform/production-operations](../data-platform/production-operations.md), [glossary/index](../glossary/index.md).
 
+### determine {#vocab-determine}
+
+**13회 · 12개 문서 · 격식**
+
+**판단하다; 알아내다; 결정하다**
+
+근거를 바탕으로 원인이나 상태를 알아내거나 결과를 결정하는 맥락에 쓴다. 사실을 알아내는 이 뜻은 격식 있는 표현이며 일상 대화에서는 find out도 쓸 수 있다.
+
+> We need the original logs to determine when the failure began.
+>
+> 실패가 시작된 시점을 알아내려면 원본 로그가 필요합니다.
+
+집계한 형태: determine, determines, determined, determining.
+
+본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/compute](../aws-cloud/compute.md).
+
 ### resolve {#vocab-resolve}
 
-**12회 · 8개 문서 · 중립**
+**13회 · 9개 문서 · 중립**
 
 **해결하다**
 
@@ -736,7 +736,7 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 
 집계한 형태: resolve, resolves, resolved, resolving.
 
-본문 예: [data-platform/ai-evaluation](../data-platform/ai-evaluation.md), [data-platform/dbt](../data-platform/dbt.md), [data-platform/orchestration](../data-platform/orchestration.md).
+본문 예: [data-platform/ai-evaluation](../data-platform/ai-evaluation.md), [data-platform/dbt](../data-platform/dbt.md), [data-platform/lakehouse-iceberg](../data-platform/lakehouse-iceberg.md).
 
 ### maintain {#vocab-maintain}
 

@@ -1,8 +1,8 @@
 ---
 id: english-study-workplace
 status: studied
-last_updated: 2026-10-18
-last_reviewed: 2026-10-18
+last_updated: 2026-10-19
+last_reviewed: 2026-10-19
 knowledge_ids: []
 ---
 
@@ -46,7 +46,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### For example, ... {#workplace-for-example}
 
-**38 occurrences · 20 documents · neutral**
+**39 occurrences · 20 documents · neutral**
 
 **예를 들어 ...**
 

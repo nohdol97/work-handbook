@@ -1,8 +1,8 @@
 ---
 id: data-platform-lakehouse-iceberg
 status: studied
-last_updated: 2026-10-18
-last_reviewed: 2026-10-18
+last_updated: 2026-10-19
+last_reviewed: 2026-10-19
 knowledge_ids:
   - DPE-03-01
   - DPE-03-02
@@ -54,11 +54,11 @@ Catalog / Governance
 
 | 계층 | 역할 |
 | --- | --- |
-| Object storage | 지속 보관할 object 저장 |
-| Parquet 같은 file format | 파일 안의 데이터 표현 |
-| Iceberg 같은 table format | 여러 파일에 걸친 일관된 table 설명 |
-| Spark·Trino·Flink 같은 compute | 데이터 읽기·변환·쓰기 |
-| Catalog | Table과 metadata 찾기 |
+| 객체 저장소(Object storage) | 파일을 지속적으로 보관 |
+| 파일 형식(File format): Parquet 등 | 파일 안에 행과 열을 저장하는 방식 정의 |
+| 테이블 형식(Table format): Iceberg 등 | 여러 파일을 하나의 일관된 테이블로 관리 |
+| 연산 엔진(Compute): Spark·Trino·Flink 등 | 데이터 읽기·변환·쓰기 |
+| 카탈로그(Catalog) | 테이블 이름으로 현재 메타데이터 위치 찾기 |
 | Governance | 정책과 책임 관리 |
 
 ---
@@ -104,7 +104,9 @@ Manifest Files
 Data Files
 ```
 
-여기서 **Iceberg 테이블**은 하나의 거대한 파일이 아니다. 카탈로그에 등록된 `prod.db.orders` 같은 이름, 그 이름이 가리키는 현재 메타데이터 파일, 그리고 메타데이터가 참조하는 여러 파일을 묶어 읽는 **논리적 테이블**이다. SQL에서는 행과 열로 보이지만, 객체 저장소에서는 예를 들어 다음처럼 보인다. 경로와 파일명은 설명을 위한 예시이며 실제 배치는 카탈로그와 엔진에 따라 달라진다.
+SQL에서 `prod.db.orders`를 조회하면 하나의 주문 테이블이 보인다. 하지만 저장소에 그 이름의 거대한 파일 하나가 있는 것은 아니다. **카탈로그에 등록된 이름 → 현재 메타데이터 → 실제 데이터 파일들**을 연결해 하나의 테이블로 읽는다. 이런 묶음을 **논리적 테이블**이라고 한다.
+
+아래 주문 테이블 예시를 따라가 보자. 경로와 파일명은 설명용이며, 실제 배치는 카탈로그와 엔진에 따라 달라진다.
 
 ```text
 카탈로그: prod.db.orders
@@ -118,7 +120,9 @@ s3://lake/orders/
   data/orders-a.parquet           실제 행과 열
 ```
 
-폴더의 파일이 모두 현재 테이블에 속하는 것은 아니다. **현재 메타데이터에서 시작해 이어지는 참조 경로**가 읽을 파일을 결정한다. 디렉터리 목록만 보고 파일을 삭제하거나 테이블 상태를 판단하면 과거 스냅샷의 참조를 놓칠 수 있다.
+이 예시에서 카탈로그는 `v2.metadata.json`을 가리킨다. 파일명에 붙인 `v1`, `v2`는 예시의 메타데이터 개정 번호이며, Iceberg 테이블 포맷 버전과는 별개다.
+
+**폴더에 있는 파일 목록과 현재 테이블이 읽는 파일 목록은 다르다.** 엔진은 현재 메타데이터의 참조를 따라 읽을 파일을 결정한다. 이전 파일도 과거 스냅샷이 사용할 수 있으므로, 폴더 목록만 보고 삭제하거나 테이블 상태를 판단하면 안 된다.
 
 ---
 
@@ -126,7 +130,9 @@ s3://lake/orders/
 
 Metadata JSON은 현재 테이블의 스키마, 파티션 규칙, 스냅샷 같은 상태를 설명한다. 데이터 파일을 직접 읽기 전에 확인하는 목차다.
 
-위 예시의 `v2.metadata.json`은 실제로 JSON 파일이다. 다음은 연결에 필요한 필드만 남긴 **설명용 발췌**다. Snapshot은 별도 JSON 파일이 아니라 `snapshots` 배열 안의 객체다.
+앞서 본 `v2.metadata.json`을 열면 아래와 같은 정보를 확인할 수 있다. **Snapshot은 별도 JSON 파일이 아니라, 이 파일의 `snapshots` 배열 안에 있는 기록**이다.
+
+다음 JSON은 파일 사이의 연결을 보여 주기 위해 일부 필드만 남긴 설명용 발췌다.
 
 ```json
 {
@@ -152,7 +158,11 @@ Metadata JSON은 현재 테이블의 스키마, 파티션 규칙, 스냅샷 같�
 
 현재 스냅샷은 지금 테이블에 속한 파일들의 일관된 집합을 가리킨다.
 
-`current-snapshot-id`의 값 `202`가 `snapshots`의 `snapshot-id: 202`를 고른다. 그 객체의 `manifest-list` URI가 다음 파일을 가리킨다. 이 경로는 Iceberg 포맷 v1–v3의 예시다.
+앞의 JSON은 다음 순서로 읽으면 된다. 이 예시는 Iceberg 테이블 포맷 v2를 기준으로 한다.
+
+1. `current-snapshot-id`가 `202`이므로 현재 스냅샷은 202번이다.
+2. `snapshots` 배열에서 `snapshot-id`가 `202`인 기록을 찾는다.
+3. 그 기록의 `manifest-list` 경로를 따라 `snap-202-1.avro`를 읽는다.
 
 ---
 
@@ -190,17 +200,37 @@ Data File
 
 중간 목록이 파일 경로와 통계를 나누어 관리하므로, 큰 테이블에서도 모든 파일을 무작정 열지 않고 필요한 파일을 고를 수 있다.
 
-포맷 v1–v3에서 **Manifest List**는 스냅샷마다 작성되는 Avro 파일이다. 그 안의 각 레코드는 `manifest_path`로 Manifest File 하나를 가리키고, `manifest_length`, `partition_spec_id`, 파일 수, 파티션 범위 같은 요약도 담는다. **Manifest File**도 Avro 파일이며, 각 레코드의 `data_file.file_path`가 실제 데이터 파일 또는 삭제 파일을 가리킨다. 예를 들면 다음 연결이다. 표는 Avro 바이너리를 읽기 좋게 풀어 쓴 것이며 실제 파일의 텍스트 내용은 아니다.
+앞에서 찾은 `snap-202-1.avro`가 **Manifest List**다. 이 파일은 실제 주문 데이터를 담지 않는다. 대신 읽어야 할 **Manifest File의 목록**을 담는다. Manifest File을 한 단계 더 따라가야 실제 데이터 파일의 경로가 나온다.
 
-| 읽는 파일 | 레코드의 핵심 필드 | 다음 참조 |
-|---|---|---|
-| `snap-202-1.avro` (Manifest List) | `manifest_path`, `manifest_length`, `partition_spec_id` | `manifest-a.avro` |
-| `manifest-a.avro` (Manifest File) | `status=ADDED`, `snapshot_id=202`, `data_file.file_path`, `data_file.record_count` | `orders-a.parquet` |
-| `orders-a.parquet` (Data File) | 실제 주문 행과 열 | 쿼리 결과 |
+| 단계 | 예시 파일 | 담고 있는 내용 |
+| --- | --- | --- |
+| Manifest List | `snap-202-1.avro` | Manifest File의 경로와 요약 정보 |
+| Manifest File | `manifest-a.avro` | Data File 또는 Delete File의 경로와 통계 |
+| Data File | `orders-a.parquet` | 실제 주문 행과 열: 쿼리 결과를 만드는 데이터 |
 
-Manifest의 `status`는 해당 항목이 추가·기존·삭제 상태인지 나타낸다. 데이터 파일 항목에는 경로 외에 파일 형식, 행 수, 크기, 선택적인 열 통계가 있다. 다음 스냅샷이 생겨도 변경되지 않은 Manifest와 Data File을 재사용할 수 있다. 포맷 v4에서는 Manifest List 대신 별도의 Parquet **Root Manifest**를 쓰므로 위 Avro 연결을 모든 버전에 그대로 적용하면 안 된다. [Iceberg 사양: 스냅샷과 Manifest](https://iceberg.apache.org/spec/#snapshots), [Manifest List](https://iceberg.apache.org/spec/#manifest-lists), [Manifest Schema](https://iceberg.apache.org/spec/#manifest-schema)
+**파일 안의 필드를 따라 읽기**
 
-실제 테이블에서 경로를 확인할 때는 Spark의 메타데이터 테이블을 조회할 수 있다. `.snapshots`는 `manifest_list` 경로, `.manifests`는 Manifest 경로, `.entries`는 Manifest의 항목을 보여 준다. 사용 가능한 메타데이터 테이블은 엔진과 Iceberg 버전을 확인한다. [Iceberg Spark 메타데이터 테이블](https://iceberg.apache.org/docs/latest/spark-queries/#metadata-tables)
+포맷 v1–v3에서 Manifest List와 Manifest File은 모두 **Avro 바이너리 파일**이다. 아래 설명은 파일을 해석한 결과이며, 파일에 그대로 적힌 텍스트가 아니다.
+
+- **Manifest List의 레코드 하나**는 `manifest_path`로 Manifest File 하나를 가리킨다. 예시에서는 `manifest-a.avro`다. 파일 크기(`manifest_length`), 파티션 규칙 ID(`partition_spec_id`), 파일 수, 파티션 범위도 요약해 둔다. Manifest List는 스냅샷마다 작성된다.
+- **Manifest File의 항목 하나**는 `data_file.file_path`로 데이터 파일 또는 삭제 파일을 가리킨다. 예시에서는 `orders-a.parquet`다. 파일 형식, 행 수(`data_file.record_count`), 크기와 선택적인 열 통계도 담는다.
+- 항목의 `status`는 추가·기존·삭제 상태를 구분한다. 예를 들어 `status=1`(ADDED), `snapshot_id=202`인 항목은 스냅샷 202에서 추가된 파일을 나타낸다.
+
+이렇게 목록과 통계를 나누면 필요한 파일을 골라 읽을 수 있다. 다음 스냅샷에서도 바뀌지 않은 Manifest와 Data File은 재사용할 수 있다.
+
+**버전 범위**
+
+위 예시는 포맷 v2를 기준으로 하며, v1–v3에서도 이 연결 구조를 사용할 수 있다. 다만 v1에서는 Manifest List 없이 스냅샷의 `manifests` 배열에 Manifest 경로를 직접 담는 방식도 허용된다.
+
+포맷 v4에서는 Manifest List 대신 Parquet 형식의 **Root Manifest**를 사용한다. 따라서 Avro 파일로 이어지는 위 구조를 모든 버전에 그대로 적용하면 안 된다. [스냅샷 사양](https://iceberg.apache.org/spec/#snapshots), [Manifest List 사양](https://iceberg.apache.org/spec/#manifest-lists), [Manifest 필드 사양](https://iceberg.apache.org/spec/#manifest-schema)
+
+**실제 테이블에서 확인하기**
+
+Spark에서는 다음 메타데이터 테이블로 참조 경로를 확인할 수 있다. 지원 여부는 사용하는 엔진과 Iceberg 버전에 따라 확인한다. [Spark 메타데이터 테이블 문서](https://iceberg.apache.org/docs/latest/spark-queries/#metadata-tables)
+
+- `.snapshots`: 스냅샷의 `manifest_list` 경로
+- `.manifests`: Manifest File의 경로
+- `.entries`: Manifest File 안의 개별 항목
 
 ```sql
 SELECT * FROM prod.db.orders.snapshots;
@@ -314,7 +344,7 @@ File은 만들어졌는데 Commit에 실패하면 Table Metadata에서 참조되
 
 이런 File은 나중에 cleanup 대상이 된다.
 
-원자적 commit의 구현은 catalog에 달려 있다. 모든 충돌이 retry로 성공하지는 않는다. Update에서 새 값은 data file에도 기록해야 한다. Position/equality delete 설명은 주로 v2 모델이다. 새로운 format version에는 deletion vector 등 다른 표현도 있으므로 엔진과 테이블 버전의 지원 범위를 확인한다. Partition spec 변경만으로 옛 파일이 자동 재배치되지는 않는다. [Iceberg 사양](https://iceberg.apache.org/spec/)
+원자적 커밋을 실제로 구현하는 방식은 카탈로그에 달려 있다. 충돌이 발생했다고 무조건 재시도하면 성공하는 것은 아니다. 충돌의 원인과 해당 카탈로그의 동작을 확인해야 한다. [Iceberg 사양](https://iceberg.apache.org/spec/)
 
 ---
 
@@ -363,7 +393,7 @@ bucket(32, user_id)
 변경: hour(event_time)
 ```
 
-과거 데이터와 새 데이터가 서로 다른 Partition Spec을 사용해도 Metadata를 통해 관리할 수 있다.
+과거 데이터와 새 데이터가 서로 다른 Partition Spec을 사용해도 Metadata를 통해 관리할 수 있다. 다만 규칙을 바꾸는 것만으로 기존 파일이 새 규칙에 맞게 자동 재배치되지는 않는다.
 
 ---
 
@@ -466,6 +496,8 @@ User ID가 모든 파일에 무작위로 분포하면 넓은 min/max 범위가 �
 
 ### Position Delete
 
+아래 Position Delete와 Equality Delete는 주로 포맷 v2의 모델이다. 이후 포맷에는 deletion vector 같은 다른 표현도 있으므로 엔진과 테이블 버전의 지원 범위를 확인한다. [Iceberg 사양](https://iceberg.apache.org/spec/)
+
 Position Delete는 특정 파일의 특정 행 위치를 삭제 대상으로 기록한다. 읽을 때 그 위치를 건너뛴다.
 
 ### Equality Delete
@@ -484,7 +516,7 @@ Equality Delete는 키나 값 조건에 맞는 행을 삭제 대상으로 기록
 새 row 삽입
 ```
 
-처럼 이해할 수 있다.
+처럼 이해할 수 있다. 삭제 정보만 기록하는 것으로는 새 값이 생기지 않으므로, 변경된 값은 데이터 파일에도 써야 한다.
 
 ### MERGE
 
@@ -639,7 +671,7 @@ Unity Catalog는 data/AI 자산의 접근 제어·lineage·audit 등을 포함�
     Review the material; do not apply changes.
     ```
 
-**핵심 사항:** 충돌 후보, snapshot 참조 확인, 안전한 후속 확인 순서다. 현재 snapshot에 없는 파일을 바로 orphan으로 분류할 수 있다. 유지 중인 모든 snapshot과 진행 중 write를 확인하고 공식 catalog 동작과 로그를 대조한다.
+**핵심 사항:** LLM은 현재 스냅샷에 없는 파일을 곧바로 orphan으로 잘못 분류할 수 있다. 삭제 후보를 판단하기 전에 유지 중인 모든 스냅샷과 진행 중인 쓰기를 확인한다. 충돌 가설은 카탈로그의 공식 동작 설명과 실제 로그를 대조해 검토한다.
 
 [이 주제의 실무 프롬프트 6개 더 보기](../prompts/lakehouse-iceberg.md)
 

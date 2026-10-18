@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-18",
+  "updated": "2026-10-19",
   "scope": "docs/en/**/*.md except english-study; prose only; listed forms; case insensitive",
   "corpus": {
     "ai-model-development/adapter-compatibility.md": "bdc63d02fb81b3999218abc69694f746d597a49322437f99a26cb4cb2b4bacf0",
@@ -35,7 +35,7 @@
     "data-platform/flink.md": "5319584b3bc146838a7a61534bc9ed0e05fac4184930c91190e7afadb6dcd3d8",
     "data-platform/foundations.md": "a5ace05ce5dec7d980e1271b84bc68b74ea387c90c875165fbfe4471fe432b3a",
     "data-platform/governance.md": "03e162b049c4fd0e59f2aca311d516c751168e29f88dd8dbd509b6e668c1e68f",
-    "data-platform/lakehouse-iceberg.md": "a5aca7a8bec285faf87690f9b0a8bfd232449c4711803dea821cccdd8da890e5",
+    "data-platform/lakehouse-iceberg.md": "c0c2bbab582d518f0200dd050a47b6e0f3823eeb20b58ef7e5043db6b590eb9c",
     "data-platform/lineage-metadata.md": "b699237c6d715453027348137c76b2c0e40026a0ba70a574053b389c182eabc7",
     "data-platform/orchestration.md": "85364ecc7f7639b1979138adb859d0242da45674db10dbb8f7e6e85db932425d",
     "data-platform/platform-comparison.md": "a9aa014845c49aba17913f6f73c808953144c617003ab9dbc9f42738b1ec97e4",
@@ -170,7 +170,7 @@
       "id": "vocab-use",
       "category": "vocabulary",
       "term": "use",
-      "count": 537,
+      "count": 541,
       "documents": 75,
       "sources": [
         "ai-model-development/adapter-compatibility.md",
@@ -639,7 +639,7 @@
       "id": "vocab-actual",
       "category": "vocabulary",
       "term": "actual",
-      "count": 206,
+      "count": 208,
       "documents": 65,
       "sources": [
         "ai-model-development/adapter-compatibility.md",
@@ -886,7 +886,7 @@
       "id": "vocab-record",
       "category": "vocabulary",
       "term": "record",
-      "count": 161,
+      "count": 163,
       "documents": 54,
       "sources": [
         "ai-model-development/adapter-compatibility.md",
@@ -949,7 +949,7 @@
       "id": "vocab-support",
       "category": "vocabulary",
       "term": "support",
-      "count": 154,
+      "count": 155,
       "documents": 50,
       "sources": [
         "ai-model-development/adapter-compatibility.md",
@@ -1230,8 +1230,8 @@
       "id": "vocab-scope",
       "category": "vocabulary",
       "term": "scope",
-      "count": 96,
-      "documents": 45,
+      "count": 97,
+      "documents": 46,
       "sources": [
         "ai-model-development/index.md",
         "ai-model-development/model-retraining.md",
@@ -1255,6 +1255,7 @@
         "data-platform/event-architecture.md",
         "data-platform/flink.md",
         "data-platform/governance.md",
+        "data-platform/lakehouse-iceberg.md",
         "data-platform/lineage-metadata.md",
         "data-platform/orchestration.md",
         "data-platform/platform-comparison.md",
@@ -1402,7 +1403,7 @@
       "id": "vocab-handle",
       "category": "vocabulary",
       "term": "handle",
-      "count": 69,
+      "count": 70,
       "documents": 31,
       "sources": [
         "ai-model-development/qlora-training.md",
@@ -1480,8 +1481,8 @@
       "id": "vocab-allow",
       "category": "vocabulary",
       "term": "allow",
-      "count": 63,
-      "documents": 31,
+      "count": 64,
+      "documents": 32,
       "sources": [
         "ai-model-development/adapter-compatibility.md",
         "ai-model-development/model-retraining.md",
@@ -1496,6 +1497,7 @@
         "data-platform/event-architecture.md",
         "data-platform/flink.md",
         "data-platform/governance.md",
+        "data-platform/lakehouse-iceberg.md",
         "data-platform/platform-comparison.md",
         "data-platform/production-operations.md",
         "data-platform/snowflake.md",
@@ -1693,7 +1695,7 @@
       "id": "workplace-for-example",
       "category": "workplace",
       "term": "For example, ...",
-      "count": 38,
+      "count": 39,
       "documents": 20,
       "sources": [
         "ai-model-development/model-developer.md",
@@ -2292,28 +2294,6 @@
       ]
     },
     {
-      "id": "vocab-determine",
-      "category": "vocabulary",
-      "term": "determine",
-      "count": 14,
-      "documents": 13,
-      "sources": [
-        "ai-model-development/model-developer.md",
-        "ai-model-development/qlora-training.md",
-        "aws-cloud/compute.md",
-        "aws-cloud/networking.md",
-        "aws-cloud/storage-databases.md",
-        "data-platform/analytical-modeling.md",
-        "data-platform/lakehouse-iceberg.md",
-        "data-platform/snowflake.md",
-        "platform-infrastructure/kafka.md",
-        "platform-infrastructure/kubernetes-operations.md",
-        "platform-infrastructure/platform-security.md",
-        "platform-infrastructure/terraform-iac.md",
-        "platform-infrastructure/vllm.md"
-      ]
-    },
-    {
       "id": "vocab-estimate",
       "category": "vocabulary",
       "term": "estimate",
@@ -2328,6 +2308,45 @@
         "platform-infrastructure/vllm.md",
         "prompts/data-observability.md",
         "prompts/foundations.md"
+      ]
+    },
+    {
+      "id": "vocab-determine",
+      "category": "vocabulary",
+      "term": "determine",
+      "count": 13,
+      "documents": 12,
+      "sources": [
+        "ai-model-development/model-developer.md",
+        "ai-model-development/qlora-training.md",
+        "aws-cloud/compute.md",
+        "aws-cloud/networking.md",
+        "aws-cloud/storage-databases.md",
+        "data-platform/analytical-modeling.md",
+        "data-platform/snowflake.md",
+        "platform-infrastructure/kafka.md",
+        "platform-infrastructure/kubernetes-operations.md",
+        "platform-infrastructure/platform-security.md",
+        "platform-infrastructure/terraform-iac.md",
+        "platform-infrastructure/vllm.md"
+      ]
+    },
+    {
+      "id": "vocab-resolve",
+      "category": "vocabulary",
+      "term": "resolve",
+      "count": 13,
+      "documents": 9,
+      "sources": [
+        "data-platform/ai-evaluation.md",
+        "data-platform/dbt.md",
+        "data-platform/lakehouse-iceberg.md",
+        "data-platform/orchestration.md",
+        "platform-infrastructure/kubernetes-core.md",
+        "platform-infrastructure/kubernetes-operations.md",
+        "platform-infrastructure/linux-containers.md",
+        "platform-infrastructure/litellm.md",
+        "prompts/lineage-metadata.md"
       ]
     },
     {
@@ -2348,23 +2367,6 @@
         "platform-infrastructure/redis.md",
         "platform-infrastructure/terraform-iac.md",
         "platform-infrastructure/vllm.md"
-      ]
-    },
-    {
-      "id": "vocab-resolve",
-      "category": "vocabulary",
-      "term": "resolve",
-      "count": 12,
-      "documents": 8,
-      "sources": [
-        "data-platform/ai-evaluation.md",
-        "data-platform/dbt.md",
-        "data-platform/orchestration.md",
-        "platform-infrastructure/kubernetes-core.md",
-        "platform-infrastructure/kubernetes-operations.md",
-        "platform-infrastructure/linux-containers.md",
-        "platform-infrastructure/litellm.md",
-        "prompts/lineage-metadata.md"
       ]
     },
     {
