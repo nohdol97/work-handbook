@@ -19,6 +19,8 @@
 | [013](adr/013-integrated-study-explanations.md) | accepted | 필요한 보완을 원문 절에 통합하고 AI 예시는 선택적으로 사용 |
 | [014](adr/014-interactive-slides-pipeline.md) | accepted | 공개 한영 문서를 스키마 기반 독립 HTML 슬라이드로 생성 |
 
+| [015](adr/015-explanation-first-slides.md) | accepted | 정적 원문 기본값·설명 중심 학습/발표 모드·의미 검토 경계 |
+
 ## 스펙
 
 | 스펙 | 상태 | 범위 |
@@ -45,3 +47,9 @@
 ## 변경 이력
 
 - [하네스 변경 이력](harness-changelog.md)
+
+## 검토 기록
+
+- [설명 우선 슬라이드 검토](../reviews/slides/2026-10-18-explanation-review.md): 결함 재현, 기술·한영 의미 검토, 독립 기대 결과와 화면 검증 범위.
+
+- [학습 모드·배포 검토](../reviews/slides/2026-10-18-study-mode-release.md): 기본 학습 페이지, QLoRA 흐름, 전체 학습 절 감사와 배포 증거.

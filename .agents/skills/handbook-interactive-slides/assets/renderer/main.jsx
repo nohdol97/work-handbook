@@ -1,47 +1,14 @@
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useId, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import SlideTransition from '../../../../../third_party/slides-generator-template/src/components/SlideTransition.jsx';
 import './style.css';
 
 const deck = window.__HANDBOOK_SLIDES__ || {};
 const slides = Array.isArray(deck.slides) ? deck.slides : [];
 const english = String(deck.language || '').toLowerCase().startsWith('en');
 const words = english ? {
-  previous: 'Previous', next: 'Next', contents: 'Contents', progress: 'Progress',
-  theme: 'Toggle theme', fullscreen: 'Fullscreen', notes: 'Notes', source: 'Source',
-  language: 'Other language', related: 'Related documents', review: 'Review concepts',
-  close: 'Close', reset: 'Reset', play: 'Play', pause: 'Pause', step: 'Next step',
-  reveal: 'Reveal', hide: 'Hide', choose: 'Choose an option', check: 'Check answer',
-  correct: 'Correct', incorrect: 'Try again', explanation: 'Explanation',
-  copy: 'Copy', copied: 'Copied', objective: 'Learning objective', details: 'Details',
-  select: 'Select a component', compare: 'Compare two options', noSlides: 'No slides available',
-  noNotes: 'No notes for this slide', slide: 'Slide', of: 'of', results: 'Result',
-  flip: 'Flip card', front: 'Question', back: 'Answer', card: 'Card',
-  nextCard: 'Next card', previousCard: 'Previous card',
-  editPrompt: 'Edit your version', original: 'Original prompt',
-  showOriginal: 'Show original', hideOriginal: 'Hide original', guidance: 'Practice guidance',
-  threshold: 'Threshold', bounds: 'Available range', mayMatch: 'May match', canSkip: 'Can skip',
-  enterNumber: 'Enter a number to see the result', invalidParameter: 'Parameter data is unavailable',
-  possibleReason: 'The range allows at least one matching value; actual records may still differ.',
-  skipReason: 'No value in the range can satisfy this condition.',
+ previous:'Previous slide',next:'Next slide',contents:'Contents',notes:'Notes',source:'Source',language:'한국어',close:'Close',reset:'Reset',threshold:'Threshold',bounds:'Available range',mayMatch:'May match',canSkip:'Can skip',enterNumber:'Enter a number',invalidParameter:'Parameter unavailable',possibleReason:'The range allows a matching value; this does not prove a record exists.',skipReason:'No value in this range satisfies the condition.',hint:'Tap left / right margins · Arrow keys',noNotes:'Supplementary notes are not available.',
 } : {
-  previous: '이전', next: '다음', contents: '목차', progress: '진행률',
-  theme: '테마 전환', fullscreen: '전체 화면', notes: '발표자 노트', source: '원문',
-  language: '다른 언어', related: '관련 문서', review: '개념 다시 보기',
-  close: '닫기', reset: '초기화', play: '실행', pause: '일시정지', step: '다음 단계',
-  reveal: '보기', hide: '숨기기', choose: '선택하세요', check: '정답 확인',
-  correct: '정답입니다', incorrect: '다시 생각해 보세요', explanation: '해설',
-  copy: '복사', copied: '복사됨', objective: '학습 목표', details: '자세히',
-  select: '구성 요소를 선택하세요', compare: '두 항목 비교', noSlides: '슬라이드가 없습니다',
-  noNotes: '이 슬라이드의 노트가 없습니다', slide: '슬라이드', of: '/', results: '결과',
-  flip: '카드 뒤집기', front: '앞면', back: '뒷면', card: '카드',
-  nextCard: '다음 카드', previousCard: '이전 카드',
-  editPrompt: '직접 수정하기', original: '원본 프롬프트',
-  showOriginal: '원본 보기', hideOriginal: '원본 숨기기', guidance: '연습 안내',
-  threshold: '기준값', bounds: '값의 범위', mayMatch: '읽을 가능성', canSkip: '건너뛰기',
-  enterNumber: '결과를 보려면 숫자를 입력하세요', invalidParameter: '매개변수 데이터를 사용할 수 없습니다',
-  possibleReason: '범위에 조건을 만족하는 값이 있을 수 있지만, 실제 데이터 존재 여부는 알 수 없습니다.',
-  skipReason: '범위 안의 어떤 값도 이 조건을 만족할 수 없습니다.',
+ previous:'이전 슬라이드',next:'다음 슬라이드',contents:'목차',notes:'보충 노트',source:'원문',language:'English',close:'닫기',reset:'초기화',threshold:'기준값',bounds:'값의 범위',mayMatch:'읽을 가능성',canSkip:'건너뛰기',enterNumber:'숫자를 입력하세요',invalidParameter:'매개변수 없음',possibleReason:'범위에 조건을 만족하는 값이 있을 수 있지만, 실제 데이터 존재 여부는 알 수 없습니다.',skipReason:'범위 안의 어떤 값도 이 조건을 만족할 수 없습니다.',hint:'왼쪽 / 오른쪽 여백 터치 · 방향키',noNotes:'별도 보충 노트가 없습니다.',
 };
 
 function safeUrl(value) {
@@ -58,7 +25,7 @@ function safeUrl(value) {
 function cleanHtml(html) {
   if (typeof html !== 'string' || !html) return '';
   const doc = new DOMParser().parseFromString(html, 'text/html');
-  const tags = new Set('p br strong em b i u s code pre blockquote ul ol li h1 h2 h3 h4 h5 h6 table thead tbody tr th td a img hr details summary kbd sub sup mark'.split(' '));
+  const tags = new Set('p br strong em b i u s code pre blockquote ul ol li h1 h2 h3 h4 h5 h6 table caption thead tbody tfoot tr th td a img hr details summary kbd sub sup mark'.split(' '));
   const walk = (node) => {
     for (const child of [...node.children]) {
       if (!tags.has(child.tagName.toLowerCase())) {
@@ -68,10 +35,11 @@ function cleanHtml(html) {
       }
       for (const attr of [...child.attributes]) {
         const name = attr.name.toLowerCase();
-        const valid = name === 'title' || (child.tagName === 'IMG' && ['src', 'alt'].includes(name)) || (child.tagName === 'A' && name === 'href') || (['TH', 'TD'].includes(child.tagName) && ['colspan', 'rowspan'].includes(name));
+        const valid = name === 'title' || (child.tagName === 'CODE' && name === 'class' && /^language-[a-z0-9_-]+$/i.test(attr.value)) || (child.tagName === 'IMG' && ['src', 'alt'].includes(name)) || (child.tagName === 'A' && name === 'href') || (['TH', 'TD'].includes(child.tagName) && ['colspan', 'rowspan', 'scope'].includes(name));
         if (!valid || (['src', 'href'].includes(name) && !safeUrl(attr.value) && !/^data:image\/(?:png|jpeg|gif|webp);base64,/i.test(attr.value))) child.removeAttribute(attr.name);
       }
       if (child.tagName === 'A') child.setAttribute('rel', 'noopener noreferrer');
+      if (child.tagName === 'DETAILS') child.setAttribute('open', '');
       walk(child);
     }
   };
@@ -87,161 +55,6 @@ function Label({ children }) { return <span className="ui-label">{children}</spa
 
 function ResetButton({ onClick }) {
   return <button type="button" className="subtle-button" onClick={onClick}>{words.reset}</button>;
-}
-
-function ItemDetail({ item }) {
-  if (!item) return null;
-  return <div className="interaction-detail" role="status" aria-live="polite">
-    <strong>{item.label || item.title}</strong>
-    <p>{item.detail || item.description || item.result || ''}</p>
-  </div>;
-}
-
-function Steps({ data }) {
-  const items = Array.isArray(data.items) ? data.items : [];
-  const [index, setIndex] = useState(-1);
-  const [running, setRunning] = useState(false);
-  useEffect(() => {
-    if (!running) return undefined;
-    const timer = window.setInterval(() => setIndex((value) => Math.min(value + 1, items.length - 1)), Math.max(400, Number(data.intervalMs) || 1200));
-    return () => window.clearInterval(timer);
-  }, [running, items.length, data.intervalMs]);
-  useEffect(() => { if (index >= items.length - 1) setRunning(false); }, [index, items.length]);
-  if (!items.length) return null;
-  return <div className="interaction">
-    <div className="interaction-toolbar">
-      <button type="button" onClick={() => { if (index >= items.length - 1) setIndex(-1); setRunning(!running); }}>{running ? words.pause : words.play}</button>
-      <button type="button" disabled={index >= items.length - 1} onClick={() => { setRunning(false); setIndex((value) => value + 1); }}>{words.step}</button>
-      <ResetButton onClick={() => { setRunning(false); setIndex(-1); }} />
-    </div>
-    <ol className="step-track">
-      {items.map((item, i) => <li key={i} className={i <= index ? 'is-active' : ''}>
-        <button type="button" aria-current={i === index ? 'step' : undefined} onClick={() => { setRunning(false); setIndex(i); }}>
-          <span className="step-number">{i + 1}</span><span>{item.label || `${words.step} ${i + 1}`}</span>
-        </button>
-      </li>)}
-    </ol>
-    <ItemDetail item={items[index]} />
-    {data.model_note && <p className="model-note">{data.model_note}</p>}
-  </div>;
-}
-
-function Architecture({ data }) {
-  const items = Array.isArray(data.items) ? data.items : [];
-  const [index, setIndex] = useState(-1);
-  if (!items.length) return null;
-  return <div className="interaction">
-    <div className="interaction-heading"><Label>{words.select}</Label><ResetButton onClick={() => setIndex(-1)} /></div>
-    <div className="architecture-grid">
-      {items.map((item, i) => <button key={i} type="button" className={`architecture-node ${index === i ? 'is-selected' : ''}`} aria-pressed={index === i} onClick={() => setIndex(i)}>
-        <span className="node-index">{String(i + 1).padStart(2, '0')}</span><strong>{item.label || item.title}</strong>
-      </button>)}
-    </div>
-    <ItemDetail item={items[index]} />
-    {data.model_note && <p className="model-note">{data.model_note}</p>}
-  </div>;
-}
-
-function Comparison({ data }) {
-  const items = Array.isArray(data.items) ? data.items : [];
-  const [selected, setSelected] = useState(items.length > 1 ? [0, 1] : [0]);
-  if (!items.length) return null;
-  const pick = (index) => setSelected((prior) => prior.includes(index) ? prior.length > 1 ? prior.filter((value) => value !== index) : prior : [...prior.slice(-1), index]);
-  return <div className="interaction">
-    <div className="interaction-heading"><Label>{words.compare}</Label><ResetButton onClick={() => setSelected(items.length > 1 ? [0, 1] : [0])} /></div>
-    <div className="choice-row">{items.map((item, i) => <button key={i} type="button" className={`choice-pill ${selected.includes(i) ? 'is-selected' : ''}`} aria-pressed={selected.includes(i)} onClick={() => pick(i)}>{item.label || item.title}</button>)}</div>
-    <div className="comparison-grid">{selected.map((i) => <ItemDetail key={i} item={items[i]} />)}</div>
-    {data.model_note && <p className="model-note">{data.model_note}</p>}
-  </div>;
-}
-
-function Scenario({ data }) {
-  const items = Array.isArray(data.items) ? data.items : [];
-  const [index, setIndex] = useState(-1);
-  if (!items.length) return null;
-  return <div className="interaction">
-    <div className="interaction-heading"><Label>{data.prompt || words.choose}</Label><ResetButton onClick={() => setIndex(-1)} /></div>
-    <div className="choice-row">{items.map((item, i) => <button key={i} type="button" className={`choice-pill ${index === i ? 'is-selected' : ''}`} aria-pressed={index === i} onClick={() => setIndex(i)}>{item.label || item.title}</button>)}</div>
-    <ItemDetail item={items[index]} />
-    {data.model_note && <p className="model-note">{data.model_note}</p>}
-  </div>;
-}
-
-function Reveal({ data }) {
-  const items = Array.isArray(data.items) ? data.items : [];
-  const [opened, setOpened] = useState([]);
-  const toggle = (i) => setOpened((prior) => prior.includes(i) ? prior.filter((value) => value !== i) : [...prior, i]);
-  if (!items.length) return null;
-  return <div className="interaction">
-    <div className="interaction-heading"><Label>{data.prompt || words.reveal}</Label><ResetButton onClick={() => setOpened([])} /></div>
-    <div className="reveal-list">{items.map((item, i) => <div className="reveal-item" key={i}>
-      <button type="button" aria-expanded={opened.includes(i)} onClick={() => toggle(i)}><span>{item.label || item.title}</span><span aria-hidden="true">{opened.includes(i) ? '−' : '+'}</span></button>
-      {opened.includes(i) && <div className="reveal-content" role="status">{item.detail || item.description || item.result}</div>}
-    </div>)}</div>
-    {data.model_note && <p className="model-note">{data.model_note}</p>}
-  </div>;
-}
-
-function Quiz({ data }) {
-  const options = Array.isArray(data.options) ? data.options : [];
-  const [selection, setSelection] = useState(-1);
-  const [checked, setChecked] = useState(false);
-  if (!options.length) return null;
-  const correct = selection === Number(data.correctIndex);
-  return <div className="interaction quiz">
-    <div className="interaction-heading"><Label>{data.question || words.choose}</Label><ResetButton onClick={() => { setSelection(-1); setChecked(false); }} /></div>
-    <div className="quiz-options" role="radiogroup" aria-label={data.question || words.choose}>
-      {options.map((option, i) => <button type="button" role="radio" aria-checked={selection === i} className={`quiz-option ${selection === i ? 'is-selected' : ''}`} key={i} onClick={() => { setSelection(i); setChecked(false); }}><span>{String.fromCharCode(65 + i)}</span>{typeof option === 'string' ? option : option.label}</button>)}
-    </div>
-    <button type="button" disabled={selection < 0} onClick={() => setChecked(true)}>{words.check}</button>
-    {checked && <div className={`quiz-feedback ${correct ? 'is-correct' : 'is-incorrect'}`} role="status" aria-live="polite"><strong>{correct ? words.correct : words.incorrect}</strong>{data.explanation && <p><strong>{words.explanation}: </strong>{data.explanation}</p>}</div>}
-    {data.model_note && <p className="model-note">{data.model_note}</p>}
-  </div>;
-}
-
-function Flashcard({ data }) {
-  const items = Array.isArray(data.items) ? data.items : [];
-  const [index, setIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-  if (!items.length) return null;
-  const current = items[index];
-  const move = (next) => { setIndex(Math.max(0, Math.min(items.length - 1, next))); setFlipped(false); };
-  return <div className="interaction flashcard" onKeyDown={(event) => {
-    if (event.key === 'ArrowLeft') { event.preventDefault(); move(index - 1); }
-    if (event.key === 'ArrowRight') { event.preventDefault(); move(index + 1); }
-  }}>
-    <div className="interaction-heading"><Label>{words.card} {index + 1} / {items.length}</Label><ResetButton onClick={() => { setIndex(0); setFlipped(false); }} /></div>
-    <button type="button" className="flashcard-face" aria-pressed={flipped} onClick={() => setFlipped((value) => !value)}>
-      <span className="flashcard-side">{flipped ? words.back : words.front}</span>
-      <span className="flashcard-text">{flipped ? current.detail || '' : current.label || ''}</span>
-      <span className="flashcard-hint">{words.flip} ↻</span>
-    </button>
-    <div className="interaction-toolbar flashcard-controls">
-      <button type="button" disabled={index === 0} onClick={() => move(index - 1)}>← {words.previousCard}</button>
-      <button type="button" disabled={index === items.length - 1} onClick={() => move(index + 1)}>{words.nextCard} →</button>
-    </div>
-    {data.model_note && <p className="model-note">{data.model_note}</p>}
-  </div>;
-}
-
-function Practice({ data }) {
-  const original = typeof data.prompt === 'string' ? data.prompt : '';
-  const [draft, setDraft] = useState(original);
-  const [showOriginal, setShowOriginal] = useState(false);
-  const editorId = useId();
-  if (!original && !data.guidance) return null;
-  return <div className="interaction practice">
-    <div className="interaction-heading"><Label>{words.guidance}</Label><ResetButton onClick={() => { setDraft(original); setShowOriginal(false); }} /></div>
-    {data.guidance && <p className="practice-guidance">{data.guidance}</p>}
-    <label className="practice-label" htmlFor={editorId}>{words.editPrompt}</label>
-    <textarea id={editorId} spellCheck="false" value={draft} onChange={(event) => setDraft(event.target.value)} rows={Math.min(14, Math.max(6, original.split('\n').length + 2))} />
-    <div className="interaction-toolbar practice-controls">
-      <CopyButton text={draft} />
-      <button type="button" aria-expanded={showOriginal} onClick={() => setShowOriginal((value) => !value)}>{showOriginal ? words.hideOriginal : words.showOriginal}</button>
-    </div>
-    {showOriginal && <div className="practice-original" role="region" aria-label={words.original}><strong>{words.original}</strong><pre>{original}</pre></div>}
-    {data.model_note && <p className="model-note">{data.model_note}</p>}
-  </div>;
 }
 
 function rangeCanMatch(minimum, maximum, operator, threshold) {
@@ -293,136 +106,302 @@ function Parameter({ data }) {
   </div>;
 }
 
-const interactions = { steps: Steps, architecture: Architecture, comparison: Comparison, scenario: Scenario, reveal: Reveal, quiz: Quiz, flashcard: Flashcard, practice: Practice, parameter: Parameter };
-
-function Interaction({ interaction }) {
-  const Component = interactions[interaction?.type];
-  const data = { ...(interaction?.data || {}), model_note: interaction?.model_note ?? interaction?.data?.model_note };
-  return Component ? <Component data={data} /> : null;
-}
-
-function CopyButton({ text }) {
-  const [copied, setCopied] = useState(false);
-  const timer = useRef();
-  useEffect(() => () => window.clearTimeout(timer.current), []);
-  const copy = async () => {
-    try {
-      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
-      else {
-        const input = document.createElement('textarea');
-        input.value = text; document.body.appendChild(input); input.select();
-        try { if (!document.execCommand('copy')) throw new Error('Copy failed'); }
-        finally { input.remove(); }
+// Split source DOM, retaining inline markup, links, table headings and code order.
+// Measurement uses the same typography as the visible slide, never a scale transform.
+function fragments(html, narrow) {
+  const doc = new DOMParser().parseFromString(cleanHtml(html), 'text/html');
+  const result = [];
+  const add = (node) => {
+    if (!node.textContent.trim() && !node.querySelector?.('img')) return;
+    const tag = node.tagName;
+    if (['DIV','SECTION','ARTICLE'].includes(tag)) { [...node.children].forEach(add); return; }
+    if (tag === 'TABLE') {
+      const rows = [...node.querySelectorAll('tr')];
+      const headers = rows.shift();
+      const count = headers?.children.length || 0;
+      const groups = narrow && count > 3 ? Array.from({length:count-1},(_,i)=>[0,i+1]) : [Array.from({length:count},(_,i)=>i)];
+      for (const row of rows) for (const group of groups) {
+        const cells = (r, head) => group.map(i => `<${head?'th':'td'}>${r.children[i]?.innerHTML || ''}</${head?'th':'td'}>`).join('');
+        result.push(`<table><thead><tr>${cells(headers,true)}</tr></thead><tbody><tr>${cells(row,false)}</tr></tbody></table>`);
       }
-      setCopied(true);
-      window.clearTimeout(timer.current);
-      timer.current = window.setTimeout(() => setCopied(false), 1800);
-    } catch { setCopied(false); }
+      return;
+    }
+    if (tag === 'UL' || tag === 'OL') {
+      [...node.children].forEach((li,i)=>result.push(`<${tag.toLowerCase()}${tag==='OL'?` start="${i+1}"`:''}>${li.outerHTML}</${tag.toLowerCase()}>`)); return;
+    }
+    result.push(node.outerHTML || `<p>${node.textContent}</p>`);
   };
-  return <button type="button" className="copy-button" onClick={copy} aria-label={copied ? words.copied : words.copy}>{copied ? words.copied : words.copy}</button>;
+  [...doc.body.childNodes].forEach(add);
+  const grouped=[];
+  for(let i=0;i<result.length;i++){
+    let chunk=result[i];
+    while(/^<h[1-6][ >]/i.test(result[i])&&i+1<result.length){chunk+=result[++i];}
+    grouped.push(chunk);
+  }
+  return grouped;
 }
 
-function CodeCopy({ containerRef, slideId }) {
-  const [blocks, setBlocks] = useState([]);
-  useEffect(() => {
-    const root = containerRef.current;
-    if (!root) return;
-    const code = [...root.querySelectorAll('pre')];
-    setBlocks(code.map((node, i) => ({ id: i, text: node.textContent || '' })));
-  }, [containerRef, slideId]);
-  return blocks.length ? <div className="code-copy-row">{blocks.map((block) => <CopyButton key={block.id} text={block.text} />)}</div> : null;
+function splitFragment(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const elements=[...doc.body.children];
+  if(elements.length>1){
+    const heading=elements.shift().outerHTML;
+    const parts=splitFragment(elements.map(e=>e.outerHTML).join(''));
+    return parts.length>1 ? [heading+parts[0],...parts.slice(1)] : [html];
+  }
+  const root = doc.body.firstElementChild;
+  if (!root || root.textContent.length < 2 || root.matches('table,pre,svg,img')) return [html];
+  // DOM ranges preserve emphasis and links across a continuation.
+  const text = root.textContent;
+  const midpoint = Math.floor(text.length / 2);
+  const boundaries = [...text.matchAll(/(?:[.!?。]\s+|\n)/g)].map(m=>m.index+m[0].length).filter(n=>n>0&&n<text.length);
+  if (!boundaries.length) return [html];
+  const cut = boundaries.reduce((a,b)=>Math.abs(b-midpoint)<Math.abs(a-midpoint)?b:a);
+  const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node, offset=0, target;
+  while ((node=walker.nextNode())) { if (offset+node.length >= cut) { target=node; break; } offset+=node.length; }
+  if (!target) return [html];
+  const left=doc.createRange(),right=doc.createRange();
+  left.selectNodeContents(root); left.setEnd(target,cut-offset);
+  right.selectNodeContents(root); right.setStart(target,cut-offset);
+  return [left,right].map(range=>{const copy=root.cloneNode(false);copy.append(range.cloneContents());return copy.outerHTML;});
 }
 
-function Slide({ slide, index }) {
-  const contentRef = useRef(null);
-  const interaction = slide.interaction || {};
-  return <section className="slide-card" aria-label={`${words.slide} ${index + 1}: ${slide.title || ''}`}>
-    <div className="slide-eyebrow"><span>{String(index + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}</span><span>{slide.section || deck.title || ''}</span></div>
-    <div className="slide-main">
-      <header><h1>{slide.title || deck.title}</h1>{slide.objective && <p className="objective"><strong>{words.objective}</strong> {slide.objective}</p>}</header>
-      <div className="slide-content" ref={contentRef}>
-        <RichText html={slide.body_html} className="rich-text" />
-        <CodeCopy containerRef={contentRef} slideId={slide.id} />
-        <Interaction key={`${slide.id || index}-${interaction.type || ''}`} interaction={interaction} />
-      </div>
-    </div>
-    {slide.source?.heading && <footer className="slide-source">{slide.source.heading}</footer>}
-  </section>;
+// On a single page, adjacent comparison rows share their column headings.
+// Each new page still begins with the complete table header.
+function appendHtml(leftHtml, rightHtml) {
+  if(!leftHtml)return rightHtml;
+  const parser=new DOMParser();
+  const left=parser.parseFromString(leftHtml,'text/html');
+  const right=parser.parseFromString(rightHtml,'text/html');
+  const previous=left.body.lastElementChild,next=right.body.firstElementChild;
+  if(previous?.tagName==='TABLE'&&next?.tagName==='TABLE'
+      &&previous.tHead?.innerHTML===next.tHead?.innerHTML
+      &&previous.tHead&&next.tHead){
+    const body=previous.tBodies[0]||previous.createTBody();
+    for(const row of [...(next.tBodies[0]?.rows||[])])body.append(row);
+    next.remove();
+    return left.body.innerHTML+right.body.innerHTML;
+  }
+  return leftHtml+rightHtml;
 }
 
+function pendingNotice() { return `<p>${english?'This source block needs a reviewed layout for this screen. Read the complete block using the Source link below.':'이 원문 블록은 현재 화면에 맞는 설명 구성을 검토 중입니다. 아래 원문 링크에서 전체 내용을 읽을 수 있습니다.'}</p>`; }
+
+function studyHtml(unit) {
+  const source=Array.isArray(unit.content_blocks)&&unit.content_blocks.length?unit.content_blocks.map(b=>typeof b==='string'?b:b.html||'').join(''):unit.body_html;
+  const doc=new DOMParser().parseFromString(cleanHtml(source),'text/html');
+  for(const pre of doc.querySelectorAll('pre')){
+    if(pre.querySelector('code.language-mermaid')||/[┌┐└┘├┤│─]/.test(pre.textContent)){
+      const note=doc.createElement('p');
+      note.textContent=english?'Static source notation. Long lines wrap on small screens; use the original document for its spatial layout. Arrows and labels below are preserved as source text.':'정적 원문 표기입니다. 작은 화면에서는 긴 줄이 줄바꿈되므로 공간 배치는 원문 문서에서 확인하세요. 아래 화살표와 이름은 원문 텍스트 그대로 유지합니다.';
+      pre.before(note);
+    }
+  }
+  if(innerWidth>=600)return doc.body.innerHTML;
+  for(const table of doc.querySelectorAll('table')){
+    const rows=[...table.rows],head=rows[0];
+    if(!head||head.cells.length<=3||table.querySelector('[colspan],[rowspan]')||table.tHead?.rows.length>1)continue;
+    const replacement=doc.createDocumentFragment();
+    for(let column=1;column<head.cells.length;column++){
+      const copy=doc.createElement('table');
+      if(table.caption)copy.append(table.caption.cloneNode(true));
+      for(const [index,row] of rows.entries()){
+        const group=index===0?(copy.tHead||copy.createTHead()):(copy.tBodies[0]||copy.createTBody());
+        const tr=group.insertRow();
+        for(const n of [0,column])if(row.cells[n])tr.append(row.cells[n].cloneNode(true));
+      }
+      replacement.append(copy);
+    }
+    table.replaceWith(replacement);
+  }
+  return doc.body.innerHTML;
+}
+
+function positionKey(slide) { return slide.unit_id || slide.id; }
+function sectionKey(slide) { return slide.section_id || slide.source?.section_id || slide.id; }
+function locationState() { const params=new URLSearchParams(location.hash.slice(1));return {unit:params.get('unit'),section:params.get('section'),part:Number(params.get('part')||0),panel:params.get('panel')==='parameter'?'parameter':'content',mode:params.get('mode')==='presentation'?'presentation':'study'}; }
 function App() {
-  const [index, setIndex] = useState(0);
-  const [tocOpen, setTocOpen] = useState(false);
-  const [notesOpen, setNotesOpen] = useState(false);
-  const [reviewOpen, setReviewOpen] = useState(false);
-  const [dark, setDark] = useState(() => window.matchMedia?.('(prefers-color-scheme: dark)').matches || false);
-  const [studyMode, setStudyMode] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false);
-  const shellRef = useRef(null);
-  const headingRef = useRef(null);
-  const slide = slides[index];
-  const nav = (value) => { setIndex(Math.max(0, Math.min(slides.length - 1, value))); setTocOpen(false); setReviewOpen(false); };
-  useEffect(() => { document.documentElement.dataset.slidesTheme = dark ? 'dark' : 'light'; }, [dark]);
-  useEffect(() => {
-    const query = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    if (!query) return undefined;
-    const update = () => setReducedMotion(query.matches);
-    query.addEventListener?.('change', update);
-    return () => query.removeEventListener?.('change', update);
-  }, []);
-  useEffect(() => { document.title = `${slide?.title || deck.title || 'Slides'} — Work Handbook`; headingRef.current?.focus(); }, [index, slide?.title]);
-  useEffect(() => {
-    const onKey = (event) => {
-      if (event.altKey || event.ctrlKey || event.metaKey || /^(INPUT|TEXTAREA|SELECT)$/.test(event.target?.tagName) || event.target?.isContentEditable || event.target?.closest?.('.interaction')) return;
-      if (event.key === 'Escape') { setTocOpen(false); setNotesOpen(false); setReviewOpen(false); return; }
-      if (['ArrowRight', 'PageDown'].includes(event.key)) { event.preventDefault(); setIndex((value) => Math.min(slides.length - 1, value + 1)); }
-      if (['ArrowLeft', 'PageUp'].includes(event.key)) { event.preventDefault(); setIndex((value) => Math.max(0, value - 1)); }
-      if (event.key === 'Home') { event.preventDefault(); setIndex(0); }
-      if (event.key === 'End') { event.preventDefault(); setIndex(slides.length - 1); }
-      if (event.key.toLowerCase() === 'f') shellRef.current?.requestFullscreen?.();
-      if (event.key.toLowerCase() === 'n') setNotesOpen((value) => !value);
+  const [mode,setMode]=useState(locationState().mode);
+  const [pages,setPages]=useState([]),[index,setIndex]=useState(0),[dialog,setDialog]=useState(null),[dialogPage,setDialogPage]=useState(0);
+  const [notePages,setNotePages]=useState([]),[tocPages,setTocPages]=useState([]);
+  const measure=useRef(), shell=useRef(), dialogRef=useRef(), returnFocus=useRef(), pointer=useRef();
+  const reading=useRef(locationState());
+  const page=pages[index],slide=page?.slide;
+  const writeLocation=(p,replace=false)=>{
+    if(!p)return;
+    const activeUnit=mode==='study'&&p.units?.some(s=>positionKey(s)===reading.current.unit)?reading.current.unit:positionKey(p.slide);
+    const state={unit:activeUnit,section:sectionKey(p.slide),part:p.part,panel:p.parameter?'parameter':'content',mode}; reading.current=state;
+    const hash=new URLSearchParams(state).toString();
+    if(location.hash.slice(1)!==hash)history[replace?'replaceState':'pushState'](null,'',`#${hash}`);
+  };
+  const nav=(value)=>{const n=Math.max(0,Math.min(pages.length-1,value));if(n===index)return;setIndex(n);writeLocation(pages[n]);if(mode==='study')window.scrollTo(0,0);};
+  const changeMode=()=>{const next=mode==='study'?'presentation':'study';reading.current={...reading.current,mode:next};history.pushState(null,'',`#${new URLSearchParams(reading.current)}`);setMode(next);};
+  useLayoutEffect(()=>{
+    let timer;
+    const rebuild=()=>{
+      const host=measure.current;if(!host)return;
+      const width=shell.current.clientWidth;
+      if(mode==='study'){
+        shell.current.style.height='auto';
+        const next=[];
+        for(const item of slides){
+          let group=next.at(-1);
+          if(!group||sectionKey(group.slide)!==sectionKey(item)){group={mode:'study',slide:item,units:[],part:0,parameter:false,pending:false};next.push(group);}
+          group.units.push(item);
+        }
+        setPages(next);
+        let found=next.findIndex(p=>p.units.some(s=>positionKey(s)===reading.current.unit));
+        if(found<0)found=next.findIndex(p=>sectionKey(p.slide)===reading.current.section);
+        setIndex(Math.max(0,found));
+        return;
+      }
+      const height=window.visualViewport?.height || window.innerHeight;
+      shell.current.style.height=`${height}px`;
+      const header=shell.current.querySelector('.app-header').getBoundingClientRect().height;
+      const footer=shell.current.querySelector('.app-footer').getBoundingClientRect().height;
+      const available=height-header-footer-24;
+      host.style.width=`${Math.min(1100,width)-32}px`;
+      const next=[];
+      for (const item of slides) {
+        host.innerHTML=`<h1>${cleanHtml(item.title||deck.title)}</h1>`;
+        const titleHeight=host.getBoundingClientRect().height;
+        const budget=Math.max(80,available-titleHeight-24);
+        const fits=(html)=>{host.innerHTML=`<div class="rich-text">${html}</div>`;return host.getBoundingClientRect().height<=budget && host.scrollWidth<=host.clientWidth;};
+        const source=Array.isArray(item.content_blocks)&&item.content_blocks.length ? item.content_blocks.map(b=>typeof b==='string'?b:b.html||'').join('') : item.body_html;
+        const pending=fragments(source||'',width<600), atoms=[];
+        while(pending.length){const html=pending.shift();if(fits(html)){atoms.push(html);continue;}const divided=splitFragment(html);if(divided.length===1){atoms.push(pendingNotice());continue;}pending.unshift(...divided);}
+        let body='',part=0;
+        const emit=()=>{next.push({mode:'presentation',slide:item,html:body,part:part++,parameter:false,pending:body.includes('현재 화면에 맞는 설명')||body.includes('needs a reviewed layout')});body='';};
+        for(const atom of atoms){const combined=appendHtml(body,atom);if(body&&!fits(combined)){emit();body=atom;}else body=combined;}
+        if(body||!atoms.length)emit();
+        if(item.interaction?.type==='parameter')next.push({mode:'presentation',slide:item,html:'',part:part++,parameter:true});
+      }
+      setPages(next);
+      const state=reading.current;
+      let found=next.findIndex(p=>positionKey(p.slide)===state.unit&&(state.panel==='parameter'?p.parameter:!p.parameter&&p.part===state.part));
+      if(found<0)found=next.findIndex(p=>positionKey(p.slide)===state.unit);
+      if(found<0)found=next.findIndex(p=>sectionKey(p.slide)===state.section);
+      setIndex(Math.max(0,found));
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-  if (!slide) return <div className="empty-state">{words.noSlides}</div>;
-  const sourceLink = safeUrl(deck.source_url);
-  const alternateLink = safeUrl(deck.alternate_url);
-  const related = Array.isArray(deck.related) ? deck.related : [];
-  return <div className={`app-shell ${studyMode ? 'study-mode' : 'present-mode'}`} ref={shellRef}>
-    <a className="skip-link" href="#slide-content">{english ? 'Skip to slide' : '슬라이드로 건너뛰기'}</a>
-    <header className="app-header">
-      <button type="button" className="brand" onClick={() => nav(0)} aria-label={deck.title || 'Work Handbook'}><span className="brand-mark">W</span><span>{deck.title || 'Work Handbook'}</span></button>
-      <div className="header-actions">
-        <button type="button" onClick={() => setTocOpen(true)} aria-expanded={tocOpen}>{words.contents}</button>
-        <button type="button" onClick={() => setStudyMode((value) => !value)} aria-pressed={studyMode}>{studyMode ? (english ? 'Present' : '발표 모드') : (english ? 'Study' : '학습 모드')}</button>
-        <button type="button" onClick={() => setDark((value) => !value)} aria-label={words.theme}>{dark ? '☀' : '☾'}</button>
-      </div>
-    </header>
-    <main id="slide-content" className="presentation-main">
-      <div tabIndex={-1} ref={headingRef} className="focus-anchor" aria-live="polite" aria-atomic="true">{words.slide} {index + 1} {words.of} {slides.length}: {slide.title}</div>
-      {reducedMotion ? <Slide key={slide.id || index} slide={slide} index={index} /> : <SlideTransition slideKey={slide.id || index} variant="fade"><Slide slide={slide} index={index} /></SlideTransition>}
-      <nav className="slide-controls" aria-label={english ? 'Slide navigation' : '슬라이드 이동'}>
-        <button type="button" disabled={index === 0} onClick={() => nav(index - 1)}>← {words.previous}</button>
-        <div className="progress-wrap"><div className="progress-track" role="progressbar" aria-label={words.progress} aria-valuemin={1} aria-valuemax={slides.length} aria-valuenow={index + 1}><span style={{ width: `${((index + 1) / slides.length) * 100}%` }} /></div><small>{index + 1} / {slides.length}</small></div>
-        <button type="button" disabled={index === slides.length - 1} onClick={() => nav(index + 1)}>{words.next} →</button>
-      </nav>
-    </main>
-    <footer className="app-footer">
-      <div className="footer-actions">
-        <button type="button" onClick={() => setReviewOpen(true)}>{words.review}</button>
-        <button type="button" onClick={() => setNotesOpen((value) => !value)} aria-expanded={notesOpen}>{words.notes}</button>
-        <button type="button" onClick={() => document.fullscreenElement ? document.exitFullscreen?.() : shellRef.current?.requestFullscreen?.()}>{words.fullscreen}</button>
-      </div>
-      <div className="footer-links">
-        {sourceLink && <a href={sourceLink}>{words.source} ↗</a>}
-        {alternateLink && <a href={alternateLink} lang={english ? 'ko' : 'en'}>{words.language} ↗</a>}
-        {related.filter((item) => safeUrl(typeof item === 'string' ? item : item.href || item.url)).map((item, i) => <a key={i} href={safeUrl(typeof item === 'string' ? item : item.href || item.url)}>{typeof item === 'string' ? words.related : item.label || item.title || words.related} ↗</a>)}
-      </div>
-    </footer>
-    {notesOpen && <aside className="notes-panel" aria-label={words.notes}><div className="panel-title"><h2>{words.notes}</h2><button type="button" onClick={() => setNotesOpen(false)}>{words.close}</button></div>{slide.notes_html ? <RichText html={slide.notes_html} className="rich-text" /> : <p>{words.noNotes}</p>}</aside>}
-    {(tocOpen || reviewOpen) && <div className="overlay" onClick={() => { setTocOpen(false); setReviewOpen(false); }}><aside className="drawer" onClick={(event) => event.stopPropagation()} aria-label={reviewOpen ? words.review : words.contents}><div className="panel-title"><h2>{reviewOpen ? words.review : words.contents}</h2><button type="button" onClick={() => { setTocOpen(false); setReviewOpen(false); }}>{words.close}</button></div><ol>{slides.map((item, i) => <li key={item.id || i}><button type="button" aria-current={i === index ? 'page' : undefined} onClick={() => nav(i)}><span>{String(i + 1).padStart(2, '0')}</span><span><strong>{item.title}</strong>{(reviewOpen ? item.objective : item.section) && <small>{reviewOpen ? item.objective : item.section}</small>}</span></button></li>)}</ol></aside></div>}
+    rebuild();
+    const resize=()=>{clearTimeout(timer);timer=setTimeout(rebuild,100);};
+    window.addEventListener('resize',resize);window.visualViewport?.addEventListener('resize',resize);
+    const observer=new ResizeObserver(resize);observer.observe(document.documentElement);
+    document.fonts?.ready.then(rebuild);
+    return()=>{clearTimeout(timer);window.removeEventListener('resize',resize);window.visualViewport?.removeEventListener('resize',resize);observer.disconnect();};
+  },[mode]);
+  useEffect(()=>{
+    const restore=()=>{reading.current=locationState();const s=reading.current;if(s.mode!==mode){setMode(s.mode);return;}let n=pages.findIndex(p=>positionKey(p.slide)===s.unit&&(s.panel==='parameter'?p.parameter:!p.parameter&&p.part===s.part));if(n<0)n=pages.findIndex(p=>sectionKey(p.slide)===s.section);setIndex(Math.max(0,n));if(mode==='study')requestAnimationFrame(()=>{const target=shell.current.querySelector(`.study-unit[data-unit-id="${CSS.escape(s.unit||'')}"]`);target?.scrollIntoView({block:'start'});});};
+    window.addEventListener('popstate',restore);window.addEventListener('hashchange',restore);
+    return()=>{window.removeEventListener('popstate',restore);window.removeEventListener('hashchange',restore);};
+  },[pages,mode]);
+  useEffect(()=>{if(page&&page.mode===mode&&reading.current.mode===mode){document.title=`${slide.title} — Work Handbook`;writeLocation(page,true);}},[page]);
+  useEffect(()=>{
+    if(mode!=='study'||!page)return;
+    const target=shell.current.querySelector(`.study-unit[data-unit-id="${CSS.escape(reading.current.unit||'')}"]`);
+    if(target&&page.units?.[0]&&positionKey(page.units[0])!==reading.current.unit)target.scrollIntoView({block:'start'});
+    const update=()=>{
+      const units=[...shell.current.querySelectorAll('.study-unit')];
+      const current=units.find(el=>el.getBoundingClientRect().bottom>100);
+      if(!current)return;
+      reading.current={...reading.current,unit:current.dataset.unitId,mode};
+      history.replaceState(null,'',`#${new URLSearchParams(reading.current)}`);
+      const link=shell.current.querySelector('[data-language-link]');
+      if(link)link.hash=new URLSearchParams({section:reading.current.section,unit:reading.current.unit,mode}).toString();
+    };
+    window.addEventListener('scroll',update,{passive:true});
+    return()=>window.removeEventListener('scroll',update);
+  },[page,mode]);
+  const close=()=>{setDialog(null);requestAnimationFrame(()=>returnFocus.current?.focus());};
+  const open=(kind,event,preserve=false)=>{
+    if(!preserve){returnFocus.current=event.currentTarget;setDialogPage(0);setDialog(kind);}
+    const host=measure.current;
+    const viewportHeight=window.visualViewport?.height||innerHeight;
+    host.className='measure';
+    host.style.width=`${Math.min(760,shell.current.clientWidth-24)}px`;
+    const heading=kind==='toc'?words.contents:words.notes;
+    const fitsPanel=(content)=>{
+      // Measure the whole modal with the actual CSS, including enlarged controls,
+      // header, footer, borders, padding and flex gaps. No guessed chrome budget.
+      host.innerHTML=`<section class="dialog" style="max-height:none;width:100%"><header class="panel-title"><h2>${heading}</h2><button>${words.close}</button></header>${content}<nav class="dialog-pagination"><button>−</button><span>1 / 999</span><button>+</button></nav></section>`;
+      const panel=host.firstElementChild;
+      return panel.getBoundingClientRect().height<=viewportHeight-24 && panel.scrollWidth<=panel.clientWidth;
+    };
+    if(kind==='toc'){
+      const groups=[];let group=[];
+      const markup=items=>`<ol class="toc-list">${items.map(item=>`<li><button>${cleanHtml(item.slide.title)}</button></li>`).join('')}</ol>`;
+      for(const item of toc){
+        if(group.length&&!fitsPanel(markup([...group,item]))){groups.push(group);group=[];}
+        group.push(item);
+      }
+      if(group.length)groups.push(group);setTocPages(groups);if(preserve)setDialogPage(n=>Math.min(n,Math.max(0,groups.length-1)));
+    }
+    if(kind==='notes'){
+      const noteSlide=mode==='study'?(page.units?.find(unit=>positionKey(unit)===reading.current.unit)||slide):slide;
+      const queue=fragments(noteSlide.notes_html||`<p>${words.noNotes}</p>`,innerWidth<600),out=[];
+      while(queue.length){const h=queue.shift();if(!fitsPanel(`<div class="rich-text">${h}</div>`)){const pieces=splitFragment(h);if(pieces.length>1){queue.unshift(...pieces);continue;}out.push(pendingNotice());continue;}out.push(h);}
+      setNotePages(out);if(preserve)setDialogPage(n=>Math.min(n,Math.max(0,out.length-1)));
+    }
+    host.innerHTML='';host.className='measure rich-text';
+
+  };
+  useEffect(()=>{if(dialog)dialogRef.current?.querySelector('button')?.focus();},[dialog]);
+  useEffect(()=>{
+    if(!dialog)return;
+    let timer;
+    const repaginate=()=>{clearTimeout(timer);timer=setTimeout(()=>{
+      open(dialog,null,true);
+      requestAnimationFrame(()=>{if(!dialogRef.current?.contains(document.activeElement))dialogRef.current?.querySelector('button')?.focus();});
+    },160);};
+    window.addEventListener('resize',repaginate);window.visualViewport?.addEventListener('resize',repaginate);
+    return()=>{clearTimeout(timer);window.removeEventListener('resize',repaginate);window.visualViewport?.removeEventListener('resize',repaginate);};
+  },[dialog,slide]);
+  useEffect(()=>{
+    const key=(event)=>{
+      if(dialog){
+        if(event.key==='Escape'){event.preventDefault();close();}
+        if(event.key==='Tab'){
+          const items=[...dialogRef.current.querySelectorAll('button:not(:disabled),a[href],input')];const first=items[0],last=items.at(-1);
+          if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}
+          else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}
+        }return;
+      }
+      if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||event.isComposing||window.getSelection()?.toString()||event.target.closest?.('input,textarea,select,button,a,[contenteditable],.interaction'))return;
+      if(event.key==='ArrowRight'||(mode==='presentation'&&event.key==='PageDown')){event.preventDefault();nav(index+1);}
+      if(event.key==='ArrowLeft'||(mode==='presentation'&&event.key==='PageUp')){event.preventDefault();nav(index-1);}
+      if(mode==='presentation'&&event.key==='Home'){event.preventDefault();nav(0);}if(mode==='presentation'&&event.key==='End'){event.preventDefault();nav(pages.length-1);}
+    };window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);
+  },[dialog,index,pages,mode]);
+  const excluded=(target)=>target.closest('a,button,input,select,textarea,svg,pre,code,table,.interaction,[contenteditable],p,li,h1,h2,h3,h4,blockquote');
+  const down=(event)=>{pointer.current=!excluded(event.target)&&!window.getSelection()?.toString()&&event.button===0?{x:event.clientX,y:event.clientY,id:event.pointerId,scroll:window.scrollY}:null;};
+  const up=(event)=>{const start=pointer.current;pointer.current=null;if(!start||Math.abs(window.scrollY-start.scroll)>2||start.id!==event.pointerId||excluded(event.target)||Math.hypot(start.x-event.clientX,start.y-event.clientY)>6||window.getSelection()?.toString())return;const rect=event.currentTarget.getBoundingClientRect();nav(index+(event.clientX<rect.left+rect.width/2?-1:1));};
+  const toc=mode==='study'?pages.map((p,i)=>({slide:p.slide,index:i})):slides.map(s=>({slide:s,index:pages.findIndex(p=>p.slide===s)}));
+  const count=dialog==='notes'?notePages.length:tocPages.length;
+  const alternate=safeUrl(deck.alternate_url);
+  const alternateHash=slide?new URLSearchParams({section:sectionKey(slide),unit:reading.current.unit||positionKey(slide),panel:page?.parameter?'parameter':'content',mode}).toString():'';
+  return <div className={`app-shell ${mode}-mode`} data-view-mode={mode} ref={shell}>
+    <div className="measure rich-text" ref={measure} aria-hidden="true" />
+    <div className="viewer" inert={dialog?'':undefined} aria-hidden={dialog?true:undefined}>
+      <header className="app-header"><a href={safeUrl(deck.source_url)||'#'} aria-label={words.source}>Work Handbook</a><div className="header-controls"><button data-mode-toggle onClick={changeMode}>{mode==='study'?(english?'Present':'발표 모드'):(english?'Study':'학습 모드')}</button><button onClick={e=>open('toc',e)} aria-haspopup="dialog">{words.contents}</button></div></header>
+      <main className="presentation-main" onPointerDown={down} onPointerUp={up} onPointerCancel={()=>{pointer.current=null;}}>
+        {page&&<section className="slide-card" data-unit-id={positionKey(slide)} data-section-id={sectionKey(slide)} data-part={page.part} data-layout-status={page.pending?'pending':'rendered'} aria-label={slide.title}>
+          <h1>{slide.title}</h1>
+          {mode==='study'?<div className="study-units">{page.units?.map((unit,i)=><article className="study-unit" key={positionKey(unit)} data-unit-id={positionKey(unit)} data-section-id={sectionKey(unit)}>
+            {i>0&&unit.title!==slide.title&&<h2>{unit.title}</h2>}
+            <RichText className="rich-text" html={studyHtml(unit)}/>
+            {unit.interaction?.type==='parameter'&&<Parameter data={{...unit.interaction.data,model_note:unit.interaction.model_note}}/>}
+          </article>)}</div>:<div className="slide-content"><RichText className="rich-text" html={page.html}/>{page.parameter&&<Parameter data={{...slide.interaction.data,model_note:slide.interaction.model_note}}/>}</div>}
+        </section>}
+      </main>
+      <footer className="app-footer"><div className="footer-row"><span aria-live="polite">{index+1} / {pages.length}</span><button onClick={e=>open('notes',e)}>{words.notes}</button><a data-source-link href={safeUrl(slide?.source?.url)||`${safeUrl(deck.source_url)||''}${slide?.source?.anchor?'#'+slide.source.anchor:''}`}>{words.source}</a>{alternate&&<a data-language-link href={`${alternate.split('#')[0]}#${alternateHash}`}>{words.language}</a>}</div><small>{words.hint}</small></footer>
+      <nav className="assistive-navigation" aria-label={english?'Slide navigation':'슬라이드 이동'}><button disabled={index===0} onClick={()=>nav(index-1)}>{words.previous}</button><button disabled={index===pages.length-1} onClick={()=>nav(index+1)}>{words.next}</button></nav>
+    </div>
+    {dialog&&<div className="overlay"><section className="dialog" ref={dialogRef} role="dialog" aria-modal="true" aria-label={dialog==='toc'?words.contents:words.notes}>
+      <header className="panel-title"><h2>{dialog==='toc'?words.contents:words.notes}</h2><button onClick={close}>{words.close}</button></header>
+      {dialog==='toc'?<ol className="toc-list" start={1+tocPages.slice(0,dialogPage).reduce((n,items)=>n+items.length,0)}>{(tocPages[dialogPage]||[]).map(item=><li key={positionKey(item.slide)}><button aria-current={item.slide===slide?'page':undefined} onClick={()=>{nav(item.index);close();}}>{item.slide.title}</button></li>)}</ol>:<RichText className="rich-text" html={notePages[dialogPage]}/>}
+      <nav className="dialog-pagination" aria-label={english?'Panel pages':'패널 페이지'}><button aria-label={english?'Previous panel page':'이전 패널 페이지'} disabled={dialogPage===0} onClick={()=>setDialogPage(n=>n-1)}>−</button><span>{dialogPage+1} / {count}</span><button aria-label={english?'Next panel page':'다음 패널 페이지'} disabled={dialogPage>=count-1} onClick={()=>setDialogPage(n=>n+1)}>+</button></nav>
+    </section></div>}
   </div>;
 }
-
-createRoot(document.getElementById('root')).render(<App />);
+createRoot(document.getElementById('root')).render(<App/>);

@@ -22,15 +22,19 @@ from bs4 import BeautifulSoup
 import yaml
 
 
-ENGINE_VERSION = '1'
-SUPPORTED_INTERACTIONS = {'none', 'steps', 'architecture', 'comparison', 'scenario',
-                          'reveal', 'quiz', 'flashcard', 'practice', 'parameter'}
+try:
+    from scripts.slide_explanations import reviewed_design
+except ModuleNotFoundError:
+    from slide_explanations import reviewed_design
+
+
+ENGINE_VERSION = '2'
+SUPPORTED_INTERACTIONS = {'none', 'parameter'}
 INTERACTION_PLUGINS = []
 PLUGIN_FILES = []
 HEADING = re.compile(r'^(#{1,6})\s+(.+?)\s*#*\s*$')
 LINK = re.compile(r'(?<!!)\[([^]]+)\]\(([^)]+)\)')
 FENCE = re.compile(r'^\s*(`{3,}|~{3,})')
-SENTENCE = re.compile(r'(?<=[.!?。])\s+|\n+')
 
 
 @dataclass(frozen=True)
@@ -136,8 +140,17 @@ def _slide_url(rel: Path, lang: str) -> str:
 
 def _safe_markdown(source: str, page: Page | None = None) -> str:
     # Canonical Markdown is public but never allowed to inject active HTML in slides.
-    rendered = markdown.markdown(source, extensions=['fenced_code', 'tables', 'attr_list', 'admonition'])
+    rendered = markdown.markdown(source, extensions=[
+        'tables', 'attr_list', 'admonition', 'pymdownx.superfences', 'pymdownx.tabbed'])
     soup = BeautifulSoup(rendered, 'html.parser')
+    # Tabs become labeled static sections: no hidden language, quiz controls or
+    # mandatory selection. Superfences parses indented prompt fences correctly.
+    for control in soup.select('.tabbed-set > input'):
+        control.decompose()
+    for label in soup.select('.tabbed-set > label'):
+        label.name = 'h4'
+    for wrapper in list(soup.select('.tabbed-content, .tabbed-set, .highlight')):
+        wrapper.unwrap()
     for tag in list(soup.find_all(['script', 'iframe', 'object', 'embed', 'style', 'form'])):
         tag.decompose()
     for tag in soup.find_all(True):
@@ -163,7 +176,7 @@ def _safe_markdown(source: str, page: Page | None = None) -> str:
 def _sections(body: str, offset: int):
     """Keep every source line in one section; fenced headings are data."""
     sections = []
-    current = {'heading': '', 'lines': [], 'line_start': offset}
+    current = {'heading': '', 'anchor': '', 'lines': [], 'line_start': offset}
     fence = None
     for number, line in enumerate(body.splitlines(), offset):
         fm = FENCE.match(line)
@@ -178,6 +191,7 @@ def _sections(body: str, offset: int):
                 current['line_end'] = number - 1
                 sections.append(current)
             current = {'heading': re.sub(r'\s*\{#[^}]+\}\s*$', '', match[2]).strip(),
+                       'anchor': (re.search(r'\{#([^}]+)\}', match[2]).group(1) if re.search(r'\{#([^}]+)\}', match[2]) else ''),
                        'lines': [line], 'line_start': number}
         else:
             current['lines'].append(line)
@@ -187,38 +201,36 @@ def _sections(body: str, offset: int):
     return sections
 
 
-def _chunks(section):
-    lines = section['lines']
-    start = section['line_start']
-    # Break at blank lines, keeping fenced examples together and every line mapped.
-    blocks, active, fence, block_start = [], [], None, start
-    for index, line in enumerate(lines):
-        fm = FENCE.match(line)
-        if fm:
-            if fence is None:
-                fence = fm[1][0]
-            elif fence == fm[1][0]:
-                fence = None
-        if not line.strip() and fence is None and active:
-            blocks.append((block_start, start + index - 1, '\n'.join(active)))
-            active = []
-        else:
-            if not active:
-                block_start = start + index
-            active.append(line)
-    if active:
-        blocks.append((block_start, start + len(lines) - 1, '\n'.join(active)))
-    chunks, group = [], []
-    for block in blocks:
-        lead_only = group and all(HEADING.match(x[2].strip()) or x[2].strip().startswith('<!--')
-                                  for x in group)
-        if group and not lead_only and sum(len(x[2]) for x in group) + len(block[2]) > 1100:
-            chunks.append(group)
-            group = []
-        group.append(block)
-    if group:
-        chunks.append(group)
-    return chunks
+def source_anchors(body, sections):
+    """Resolve anchors with canonical Markdown TOC semantics, including suffixes."""
+    rendered = markdown.markdown(body, extensions=[
+        'admonition', 'tables', 'attr_list', 'toc', 'pymdownx.highlight',
+        'pymdownx.inlinehilite', 'pymdownx.tabbed', 'pymdownx.superfences'])
+    headings = BeautifulSoup(rendered, 'html.parser').find_all(re.compile(r'^h[1-6]$'))
+    expected = [section for section in sections if section['heading']]
+    if len(headings) != len(expected):
+        raise ValueError('source heading parser disagrees with canonical Markdown TOC')
+    anchors = iter(tag.get('id', '') for tag in headings)
+    return [next(anchors) if section['heading'] else '' for section in sections]
+
+
+def section_keys(sections):
+    """Locate a source section by heading ancestry, independently per language."""
+    stack, occurrences, keys = [], Counter(), []
+    for section in sections:
+        first = section['lines'][0] if section['lines'] else ''
+        match = HEADING.match(first)
+        depth = len(match[1]) if match else 0
+        while stack and stack[-1][0] >= depth:
+            stack.pop()
+        stack.append((depth, section['heading']))
+        path = json.dumps(stack, ensure_ascii=False)
+        occurrences[path] += 1
+        # Repeated same-named siblings are distinguished in the source registry,
+        # never by a rendered slide index.
+        key = hashlib.sha256((path + ':' + str(occurrences[path])).encode()).hexdigest()[:20]
+        keys.append(key)
+    return keys
 
 
 def _plain(raw: str) -> str:
@@ -227,30 +239,6 @@ def _plain(raw: str) -> str:
     text = re.sub(r'!?\[([^]]+)\]\([^)]+\)', r'\1', text)
     text = re.sub(r'(?m)^\s*(?:#{1,6}\s+|[-+*]\s+|\d+[.)]\s+|>\s*)', '', text)
     return re.sub(r'[`*_{}]', '', text).strip()
-
-
-def _items(raw: str) -> list[dict]:
-    found = []
-    for line in raw.splitlines():
-        match = re.match(r'^\s*(?:[-+*]|\d+[.)])\s+(.+)', line)
-        if match:
-            label = _plain(match[1])
-            if label:
-                found.append({'label': label[:160], 'detail': label})
-    return found[:16]
-
-
-def _table_items(raw: str) -> list[dict]:
-    rows = []
-    for line in raw.splitlines():
-        if line.strip().startswith('|'):
-            cells = [x.strip() for x in line.strip().strip('|').split('|')]
-            if cells and not all(re.fullmatch(r':?-{2,}:?', x) for x in cells):
-                rows.append(cells)
-    if len(rows) < 3:
-        return []
-    return [{'label': _plain(row[0])[:160], 'detail': _plain(' · '.join(row[1:]))}
-            for row in rows[1:17] if len(row) > 1]
 
 
 def register_interaction(name, matches, create, priority=0):
@@ -296,77 +284,7 @@ def _interaction(raw: str, heading: str, language: str) -> dict:
                 'model_note': ('원문의 최소·최대·필터 값만 사용한 범위 판정입니다. 실제 Reader는 통계 존재와 설정에 따라 다릅니다.'
                                if language == 'ko' else
                                'This checks only the source min/max and filter. A real reader depends on available statistics and configuration.')}
-    prompt = re.search(r'(?ms)^\s*```[^\n]*\.prompt[^\n]*\n(.*?)^\s*```', raw)
-    if prompt:
-        guidance = _plain(raw[prompt.end():])
-        return {'type': 'practice', 'data': {'prompt': prompt[1].strip(), 'guidance': guidance},
-                'model_note': '원문의 예시 요청을 수정해 연습합니다. 외부 서비스에 전송하지 않습니다.' if language == 'ko' else
-                'Edit the source example locally. It is not sent to a service.'}
-    quote_lines = [re.sub(r'^\s*>\s?', '', line).strip() for line in raw.splitlines()
-                   if re.match(r'^\s*>\s*\S', line)]
-    if quote_lines and (len(quote_lines) >= 2 or re.search(r'\*\*[^*]+\*\*', raw)):
-        detail = ' / '.join(quote_lines[:4])
-        return {'type': 'flashcard', 'data': {'items': [{'label': heading, 'detail': detail}]},
-                'model_note': '원문 인용 예문을 앞뒤로 확인합니다.' if language == 'ko' else
-                'Flip to reveal the source example.'}
-    table = _table_items(raw)
-    bullets = _items(raw)
-    lower = (raw + ' ' + heading).lower()
-    if table:
-        return {'type': 'comparison', 'data': {'items': table},
-                'model_note': '원문 표의 행을 선택해 확인합니다.' if language == 'ko' else 'Explore rows from the source table.'}
-    if len(bullets) >= 2:
-        terms = ('failure', 'recover', '장애', '복구', '오류', 'incident')
-        typ = 'scenario' if any(word in lower for word in terms) else 'steps'
-        return {'type': typ, 'data': {'items': bullets},
-                'model_note': '원문 항목의 순서를 탐색합니다. 실제 시스템 실행은 아닙니다.' if language == 'ko' else
-                'Explore the source item order. This does not execute a real system.'}
-    diagram = re.search(r'(?ms)^\s*```(?:text|mermaid)?[^\n]*\n(.*?)^\s*```', raw)
-    diagram_text = diagram[1] if diagram and re.search(r'[→│▼↓]|-->|flowchart|graph ', diagram[1]) else ''
-    if diagram_text:
-        lines = []
-        for line in diagram_text.splitlines():
-            cleaned = re.sub(r'[│─┌┐└┘┬┴├┤┼▼↓→]+', ' ', line)
-            cleaned = _plain(cleaned)
-            if cleaned and len(cleaned) <= 80 and cleaned.lower() not in ('예:', 'example:', '대표:') and cleaned not in lines:
-                lines.append(cleaned)
-        lines = lines[:14]
-        if len(lines) >= 2:
-            prose = raw.replace(diagram[0], '') if diagram else ''
-            sentences = [s.strip() for s in SENTENCE.split(_plain(prose)) if s.strip()]
-            linear = bool(re.search(r'[→▼↓]', diagram_text)) and not bool(re.search(r'[┬┴├┤┼]', diagram_text))
-            items = []
-            for index, label in enumerate(lines):
-                explained = next((sentence for sentence in sentences
-                                  if label.casefold() in sentence.casefold() and len(sentence) > len(label) + 10), '')
-                if explained:
-                    detail = explained
-                elif linear:
-                    neighbors = lines[max(0, index - 1): min(len(lines), index + 2)]
-                    detail = ('원문 흐름: ' if language == 'ko' else 'Source flow: ') + ' → '.join(neighbors)
-                else:
-                    detail = ('원문 도식 요소: ' if language == 'ko' else 'Source diagram element: ') + label
-                items.append({'label': label, 'detail': detail})
-            return {'type': 'architecture', 'data': {'items': items},
-                    'model_note': '원문 도식과 설명의 연결만 보여줍니다. 실제 시스템을 실행하지 않습니다.' if language == 'ko' else
-                    'This explores the source diagram and prose. It does not run a real system.'}
     return {'type': 'none', 'data': {}, 'model_note': ''}
-
-
-def _visible_content(content: str, interaction_type: str) -> str:
-    """Keep a short setup visible; complete source stays in expandable notes."""
-    if interaction_type == 'none':
-        return content
-    if interaction_type == 'quiz':
-        return ''
-    setup = []
-    for line in content.splitlines():
-        if re.match(r'^\s*(?:```|~~~|\||>|===|[-+*]\s|\d+[.)]\s|예\s*:|Example\s*:)', line, re.I):
-            break
-        setup.append(line)
-    paragraphs = '\n'.join(setup).strip().split('\n\n')
-    visible = '\n\n'.join(paragraphs[:2]).strip()
-    return visible if len(visible) <= 500 else paragraphs[0][:500]
 
 
 def build_schema(root: Path, page: Page) -> dict:
@@ -378,64 +296,58 @@ def build_schema(root: Path, page: Page) -> dict:
     sections = _sections(body, offset)
     slides = []
     mapped = set()
+    registry_path = Path(__file__).with_name('slide_sections.json')
+    registry = json.loads(registry_path.read_text()) if registry_path.is_file() else {}
+    section_registry = registry.get(page.document_id, {}).get(page.language, {})
+    source_keys = section_keys(sections)
+    source_anchor_ids = source_anchors(body, sections)
     for section_index, section in enumerate(sections):
         heading = section['heading'] or page.title
-        for chunk_index, blocks in enumerate(_chunks(section)):
-            content = '\n\n'.join(x[2] for x in blocks)
-            content = re.sub(r'(?m)^\s*<!--[^\n]*-->\s*\n?', '', content)
-            content = re.sub(r'^#{1,6}\s+[^\n]*\n?', '', content)
-            plain = _plain(content)
-            if not plain:
-                continue
-            short = plain[:240].strip()
+        content = '\n'.join(section['lines'])
+        content = re.sub(r'(?m)^\s*<!--[^\n]*-->\s*\n?', '', content)
+        content = re.sub(r'^#{1,6}\s+[^\n]*\n?', '', content).strip()
+        if not _plain(content):
+            continue
+        anchor = section.get('anchor', '')
+        design = reviewed_design(page.document_id, heading, anchor, page.language, content, full_source=raw)
+        registered_id = section_registry.get(source_keys[section_index])
+        section_id = anchor or registered_id or 'unpaired-' + source_keys[section_index]
+        if design:
+            section_id = design['id']
+            units = design['units']
+        else:
+            units = [{'key': 'source', 'title': heading, 'body': content}]
+        for unit in units:
+            visible = unit['body']
+            interaction = _interaction(content, heading, page.language) if not design else {'type': 'none', 'data': {}, 'model_note': ''}
+            unit_id = section_id + ':' + unit['key']
+            body_html = _safe_markdown(visible, page)
+            soup = BeautifulSoup(body_html, 'html.parser')
             refs = [{'label': label, 'href': href} for label, href in LINK.findall(content)
                     if not href.lower().startswith(('javascript:', 'data:'))]
-            interaction = _interaction(content, heading, page.language)
-            visible = _visible_content(content, interaction['type'])
-            objective = (f'{heading}의 핵심을 설명하고 원문 근거를 확인한다' if page.language == 'ko' else
-                         f'Explain the key idea in {heading} using source evidence')
             slides.append({
-                'id': f'{section_index + 1}-{chunk_index + 1}', 'title': heading,
-                'section': heading, 'objective': objective,
-                'concepts': [{'term': heading, 'explanation': short}],
-                'visualization': interaction['type'], 'interaction': interaction,
+                'id': unit_id, 'unit_id': unit_id, 'section_id': section_id,
+                'title': unit['title'], 'section': heading, 'objective': '',
+                'position_mapping': 'paired' if design or anchor or registered_id else 'unpaired',
+                'concepts': [], 'visualization': interaction['type'], 'interaction': interaction,
                 'parameters': interaction['data'], 'example_data': interaction['data'],
-                'validation_rules': {'source_grounded': True, 'model_note': interaction['model_note']},
-                'body_html': _safe_markdown(visible, page), 'notes_html': _safe_markdown(content, page),
+                'design': {'status': 'reviewed' if design else 'static-source',
+                           'rationale': design['rationale'] if design else 'Unreviewed explanation design: preserve static source structure.',
+                           'assumptions': design['assumptions'] if design else '',
+                           'interaction_benefit': ('Changing the predicate shows why min/max can exclude a range, but cannot prove a match.' if interaction['type'] == 'parameter' else '')},
+                'validation_rules': {'model_note': interaction['model_note'],
+                                     'visible_semantic_review': bool(design),
+                                     'source_traceability_is_not_quality': True},
+                'body_html': body_html,
+                'content_blocks': [str(node) for node in soup.children if str(node).strip()],
+                'notes_html': _safe_markdown(interaction['model_note'] or ('원문 링크에서 전체 문맥을 확인할 수 있습니다.' if page.language == 'ko' else 'The source link provides the full document context.'), page),
                 'source': {'path': f'docs/{page.language}/{page.relative_path.as_posix()}',
-                           'heading': heading, 'line_start': blocks[0][0], 'line_end': blocks[-1][1]},
+                           'heading': heading, 'anchor': source_anchor_ids[section_index],
+                           'url': _source_path(page.relative_path, page.language) + ('#' + source_anchor_ids[section_index] if source_anchor_ids[section_index] else ''),
+                           'line_start': section['line_start'], 'line_end': section['line_end']},
                 'references': refs,
             })
-            mapped.update(range(blocks[0][0], blocks[-1][1] + 1))
-            if interaction['type'] == 'comparison' and len(interaction['data']['items']) >= 3:
-                rows = interaction['data']['items'][:4]
-                if len({row['detail'] for row in rows}) >= 3:
-                    first = rows[0]
-                    alternatives = [row['detail'] for row in rows[1:3]]
-                    position = int(hashlib.sha256((page.document_id + heading).encode()).hexdigest(), 16) % 3
-                    options = alternatives.copy()
-                    options.insert(position, first['detail'])
-                    question = (f"원문 표에서 '{first['label']}'에 해당하는 설명은?" if page.language == 'ko' else
-                                f"Which source-table description matches '{first['label']}'?")
-                    slides.append({
-                        'id': f'{section_index + 1}-{chunk_index + 1}-quiz',
-                        'title': heading, 'section': heading,
-                        'objective': (f'{heading}의 표를 확인하고 선택 근거를 설명한다' if page.language == 'ko' else
-                                      f'Apply the source table in {heading}'),
-                        'concepts': [{'term': first['label'], 'explanation': first['detail']}],
-                        'visualization': 'quiz',
-                        'interaction': {'type': 'quiz', 'data': {'question': question,
-                                         'options': options, 'correctIndex': position,
-                                         'explanation': first['detail']},
-                                        'model_note': '정답은 원문 표의 해당 행입니다.' if page.language == 'ko' else
-                                        'The answer is the matching source-table row.'},
-                        'parameters': {}, 'example_data': rows,
-                        'validation_rules': {'source_grounded': True, 'correct_index': position},
-                        'body_html': '', 'notes_html': _safe_markdown(content, page),
-                        'source': {'path': f'docs/{page.language}/{page.relative_path.as_posix()}',
-                                   'heading': heading, 'line_start': blocks[0][0], 'line_end': blocks[-1][1]},
-                        'references': refs,
-                    })
+        mapped.update(range(section['line_start'], section['line_end'] + 1))
     if not slides:
         raise ValueError(f'no slide content: {path}')
     source_lines = {offset + index for index, line in enumerate(body.splitlines())
@@ -486,7 +398,7 @@ def validate_schema(schema: dict):
             raise ValueError('duplicate or empty slide id')
         ids.add(slide_id)
         source = slide.get('source') or {}
-        if (not slide.get('objective') or not slide.get('notes_html') or
+        if (not slide.get('body_html') or not slide.get('section_id') or
                 source.get('path') != schema['source_path'] or
                 not isinstance(source.get('line_start'), int) or
                 not isinstance(source.get('line_end'), int) or
@@ -499,12 +411,6 @@ def validate_schema(schema: dict):
             raise ValueError(f'unsupported interaction: {slide_id}')
         if activity_type != 'none' and not activity.get('model_note'):
             raise ValueError(f'missing interaction boundary: {slide_id}')
-        if activity_type == 'quiz':
-            options = data.get('options')
-            correct = data.get('correctIndex')
-            if (not isinstance(options, list) or len(options) < 2 or
-                    not isinstance(correct, int) or not 0 <= correct < len(options)):
-                raise ValueError(f'invalid quiz: {slide_id}')
         if activity_type == 'parameter':
             minimum, maximum = data.get('minimum'), data.get('maximum')
             if (not isinstance(minimum, (int, float)) or not isinstance(maximum, (int, float))
@@ -555,6 +461,8 @@ def build(root: Path, output: Path, bundle: Path, selection: str | None = None,
     css_path = bundle.with_suffix('.css')
     css = css_path.read_text(encoding='utf-8') if css_path.is_file() else ''
     engine_hash = hashlib.sha256(Path(__file__).read_bytes() +
+                                 Path(__file__).with_name('slide_explanations.py').read_bytes() +
+                                 Path(__file__).with_name('slide_sections.json').read_bytes() +
                                  b''.join(path.read_bytes() for path in PLUGIN_FILES)).hexdigest()
     renderer_hash = hashlib.sha256((js + css + engine_hash + ENGINE_VERSION).encode()).hexdigest()
     manifest_path = output / 'manifest.json'
