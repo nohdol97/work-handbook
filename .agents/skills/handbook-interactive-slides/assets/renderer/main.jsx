@@ -6,9 +6,9 @@ const deck = window.__HANDBOOK_SLIDES__ || {};
 const slides = Array.isArray(deck.slides) ? deck.slides : [];
 const english = String(deck.language || '').toLowerCase().startsWith('en');
 const words = english ? {
- previous:'Previous slide',next:'Next slide',contents:'Contents',notes:'Notes',source:'Source',language:'한국어',close:'Close',reset:'Reset',threshold:'Threshold',bounds:'Available range',mayMatch:'May match',canSkip:'Can skip',enterNumber:'Enter a number',invalidParameter:'Parameter unavailable',possibleReason:'The range allows a matching value; this does not prove a record exists.',skipReason:'No value in this range satisfies the condition.',hint:'Tap left / right margins · Arrow keys',noNotes:'Supplementary notes are not available.',
+ previous:'Previous slide',next:'Next slide',contents:'Contents',notes:'Notes',source:'Source',language:'한국어',close:'Close',reset:'Reset',threshold:'Threshold',bounds:'Available range',mayMatch:'May match',canSkip:'Can skip',enterNumber:'Enter a number',invalidParameter:'Parameter unavailable',possibleReason:'The range allows a matching value; this does not prove a record exists.',skipReason:'No value in this range satisfies the condition.',hint:'Swipe ↔ · Tap margins · ← →',noNotes:'Supplementary notes are not available.',
 } : {
- previous:'이전 슬라이드',next:'다음 슬라이드',contents:'목차',notes:'보충 노트',source:'원문',language:'English',close:'닫기',reset:'초기화',threshold:'기준값',bounds:'값의 범위',mayMatch:'읽을 가능성',canSkip:'건너뛰기',enterNumber:'숫자를 입력하세요',invalidParameter:'매개변수 없음',possibleReason:'범위에 조건을 만족하는 값이 있을 수 있지만, 실제 데이터 존재 여부는 알 수 없습니다.',skipReason:'범위 안의 어떤 값도 이 조건을 만족할 수 없습니다.',hint:'왼쪽 / 오른쪽 여백 터치 · 방향키',noNotes:'별도 보충 노트가 없습니다.',
+ previous:'이전 슬라이드',next:'다음 슬라이드',contents:'목차',notes:'보충 노트',source:'원문',language:'English',close:'닫기',reset:'초기화',threshold:'기준값',bounds:'값의 범위',mayMatch:'읽을 가능성',canSkip:'건너뛰기',enterNumber:'숫자를 입력하세요',invalidParameter:'매개변수 없음',possibleReason:'범위에 조건을 만족하는 값이 있을 수 있지만, 실제 데이터 존재 여부는 알 수 없습니다.',skipReason:'범위 안의 어떤 값도 이 조건을 만족할 수 없습니다.',hint:'좌우 스와이프 · 여백 터치 · ← →',noNotes:'별도 보충 노트가 없습니다.',
 };
 
 function safeUrl(value) {
@@ -373,9 +373,38 @@ function App() {
       if(mode==='presentation'&&event.key==='Home'){event.preventDefault();nav(0);}if(mode==='presentation'&&event.key==='End'){event.preventDefault();nav(pages.length-1);}
     };window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);
   },[dialog,index,pages,mode]);
-  const excluded=(target)=>target.closest('a,button,input,select,textarea,svg,pre,code,table,.interaction,[contenteditable],p,li,h1,h2,h3,h4,blockquote');
-  const down=(event)=>{pointer.current=!excluded(event.target)&&!window.getSelection()?.toString()&&event.button===0?{x:event.clientX,y:event.clientY,id:event.pointerId,scroll:window.scrollY}:null;};
-  const up=(event)=>{const start=pointer.current;pointer.current=null;if(!start||Math.abs(window.scrollY-start.scroll)>2||start.id!==event.pointerId||excluded(event.target)||Math.hypot(start.x-event.clientX,start.y-event.clientY)>6||window.getSelection()?.toString())return;const rect=event.currentTarget.getBoundingClientRect();nav(index+(event.clientX<rect.left+rect.width/2?-1:1));};
+  const controls='a,button,input,select,textarea,svg,pre,code,table,.interaction,[contenteditable]';
+  const excluded=(target)=>target.closest(`${controls},p,li,h1,h2,h3,h4,blockquote`);
+  useEffect(()=>{
+    // A second finger anywhere on the page invalidates the complete gesture.
+    const cancelMulti=event=>{if(event.pointerType==='touch'&&!event.isPrimary)pointer.current=null;};
+    window.addEventListener('pointerdown',cancelMulti,true);
+    return()=>window.removeEventListener('pointerdown',cancelMulti,true);
+  },[]);
+  const down=(event)=>{
+    const touch=event.pointerType==='touch';
+    pointer.current=event.button===0&&event.isPrimary&&!window.getSelection()?.toString()&&
+      !(touch?event.target.closest(controls):excluded(event.target))?
+      {x:event.clientX,y:event.clientY,id:event.pointerId,scroll:window.scrollY,time:performance.now(),touch,tap:!excluded(event.target)}:null;
+  };
+  const move=(event)=>{
+    const start=pointer.current;if(!start||start.id!==event.pointerId)return;
+    const dx=Math.abs(event.clientX-start.x),dy=Math.abs(event.clientY-start.y);
+    if(start.touch&&dy>10&&dy>dx)pointer.current=null;
+  };
+  const up=(event)=>{
+    const start=pointer.current;pointer.current=null;
+    if(!start||start.id!==event.pointerId||Math.abs(window.scrollY-start.scroll)>2||window.getSelection()?.toString())return;
+    const dx=event.clientX-start.x,dy=event.clientY-start.y;
+    // Touch implicit capture retains the start target; inspect the actual end point too.
+    const end=document.elementFromPoint(event.clientX,event.clientY);
+    if(!end||!event.currentTarget.contains(end))return;
+    if(start.touch&&Math.abs(dx)>=60&&Math.abs(dx)>=1.5*Math.abs(dy)&&performance.now()-start.time<=1000&&!end.closest(controls)){
+      nav(index+(dx<0?1:-1));return;
+    }
+    if(!start.tap||excluded(end)||Math.hypot(dx,dy)>6)return;
+    const rect=event.currentTarget.getBoundingClientRect();nav(index+(event.clientX<rect.left+rect.width/2?-1:1));
+  };
   const toc=mode==='study'?pages.map((p,i)=>({slide:p.slide,index:i})):slides.map(s=>({slide:s,index:pages.findIndex(p=>p.slide===s)}));
   const count=dialog==='notes'?notePages.length:tocPages.length;
   const alternate=safeUrl(deck.alternate_url);
@@ -384,7 +413,7 @@ function App() {
     <div className="measure rich-text" ref={measure} aria-hidden="true" />
     <div className="viewer" inert={dialog?'':undefined} aria-hidden={dialog?true:undefined}>
       <header className="app-header"><a href={safeUrl(deck.source_url)||'#'} aria-label={words.source}>Work Handbook</a><div className="header-controls"><button data-mode-toggle onClick={changeMode}>{mode==='study'?(english?'Present':'발표 모드'):(english?'Study':'학습 모드')}</button><button onClick={e=>open('toc',e)} aria-haspopup="dialog">{words.contents}</button></div></header>
-      <main className="presentation-main" onPointerDown={down} onPointerUp={up} onPointerCancel={()=>{pointer.current=null;}}>
+      <main className="presentation-main" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={()=>{pointer.current=null;}}>
         {page&&<section className="slide-card" data-unit-id={positionKey(slide)} data-section-id={sectionKey(slide)} data-part={page.part} data-layout-status={page.pending?'pending':'rendered'} aria-label={slide.title}>
           <h1>{slide.title}</h1>
           {mode==='study'?<div className="study-units">{page.units?.map((unit,i)=><article className="study-unit" key={positionKey(unit)} data-unit-id={positionKey(unit)} data-section-id={sectionKey(unit)}>

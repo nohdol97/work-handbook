@@ -107,3 +107,6 @@ h1 { font-size:clamp(1.25rem,2.7vw,2rem); line-height:1.25; margin:0 0 20px; fon
 .study-mode .rich-text pre code { font-size:1em; }
 /* Preserve source indentation while allowing whitespace runs to wrap. */
 .study-mode .rich-text pre { white-space:break-spaces; }
+
+/* Keep native vertical reading and pinch zoom; horizontal touch is slide navigation. */
+.presentation-main { touch-action: pan-y pinch-zoom; }

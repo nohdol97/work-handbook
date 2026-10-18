@@ -36,7 +36,7 @@
 | [009](specs/009-beginner-friendly-writing.md) | active | 기존 목차·핵심 지식 보존과 입문자 중심 설명·장별 요약 검토 |
 | [010](specs/010-requested-source-rewrite.md) | active | 명시 요청 구역의 본문 개정·범위 한정 등록·구조 및 의미 검토 |
 | [011](specs/011-integrated-study-pages.md) | active | 원문 절별 보완 통합·유연한 실무/AI 흐름·원래 형식 보존 |
-| [012](specs/012-interactive-learning-slides.md) | active | 공개 문서의 추적 가능한 인터랙티브 슬라이드 생성·게시·검증 |
+| [012](specs/012-interactive-learning-slides.md) | active | 공개 문서의 추적 가능한 인터랙티브 슬라이드 생성·게시·검증과 모바일 스와이프 |
 
 ## 제안서
 
