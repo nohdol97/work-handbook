@@ -1,0 +1,139 @@
+{
+  "date": "2026-10-18",
+  "user_request": "이해에 도움되는 자료들은 복원해",
+  "removed_by": "237b8df3415286a06c7ba543e8ce66579b24eb53",
+  "restored_from": "237b8df^",
+  "scope": "한영 10쌍, 언어별 Mermaid 12개·역할표 1개·Trace 구성 트리 1개",
+  "decisions": [
+    {
+      "page": "data-platform/event-architecture.md",
+      "restored": [
+        "2.6: Kafka에서 검색·서비스·lakehouse로 분기"
+      ],
+      "notes": "기존 본문 절 안에 추가하며 원래 번호·목차·text 도식·설명을 유지",
+      "hashes": {
+        "ko": "adc334267c456d52b69b4c75146a47f1a476aeaeab17155be40fc8ff198cd40f",
+        "en": "2322c6737d1f8590c7e32e63a8a6c94d30956dbe23e9be012b1f0583ae1bd52b"
+      }
+    },
+    {
+      "page": "data-platform/lakehouse-iceberg.md",
+      "restored": [
+        "3.1: 계층별 역할표",
+        "3.2: Catalog부터 data/delete file까지의 참조 구조"
+      ],
+      "notes": "기존 본문 절 안에 추가하며 원래 번호·목차·text 도식·설명을 유지; 기존 역할표 복원, Mermaid는 v2 범위와 data/delete manifest 분리를 명확히 수정. 작업 시작 전 추가 중이던 JSON·Avro 상세 예시는 보존.",
+      "hashes": {
+        "ko": "66725041a5a9fc45d6afe75067d669bd1d564d4804793ae2f178a63bb2b5e9c1",
+        "en": "a5aca7a8bec285faf87690f9b0a8bfd232449c4711803dea821cccdd8da890e5"
+      }
+    },
+    {
+      "page": "data-platform/analytical-modeling.md",
+      "restored": [
+        "9.4: fact와 dimension의 star schema"
+      ],
+      "notes": "기존 본문 절 안에 추가하며 원래 번호·목차·text 도식·설명을 유지",
+      "hashes": {
+        "ko": "cf5d45cc622fcd0c46000f51a5d03dff0704b6009c1dbbe377b84341e55c6842",
+        "en": "a6f634b8fbaafccccaca9733e4c8d48cb8188f9ec94a4210a3835a9cdbae77e2"
+      }
+    },
+    {
+      "page": "data-platform/trino.md",
+      "restored": [
+        "10.8: 저장 파일·metadata·Trino·BI 연결"
+      ],
+      "notes": "기존 본문 절 안에 추가하며 원래 번호·목차·text 도식·설명을 유지",
+      "hashes": {
+        "ko": "bd7413e66f8cde8cf032cab5884c3ccb64e7f321189e51b18e60f2b5a6e0fc16",
+        "en": "a4e7bca05f37de3107944f4db34905ca054642dedbf0a33422d3a6b13199088b"
+      }
+    },
+    {
+      "page": "data-platform/data-quality.md",
+      "restored": [
+        "11.3: 격리 후 수정·재처리·재검증 순환"
+      ],
+      "notes": "기존 본문 절 안에 추가하며 원래 번호·목차·text 도식·설명을 유지",
+      "hashes": {
+        "ko": "98eeee82d403036b3da9a0c52b7459956dc88c9df2451d9e6b6d5a8bdea208eb",
+        "en": "8b75efc5273466c50fdabd03634385167ad328a5e686427ac07e05ed899875a0"
+      }
+    },
+    {
+      "page": "data-platform/governance.md",
+      "restored": [
+        "14.4: 삭제 범위의 사본 경로"
+      ],
+      "notes": "기존 본문 절 안에 추가하며 원래 번호·목차·text 도식·설명을 유지",
+      "hashes": {
+        "ko": "bffb6c3fcbbcd3f0f70d031cd9c7a6c643313c573d277660323d3cdceac63a85",
+        "en": "03e162b049c4fd0e59f2aca311d516c751168e29f88dd8dbd509b6e668c1e68f"
+      }
+    },
+    {
+      "page": "data-platform/ai-evaluation.md",
+      "restored": [
+        "16.1: Langfuse Trace 구성 트리",
+        "16.2: 온라인·오프라인 평가 순환",
+        "16.11: Langfuse에서 분석 계층까지의 제안 경로"
+      ],
+      "notes": "기존 본문 절 안에 추가하며 원래 번호·목차·text 도식·설명을 유지",
+      "hashes": {
+        "ko": "fb7cadc6f48abdede0db64afbf2eeeb200ebdeb5a0102f2dbf4f17ed1cf82983",
+        "en": "1ae987400855f58f23c15c81c2e6c05c94f66d5ec4c12fad3095c827f6d5a50f"
+      }
+    },
+    {
+      "page": "data-platform/cdc-debezium.md",
+      "restored": [
+        "6.8: 이력 테이블·현재 상태 테이블 분기"
+      ],
+      "notes": "기존 본문 절 안에 추가하며 원래 번호·목차·text 도식·설명을 유지",
+      "hashes": {
+        "ko": "64ed291a2b970f992c67edc0d257eaf219e98eace481d5e13fee02b6553f97ef",
+        "en": "38e9b0c0b8c7ddaaac640c7aaa2369c77de043333d76cf4a0e0bddb1c5a3df32"
+      }
+    },
+    {
+      "page": "data-platform/lineage-metadata.md",
+      "restored": [
+        "13.2: 데이터셋 계보",
+        "13.4: 열 의존성"
+      ],
+      "notes": "기존 본문 절 안에 추가하며 원래 번호·목차·text 도식·설명을 유지",
+      "hashes": {
+        "ko": "eebcff69025137441602ef7b322853c81ee4541526fdc4239ba7aeef576a52e9",
+        "en": "b699237c6d715453027348137c76b2c0e40026a0ba70a574053b389c182eabc7"
+      }
+    },
+    {
+      "page": "data-platform/orchestration.md",
+      "restored": [
+        "7.1: 작업 의존성"
+      ],
+      "notes": "기존 본문 절 안에 추가하며 원래 번호·목차·text 도식·설명을 유지; 7.6 영어 연결문의 반대 권고를 원문 의미에 맞게 정정",
+      "hashes": {
+        "ko": "3dab54cd91aa12c7aedb6ec4bf4349416015d894cf634841fa4d4657ab46413b",
+        "en": "85364ecc7f7639b1979138adb859d0242da45674db10dbb8f7e6e85db932425d"
+      }
+    }
+  ],
+  "not_duplicated": {
+    "architecture": "삭제 표 49/49행이 현재 본문에 존재",
+    "databricks": "삭제 표 12/12행이 현재 본문에 존재",
+    "dbt": "삭제 표 7/7행이 현재 본문에 존재",
+    "production-operations": "표 28행 유지, 사고 사례 7개 설명은 20.3–20.9절에 이동되어 존재"
+  },
+  "feedback": "기존 스펙 011 R2와 ADR 013의 보존·본문 이동 의무를 재사용. 원문 보존 스킬에는 문장과 도식·표가 서로 보완하는 판단 예시를 보강한다. 문서 복원에는 동작 코드 변경이 없어 구조·원문·한영·렌더링 검증을 적용한다.",
+  "visual_review": {
+    "reviewer": "Codex /root/other_losses; Iceberg 모바일 화면은 /root 추가 확인",
+    "pages": 20,
+    "mermaid_svg": 24,
+    "page_errors": 0,
+    "representatives": "Iceberg·data-quality 한영 1280px·390px 스크린샷 8개",
+    "final_rebuild": "orchestration 7.6 영어 정정과 Iceberg 동일 주제 한→영 전환 확인",
+    "limits": "기존 이동식 언어 버튼은 특정 스크롤 위치에서 도식에 겹칠 수 있으나 도식 자체의 잘림·가로 overflow 없음"
+  }
+}

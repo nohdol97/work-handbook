@@ -139,6 +139,18 @@ Valid   Invalid
 Silver   Quarantine
 ```
 
+Quarantine is not the final step. After the cause is fixed, reprocessed data must pass the same validation before entering Silver.
+
+```mermaid
+flowchart TD
+    Incoming --> Validation
+    Validation -->|Valid| Silver
+    Validation -->|Invalid| Quarantine
+    Quarantine --> Repair[Fix the cause]
+    Repair --> Reprocess
+    Reprocess --> Validation
+```
+
 Keep information needed for investigation in quarantine:
 
 - Raw payload

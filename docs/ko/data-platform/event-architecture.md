@@ -355,6 +355,16 @@ Kafka
    └─→ Lakehouse / Iceberg
 ```
 
+분기 그림으로 보면 각 저장소가 같은 이벤트를 서로 다른 목적에 맞게 사용하는 관계가 드러난다. 화살표는 데이터 경로이며, 모든 목적지에 동시에 반영된다는 보장은 아니다.
+
+```mermaid
+flowchart TD
+    A[Application] --> K[Kafka]
+    K --> S[Search Store]
+    K --> O[Operational Serving Store]
+    K --> L[Lakehouse / Iceberg]
+```
+
 예를 들어 사용자 click event 하나가:
 
 - 실시간 Dashboard

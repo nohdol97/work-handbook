@@ -353,6 +353,16 @@ Kafka
    └─→ Lakehouse / Iceberg
 ```
 
+The branches show how each store uses the same event for a different purpose. Arrows show data paths; they do not guarantee simultaneous updates at every destination.
+
+```mermaid
+flowchart TD
+    A[Application] --> K[Kafka]
+    K --> S[Search Store]
+    K --> O[Operational Serving Store]
+    K --> L[Lakehouse / Iceberg]
+```
+
 For example, one user click event can support:
 
 - A real-time dashboard

@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### instead of {#idioms-instead-of}
 
-**52회 · 34개 문서 · 중립**
+**54회 · 35개 문서 · 중립**
 
 **~ 대신에**
 
@@ -46,7 +46,7 @@ knowledge_ids: []
 
 ### rather than {#idioms-rather-than}
 
-**34회 · 26개 문서 · 중립**
+**33회 · 26개 문서 · 중립**
 
 **~보다는, ~하지 않고**
 

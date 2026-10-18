@@ -131,6 +131,16 @@ dim_team — fact_llm_call — dim_model
               dim_date
 ```
 
+The links show how one call fact can be analyzed by agent, team, model, and date. They represent table relationships; actual join keys and history versions still need to be defined.
+
+```mermaid
+flowchart TD
+  A[dim_agent] --- F[fact_llm_call]
+  T[dim_team] --- F
+  M[dim_model] --- F
+  D[dim_date] --- F
+```
+
 Benefits:
 
 - Easy to understand.

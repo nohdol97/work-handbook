@@ -131,6 +131,16 @@ dim_team — fact_llm_call — dim_model
               dim_date
 ```
 
+선을 따라 보면 하나의 호출 fact를 agent·team·model·date 관점으로 분석하는 구조다. 선은 테이블 관계를 나타내며 실제 join key와 이력 버전은 따로 정해야 한다.
+
+```mermaid
+flowchart TD
+  A[dim_agent] --- F[fact_llm_call]
+  T[dim_team] --- F
+  M[dim_model] --- F
+  D[dim_date] --- F
+```
+
 장점:
 
 - 이해 쉬움

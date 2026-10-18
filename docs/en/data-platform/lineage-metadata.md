@@ -149,6 +149,16 @@ dbt
 mart_daily_users
 ```
 
+Follow the arrows to the right for derived outputs, or trace them back to the left for sources and transformations.
+
+```mermaid
+flowchart LR
+    Raw[raw_user_events] --> Spark[Spark Job]
+    Spark --> Silver[silver_user_events]
+    Silver --> Dbt[dbt]
+    Dbt --> Mart[mart_daily_users]
+```
+
 ### Upstream
 
 The source data and jobs that produced this dataset.
@@ -222,6 +232,14 @@ Uses:
 - Find the cause of KPI errors
 - Assess schema-change impact
 - Track sensitive data
+
+The diagram shows two source columns contributing to one output column. The arrows show dependencies; they do not define the calculation itself.
+
+```mermaid
+flowchart LR
+    Amount[raw_orders.amount] --> Net[silver_orders.net_amount]
+    Discount[raw_orders.discount] --> Net
+```
 
 ---
 

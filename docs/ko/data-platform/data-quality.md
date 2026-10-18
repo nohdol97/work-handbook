@@ -139,6 +139,18 @@ Valid   Invalid
 Silver   Quarantine
 ```
 
+격리는 끝 지점이 아니다. 원인을 수정하고 재처리한 데이터도 같은 검사를 다시 통과해야 Silver로 들어간다.
+
+```mermaid
+flowchart TD
+    Incoming --> Validation
+    Validation -->|Valid| Silver
+    Validation -->|Invalid| Quarantine
+    Quarantine --> Repair[Fix the cause]
+    Repair --> Reprocess
+    Reprocess --> Validation
+```
+
 격리 구역에는 조사에 필요한 정보를 남긴다:
 
 - Raw payload

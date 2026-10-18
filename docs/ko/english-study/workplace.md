@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### X depends on Y {#workplace-depends-on}
 
-**64회 · 29개 문서 · 중립**
+**65회 · 29개 문서 · 중립**
 
 **X는 Y에 따라 달라진다**
 

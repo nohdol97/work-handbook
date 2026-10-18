@@ -86,6 +86,17 @@ feedback
 어떤 Agent 릴리스에서 생성했는가?
 ```
 
+Langfuse에서는 한 실행의 trace에 다음 정보를 연결해 함께 살펴볼 수 있다. 낮은 점수에서 해당 prompt·호출·응답으로 거슬러 가는 개념도다.
+
+```text
+Langfuse Trace
+ ├─ Prompt
+ ├─ LLM Call
+ ├─ Tool Call
+ ├─ Response
+ └─ Score / Feedback
+```
+
 ### User Feedback
 
 가장 간단한 온라인 평가는 응답에 사용자의 반응을 붙이는 것이다:
@@ -266,6 +277,18 @@ Regression    = 70%
 범주를 나눠 보면 전체 평균에 가려진 회귀 실패를 찾기 쉽다.
 
 ### Online과 offline의 순환
+
+이 흐름은 릴리스 뒤 다시 운영 평가로 돌아오는 순환이다.
+
+```mermaid
+flowchart LR
+    P[Production] --> O[Online evaluation]
+    O --> F[Failure found]
+    F --> D[Offline regression dataset]
+    D --> E[Evaluate new version]
+    E --> R[Release]
+    R --> P
+```
 
 ```text
 Production
@@ -1122,6 +1145,19 @@ Object Storage
 Spark / dbt / Trino
         ↓
 BI / Cost / Evaluation Analytics
+```
+
+아래 그림은 분석까지 이어지는 제안 경로다. Object storage에서 Iceberg로 가는 화살표에는 별도의 수집·변환·commit 작업이 필요하다.
+
+```mermaid
+flowchart TD
+    A[Application or Agent] --> L[Langfuse]
+    L --> T[Trace / Observation / Score]
+    T --> E[Export or API]
+    E --> O[Object storage]
+    O --> I[Iceberg tables]
+    I --> C[Spark / dbt / Trino]
+    C --> B[BI / Cost / Evaluation analytics]
 ```
 
 ### Iceberg 모델링 예

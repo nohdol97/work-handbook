@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### check {#vocab-check}
 
-**670 occurrences · 74 documents · neutral**
+**671 occurrences · 74 documents · neutral**
 
 **확인하다; 점검**
 
@@ -30,7 +30,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### use {#vocab-use}
 
-**530 occurrences · 75 documents · neutral**
+**537 occurrences · 75 documents · neutral**
 
 **사용하다; 사용**
 
@@ -46,7 +46,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### change {#vocab-change}
 
-**410 occurrences · 66 documents · neutral**
+**412 occurrences · 66 documents · neutral**
 
 **변경하다; 변경 사항**
 
@@ -62,7 +62,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### separate {#vocab-separate}
 
-**243 occurrences · 65 documents · neutral**
+**250 occurrences · 65 documents · neutral**
 
 **분리하다; 별개의**
 
@@ -78,7 +78,7 @@ Example source pages: [ai-model-development/artifact-lineage](../ai-model-develo
 
 ### manage {#vocab-manage}
 
-**226 occurrences · 46 documents · neutral**
+**227 occurrences · 46 documents · neutral**
 
 **관리하다; 해내다**
 
@@ -94,7 +94,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### result {#vocab-result}
 
-**225 occurrences · 73 documents · neutral**
+**226 occurrences · 73 documents · neutral**
 
 **결과**
 
@@ -126,7 +126,7 @@ Example source pages: [ai-model-development/evaluation-promotion](../ai-model-de
 
 ### request {#vocab-request}
 
-**209 occurrences · 30 documents · neutral**
+**210 occurrences · 31 documents · neutral**
 
 **요청하다; 요청**
 
@@ -142,7 +142,7 @@ Example source pages: [ai-model-development/model-platform-collaboration](../ai-
 
 ### actual {#vocab-actual}
 
-**203 occurrences · 65 documents · neutral**
+**206 occurrences · 65 documents · neutral**
 
 **실제의**
 
@@ -208,7 +208,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### record {#vocab-record}
 
-**157 occurrences · 54 documents · neutral**
+**161 occurrences · 54 documents · neutral**
 
 **기록하다; 기록**
 
@@ -240,7 +240,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### require {#vocab-require}
 
-**145 occurrences · 53 documents · neutral**
+**146 occurrences · 53 documents · neutral**
 
 **필요로 하다; 요구하다**
 
@@ -256,7 +256,7 @@ Example source pages: [ai-model-development/evaluation-promotion](../ai-model-de
 
 ### compare {#vocab-compare}
 
-**128 occurrences · 48 documents · neutral**
+**129 occurrences · 48 documents · neutral**
 
 **비교하다**
 
@@ -304,7 +304,7 @@ Example source pages: [ai-model-development/adapter-compatibility](../ai-model-d
 
 ### scope {#vocab-scope}
 
-**95 occurrences · 45 documents · neutral**
+**96 occurrences · 45 documents · neutral**
 
 **범위**
 
@@ -402,7 +402,7 @@ Usage references: [1](https://www.collinsdictionary.com/us/dictionary/english/al
 
 ### available {#vocab-available}
 
-**43 occurrences · 25 documents · neutral**
+**44 occurrences · 26 documents · neutral**
 
 **이용 가능한; 시간이 되는**
 
@@ -530,7 +530,7 @@ Example source pages: [ai-model-development/training-datasets](../ai-model-devel
 
 ### consistent {#vocab-consistent}
 
-**23 occurrences · 15 documents · neutral**
+**24 occurrences · 15 documents · neutral**
 
 **일관된; 서로 모순되지 않는**
 
@@ -690,6 +690,22 @@ Counted forms: validate, validates, validated, validating.
 
 Example source pages: [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
 
+### determine {#vocab-determine}
+
+**14 occurrences · 13 documents · formal**
+
+**판단하다; 알아내다; 결정하다**
+
+Use determine for finding something out from evidence or deciding what the result will be. This sense of finding a fact is formal; find out is a conversational alternative.
+
+> We need the original logs to determine when the failure began.
+>
+> 실패가 시작된 시점을 알아내려면 원본 로그가 필요합니다.
+
+Counted forms: determine, determines, determined, determining.
+
+Example source pages: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/compute](../aws-cloud/compute.md).
+
 ### estimate {#vocab-estimate}
 
 **14 occurrences · 8 documents · neutral**
@@ -705,22 +721,6 @@ Use estimate for an informed approximation rather than an exact measurement. Exp
 Counted forms: estimate, estimates, estimated, estimating.
 
 Example source pages: [data-platform/lineage-metadata](../data-platform/lineage-metadata.md), [data-platform/production-operations](../data-platform/production-operations.md), [glossary/index](../glossary/index.md).
-
-### determine {#vocab-determine}
-
-**13 occurrences · 12 documents · formal**
-
-**판단하다; 알아내다; 결정하다**
-
-Use determine for finding something out from evidence or deciding what the result will be. This sense of finding a fact is formal; find out is a conversational alternative.
-
-> We need the original logs to determine when the failure began.
->
-> 실패가 시작된 시점을 알아내려면 원본 로그가 필요합니다.
-
-Counted forms: determine, determines, determined, determining.
-
-Example source pages: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/compute](../aws-cloud/compute.md).
 
 ### resolve {#vocab-resolve}
 

@@ -61,6 +61,16 @@ Quality Check
 Publish
 ```
 
+아래 화살표는 작업의 선행 관계다. 데이터를 옮기는 통로가 아니라 어느 단계 뒤에 다음 단계를 실행할지 보여 준다.
+
+```mermaid
+flowchart LR
+  E[Extract] --> S[Spark transform]
+  S --> D[dbt]
+  D --> Q[Quality check]
+  Q --> P[Publish]
+```
+
 Airflow는 데이터를 직접 대규모로 처리하기보다 다른 시스템을 지휘한다.
 
 Dependency는 task 간 선행 조건을 뜻하며, schedule은 실행 시점이나 주기를 정한다. 일시적 실패도 retry로 반드시 해결되는 것은 아니다. 무조건 append하면 retry 때 중복 행이 생길 수 있다.

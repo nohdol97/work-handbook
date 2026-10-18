@@ -333,6 +333,18 @@ Flink / Spark
 Iceberg
 ```
 
+The same change stream can feed separate history and current-state tables. The branches show their different purposes; each needs its own storage and change-application rules.
+
+```mermaid
+flowchart LR
+  P[PostgreSQL] --> W[WAL]
+  W --> D[Debezium]
+  D --> K[Kafka]
+  K --> C[Flink or Spark]
+  C --> H[Iceberg history]
+  C --> S[Iceberg current state]
+```
+
 ### History Table
 
 Store every change event.

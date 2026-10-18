@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### X depends on Y {#workplace-depends-on}
 
-**64 occurrences · 29 documents · neutral**
+**65 occurrences · 29 documents · neutral**
 
 **X는 Y에 따라 달라진다**
 

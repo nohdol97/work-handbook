@@ -332,6 +332,18 @@ Flink / Spark
 Iceberg
 ```
 
+같은 변경 스트림에서 전체 이력과 현재 상태를 별도 테이블로 만들 수 있다. 아래 분기는 두 테이블의 목적을 구분하며, 저장과 변경 적용 규칙은 각각 설계해야 한다.
+
+```mermaid
+flowchart LR
+  P[PostgreSQL] --> W[WAL]
+  W --> D[Debezium]
+  D --> K[Kafka]
+  K --> C[Flink or Spark]
+  C --> H[Iceberg history]
+  C --> S[Iceberg current state]
+```
+
 ### History Table
 
 모든 변경 Event를 저장.

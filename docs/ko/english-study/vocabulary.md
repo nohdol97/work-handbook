@@ -14,7 +14,7 @@ knowledge_ids: []
 
 ### check {#vocab-check}
 
-**670회 · 74개 문서 · 중립**
+**671회 · 74개 문서 · 중립**
 
 **확인하다; 점검**
 
@@ -30,7 +30,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### use {#vocab-use}
 
-**530회 · 75개 문서 · 중립**
+**537회 · 75개 문서 · 중립**
 
 **사용하다; 사용**
 
@@ -46,7 +46,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### change {#vocab-change}
 
-**410회 · 66개 문서 · 중립**
+**412회 · 66개 문서 · 중립**
 
 **변경하다; 변경 사항**
 
@@ -62,7 +62,7 @@ check the settings처럼 대상을 직접 쓰거나 check whether 뒤에 확인�
 
 ### separate {#vocab-separate}
 
-**243회 · 65개 문서 · 중립**
+**250회 · 65개 문서 · 중립**
 
 **분리하다; 별개의**
 
@@ -78,7 +78,7 @@ separate A from B로 분리 대상을 표현한다. 형용사로는 a separate t
 
 ### manage {#vocab-manage}
 
-**226회 · 46개 문서 · 중립**
+**227회 · 46개 문서 · 중립**
 
 **관리하다; 해내다**
 
@@ -94,7 +94,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### result {#vocab-result}
 
-**225회 · 73개 문서 · 중립**
+**226회 · 73개 문서 · 중립**
 
 **결과**
 
@@ -126,7 +126,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### request {#vocab-request}
 
-**209회 · 30개 문서 · 중립**
+**210회 · 31개 문서 · 중립**
 
 **요청하다; 요청**
 
@@ -142,7 +142,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### actual {#vocab-actual}
 
-**203회 · 65개 문서 · 중립**
+**206회 · 65개 문서 · 중립**
 
 **실제의**
 
@@ -208,7 +208,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### record {#vocab-record}
 
-**157회 · 54개 문서 · 중립**
+**161회 · 54개 문서 · 중립**
 
 **기록하다; 기록**
 
@@ -240,7 +240,7 @@ manage resources는 자원 관리, manage to do는 어렵지만 일을 해냈다
 
 ### require {#vocab-require}
 
-**145회 · 53개 문서 · 중립**
+**146회 · 53개 문서 · 중립**
 
 **필요로 하다; 요구하다**
 
@@ -256,7 +256,7 @@ require A는 A가 필요하다는 뜻이다. require someone to do는 누군가�
 
 ### compare {#vocab-compare}
 
-**128회 · 48개 문서 · 중립**
+**129회 · 48개 문서 · 중립**
 
 **비교하다**
 
@@ -304,7 +304,7 @@ compare A with B로 두 대상을 비교한다. 비교 조건도 함께 설명�
 
 ### scope {#vocab-scope}
 
-**95회 · 45개 문서 · 중립**
+**96회 · 45개 문서 · 중립**
 
 **범위**
 
@@ -402,7 +402,7 @@ allow someone to do로 허용이나 가능성을 표현한다. 목적어 없이 
 
 ### available {#vocab-available}
 
-**43회 · 25개 문서 · 중립**
+**44회 · 26개 문서 · 중립**
 
 **이용 가능한; 시간이 되는**
 
@@ -530,7 +530,7 @@ specific requirements는 구체적인 요구사항, a specific version은 특정
 
 ### consistent {#vocab-consistent}
 
-**23회 · 15개 문서 · 중립**
+**24회 · 15개 문서 · 중립**
 
 **일관된; 서로 모순되지 않는**
 
@@ -690,6 +690,22 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 
 본문 예: [ai-model-development/artifact-lineage](../ai-model-development/artifact-lineage.md), [ai-model-development/evaluation-promotion](../ai-model-development/evaluation-promotion.md), [aws-cloud/managed-services](../aws-cloud/managed-services.md).
 
+### determine {#vocab-determine}
+
+**14회 · 13개 문서 · 격식**
+
+**판단하다; 알아내다; 결정하다**
+
+근거를 바탕으로 원인이나 상태를 알아내거나 결과를 결정하는 맥락에 쓴다. 사실을 알아내는 이 뜻은 격식 있는 표현이며 일상 대화에서는 find out도 쓸 수 있다.
+
+> We need the original logs to determine when the failure began.
+>
+> 실패가 시작된 시점을 알아내려면 원본 로그가 필요합니다.
+
+집계한 형태: determine, determines, determined, determining.
+
+본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/compute](../aws-cloud/compute.md).
+
 ### estimate {#vocab-estimate}
 
 **14회 · 8개 문서 · 중립**
@@ -705,22 +721,6 @@ prevent A from doing B로 어떤 일이 일어나지 못하게 한다는 뜻을 
 집계한 형태: estimate, estimates, estimated, estimating.
 
 본문 예: [data-platform/lineage-metadata](../data-platform/lineage-metadata.md), [data-platform/production-operations](../data-platform/production-operations.md), [glossary/index](../glossary/index.md).
-
-### determine {#vocab-determine}
-
-**13회 · 12개 문서 · 격식**
-
-**판단하다; 알아내다; 결정하다**
-
-근거를 바탕으로 원인이나 상태를 알아내거나 결과를 결정하는 맥락에 쓴다. 사실을 알아내는 이 뜻은 격식 있는 표현이며 일상 대화에서는 find out도 쓸 수 있다.
-
-> We need the original logs to determine when the failure began.
->
-> 실패가 시작된 시점을 알아내려면 원본 로그가 필요합니다.
-
-집계한 형태: determine, determines, determined, determining.
-
-본문 예: [ai-model-development/model-developer](../ai-model-development/model-developer.md), [ai-model-development/qlora-training](../ai-model-development/qlora-training.md), [aws-cloud/compute](../aws-cloud/compute.md).
 
 ### resolve {#vocab-resolve}
 

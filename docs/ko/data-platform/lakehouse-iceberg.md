@@ -50,6 +50,17 @@ Catalog / Governance
 - Catalog
 - Governance / Control Plane
 
+각 계층이 맡는 일을 나란히 보면 저장 형식과 실행 엔진의 역할을 구분하기 쉽다.
+
+| 계층 | 역할 |
+| --- | --- |
+| Object storage | 지속 보관할 object 저장 |
+| Parquet 같은 file format | 파일 안의 데이터 표현 |
+| Iceberg 같은 table format | 여러 파일에 걸친 일관된 table 설명 |
+| Spark·Trino·Flink 같은 compute | 데이터 읽기·변환·쓰기 |
+| Catalog | Table과 metadata 찾기 |
+| Governance | 정책과 책임 관리 |
+
 ---
 
 ### Data Plane vs Control Plane
@@ -93,11 +104,39 @@ Manifest Files
 Data Files
 ```
 
+여기서 **Iceberg 테이블**은 하나의 거대한 파일이 아니다. 카탈로그에 등록된 `prod.db.orders` 같은 이름, 그 이름이 가리키는 현재 메타데이터 파일, 그리고 메타데이터가 참조하는 여러 파일을 묶어 읽는 **논리적 테이블**이다. SQL에서는 행과 열로 보이지만, 객체 저장소에서는 예를 들어 다음처럼 보인다. 경로와 파일명은 설명을 위한 예시이며 실제 배치는 카탈로그와 엔진에 따라 달라진다.
+
+```text
+카탈로그: prod.db.orders
+  → 현재 메타데이터: s3://lake/orders/metadata/v2.metadata.json
+
+s3://lake/orders/
+  metadata/v1.metadata.json       이전 테이블 상태
+  metadata/v2.metadata.json       현재 테이블 상태
+  metadata/snap-202-1.avro        스냅샷 202의 manifest list
+  metadata/manifest-a.avro        data manifest
+  data/orders-a.parquet           실제 행과 열
+```
+
+폴더의 파일이 모두 현재 테이블에 속하는 것은 아니다. **현재 메타데이터에서 시작해 이어지는 참조 경로**가 읽을 파일을 결정한다. 디렉터리 목록만 보고 파일을 삭제하거나 테이블 상태를 판단하면 과거 스냅샷의 참조를 놓칠 수 있다.
+
 ---
 
 ### Metadata JSON
 
 Metadata JSON은 현재 테이블의 스키마, 파티션 규칙, 스냅샷 같은 상태를 설명한다. 데이터 파일을 직접 읽기 전에 확인하는 목차다.
+
+위 예시의 `v2.metadata.json`은 실제로 JSON 파일이다. 다음은 연결에 필요한 필드만 남긴 **설명용 발췌**다. Snapshot은 별도 JSON 파일이 아니라 `snapshots` 배열 안의 객체다.
+
+```json
+{
+  "current-snapshot-id": 202,
+  "snapshots": [{
+    "snapshot-id": 202,
+    "manifest-list": "s3://lake/orders/metadata/snap-202-1.avro"
+  }]
+}
+```
 
 포함될 수 있는 정보:
 
@@ -112,6 +151,8 @@ Metadata JSON은 현재 테이블의 스키마, 파티션 규칙, 스냅샷 같�
 ### Current Snapshot
 
 현재 스냅샷은 지금 테이블에 속한 파일들의 일관된 집합을 가리킨다.
+
+`current-snapshot-id`의 값 `202`가 `snapshots`의 `snapshot-id: 202`를 고른다. 그 객체의 `manifest-list` URI가 다음 파일을 가리킨다. 이 경로는 Iceberg 포맷 v1–v3의 예시다.
 
 ---
 
@@ -149,6 +190,24 @@ Data File
 
 중간 목록이 파일 경로와 통계를 나누어 관리하므로, 큰 테이블에서도 모든 파일을 무작정 열지 않고 필요한 파일을 고를 수 있다.
 
+포맷 v1–v3에서 **Manifest List**는 스냅샷마다 작성되는 Avro 파일이다. 그 안의 각 레코드는 `manifest_path`로 Manifest File 하나를 가리키고, `manifest_length`, `partition_spec_id`, 파일 수, 파티션 범위 같은 요약도 담는다. **Manifest File**도 Avro 파일이며, 각 레코드의 `data_file.file_path`가 실제 데이터 파일 또는 삭제 파일을 가리킨다. 예를 들면 다음 연결이다. 표는 Avro 바이너리를 읽기 좋게 풀어 쓴 것이며 실제 파일의 텍스트 내용은 아니다.
+
+| 읽는 파일 | 레코드의 핵심 필드 | 다음 참조 |
+|---|---|---|
+| `snap-202-1.avro` (Manifest List) | `manifest_path`, `manifest_length`, `partition_spec_id` | `manifest-a.avro` |
+| `manifest-a.avro` (Manifest File) | `status=ADDED`, `snapshot_id=202`, `data_file.file_path`, `data_file.record_count` | `orders-a.parquet` |
+| `orders-a.parquet` (Data File) | 실제 주문 행과 열 | 쿼리 결과 |
+
+Manifest의 `status`는 해당 항목이 추가·기존·삭제 상태인지 나타낸다. 데이터 파일 항목에는 경로 외에 파일 형식, 행 수, 크기, 선택적인 열 통계가 있다. 다음 스냅샷이 생겨도 변경되지 않은 Manifest와 Data File을 재사용할 수 있다. 포맷 v4에서는 Manifest List 대신 별도의 Parquet **Root Manifest**를 쓰므로 위 Avro 연결을 모든 버전에 그대로 적용하면 안 된다. [Iceberg 사양: 스냅샷과 Manifest](https://iceberg.apache.org/spec/#snapshots), [Manifest List](https://iceberg.apache.org/spec/#manifest-lists), [Manifest Schema](https://iceberg.apache.org/spec/#manifest-schema)
+
+실제 테이블에서 경로를 확인할 때는 Spark의 메타데이터 테이블을 조회할 수 있다. `.snapshots`는 `manifest_list` 경로, `.manifests`는 Manifest 경로, `.entries`는 Manifest의 항목을 보여 준다. 사용 가능한 메타데이터 테이블은 엔진과 Iceberg 버전을 확인한다. [Iceberg Spark 메타데이터 테이블](https://iceberg.apache.org/docs/latest/spark-queries/#metadata-tables)
+
+```sql
+SELECT * FROM prod.db.orders.snapshots;
+SELECT * FROM prod.db.orders.manifests;
+SELECT * FROM prod.db.orders.entries;
+```
+
 ---
 
 ### Data Files
@@ -160,6 +219,19 @@ Data File
 Merge-on-Read 같은 방식에서 삭제 정보를 별도 파일로 관리할 수 있다.
 
 과거 metadata 파일이 남아 있어도 그 파일이 현재 table 상태를 가리킨다는 뜻은 아니다. Manifest는 data file 또는 delete file과 그 metadata를 설명한다.
+
+카탈로그부터 실제 파일까지의 참조 관계를 펼치면 다음과 같다. 이 그림은 별도 delete file을 사용하는 v2 테이블의 예다. Snapshot은 Metadata JSON 안의 기록이며, data manifest와 delete manifest는 서로 다른 파일이다. 화살표는 참조 관계를 나타내며 데이터 복사 순서가 아니다.
+
+```mermaid
+flowchart TD
+    C[Catalog] --> M[Metadata JSON]
+    M --> S[Snapshot]
+    S --> L[Manifest List]
+    L --> F[Data manifests]
+    L --> G[Delete manifests]
+    F --> D[Data Files]
+    G --> X[Delete Files]
+```
 
 ---
 
@@ -571,4 +643,4 @@ Unity Catalog는 data/AI 자산의 접근 제어·lineage·audit 등을 포함�
 
 [이 주제의 실무 프롬프트 6개 더 보기](../prompts/lakehouse-iceberg.md)
 
-LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-09-24. 구현 버전을 시험했다는 의미는 아니다.
+LLM 출력은 작업 가설이다. 공식 문서와 실제 설정·로그·측정으로 검증한다. 외부 문서 확인일: 2026-10-18. 구현 버전을 시험했다는 의미는 아니다.

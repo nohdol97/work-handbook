@@ -62,6 +62,16 @@ Quality Check
 Publish
 ```
 
+The arrows show task dependencies. They describe execution order, not paths for moving the data itself.
+
+```mermaid
+flowchart LR
+  E[Extract] --> S[Spark transform]
+  S --> D[dbt]
+  D --> Q[Quality check]
+  Q --> P[Publish]
+```
+
 Airflow directs other systems rather than processing large datasets itself.
 
 A dependency is a condition between tasks. A schedule defines when or how often they run. A retry does not always resolve a transient failure. Blind append can add duplicate rows during a retry.
@@ -224,13 +234,13 @@ environment
 data_interval
 ```
 
-A good pipeline:
+Instead of a request whose meaning changes each day:
 
 ```text
 "Process today's data"
 ```
 
-Rather than this:
+Use an explicit date:
 
 ```text
 "Process data for 2026-09-24"

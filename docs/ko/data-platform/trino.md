@@ -277,6 +277,16 @@ Trino
 BI / Analyst
 ```
 
+아래 그림에서 S3와 Parquet의 연결은 저장 위치와 파일 형식의 관계다. Trino는 데이터 파일과 이를 설명하는 Iceberg metadata를 함께 사용해 BI 질의에 답한다.
+
+```mermaid
+flowchart LR
+  S[S3 objects] --> P[Parquet data files]
+  I[Iceberg metadata and snapshots] --> T[Trino]
+  P --> T
+  T --> B[BI and analysts]
+```
+
 Trino는 Iceberg metadata로 읽을 파일을 고르고, 지원되는 경우 Parquet의 열(column) 배치를 이용해 필요한 column만 읽는다.
 
 역할:

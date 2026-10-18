@@ -14,7 +14,7 @@ Start with the most frequent expressions across **78 handbook pages**. Practice 
 
 ### instead of {#idioms-instead-of}
 
-**52 occurrences · 34 documents · neutral**
+**54 occurrences · 35 documents · neutral**
 
 **~ 대신에**
 
@@ -46,7 +46,7 @@ Example source pages: [ai-model-development/qlora-training](../ai-model-developm
 
 ### rather than {#idioms-rather-than}
 
-**34 occurrences · 26 documents · neutral**
+**33 occurrences · 26 documents · neutral**
 
 **~보다는, ~하지 않고**
 

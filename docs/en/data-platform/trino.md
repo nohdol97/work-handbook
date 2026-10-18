@@ -277,6 +277,16 @@ Trino
 BI / Analyst
 ```
 
+The link from S3 to Parquet shows the storage location and file format. Trino uses data files together with the Iceberg metadata that describes them to answer BI queries.
+
+```mermaid
+flowchart LR
+  S[S3 objects] --> P[Parquet data files]
+  I[Iceberg metadata and snapshots] --> T[Trino]
+  P --> T
+  T --> B[BI and analysts]
+```
+
 Trino uses Iceberg metadata to choose files. Where supported, it uses Parquet's column layout to read only the needed columns.
 
 Roles:

@@ -86,6 +86,17 @@ Which tools were called?
 Which agent release produced it?
 ```
 
+In Langfuse, a trace can link the following information for one execution. This conceptual view helps trace a low score back to its prompt, calls, and response.
+
+```text
+Langfuse Trace
+ ├─ Prompt
+ ├─ LLM Call
+ ├─ Tool Call
+ ├─ Response
+ └─ Score / Feedback
+```
+
 ### User feedback
 
 The simplest online evaluation attaches a user reaction to a response:
@@ -266,6 +277,18 @@ Regression    = 70%
 Category results reveal regressions that an overall average can hide.
 
 ### Online and offline form a loop
+
+This flow returns to production evaluation after each release.
+
+```mermaid
+flowchart LR
+    P[Production] --> O[Online evaluation]
+    O --> F[Failure found]
+    F --> D[Offline regression dataset]
+    D --> E[Evaluate new version]
+    E --> R[Release]
+    R --> P
+```
 
 ```text
 Production
@@ -1122,6 +1145,19 @@ Object Storage
 Spark / dbt / Trino
         ↓
 BI / Cost / Evaluation Analytics
+```
+
+The diagram shows a proposed path into analytics. The arrow from object storage to Iceberg requires separate ingestion, transformation, and commit work.
+
+```mermaid
+flowchart TD
+    A[Application or Agent] --> L[Langfuse]
+    L --> T[Trace / Observation / Score]
+    T --> E[Export or API]
+    E --> O[Object storage]
+    O --> I[Iceberg tables]
+    I --> C[Spark / dbt / Trino]
+    C --> B[BI / Cost / Evaluation analytics]
 ```
 
 ### Example Iceberg modeling

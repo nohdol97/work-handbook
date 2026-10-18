@@ -122,6 +122,17 @@ Gold
 Backup
 ```
 
+This example shows copy paths to inspect when defining deletion scope. Deleting data in one place does not automatically remove it from downstream stores or backups.
+
+```mermaid
+flowchart LR
+    PostgreSQL --> Kafka
+    Kafka --> Bronze
+    Bronze --> Silver
+    Silver --> Gold
+    Gold --> Backup
+```
+
 Check every copy and derived dataset in the deletion scope.
 
 ### Logical Delete

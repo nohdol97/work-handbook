@@ -149,6 +149,16 @@ dbt
 mart_daily_users
 ```
 
+화살표를 오른쪽으로 따라가면 파생 결과를, 왼쪽으로 거슬러 가면 원본과 변환 작업을 찾을 수 있다.
+
+```mermaid
+flowchart LR
+    Raw[raw_user_events] --> Spark[Spark Job]
+    Spark --> Silver[silver_user_events]
+    Silver --> Dbt[dbt]
+    Dbt --> Mart[mart_daily_users]
+```
+
 ### Upstream
 
 현재 데이터의 원본과 이를 만든 작업이다.
@@ -222,6 +232,14 @@ raw_orders.discount ──┘
 - KPI Root Cause
 - Schema Change Impact
 - Sensitive Data Tracking
+
+두 원본 열이 하나의 결과 열에 함께 영향을 주는 관계를 그림으로 보면 다음과 같다. 화살표는 의존성을 나타내며 계산식 자체를 정의하지는 않는다.
+
+```mermaid
+flowchart LR
+    Amount[raw_orders.amount] --> Net[silver_orders.net_amount]
+    Discount[raw_orders.discount] --> Net
+```
 
 ---
 

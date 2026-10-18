@@ -122,6 +122,17 @@ Gold
 Backup
 ```
 
+아래는 삭제 범위를 추적할 때 살펴볼 사본 경로의 예다. 한 곳에서 삭제했다고 다음 저장소와 backup에서도 자동으로 삭제되는 것은 아니다.
+
+```mermaid
+flowchart LR
+    PostgreSQL --> Kafka
+    Kafka --> Bronze
+    Bronze --> Silver
+    Silver --> Gold
+    Gold --> Backup
+```
+
 삭제 범위에는 모든 사본과 파생 데이터를 포함해 확인한다.
 
 ### Logical Delete

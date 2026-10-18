@@ -50,6 +50,17 @@ Main layers:
 - Catalog
 - Governance / Control Plane
 
+Comparing the layers helps separate storage formats from the engines that use them.
+
+| Layer | Role |
+| --- | --- |
+| Object storage | Holds persistent objects |
+| File format, such as Parquet | Encodes the data within files |
+| Table format, such as Iceberg | Describes a consistent table across files |
+| Compute, such as Spark, Trino, or Flink | Reads, transforms, and writes data |
+| Catalog | Finds tables and their metadata |
+| Governance | Manages policies and accountability |
+
 ---
 
 ### Data Plane vs Control Plane
@@ -93,11 +104,39 @@ Manifest Files
 Data Files
 ```
 
+An **Iceberg table** is not one large file. It is a **logical table**: a registered name such as `prod.db.orders`, the current metadata file found through that name, and the files referenced by that metadata. SQL shows rows and columns, while object storage may look like this. These paths and names are illustrative; actual layouts depend on the catalog and engine.
+
+```text
+Catalog: prod.db.orders
+  → current metadata: s3://lake/orders/metadata/v2.metadata.json
+
+s3://lake/orders/
+  metadata/v1.metadata.json       previous table state
+  metadata/v2.metadata.json       current table state
+  metadata/snap-202-1.avro        snapshot 202 manifest list
+  metadata/manifest-a.avro        data manifest
+  data/orders-a.parquet           rows and columns
+```
+
+Not every file in this directory belongs to the current table. The **reference path starting at the current metadata** determines which files to read. A directory listing alone can miss references from retained older snapshots.
+
 ---
 
 ### Metadata JSON
 
 Metadata JSON describes the current schema, partition rules, and snapshots. It acts like an index that an engine checks before reading data files.
+
+In this example, `v2.metadata.json` is a JSON file. This **illustrative excerpt** shows only the fields needed to follow the links. A snapshot is an object inside `snapshots`, not a separate JSON file.
+
+```json
+{
+  "current-snapshot-id": 202,
+  "snapshots": [{
+    "snapshot-id": 202,
+    "manifest-list": "s3://lake/orders/metadata/snap-202-1.avro"
+  }]
+}
+```
 
 Information can include:
 
@@ -112,6 +151,8 @@ Information can include:
 ### Current Snapshot
 
 The current snapshot points to the consistent set of files in the table now.
+
+`current-snapshot-id: 202` selects the object with `snapshot-id: 202` in `snapshots`. Its `manifest-list` URI points to the next file. This is the path used by Iceberg format v1–v3.
 
 ---
 
@@ -149,6 +190,24 @@ Data File
 
 The intermediate lists organize file paths and statistics, so an engine can choose useful files without opening every file in a large table.
 
+In format v1–v3, a **Manifest List** is an Avro file written for each snapshot. Each record points to one Manifest File through `manifest_path` and carries summaries such as `manifest_length`, `partition_spec_id`, file counts, and partition ranges. A **Manifest File** is also Avro. Each entry's `data_file.file_path` points to a data or delete file. This table presents decoded Avro records for reading; it is not the literal text stored in the binary files.
+
+| File being read | Main fields in a record | Next reference |
+|---|---|---|
+| `snap-202-1.avro` (Manifest List) | `manifest_path`, `manifest_length`, `partition_spec_id` | `manifest-a.avro` |
+| `manifest-a.avro` (Manifest File) | `status=ADDED`, `snapshot_id=202`, `data_file.file_path`, `data_file.record_count` | `orders-a.parquet` |
+| `orders-a.parquet` (Data File) | Actual order rows and columns | Query result |
+
+The manifest entry's `status` marks a file as added, existing, or deleted. A data-file entry also includes its path, format, row count, size, and optional column statistics. A later snapshot can reuse unchanged manifests and data files. Format v4 uses a separate Parquet **Root Manifest** instead of a Manifest List, so the Avro chain above does not describe every version. [Iceberg specification: snapshots and manifests](https://iceberg.apache.org/spec/#snapshots), [manifest lists](https://iceberg.apache.org/spec/#manifest-lists), [manifest schema](https://iceberg.apache.org/spec/#manifest-schema)
+
+To inspect a real table in Spark, query its metadata tables. `.snapshots` exposes the `manifest_list` path, `.manifests` the manifest paths, and `.entries` their entries. Check the available tables for your engine and Iceberg version. [Iceberg Spark metadata tables](https://iceberg.apache.org/docs/latest/spark-queries/#metadata-tables)
+
+```sql
+SELECT * FROM prod.db.orders.snapshots;
+SELECT * FROM prod.db.orders.manifests;
+SELECT * FROM prod.db.orders.entries;
+```
+
 ---
 
 ### Data Files
@@ -160,6 +219,19 @@ Parquet, ORC, or Avro files that hold the actual data.
 Approaches such as merge-on-read can manage deletion information in separate files.
 
 An older metadata file does not automatically describe the current table. Manifests describe data or delete files and their metadata.
+
+This diagram follows references from the catalog to the files in a v2 table that uses separate delete files. The snapshot is a record inside Metadata JSON. Data manifests and delete manifests are separate files. Arrows show references, not a sequence of data copies.
+
+```mermaid
+flowchart TD
+    C[Catalog] --> M[Metadata JSON]
+    M --> S[Snapshot]
+    S --> L[Manifest List]
+    L --> F[Data manifests]
+    L --> G[Delete manifests]
+    F --> D[Data Files]
+    G --> X[Delete Files]
+```
 
 ---
 
@@ -574,4 +646,4 @@ Check all retained snapshots and in-flight writes, then compare catalog behavior
 
 [See six more practical prompts for this topic](../prompts/lakehouse-iceberg.md)
 
-LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-09-24. This does not mean an implementation version was tested.
+LLM output is a working hypothesis. Check it against official docs and actual configuration, logs, and measurements. External documents reviewed: 2026-10-18. This does not mean an implementation version was tested.
