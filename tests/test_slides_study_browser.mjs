@@ -23,6 +23,7 @@ async function audit(label){const result=await page.evaluate(()=>{
   if(![document.documentElement,document.body].includes(e)&&e.scrollHeight>e.clientHeight+2)issues.push(`${label}: nested vertical overflow (${s.overflowY})`);
  }
  for(const unit of units){
+  if(/정적 원문 표기입니다|Static source notation\./.test(unit.textContent))issues.push(`obsolete notation notice ${unit.dataset.unitId}`);
   const source=window.__HANDBOOK_SLIDES__.slides.find(s=>(s.unit_id||s.id)===unit.dataset.unitId);
   if(!source){issues.push('unit absent from schema');continue;}
   const html=source.content_blocks?.length?source.content_blocks.map(b=>typeof b==='string'?b:b.html||'').join(''):source.body_html;

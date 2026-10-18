@@ -4,6 +4,7 @@
 
 ## handbook-interactive-slides
 
+- 정적 도식: 렌더러는 원문 앞에 공간 배치·화살표를 설명하는 안내문을 덧붙이지 않는다. 원문 도식은 그대로 표시한다.
 - 모바일 탐색: 본문·여백의 한 손가락 가로 스와이프를 지원하며, 세로 읽기·핀치 확대·조작부·선택을 보호하고 실제 브라우저 터치로 검사한다.
 - 원본: [handbook-interactive-slides/SKILL.md](handbook-interactive-slides/SKILL.md)
 - 역할·트리거: 공개 한영 Handbook 문서에서 원문 추적 인터랙티브 HTML 슬라이드를 생성·갱신하고 공통 렌더러·검토된 설명 설계를 확장한다. 정적 원문이 기본값이며 퀴즈·채점·암기 카드는 제외한다.

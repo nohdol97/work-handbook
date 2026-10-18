@@ -191,13 +191,6 @@ function pendingNotice() { return `<p>${english?'This source block needs a revie
 function studyHtml(unit) {
   const source=Array.isArray(unit.content_blocks)&&unit.content_blocks.length?unit.content_blocks.map(b=>typeof b==='string'?b:b.html||'').join(''):unit.body_html;
   const doc=new DOMParser().parseFromString(cleanHtml(source),'text/html');
-  for(const pre of doc.querySelectorAll('pre')){
-    if(pre.querySelector('code.language-mermaid')||/[┌┐└┘├┤│─]/.test(pre.textContent)){
-      const note=doc.createElement('p');
-      note.textContent=english?'Static source notation. Long lines wrap on small screens; use the original document for its spatial layout. Arrows and labels below are preserved as source text.':'정적 원문 표기입니다. 작은 화면에서는 긴 줄이 줄바꿈되므로 공간 배치는 원문 문서에서 확인하세요. 아래 화살표와 이름은 원문 텍스트 그대로 유지합니다.';
-      pre.before(note);
-    }
-  }
   if(innerWidth>=600)return doc.body.innerHTML;
   for(const table of doc.querySelectorAll('table')){
     const rows=[...table.rows],head=rows[0];
