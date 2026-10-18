@@ -4,6 +4,7 @@
 
 ## handbook-interactive-slides
 
+- 모바일 탐색: 본문·여백의 한 손가락 가로 스와이프를 지원하며, 세로 읽기·핀치 확대·조작부·선택을 보호하고 실제 브라우저 터치로 검사한다.
 - 원본: [handbook-interactive-slides/SKILL.md](handbook-interactive-slides/SKILL.md)
 - 역할·트리거: 공개 한영 Handbook 문서에서 원문 추적 인터랙티브 HTML 슬라이드를 생성·갱신하고 공통 렌더러·검토된 설명 설계를 확장한다. 정적 원문이 기본값이며 퀴즈·채점·암기 카드는 제외한다.
 - 경계: MkDocs 탐색의 공개 문서만 대상으로 삼고 원본 Markdown과 vault 사본은 수정하지 않는다. 원문에 없는 계산·수치·실제 운영 결과를 만들지 않으며 단순화 모델의 한계를 화면에 표시한다.
