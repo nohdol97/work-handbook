@@ -99,15 +99,38 @@ try {
   await page.setViewportSize({width:390,height:844});
   await open('ko/data-platform/architecture.md');
   const position = () => page.evaluate(()=>location.hash);
+  const settleNavigation = async () => {
+    await page.waitForFunction(() => {
+      const params = new URLSearchParams(location.hash.slice(1));
+      const card = document.querySelector('.slide-card');
+      return card?.dataset.unitId === params.get('unit') &&
+        Number(card.dataset.part) === Number(params.get('part') || 0) &&
+        Boolean(card.querySelector('.parameter')) === (params.get('panel') === 'parameter');
+    });
+  };
+  const backgroundPoint = async side => {
+    const point = await page.locator('.presentation-main').evaluate((main, side) => {
+      const r = main.getBoundingClientRect();
+      const x = side === 'left' ? r.left + 3 : r.right - 3;
+      const y = r.top + r.height / 2;
+      const target = document.elementFromPoint(x, y);
+      return {x, y, isBackground: target === main, target: target?.tagName + '.' + target?.className};
+    }, side);
+    assert(point.isBackground, `navigation target is content instead of main padding: ${point.target}`);
+    return point;
+  };
+  await settleNavigation();
   const first = await position();
-  await page.keyboard.press('ArrowLeft');assert(await position()===first,'first slide wrapped');
-  await page.keyboard.press('ArrowRight');assert(await position()!==first,'keyboard next failed');
-  await page.keyboard.press('ArrowLeft');assert(await position()===first,'keyboard previous failed');
-  const card=await page.locator('.slide-card').boundingBox();
-  await page.mouse.click(card.x+card.width-3,card.y+card.height/2);assert(await position()!==first,'right background navigation failed');
-  await page.mouse.click(card.x+3,card.y+card.height/2);assert(await position()===first,'left background navigation failed');
-  await page.mouse.move(card.x+3,card.y+card.height/2);await page.mouse.down();await page.mouse.move(card.x+card.width-3,card.y+card.height/2,{steps:10});await page.mouse.up();assert(await position()===first,'drag navigated');
-  await page.keyboard.press('End');const last=await position();await page.keyboard.press('ArrowRight');assert(await position()===last,'last slide wrapped');
+  await page.keyboard.press('ArrowLeft');await settleNavigation();assert(await position()===first,'first slide wrapped');
+  await page.keyboard.press('ArrowRight');await page.waitForFunction(previous=>location.hash!==previous,first);await settleNavigation();assert(await position()!==first,'keyboard next failed');
+  await page.keyboard.press('ArrowLeft');await page.waitForFunction(expected=>location.hash===expected,first);await settleNavigation();assert(await position()===first,'keyboard previous failed');
+  let margin = await backgroundPoint('left');await page.mouse.click(margin.x,margin.y);await settleNavigation();assert(await position()===first,'first background click wrapped');
+  margin = await backgroundPoint('right');await page.mouse.click(margin.x,margin.y);await page.waitForFunction(previous=>location.hash!==previous,first);await settleNavigation();assert(await position()!==first,'right background navigation failed');
+  margin = await backgroundPoint('left');await page.mouse.click(margin.x,margin.y);await page.waitForFunction(expected=>location.hash===expected,first);await settleNavigation();assert(await position()===first,'left background navigation failed');
+  const dragStart=await backgroundPoint('left'),dragEnd=await backgroundPoint('right');
+  await page.mouse.move(dragStart.x,dragStart.y);await page.mouse.down();await page.mouse.move(dragEnd.x,dragEnd.y,{steps:10});await page.mouse.up();await settleNavigation();assert(await position()===first,'drag navigated');
+  await page.keyboard.press('End');await settleNavigation();const last=await position();await page.keyboard.press('ArrowRight');await settleNavigation();assert(await position()===last,'last slide wrapped');
+  margin=await backgroundPoint('right');await page.mouse.click(margin.x,margin.y);await settleNavigation();assert(await position()===last,'last background click wrapped');
   await open('ko/data-platform/foundations.md');
   const parameterId=await page.evaluate(()=>(() => {const s=window.__HANDBOOK_SLIDES__.slides.find(s=>s.interaction?.type==='parameter');return s?.unit_id || s?.id})());
   assert(parameterId,'Statistics parameter missing');

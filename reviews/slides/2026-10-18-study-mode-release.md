@@ -60,7 +60,7 @@
 | 언어/모드·reload·Back/Forward | 같은 의미 절/단위 유지 | 대표 한영 실제 이동에서 일치 |
 | 원문 변경으로 검토 무효화 | 정적 원문 복귀, 절 ID 유지 | 한영 대표 기술4절8등록값 회귀 통과 |
 
-배포는 검증된 변경을 두 커밋으로 나누어 기존 `main`의 Pages workflow로 수행한다. 실제 배포 SHA·Actions run·공개 HTTP/브라우저 결과는 최종 응답과 로컬 `_workspace/slide-qa/live/` 증거로 보고한다. 공개 URL은 [슬라이드 목록](https://nohdol97.github.io/work-handbook/slides/)과 [Watermark 학습 페이지](https://nohdol97.github.io/work-handbook/slides/ko/data-platform/flink/#section=watermark&mode=study)다.
+배포는 검증된 변경을 기존 `main`의 Pages workflow로 수행한다. 구현과 스킬 규칙은 별도 커밋으로 남기며 CI 회귀 수정도 검증 후 반영한다. 실제 배포 SHA·Actions run·공개 HTTP/브라우저 결과는 최종 응답과 로컬 `_workspace/slide-qa/live/` 증거로 보고한다. 공개 URL은 [슬라이드 목록](https://nohdol97.github.io/work-handbook/slides/)과 [Watermark 학습 페이지](https://nohdol97.github.io/work-handbook/slides/ko/data-platform/flink/#section=watermark&mode=study)다.
 
 ## 미검증 범위
 
@@ -85,3 +85,7 @@
 발표 모드의 화면 내 구성: [Watermark 모바일](screenshots/presentation-watermark-ko-390x844.png), [Watermark 데스크톱](screenshots/presentation-watermark-ko-1280x720.png), [SG/NACL 영어](screenshots/presentation-sg-nacl-en-390x844.png), [QLoRA 320px](screenshots/presentation-qlora-ko-320x568.png). 이전 검토의 QLoRA 대표 흐름 준비 중 상태는 이번에 설명 단위를 검토하여 해소했다.
 
 발표 모드의 긴 Statistics300 결과: [모바일](screenshots/presentation-statistics-300-390x844.png), [데스크톱](screenshots/presentation-statistics-300-1280x720.png).
+
+## 배포 환경의 탐색 검사 보강
+
+첫 배포 실행 `39087389977`은 Linux의 왼쪽 배경 클릭 검사에서 중단되어 공개 배포하지 않았다. 진단 결과 기존 클릭점은 슬라이드 콘텐츠 상자 안쪽 x19였으며, 글꼴·줄 수에 따라 문단 영역이 될 수 있었다. 실제 배경인 main padding의 x3/x387을 `elementFromPoint`로 확인해 검사하고, 다음 조작 전에 URL뿐 아니라 렌더링된 절/분할/패널의 일치를 기다리도록 보강했다. 처음·끝에서의 배경 클릭 경계도 명시적으로 검사한다. 렌더러와 콘텐츠는 변경하지 않았으며 배경 이동과 콘텐츠 조작 격리의 기대 조건도 유지한다.
